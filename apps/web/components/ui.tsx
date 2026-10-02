@@ -24,7 +24,7 @@ export function Stat({ label, value, hint, tone }: { label: string; value: strin
   return (
     <div className="stat">
       <span className="stat-label">{label}</span>
-      <span className="stat-value">{value}</span>
+      <span className={`stat-value ${tone ?? ""}`}>{value}</span>
       {hint && <span className={`stat-hint ${tone ?? ""}`}>{hint}</span>}
     </div>
   );
@@ -34,7 +34,7 @@ export function Progress({ pct, color }: { pct: number; color?: string }) {
   const clamped = Math.min(100, Math.max(0, pct));
   const over = pct > 100;
   return (
-    <div className="progress" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
+    <div className="progress" role="progressbar" aria-label="Progress" aria-valuetext={`${Math.round(pct)}%`} aria-valuenow={Math.round(clamped)} aria-valuemin={0} aria-valuemax={100}>
       <span style={{ width: `${clamped}%`, background: over ? "var(--danger)" : color ?? "var(--accent-grad)" }} />
     </div>
   );

@@ -31,8 +31,8 @@ export default function FeedbackPage() {
       id: `r${Date.now()}`, title: title.trim(), detail: detail.trim(), area, status: "received", votes: 1,
       premium: plan === "premium", mine: true, createdAt: new Date().toISOString().slice(0, 10), credit: credit.trim() || undefined,
       reply: plan === "premium"
-        ? "Thank you! ⭐ As a Premium member you're in the priority queue. A human will reply within 1 business day."
-        : "Thank you, this genuinely helps. We've logged it and you'll hear from us soon 🙏",
+        ? "Thank you! As a Premium member you're in the priority queue. A human will reply within 1 business day."
+        : "Thank you, this helps. We've logged it and you'll hear from us soon.",
     };
     save([r, ...items]);
     setTitle(""); setDetail(""); setCredit("");
@@ -43,7 +43,7 @@ export default function FeedbackPage() {
 
   return (
     <>
-      <PageHeader title="Feedback & Requests" subtitle="Lakshly is built with you. Thank you for every idea 💛">
+      <PageHeader title="Feedback & Requests" subtitle="Lakshly is built with you. Thank you for every idea.">
         {plan === "premium" ? <PremiumBadge /> : <span className="badge">Free</span>}
       </PageHeader>
 
@@ -51,7 +51,7 @@ export default function FeedbackPage() {
         <Glass className="card">
           <h2>Suggest something</h2>
           <p className="muted">Every request gets an instant thank-you and a visible status. {plan === "premium"
-            ? <strong>⭐ Premium: priority queue, votes count 3×, human reply within 1 business day.</strong>
+            ? <strong><Icon name="sparkle" size={13} /> Premium: priority queue, votes count 3×, human reply within 1 business day.</strong>
             : "Premium members get priority triage and a 1-business-day reply target."}</p>
           <form onSubmit={submit} style={{ display: "grid", gap: 12 }}>
             <label className="field">What would you love Lakshly to do?
@@ -99,7 +99,7 @@ export default function FeedbackPage() {
       </div>
 
       <Glass className="card">
-        <div className="card-head"><h2>💛 Built with you</h2><span className="muted tiny">Shipped ideas, credited with gratitude (opt-in). Sample names in this demo are fictional.</span></div>
+        <div className="card-head"><h2 className="heading-icon"><Icon name="heart" size={16} /> Built with you</h2><span className="muted tiny">Shipped ideas, credited with gratitude (opt-in). Sample names in this demo are fictional.</span></div>
         <div className="list">
           {shipped.map((r) => (
             <div className="row" key={r.id}>
@@ -111,7 +111,7 @@ export default function FeedbackPage() {
         </div>
       </Glass>
 
-      {toast && <Glass className="toast" as="div"><strong>🙏 Thank you!</strong> <span className="muted">{toast}</span></Glass>}
+      {toast && <Glass className="toast" as="div"><strong className="heading-icon"><Icon name="heart" size={14} /> Thank you!</strong> <span className="muted">{toast}</span></Glass>}
     </>
   );
 }
