@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		05C35B852201A988EDF25D64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1561020E16C09792D10951B3 /* Assets.xcassets */; };
+		0847608D78A0862D08FC3507 /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */; };
 		0DA20D32A0936564A02BB9F3 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
 		15BFDA7BAE7460D08B167DE7 /* InvestmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */; };
 		15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
@@ -31,19 +32,23 @@
 		6C552DFDADD516D344F7328C /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E70F932DD22164B5A2197F /* GlassCard.swift */; };
 		79EAB566141178ADB3F43674 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DBDB7CE6050917F3757B1 /* DataStore.swift */; };
 		7B59E2AD414008DE57DB184F /* DebtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A7295D48190C72FBC6A0D /* DebtView.swift */; };
+		7F2E57D0910B2EA686606F8B /* SettingsPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */; };
 		8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */; };
 		9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
 		A46698DCF3C82DF8A70D03BA /* sample.synthetic.json in Resources */ = {isa = PBXBuildFile; fileRef = A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */; };
+		A5222D5EC0392028898F5BD0 /* SettingsPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */; };
 		AEF9EC4435A9103B4921D5EB /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74D83B4AD1381D1E54EC44F /* SpendView.swift */; };
 		AF05723EC8EEA4A429F637B8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */; };
 		B485674AC3F3F6E9A0C91CE7 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E70F932DD22164B5A2197F /* GlassCard.swift */; };
 		BD27BC5725BC6C238CE0364B /* LakshlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */; };
 		C0C3EEBE95E47175483DA7A7 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DBDB7CE6050917F3757B1 /* DataStore.swift */; };
 		C1F7624690A6B5BC8C3D9B0A /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
+		C3FC0FA1D90FE6268D75F843 /* SecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */; };
 		C5C46932588768202512675C /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
 		C7CF78CB9D476B0F29676081 /* AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */; };
 		CBA9C6D4D77CB6851E62EC3B /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561213C16F83EF1708313DD /* Money.swift */; };
 		D0F8B80EB638CC979A69804A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
+		D54176348B4D1ADE4750C8FE /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */; };
 		DB22EED984F46B0C63559719 /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
 		DEC6E9528C060C3F20A4EA1C /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
 		E2DE1AD3A7C0B7A690D2CBA3 /* ChartHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */; };
@@ -67,10 +72,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOptions.swift; sourceTree = "<group>"; };
 		09196754EE8047DADE4A2DD3 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		0AB77E03381CC92564026A27 /* SecureStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStore.swift; sourceTree = "<group>"; };
 		11AF7D13642E6E1C77A58B33 /* Lakshly-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lakshly-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1561020E16C09792D10951B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityTests.swift; sourceTree = "<group>"; };
 		1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakshlyApp.swift; sourceTree = "<group>"; };
 		1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
 		2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartHelpers.swift; sourceTree = "<group>"; };
@@ -81,6 +88,7 @@
 		45C491D5C3C62507799130BD /* CreditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditView.swift; sourceTree = "<group>"; };
 		51E9BAF895BA80DCE3D5015E /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
 		60E70F932DD22164B5A2197F /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPreferences.swift; sourceTree = "<group>"; };
 		9EEA192FF98190D79F6BCD95 /* RewardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsView.swift; sourceTree = "<group>"; };
 		9FA26CFA53316EC8CD45CB55 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sample.synthetic.json; sourceTree = "<group>"; };
@@ -257,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */,
+				19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */,
 			);
 			path = LakshlyTests;
 			sourceTree = "<group>";
@@ -273,6 +282,8 @@
 			isa = PBXGroup;
 			children = (
 				1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */,
+				0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */,
+				901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -427,6 +438,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				541D6B919B187F6447F84773 /* LakshlyTests.swift in Sources */,
+				C3FC0FA1D90FE6268D75F843 /* SecurityTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -447,11 +459,13 @@
 				3069E78D8589A994E0B4F7A7 /* InvestmentsView.swift in Sources */,
 				C5C46932588768202512675C /* KeyManager.swift in Sources */,
 				E518C7D962AAC345414469BF /* LakshlyApp.swift in Sources */,
+				D54176348B4D1ADE4750C8FE /* LaunchOptions.swift in Sources */,
 				47DD0C747895C91F55369F07 /* Layout.swift in Sources */,
 				52FD76F0955E6152FA95EDE2 /* Money.swift in Sources */,
 				8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */,
 				2FDA84671774D6CE6EE92C31 /* RewardsView.swift in Sources */,
 				DEC6E9528C060C3F20A4EA1C /* SecureStore.swift in Sources */,
+				7F2E57D0910B2EA686606F8B /* SettingsPreferences.swift in Sources */,
 				499B7DFAB8244DA3EC466264 /* SettingsView.swift in Sources */,
 				AEF9EC4435A9103B4921D5EB /* SpendView.swift in Sources */,
 				9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */,
@@ -475,11 +489,13 @@
 				15BFDA7BAE7460D08B167DE7 /* InvestmentsView.swift in Sources */,
 				0DA20D32A0936564A02BB9F3 /* KeyManager.swift in Sources */,
 				BD27BC5725BC6C238CE0364B /* LakshlyApp.swift in Sources */,
+				0847608D78A0862D08FC3507 /* LaunchOptions.swift in Sources */,
 				E795379A93E9ABF170EAE4E6 /* Layout.swift in Sources */,
 				CBA9C6D4D77CB6851E62EC3B /* Money.swift in Sources */,
 				25A23228F2A820EAF908992D /* OverviewView.swift in Sources */,
 				54C44AC7B67F542948C05324 /* RewardsView.swift in Sources */,
 				15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */,
+				A5222D5EC0392028898F5BD0 /* SettingsPreferences.swift in Sources */,
 				AF05723EC8EEA4A429F637B8 /* SettingsView.swift in Sources */,
 				F74CCF13F9FA0C46E74D028C /* SpendView.swift in Sources */,
 				D0F8B80EB638CC979A69804A /* Theme.swift in Sources */,

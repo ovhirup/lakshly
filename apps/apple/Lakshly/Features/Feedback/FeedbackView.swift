@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FeedbackView: View {
   let store: DataStore
-  @AppStorage("premium") private var premium = false
+  @AppStorage("settings.premium") private var premium = false
   @State private var title = ""
   @State private var details = ""
   @State private var type = "Feature"

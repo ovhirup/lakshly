@@ -3,7 +3,7 @@ import SwiftUI
 
 struct DebtView: View {
   let store: DataStore
-  @AppStorage("premium") private var premium = false
+  @AppStorage("settings.premium") private var premium = false
   private func projection(_ debt: Debt) -> [ProjectionPoint] {
     var balance = Double(debt.outstanding)
     var points = [ProjectionPoint(month: 0, amount: balance)]

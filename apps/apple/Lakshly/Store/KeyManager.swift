@@ -20,6 +20,9 @@ final class KeyManager {
     do {
       let query: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+        // Data-protection keychain only: never touch the legacy macOS file keychain,
+        // which can block launch with an ACL prompt. Unsigned builds fall back to an in-memory key.
+        kSecUseDataProtectionKeychain as String: true,
         kSecAttrAccount as String: "dataset-key", kSecReturnData as String: true,
         kSecMatchLimit as String: kSecMatchLimitOne,
       ]
@@ -69,6 +72,9 @@ final class KeyManager {
       }
       let attributes: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+        // Data-protection keychain only: never touch the legacy macOS file keychain,
+        // which can block launch with an ACL prompt. Unsigned builds fall back to an in-memory key.
+        kSecUseDataProtectionKeychain as String: true,
         kSecAttrAccount as String: "dataset-key",
         kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
         kSecValueData as String: stored,
