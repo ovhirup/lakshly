@@ -29,8 +29,8 @@ cd site && python3 -m http.server 4173   # http://localhost:4173
 
 The waitlist is wired to Buttondown (newsletter `lakshly`, double opt-in) via its
 [embed-subscribe endpoint](https://docs.buttondown.com/building-your-subscriber-base) in `form` mode:
-a native POST of `email`, `embed=1`, `tag=waitlist` and optional `metadata__track`, opened in a new tab.
-Buttondown says not to call this endpoint with `fetch`. `tag` and `metadata__*` are Buttondown paid add-ons.
+a native POST of just `email` and `embed=1` (works on the free plan), opened in a new tab.
+Buttondown says not to call this endpoint with `fetch`. Tags and `metadata__*` fields are paid add-ons, so none are sent.
 
 If `WAITLIST_ENDPOINT` is set back to `""`, the form validates input and shows a "coming soon" thank-you,
 but sends, stores and logs nothing.

@@ -56,7 +56,6 @@
   var status = document.getElementById("wl-status");
   var email = document.getElementById("wl-email");
   var consent = document.getElementById("wl-consent");
-  var track = document.getElementById("wl-track");
   var emailErr = document.getElementById("wl-email-err");
   var consentErr = document.getElementById("wl-consent-err");
   var endpoint = (cfg.WAITLIST_ENDPOINT || "").trim();
@@ -66,11 +65,10 @@
 
   // Native-form mode: point the real form at the provider, with the provider's field names.
   if (endpoint && cfg.WAITLIST_MODE === "form") {
-    var fm = cfg.WAITLIST_FIELDS || { email: "email", track: "track" };
+    var fm = cfg.WAITLIST_FIELDS || { email: "email" };
     form.action = endpoint; form.method = "post"; form.target = "_blank";
     form.setAttribute("rel", "noopener noreferrer");
     email.name = fm.email;
-    if (fm.track) track.name = fm.track; else track.removeAttribute("name");
     consent.removeAttribute("name"); // consent is checked here; the provider doesn't need it
     Object.keys(cfg.WAITLIST_EXTRA || {}).forEach(function (k) {
       var i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = cfg.WAITLIST_EXTRA[k]; form.appendChild(i);
@@ -92,18 +90,16 @@
       say("<strong>Thank you! 💛</strong> The waitlist opens very soon. Nothing was sent or saved, so please check back shortly, or watch the project on GitHub.", "soon");
       return;
     }
-    var f = cfg.WAITLIST_FIELDS || { email: "email", track: "track" };
+    var f = cfg.WAITLIST_FIELDS || { email: "email" };
     if (cfg.WAITLIST_MODE === "form") {
       // Native POST (Buttondown's documented embed flow; it must not be called with fetch). The real form
       // submits itself into a new tab, where Buttondown shows its confirmation (or a CAPTCHA if needed).
-      track.disabled = !track.value; // don't send an empty optional answer
       say("<strong>Almost there! 💛</strong> Check your inbox to confirm your email. Buttondown, our email provider, has opened a new tab to finish signing you up. You’re on the list once you click the link in the confirmation email.", "ok");
-      setTimeout(function () { track.disabled = false; form.reset(); }, 0);
+      setTimeout(function () { form.reset(); }, 0);
       return; // no preventDefault: let the browser POST the form
     }
     var body = new FormData();
     body.append(f.email, email.value.trim());
-    if (track.value) body.append(f.track, track.value);
     var btn = form.querySelector("button[type=submit]");
     btn.disabled = true;
     say("Adding you…");
@@ -114,7 +110,7 @@
     }).then(function (r) {
       if (cfg.WAITLIST_MODE !== "no-cors" && !r.ok) throw new Error("bad status");
       form.reset();
-      say("<strong>You’re on the list. Thank you! 💛</strong> We’ll email you once, when Lakshly launches. Unsubscribe anytime.", "ok");
+      say("<strong>You’re on the list. Thank you! 💛</strong> We’ll only email you about launch and major product updates. Unsubscribe anytime.", "ok");
     }).catch(function () {
       say("Sorry, that didn’t go through. Please try again in a moment.", "bad");
     }).finally(function () { btn.disabled = false; });
