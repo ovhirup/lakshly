@@ -20,7 +20,7 @@ struct OverviewView: View {
       Card(title: "Net worth") {
         Text(Money.format(assets - liabilities)).font(
           .system(size: 38, weight: .bold, design: .rounded)
-        ).minimumScaleFactor(0.5)
+        ).foregroundStyle(Theme.gold).minimumScaleFactor(0.5)
         Pill(text: "Demo data")
         MetricRow(title: "Assets", value: Money.format(assets))
         MetricRow(title: "Liabilities", value: Money.format(liabilities))
@@ -38,11 +38,11 @@ struct OverviewView: View {
               by: .value("Flow", "Spend")
             ).position(by: .value("Flow", "Spend"))
           }
-        }.chartForegroundStyleScale(["Income": Color.orange, "Spend": Color.pink]).modifier(
+        }.chartForegroundStyleScale(["Income": Theme.income, "Spend": Theme.spend]).modifier(
           MoneyChartAxis()
         ).frame(height: 220)
         Text("All inflows and outflows, including investments and EMI.").font(.caption)
-          .foregroundStyle(.secondary)
+          .foregroundStyle(Theme.secondaryText)
       }
       Card(title: "Top categories · \(store.selectedMonth)") {
         MonthPicker(store: store)

@@ -32,6 +32,7 @@
 		79EAB566141178ADB3F43674 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DBDB7CE6050917F3757B1 /* DataStore.swift */; };
 		7B59E2AD414008DE57DB184F /* DebtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A7295D48190C72FBC6A0D /* DebtView.swift */; };
 		8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */; };
+		9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
 		A46698DCF3C82DF8A70D03BA /* sample.synthetic.json in Resources */ = {isa = PBXBuildFile; fileRef = A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */; };
 		AEF9EC4435A9103B4921D5EB /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74D83B4AD1381D1E54EC44F /* SpendView.swift */; };
 		AF05723EC8EEA4A429F637B8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */; };
@@ -42,6 +43,7 @@
 		C5C46932588768202512675C /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
 		C7CF78CB9D476B0F29676081 /* AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */; };
 		CBA9C6D4D77CB6851E62EC3B /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561213C16F83EF1708313DD /* Money.swift */; };
+		D0F8B80EB638CC979A69804A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
 		DB22EED984F46B0C63559719 /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
 		DEC6E9528C060C3F20A4EA1C /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
 		E2DE1AD3A7C0B7A690D2CBA3 /* ChartHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */; };
@@ -91,6 +93,7 @@
 		D89A7295D48190C72FBC6A0D /* DebtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebtView.swift; sourceTree = "<group>"; };
 		F09DBDB7CE6050917F3757B1 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLock.swift; sourceTree = "<group>"; };
+		F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -237,6 +240,7 @@
 				60E70F932DD22164B5A2197F /* GlassCard.swift */,
 				9FA26CFA53316EC8CD45CB55 /* Layout.swift */,
 				C561213C16F83EF1708313DD /* Money.swift */,
+				F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -450,6 +454,7 @@
 				DEC6E9528C060C3F20A4EA1C /* SecureStore.swift in Sources */,
 				499B7DFAB8244DA3EC466264 /* SettingsView.swift in Sources */,
 				AEF9EC4435A9103B4921D5EB /* SpendView.swift in Sources */,
+				9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -477,6 +482,7 @@
 				15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */,
 				AF05723EC8EEA4A429F637B8 /* SettingsView.swift in Sources */,
 				F74CCF13F9FA0C46E74D028C /* SpendView.swift in Sources */,
+				D0F8B80EB638CC979A69804A /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

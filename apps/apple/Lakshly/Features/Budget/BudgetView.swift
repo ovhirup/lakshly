@@ -13,17 +13,17 @@ struct BudgetView: View {
             title: "Spent / planned",
             value: "\(Money.format(actual)) / \(Money.format(budget.limit))")
           ProgressView(value: min(Double(actual) / Double(max(1, budget.limit)), 1)).tint(
-            actual > budget.limit ? .red : .orange)
+            actual > budget.limit ? Theme.danger : Theme.success)
           if actual > budget.limit {
-            Text("\(Money.format(actual - budget.limit)) over budget").foregroundStyle(.red).font(
+            Text("\(Money.format(actual - budget.limit)) over budget").foregroundStyle(Theme.danger).font(
               .subheadline.bold())
           } else {
-            Text("\(Money.format(budget.limit - actual)) remaining").foregroundStyle(.secondary)
+            Text("\(Money.format(budget.limit - actual)) remaining").foregroundStyle(Theme.success)
           }
           if budget.rollover == true {
             Text(
               "Rollover enabled. Unused amounts may carry forward; this view shows the base monthly limit."
-            ).font(.caption).foregroundStyle(.secondary)
+            ).font(.caption).foregroundStyle(Theme.secondaryText)
           }
         }
       }

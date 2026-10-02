@@ -19,7 +19,7 @@ struct HistoryView: View {
   private var months: [String] { Set(filtered.map { String($0.date.prefix(7)) }).sorted(by: >) }
   var body: some View {
     Page(title: "History", subtitle: "Every transaction has a story.") {
-      TextField("Search merchants or transactions", text: $search).textFieldStyle(.roundedBorder)
+      TextField("Search merchants or transactions", text: $search).textFieldStyle(ThemedFieldStyle())
       HStack {
         Picker("Category", selection: $category) {
           ForEach(categories, id: \.self) { Text($0.capitalized).tag($0) }
@@ -39,12 +39,12 @@ struct HistoryView: View {
             HStack(alignment: .top) {
               VStack(alignment: .leading, spacing: 6) {
                 Text(row.merchant ?? row.description).font(.headline)
-                Text(row.date).font(.caption).foregroundStyle(.secondary)
+                Text(row.date).font(.caption).foregroundStyle(Theme.secondaryText)
                 Pill(text: row.category.capitalized)
               }
               Spacer()
               Text(Money.format(row.amount)).font(.subheadline.bold()).foregroundStyle(
-                row.amount < 0 ? Color.primary : Color.green)
+                row.amount < 0 ? Color.primary : Theme.income)
             }
             Divider()
           }

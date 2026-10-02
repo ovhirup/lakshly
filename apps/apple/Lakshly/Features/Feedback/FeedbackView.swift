@@ -9,10 +9,10 @@ struct FeedbackView: View {
   @State private var confirmation = false
   private func statusColor(_ status: String) -> Color {
     switch status {
-    case "Planned": .blue
-    case "In progress": .orange
-    case "Shipped": .green
-    default: .gray
+    case "Planned": Theme.indigo
+    case "In progress": Theme.invest
+    case "Shipped": Theme.success
+    default: Theme.slate
     }
   }
   var body: some View {
@@ -21,18 +21,17 @@ struct FeedbackView: View {
         Text("Every request is read by a human.").font(.headline)
         Text(
           "This demo saves requests only on this device. Share them manually on GitHub for a human to read."
-        ).foregroundStyle(.secondary)
+        ).foregroundStyle(Theme.secondaryText)
         Link(
           "GitHub Issues", destination: URL(string: "https://github.com/ovhirup/lakshly/issues")!)
       }
       Card(title: "Your next idea") {
         if store.encryptionStatus == "Encryption key not persisted (dev build)" {
           Text("Dev build: requests are kept in memory for this session only.").font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Theme.secondaryText)
         }
-        TextField("Title", text: $title).textFieldStyle(.roundedBorder)
-        TextField("Details", text: $details, axis: .vertical).lineLimit(3...6).textFieldStyle(
-          .roundedBorder)
+        TextField("Title", text: $title).textFieldStyle(ThemedFieldStyle())
+        TextField("Details", text: $details, axis: .vertical).lineLimit(3...6).textFieldStyle(ThemedFieldStyle())
         Picker("Type", selection: $type) {
           ForEach(["Feature", "Bug", "Idea"], id: \.self) { Text($0) }
         }.pickerStyle(.segmented)
@@ -45,10 +44,10 @@ struct FeedbackView: View {
             details = ""
             confirmation = true
           }
-        }.buttonStyle(.glass).disabled(
+        }.buttonStyle(ThemedSubmitStyle()).disabled(
           title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             || details.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        if let error = store.error { Text(error).foregroundStyle(.red) }
+        if let error = store.error { Text(error).foregroundStyle(Theme.danger) }
       }
       Card(title: "Community requests · synthetic") {
         ForEach(
@@ -61,16 +60,16 @@ struct FeedbackView: View {
             HStack {
               Text(request.title).font(.headline)
               Spacer()
-              if request.priority { Pill(text: "Priority", color: .pink, symbol: "star.fill") }
+              if request.priority { Pill(text: "Priority", color: Theme.lotus, symbol: "star.fill") }
               Pill(text: request.status, color: statusColor(request.status))
             }
-            Text(request.details).font(.subheadline).foregroundStyle(.secondary)
+            Text(request.details).font(.subheadline).foregroundStyle(Theme.secondaryText)
             Text("\(request.author) · \(request.type)").font(.caption)
           }.padding(.vertical, 8)
         }
       }
       Card(title: "Built with you") {
-        Text("Synthetic community contributors").foregroundStyle(.secondary)
+        Text("Synthetic community contributors").foregroundStyle(Theme.secondaryText)
         ForEach(store.requests.filter { $0.status == "Shipped" }) {
           Text("\($0.author) · \($0.title)")
         }

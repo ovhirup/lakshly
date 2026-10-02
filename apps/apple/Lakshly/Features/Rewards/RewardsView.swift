@@ -10,15 +10,15 @@ struct RewardsView: View {
           if let unitValue = reward.valuePerUnitPaise {
             MetricRow(title: "Estimated value", value: Money.format(reward.balance * unitValue))
           } else {
-            Text("Redemption value not provided").foregroundStyle(.secondary)
+            Text("Redemption value not provided").foregroundStyle(Theme.secondaryText)
           }
           if let expiry = reward.expiresOn {
             Label(
               "Expires \(expiry) · redeem before expiry", systemImage: "clock.badge.exclamationmark"
-            ).font(.subheadline).foregroundStyle(.orange)
+            ).font(.subheadline).foregroundStyle(Theme.gold)
           }
           Text("Values depend on each synthetic program's redemption rules.").font(.caption)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Theme.secondaryText)
         }
       }
     }

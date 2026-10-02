@@ -19,10 +19,11 @@ struct SettingsView: View {
           Text(
             "No network requests, analytics, purchases or accounts. All data is synthetic. Device authentication includes passcode fallback."
           )
-          if let error = store.error { Text(error).foregroundStyle(.red) }
+          if let error = store.error { Text(error).foregroundStyle(Theme.danger) }
         }
         Section { Button("Reset demo data", role: .destructive) { reset = true } }
-      }.navigationTitle("Settings").toolbar { Button("Done") { dismiss() } }
+      }.scrollContentBackground(.hidden).background { ThemeBackground() }
+        .tint(Theme.gold).navigationTitle("Settings").toolbar { Button("Done") { dismiss() } }
         .confirmationDialog("Reset data and local requests?", isPresented: $reset) {
           Button("Reset demo data", role: .destructive) { store.reset() }
         }

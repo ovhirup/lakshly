@@ -10,20 +10,14 @@ struct Page<Content: View>: View {
         VStack(alignment: .leading, spacing: 24) {
           VStack(alignment: .leading, spacing: 8) {
             Text(title).font(.system(.largeTitle, design: .rounded, weight: .bold))
-            Text(subtitle).foregroundStyle(.secondary)
+            Text(subtitle).foregroundStyle(Theme.secondaryText)
           }
           content
         }.frame(maxWidth: 900).padding(24).frame(maxWidth: .infinity)
       }
     }
     .scrollContentBackground(.hidden)
-    .background {
-      LinearGradient(
-        colors: [.pink.opacity(0.20), .orange.opacity(0.18), .yellow.opacity(0.22)],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-      ).ignoresSafeArea()
-    }
+    .background { ThemeBackground() }
   }
 }
 struct Card<Content: View>: View {
@@ -41,7 +35,7 @@ struct MetricRow: View {
   let value: String
   var body: some View {
     HStack(alignment: .firstTextBaseline) {
-      Text(title).foregroundStyle(.secondary)
+      Text(title).foregroundStyle(Theme.secondaryText)
       Spacer()
       Text(value).fontWeight(.semibold).monospacedDigit()
     }
@@ -49,7 +43,7 @@ struct MetricRow: View {
 }
 struct Pill: View {
   let text: String
-  var color: Color = .orange
+  var color: Color = Theme.secondaryText
   var symbol: String? = nil
   var body: some View {
     HStack(spacing: 4) {

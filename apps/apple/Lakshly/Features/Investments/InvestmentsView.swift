@@ -35,7 +35,7 @@ struct InvestmentsView: View {
                 "\(Money.format(account.balance - invested)) · \(String(format: "%.1f", Double(account.balance - invested) / Double(max(1, invested)) * 100))%"
             )
           } else {
-            Text("Invested amount not provided").foregroundStyle(.secondary)
+            Text("Invested amount not provided").foregroundStyle(Theme.secondaryText)
           }
         }
       }
@@ -51,7 +51,7 @@ struct InvestmentsView: View {
             ).font(.caption)
             if let step = sip.stepUpPctYearly {
               Text("Annual step-up: \(String(format: "%.0f", step))%").font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.secondaryText)
             }
             Divider()
           }
@@ -60,11 +60,11 @@ struct InvestmentsView: View {
       Card(title: "A possible ten-year horizon") {
         Chart(projection) { point in
           LineMark(x: .value("Years", point.month), y: .value("Value", point.amount))
-            .foregroundStyle(.orange).interpolationMethod(.monotone)
+            .foregroundStyle(Theme.invest).interpolationMethod(.monotone)
         }.modifier(MoneyChartAxis()).frame(height: 210)
         Text(
           "Illustrative 12% CAGR, fixed monthly SIPs paid at month-end. Excludes step-ups, taxes and fees. Returns are not guaranteed; this is not investment advice."
-        ).font(.caption).foregroundStyle(.secondary)
+        ).font(.caption).foregroundStyle(Theme.secondaryText)
       }
     }
   }
