@@ -37,6 +37,20 @@ struct FeedbackView: View {
     }
   }
   var body: some View {
+    ScrollViewReader { proxy in
+      page.task {
+        #if DEBUG
+        // Screenshot control only: bring the live GitHub preview into view.
+        if LaunchOptions.current.feedbackDemo == true {
+          try? await Task.sleep(for: .milliseconds(400))
+          proxy.scrollTo("issuePreview", anchor: .top)
+        }
+        #endif
+      }
+    }
+  }
+
+  private var page: some View {
     Page(title: "Feedback & Requests", subtitle: "Built with you") {
       Card(title: "Thank you for helping shape Lakshly 💛") {
         Text("Every request is read by a human.").font(.headline)
@@ -80,7 +94,7 @@ struct FeedbackView: View {
         }.buttonStyle(ThemedSubmitStyle())
           .disabled(details.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         if let error = store.error { Text(error).foregroundStyle(theme.danger) }
-      }
+      }.id("issuePreview")
       Card(title: "Community requests · synthetic") {
         ForEach(
           store.requests.sorted {
