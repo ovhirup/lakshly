@@ -1,0 +1,111 @@
+// Lakshly landing page. No analytics, no cookies, no third-party requests.
+(function () {
+  "use strict";
+  var cfg = window.LAKSHLY_CONFIG || {};
+  var root = document.documentElement;
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+  // ---------- Theme ----------
+  function current() { return root.dataset.theme || (mq.matches ? "dark" : "light"); }
+  function syncPictures() {
+    var t = current();
+    document.querySelectorAll("picture[data-themed] source").forEach(function (s) {
+      // Force the source to match a manual choice; otherwise let the media query follow the system.
+      if (root.dataset.theme) { s.media = "all"; s.srcset = t === "dark" ? s.dataset.dark : s.dataset.light; }
+      else { s.media = "(prefers-color-scheme: dark)"; s.srcset = s.dataset.dark; }
+    });
+    var btn = document.getElementById("theme-toggle");
+    if (btn) btn.setAttribute("aria-label", t === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    var meta = document.querySelectorAll('meta[name="theme-color"]');
+    meta.forEach(function (m) { if (root.dataset.theme) m.setAttribute("content", t === "dark" ? "#0E1430" : "#FBF8F1"); });
+  }
+  var toggle = document.getElementById("theme-toggle");
+  if (toggle) toggle.addEventListener("click", function () {
+    var next = current() === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try { localStorage.setItem("lakshly.site.theme", next); } catch (e) { /* ignore */ }
+    syncPictures();
+  });
+  mq.addEventListener("change", syncPictures);
+  syncPictures();
+
+  // ---------- Currency (auto by locale/time zone, manual override) ----------
+  function guessCurrency() {
+    try {
+      var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      if (tz === "Asia/Kolkata" || tz === "Asia/Calcutta") return "INR";
+    } catch (e) { /* ignore */ }
+    var langs = navigator.languages || [navigator.language || ""];
+    return langs.some(function (l) { return /-IN$/i.test(l) || /^(hi|bn|ta|te|mr|gu|kn|ml|pa|or|as)\b/i.test(l); }) ? "INR" : "USD";
+  }
+  function setCurrency(c, manual) {
+    var key = c === "INR" ? "inr" : "usd";
+    document.querySelectorAll("[data-inr][data-usd]").forEach(function (el) { el.textContent = el.dataset[key]; });
+    document.querySelectorAll("[data-currency]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.currency === c)); });
+    var note = document.getElementById("currency-note");
+    if (note) note.textContent = (c === "INR" ? "Showing prices for India" : "Showing global prices (USD)") + (manual ? "." : ", based on your device’s region. Switch anytime.");
+  }
+  document.querySelectorAll("[data-currency]").forEach(function (b) {
+    b.addEventListener("click", function () { setCurrency(b.dataset.currency, true); });
+  });
+  setCurrency(guessCurrency(), false);
+
+  // ---------- Waitlist ----------
+  var form = document.getElementById("waitlist-form");
+  if (!form) return;
+  var status = document.getElementById("wl-status");
+  var email = document.getElementById("wl-email");
+  var consent = document.getElementById("wl-consent");
+  var track = document.getElementById("wl-track");
+  var emailErr = document.getElementById("wl-email-err");
+  var consentErr = document.getElementById("wl-consent-err");
+  var endpoint = (cfg.WAITLIST_ENDPOINT || "").trim();
+
+  function show(el, on) { el.hidden = !on; }
+  function say(html, tone) { status.className = "status " + (tone || ""); status.innerHTML = html; }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var okEmail = email.checkValidity() && /\S+@\S+\.\S+/.test(email.value);
+    show(emailErr, !okEmail); email.setAttribute("aria-invalid", String(!okEmail));
+    show(consentErr, !consent.checked); consent.setAttribute("aria-invalid", String(!consent.checked));
+    if (!okEmail) { email.focus(); return; }
+    if (!consent.checked) { consent.focus(); return; }
+
+    if (!endpoint) {
+      // Not wired yet: send nothing, store nothing, log nothing.
+      form.reset();
+      say("<strong>Thank you! 💛</strong> The waitlist opens very soon. Nothing was sent or saved, so please check back shortly, or watch the project on GitHub.", "soon");
+      return;
+    }
+    var f = cfg.WAITLIST_FIELDS || { email: "email", track: "track" };
+    if (cfg.WAITLIST_MODE === "form") {
+      // Native POST that navigates to the provider (Buttondown's documented embed flow).
+      var native = document.createElement("form");
+      native.method = "post"; native.action = endpoint; native.hidden = true;
+      var add = function (n, v) { var i = document.createElement("input"); i.type = "hidden"; i.name = n; i.value = v; native.appendChild(i); };
+      add(f.email, email.value.trim());
+      if (track.value && f.track) add(f.track, track.value);
+      if (cfg.WAITLIST_EXTRA) Object.keys(cfg.WAITLIST_EXTRA).forEach(function (k) { add(k, cfg.WAITLIST_EXTRA[k]); });
+      document.body.appendChild(native); native.submit();
+      return;
+    }
+    var body = new FormData();
+    body.append(f.email, email.value.trim());
+    if (track.value) body.append(f.track, track.value);
+    var btn = form.querySelector("button[type=submit]");
+    btn.disabled = true;
+    say("Adding you…");
+    fetch(endpoint, {
+      method: "POST", body: body, mode: cfg.WAITLIST_MODE === "no-cors" ? "no-cors" : "cors",
+      headers: cfg.WAITLIST_MODE === "no-cors" ? undefined : { Accept: "application/json" },
+      credentials: "omit", referrerPolicy: "no-referrer",
+    }).then(function (r) {
+      if (cfg.WAITLIST_MODE !== "no-cors" && !r.ok) throw new Error("bad status");
+      form.reset();
+      say("<strong>You’re on the list. Thank you! 💛</strong> We’ll email you once, when Lakshly launches. Unsubscribe anytime.", "ok");
+    }).catch(function () {
+      say("Sorry, that didn’t go through. Please try again in a moment.", "bad");
+    }).finally(function () { btn.disabled = false; });
+  });
+})();
