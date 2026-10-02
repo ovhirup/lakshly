@@ -1,6 +1,11 @@
 // What leaves the device when someone sends feedback, and how. Lakshly is local-first: feedback is the ONLY
-// user data that leaves the device, and only when the user presses Send. This prototype never sends: submit() is a stub.
-import type { Kind } from "./feedback";
+// user data that leaves the device, and only when the user presses Send.
+//   - NEXT_PUBLIC_FEEDBACK_ENDPOINT set  -> POST to the Lakshly feedback relay (workers/feedback).
+//   - unset                              -> open a prefilled email to hello@lakshly.com (mailto:).
+import type { Kind, Status } from "./feedback";
+
+export const FEEDBACK_ENDPOINT = (process.env.NEXT_PUBLIC_FEEDBACK_ENDPOINT ?? "").replace(/\/+$/, "");
+export const FEEDBACK_EMAIL = "hello@lakshly.com";
 
 export type Draft = {
   kind: Kind; title: string; detail: string; area: string;
@@ -30,11 +35,47 @@ export function looksSensitive(text: string): boolean {
   return /\d{9,19}/.test(joined) || /\b[A-Z]{5}\d{4}[A-Z]\b/i.test(text) || /\b[A-Z]{4}0[A-Z0-9]{6}\b/i.test(text);
 }
 
-export type Receipt = { id: string; receivedAt: string };
+const KIND_SUBJECT: Record<Kind, string> = { idea: "Idea", bug: "Bug", praise: "Praise" };
+/** mailto: fallback with the same fields the relay would get. */
+export function mailtoHref(p: Payload): string {
+  const lines = [
+    `${KIND_SUBJECT[p.kind]}: ${p.title}`, "", p.detail || "(no details)", "",
+    "—", `Area: ${p.area}`, `Plan: ${p.plan}`,
+    `Credit me as: ${p.credit ?? "(no credit)"}`,
+    ...(p.diagnostics ? [`App: ${p.diagnostics.appVersion} · ${p.diagnostics.platform}`] : []),
+    "", "Sent from Lakshly. Please don't include account numbers or statements.",
+  ];
+  const subject = `[Lakshly ${KIND_SUBJECT[p.kind]}${p.plan === "premium" ? " · Premium" : ""}] ${p.title}`;
+  return `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n").slice(0, 1500))}`;
+}
 
-/** STUB. The real version would POST the payload to the feedback relay (see premium-feedback-plan.md). */
-export async function submit(payload: Payload, id: string): Promise<Receipt> {
-  void payload;
-  await new Promise((r) => setTimeout(r, 600));
-  return { id, receivedAt: new Date().toISOString() };
+export type Sent = { mode: "relay"; id: string; secret: string } | { mode: "email"; href: string };
+export class SendError extends Error {}
+
+export async function send(p: Payload, honeypot = "", endpoint = FEEDBACK_ENDPOINT): Promise<Sent> {
+  if (!endpoint) return { mode: "email", href: mailtoHref(p) };
+  let res: Response;
+  try {
+    res = await fetch(`${endpoint}/v1/feedback`, {
+      method: "POST", headers: { "Content-Type": "application/json", "X-Lakshly-Client": "web" },
+      body: JSON.stringify({ ...p, website: honeypot }), credentials: "omit", referrerPolicy: "no-referrer", cache: "no-store",
+    });
+  } catch { throw new SendError("network"); }
+  if (res.status === 429) throw new SendError("rate_limited");
+  if (!res.ok) throw new SendError(`http_${res.status}`);
+  const body = (await res.json()) as { id?: string; secret?: string };
+  if (!body.id || !body.secret) throw new SendError("bad_response");
+  return { mode: "relay", id: body.id, secret: body.secret };
+}
+
+export type RemoteStatus = { status: Status; replies: { at: string; text: string }[] };
+/** Status + replies for one of your requests. null = not visible yet (GitHub search can lag a minute). */
+export async function fetchStatus(id: string, secret: string, endpoint = FEEDBACK_ENDPOINT): Promise<RemoteStatus | null> {
+  if (!endpoint) return null;
+  const res = await fetch(`${endpoint}/v1/feedback/${encodeURIComponent(id)}?s=${encodeURIComponent(secret)}`, {
+    headers: { "X-Lakshly-Client": "web" }, credentials: "omit", referrerPolicy: "no-referrer", cache: "no-store",
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new SendError(`http_${res.status}`);
+  return (await res.json()) as RemoteStatus;
 }

@@ -1,0 +1,15 @@
+{
+  "$comment": "Public roadmap. Edited titles only; credits only for people who opted in; vote counts are raw (Premium 3x weighting is internal to triage). Fictional sample entries until launch.",
+  "updated": "2026-10-03",
+  "items": [
+    { "id": "RM-07", "title": "Split a bill with family", "area": "Spend", "status": "planned", "votes": 52 },
+    { "id": "RM-12", "title": "Remind me before card due dates", "area": "Credit", "status": "planned", "votes": 41 },
+    { "id": "RM-24", "title": "Goal jars for a trip or a gadget", "area": "Budget", "status": "planned", "votes": 29 },
+    { "id": "RM-09", "title": "SIP step-up reminders", "area": "SIPs", "status": "in_progress", "votes": 35 },
+    { "id": "RM-27", "title": "Rewards points expiry alerts", "area": "Rewards", "status": "in_progress", "votes": 21 },
+    { "id": "RM-31", "title": "Hide amounts with one tap", "area": "Design", "status": "shipped", "votes": 64, "shippedIn": "0.2", "credits": ["Kavya R."] },
+    { "id": "RM-03", "title": "Dark mode that follows the system", "area": "Design", "status": "shipped", "votes": 58, "shippedIn": "0.1", "credits": ["Meera K."] },
+    { "id": "RM-05", "title": "Export budget as CSV", "area": "Budget", "status": "shipped", "votes": 23, "shippedIn": "0.1", "credits": ["@arjun_builds"] },
+    { "id": "RM-15", "title": "Live bank sync (Account Aggregator)", "area": "Import", "status": "not_now", "votes": 33, "reason": "It needs a regulated partner, so it's on hold. Statement and email import come first. Your votes decide when we revisit it." }
+  ]
+}

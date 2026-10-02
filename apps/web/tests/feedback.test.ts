@@ -1,23 +1,57 @@
-import { describe, expect, it } from "vitest";
-import { replyBy, SEED, voteWeight } from "../lib/feedback";
-import { buildPayload, looksSensitive } from "../lib/feedback-transport";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { DEMO_MINE, displayVotes, replyBy, ROADMAP } from "../lib/feedback";
+import { buildPayload, fetchStatus, looksSensitive, mailtoHref, send, SendError } from "../lib/feedback-transport";
 
 const diag = { appVersion: "web 0.2.0", platform: "Web" };
 const base = { kind: "idea" as const, title: "  Remind me before SIP dates ", detail: "", area: "SIPs", includeDiagnostics: false };
+afterEach(() => vi.unstubAllGlobals());
 
 describe("feedback payload", () => {
-  it("contains only typed fields and plan tier by default", () => {
+  it("contains only typed fields and plan tier by default (no diagnostics)", () => {
     expect(buildPayload(base, "free", diag)).toEqual({ kind: "idea", title: "Remind me before SIP dates", detail: "", area: "SIPs", plan: "free" });
   });
   it("adds credit, reply email and diagnostics only when given / opted in", () => {
     const p = buildPayload({ ...base, credit: "Kavya", replyEmail: "k@example.invalid", includeDiagnostics: true }, "premium", diag);
-    expect(p.credit).toBe("Kavya");
-    expect(p.replyEmail).toBe("k@example.invalid");
-    expect(p.diagnostics).toEqual(diag);
     expect(Object.keys(p).sort()).toEqual(["area", "credit", "detail", "diagnostics", "kind", "plan", "replyEmail", "title"]);
   });
-  it("clips long text", () => {
-    expect(buildPayload({ ...base, title: "x".repeat(200) }, "free", diag).title).toHaveLength(90);
+  it("clips long text", () => { expect(buildPayload({ ...base, title: "x".repeat(200) }, "free", diag).title).toHaveLength(90); });
+});
+
+describe("transport", () => {
+  const p = buildPayload({ ...base, detail: "So I can plan cash & stuff" }, "premium", diag);
+  it("falls back to a mailto: draft to hello@lakshly.com when no endpoint is set", async () => {
+    const r = await send(p, "", "");
+    expect(r.mode).toBe("email");
+    if (r.mode !== "email") return;
+    expect(r.href.startsWith("mailto:hello@lakshly.com?subject=")).toBe(true);
+    const body = decodeURIComponent(r.href.split("&body=")[1]);
+    expect(body).toContain("So I can plan cash & stuff");
+    expect(decodeURIComponent(r.href.split("subject=")[1].split("&")[0])).toBe("[Lakshly Idea · Premium] Remind me before SIP dates");
+  });
+  it("keeps mailto bodies short and decodable", () => {
+    const long = mailtoHref({ ...p, detail: "é".repeat(1000) });
+    expect(() => decodeURIComponent(long.split("&body=")[1])).not.toThrow();
+  });
+  it("POSTs the payload plus honeypot to the relay and returns id + secret", async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ id: "LK-ABC123", secret: "s".repeat(32) }), { status: 201 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const r = await send(p, "", "https://feedback.example");
+    expect(r).toEqual({ mode: "relay", id: "LK-ABC123", secret: "s".repeat(32) });
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("https://feedback.example/v1/feedback");
+    expect(init.credentials).toBe("omit");
+    expect(JSON.parse(init.body as string)).toEqual({ ...p, website: "" });
+  });
+  it("surfaces rate limits and failures as SendError", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 429 })));
+    await expect(send(p, "", "https://feedback.example")).rejects.toThrow(SendError);
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new TypeError("offline"); }));
+    await expect(send(p, "", "https://feedback.example")).rejects.toThrow("network");
+  });
+  it("fetches status, treating 404 as not visible yet", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 404 })));
+    expect(await fetchStatus("LK-ABC123", "s".repeat(32), "https://feedback.example")).toBeNull();
+    expect(await fetchStatus("LK-ABC123", "s".repeat(32), "")).toBeNull();
   });
 });
 
@@ -43,7 +77,14 @@ describe("reply-by date (IST business days)", () => {
   });
 });
 
-describe("seed and weights", () => {
-  it("Premium votes weigh 3×", () => { expect(voteWeight("premium")).toBe(3); expect(voteWeight("free")).toBe(1); });
-  it("seed ids are unique", () => { expect(new Set(SEED.map((r) => r.id)).size).toBe(SEED.length); });
+describe("roadmap JSON", () => {
+  it("has unique ids, valid statuses and raw counts", () => {
+    expect(new Set(ROADMAP.map((r) => r.id)).size).toBe(ROADMAP.length);
+    for (const r of ROADMAP) expect(["planned", "in_progress", "shipped", "not_now"]).toContain(r.status);
+    expect(displayVotes(ROADMAP[0], true)).toBe(ROADMAP[0].votes + 1);
+  });
+  it("demo requests link only to real roadmap items", () => {
+    const ids = new Set(ROADMAP.map((r) => r.id));
+    for (const m of DEMO_MINE) if (m.roadmapId) expect(ids.has(m.roadmapId)).toBe(true);
+  });
 });

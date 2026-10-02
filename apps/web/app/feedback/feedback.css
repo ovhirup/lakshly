@@ -93,3 +93,18 @@
   .fb-payload div { grid-template-columns: 84px 1fr; }
   .row.fb-rrow .status, .fb-thread .status { margin-left: 0; }
 }
+
+/* Preview: side card on wide screens, inline above Send on narrow screens. */
+.fb-preview-inline { display: none; }
+.fb-preview-body { display: grid; gap: 12px; }
+.fb-preview-body p { margin: 0; }
+.fb-preview-inline .fb-preview-body { padding: 16px; border-radius: 18px; border: 1px solid var(--lk-border); background: var(--lk-glass-strong); }
+.fb-hp { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.fb-head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.fb-err a { color: inherit; }
+@media (max-width: 860px) {
+  .fb-preview-inline { display: block; }
+  .fb-preview-side { display: none; }
+}
+.fb-form input[type="email"] { width: 100%; padding: 11px 14px; min-height: 48px; border-radius: 14px; border: 1px solid var(--lk-border); background: var(--lk-surface); color: var(--lk-text); font: inherit; font-size: 1rem; }
+.fb-form input[type="email"]::placeholder { color: var(--lk-text-muted); opacity: 1; }
