@@ -9,6 +9,7 @@ import UniformTypeIdentifiers
   var error: String?
   var result: ParseResult?
   var report: MergeReport?
+  var presentPicker = false
   private var bytes: Data?
   private var fileName: String?
   #if DEBUG
@@ -65,9 +66,10 @@ import UniformTypeIdentifiers
     guard !Self.didApplyDemo else { return }
     Self.didApplyDemo = true
     guard let demo = LaunchOptions.current.importDemo else { return }
-    guard demo == "picker" || demo == "password" || demo == "preview" || demo == "done" else { return }
-    if demo == "picker" {
+    guard ["picker", "chooser", "password", "preview", "done"].contains(demo) else { return }
+    if demo == "picker" || demo == "chooser" {
       stage = .picker
+      presentPicker = demo == "chooser"
       return
     }
     let useCas = LaunchOptions.current.importDemoFile == "cas"
@@ -142,7 +144,13 @@ struct ImportView: View {
         model.error = "This file could not be read."
       }
     }
-    .onAppear { model.applyLaunchDemo(into: store) }
+    .onAppear {
+      model.applyLaunchDemo(into: store)
+      if model.presentPicker {
+        model.presentPicker = false
+        picking = true
+      }
+    }
     .onChange(of: model.stage) { _, stage in
       if stage != .password { password = "" }
     }
@@ -176,32 +184,24 @@ struct ImportView: View {
 
   @ViewBuilder private var preview: some View {
     if let result = model.result {
-      Card(title: "Detected layout") {
-        Text(result.adapterLabel).font(.headline)
-        Text("\(Int(jsRound(result.confidence * 100)))% confidence").foregroundStyle(theme.secondaryText)
-      }
-      Card(title: "Accounts") {
-        ForEach(result.accounts, id: \.id) { account in
-          VStack(alignment: .leading, spacing: 6) {
-            Text(account.name).font(.headline)
-            Text("\(account.institution) · \(account.type.replacingOccurrences(of: "_", with: " "))")
-              .font(.caption).foregroundStyle(theme.secondaryText)
-            SemanticAmount(value: Money.format(Int64(account.balance)), semantic: account.balance < 0 ? .spend : .income)
-          }
-          Divider()
+      Card(title: "Summary") {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(result.adapterLabel).font(.headline)
+          Text("\(Int(jsRound(result.confidence * 100)))% match · \(result.transactions.count) rows")
+            .font(.caption).foregroundStyle(theme.secondaryText)
         }
-      }
-      if let meta = result.meta.first {
-        Card(title: "Statement") {
+        ForEach(result.accounts, id: \.id) { account in
+          MetricRow(
+            title: account.name, value: Money.format(Int64(account.balance)),
+            semantic: account.balance < 0 ? .spend : .income)
+        }
+        if let meta = result.meta.first {
           if meta.periodFrom != nil || meta.periodTo != nil {
             MetricRow(title: "Period", value: [meta.periodFrom, meta.periodTo].compactMap { $0 }.joined(separator: " – "))
           }
           if let total = meta.totalDue { MetricRow(title: "Total due", value: Money.format(Int64(total)), semantic: .spend) }
           if let minimum = meta.minDue { MetricRow(title: "Minimum due", value: Money.format(Int64(minimum))) }
           if let due = meta.dueDate { MetricRow(title: "Due date", value: due) }
-          if meta.periodFrom == nil, meta.periodTo == nil, meta.totalDue == nil, meta.minDue == nil, meta.dueDate == nil {
-            Text("No statement summary on this file.").foregroundStyle(theme.secondaryText)
-          }
         }
       }
       if !result.holdings.isEmpty {
@@ -230,16 +230,16 @@ struct ImportView: View {
           Text("No transactions in this file.").foregroundStyle(theme.secondaryText)
         }
         ForEach(result.transactions, id: \.id) { row in
-          HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 6) {
-              Text(row.description).font(.headline)
-              Text(row.date).font(.caption).foregroundStyle(theme.secondaryText)
-              Pill(text: row.category.capitalized)
+          HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 2) {
+              Text(row.description).font(.subheadline.weight(.semibold)).lineLimit(1).truncationMode(.middle)
+              Text("\(row.date) · \(row.category.capitalized)").font(.caption).foregroundStyle(theme.secondaryText)
             }
-            Spacer()
+            Spacer(minLength: 8)
             SemanticAmount(
               value: Money.format(Int64(row.amount)),
-              semantic: row.amount > 0 ? .income : (row.category == "investments" ? .invest : .spend))
+              semantic: row.amount > 0 ? .income : (row.category == "investments" ? .invest : .spend)
+            ).font(.subheadline).monospacedDigit()
           }
           Divider()
         }
