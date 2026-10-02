@@ -37,6 +37,6 @@ but sends, stores and logs nothing.
 
 ## Deploying
 
-`.github/workflows/pages.yml` publishes `site/` to GitHub Pages. It is **manual only**
-(`workflow_dispatch`). Pages must first be enabled in repo settings (Source: GitHub Actions).
-Nothing deploys on push.
+`.github/workflows/pages.yml` publishes `site/` to GitHub Pages (Source: GitHub Actions) at
+https://lakshly.com (`site/CNAME`). It runs on every push to `main` that touches `site/**` or the
+workflow, and can also be run manually (`workflow_dispatch`).

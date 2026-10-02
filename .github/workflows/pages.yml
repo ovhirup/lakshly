@@ -1,9 +1,14 @@
-# Deploys the static landing page in site/ to GitHub Pages.
-# MANUAL ONLY: runs solely via "Run workflow" (workflow_dispatch). Nothing deploys on push.
-# Before the first run, a maintainer must enable Pages (Settings → Pages → Source: GitHub Actions).
-name: Deploy landing page (manual)
+# Deploys the static landing page in site/ to GitHub Pages (custom domain via site/CNAME).
+# Runs on pushes to main that touch site/ (or this workflow), and manually via "Run workflow".
+# Pages source must be "GitHub Actions" (Settings → Pages).
+name: Deploy landing page
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
