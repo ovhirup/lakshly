@@ -65,3 +65,6 @@ venv/
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Apple MVP generated build output
+apps/apple/build/

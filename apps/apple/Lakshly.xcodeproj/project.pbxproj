@@ -1,0 +1,775 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		05C35B852201A988EDF25D64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1561020E16C09792D10951B3 /* Assets.xcassets */; };
+		0DA20D32A0936564A02BB9F3 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
+		15BFDA7BAE7460D08B167DE7 /* InvestmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */; };
+		15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
+		1EF89D89FA08E0488F6FB54E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09196754EE8047DADE4A2DD3 /* HistoryView.swift */; };
+		21B5A37E5BDEB015FB1A2C6D /* DebtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A7295D48190C72FBC6A0D /* DebtView.swift */; };
+		22D27F652CD49E0D4073FC3C /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33139522A92ACF23DB08309D /* BudgetView.swift */; };
+		252169BFDE0EFE764BF67A53 /* sample.synthetic.json in Resources */ = {isa = PBXBuildFile; fileRef = A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */; };
+		25A23228F2A820EAF908992D /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */; };
+		2B1BAF27145F5FCAC975B278 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09196754EE8047DADE4A2DD3 /* HistoryView.swift */; };
+		2FDA84671774D6CE6EE92C31 /* RewardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EEA192FF98190D79F6BCD95 /* RewardsView.swift */; };
+		3069E78D8589A994E0B4F7A7 /* InvestmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */; };
+		33B4C19F994177AAFDB19981 /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F69415892CB1861613A1A2 /* FeedbackView.swift */; };
+		47DD0C747895C91F55369F07 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA26CFA53316EC8CD45CB55 /* Layout.swift */; };
+		499B7DFAB8244DA3EC466264 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */; };
+		52FD76F0955E6152FA95EDE2 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561213C16F83EF1708313DD /* Money.swift */; };
+		541D6B919B187F6447F84773 /* LakshlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */; };
+		54C44AC7B67F542948C05324 /* RewardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EEA192FF98190D79F6BCD95 /* RewardsView.swift */; };
+		572DECB907083C9521607413 /* Dataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418C5B9471DC924BC9FA776A /* Dataset.swift */; };
+		581072DB8336FA79A69A78E3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1561020E16C09792D10951B3 /* Assets.xcassets */; };
+		5B0065DB896114DAB4A6E324 /* AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */; };
+		6C552DFDADD516D344F7328C /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E70F932DD22164B5A2197F /* GlassCard.swift */; };
+		79EAB566141178ADB3F43674 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DBDB7CE6050917F3757B1 /* DataStore.swift */; };
+		7B59E2AD414008DE57DB184F /* DebtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A7295D48190C72FBC6A0D /* DebtView.swift */; };
+		8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */; };
+		9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
+		A46698DCF3C82DF8A70D03BA /* sample.synthetic.json in Resources */ = {isa = PBXBuildFile; fileRef = A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */; };
+		AEF9EC4435A9103B4921D5EB /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74D83B4AD1381D1E54EC44F /* SpendView.swift */; };
+		AF05723EC8EEA4A429F637B8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */; };
+		B485674AC3F3F6E9A0C91CE7 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E70F932DD22164B5A2197F /* GlassCard.swift */; };
+		BD27BC5725BC6C238CE0364B /* LakshlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */; };
+		C0C3EEBE95E47175483DA7A7 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DBDB7CE6050917F3757B1 /* DataStore.swift */; };
+		C1F7624690A6B5BC8C3D9B0A /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
+		C5C46932588768202512675C /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
+		C7CF78CB9D476B0F29676081 /* AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */; };
+		CBA9C6D4D77CB6851E62EC3B /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561213C16F83EF1708313DD /* Money.swift */; };
+		D0F8B80EB638CC979A69804A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
+		DB22EED984F46B0C63559719 /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
+		DEC6E9528C060C3F20A4EA1C /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
+		E2DE1AD3A7C0B7A690D2CBA3 /* ChartHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */; };
+		E518C7D962AAC345414469BF /* LakshlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */; };
+		E795379A93E9ABF170EAE4E6 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA26CFA53316EC8CD45CB55 /* Layout.swift */; };
+		EBAE14E003D25F63DEEA3928 /* Dataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418C5B9471DC924BC9FA776A /* Dataset.swift */; };
+		F1EC5C314BFCB6C2C248A992 /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33139522A92ACF23DB08309D /* BudgetView.swift */; };
+		F74CCF13F9FA0C46E74D028C /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74D83B4AD1381D1E54EC44F /* SpendView.swift */; };
+		F8C60C4B2AD72CF65F778CE9 /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F69415892CB1861613A1A2 /* FeedbackView.swift */; };
+		FB5D35EF600CDB9DB3C75E7C /* ChartHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FFFB3E94FA04F3DFE8EA71B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 58BAC9B4D9C286503CC447A4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2AF66AC224723B24353BAE45;
+			remoteInfo = "Lakshly-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		09196754EE8047DADE4A2DD3 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		0AB77E03381CC92564026A27 /* SecureStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStore.swift; sourceTree = "<group>"; };
+		11AF7D13642E6E1C77A58B33 /* Lakshly-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lakshly-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1561020E16C09792D10951B3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakshlyApp.swift; sourceTree = "<group>"; };
+		1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
+		2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartHelpers.swift; sourceTree = "<group>"; };
+		33139522A92ACF23DB08309D /* BudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetView.swift; sourceTree = "<group>"; };
+		3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsView.swift; sourceTree = "<group>"; };
+		418C5B9471DC924BC9FA776A /* Dataset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dataset.swift; sourceTree = "<group>"; };
+		44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		45C491D5C3C62507799130BD /* CreditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditView.swift; sourceTree = "<group>"; };
+		51E9BAF895BA80DCE3D5015E /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
+		60E70F932DD22164B5A2197F /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		9EEA192FF98190D79F6BCD95 /* RewardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardsView.swift; sourceTree = "<group>"; };
+		9FA26CFA53316EC8CD45CB55 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sample.synthetic.json; sourceTree = "<group>"; };
+		A164C7C93D6C3C4096FA9C5D /* Lakshly-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "Lakshly-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A74D83B4AD1381D1E54EC44F /* SpendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendView.swift; sourceTree = "<group>"; };
+		A8211BF33EBEFFDAD6C14160 /* LakshlyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LakshlyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2F69415892CB1861613A1A2 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
+		C561213C16F83EF1708313DD /* Money.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
+		D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakshlyTests.swift; sourceTree = "<group>"; };
+		D89A7295D48190C72FBC6A0D /* DebtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebtView.swift; sourceTree = "<group>"; };
+		F09DBDB7CE6050917F3757B1 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLock.swift; sourceTree = "<group>"; };
+		F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		011204229F841061855641A2 /* demo-data */ = {
+			isa = PBXGroup;
+			children = (
+				A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */,
+			);
+			name = "demo-data";
+			path = "../../demo-data";
+			sourceTree = "<group>";
+		};
+		067D58D78B2F25E86563F41D /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				F09DBDB7CE6050917F3757B1 /* DataStore.swift */,
+				51E9BAF895BA80DCE3D5015E /* KeyManager.swift */,
+				0AB77E03381CC92564026A27 /* SecureStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		0FACC6B24B93199E53EBCE90 /* Investments */ = {
+			isa = PBXGroup;
+			children = (
+				3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */,
+			);
+			path = Investments;
+			sourceTree = "<group>";
+		};
+		25B3935F98A1FB8515EA250F /* Rewards */ = {
+			isa = PBXGroup;
+			children = (
+				9EEA192FF98190D79F6BCD95 /* RewardsView.swift */,
+			);
+			path = Rewards;
+			sourceTree = "<group>";
+		};
+		29AA9E4CC3E2A474741924C0 /* Spend */ = {
+			isa = PBXGroup;
+			children = (
+				A74D83B4AD1381D1E54EC44F /* SpendView.swift */,
+			);
+			path = Spend;
+			sourceTree = "<group>";
+		};
+		2B7E2E04921CD9C0E111DB9B = {
+			isa = PBXGroup;
+			children = (
+				011204229F841061855641A2 /* demo-data */,
+				EB18B57ECF7CC76209D8A365 /* Lakshly */,
+				D276F4EE5A6FD4CF4938F62C /* LakshlyTests */,
+				69FCB517934E435FE7F4FA5A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		370289095E96F1AA554CD358 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */,
+			);
+			path = Security;
+			sourceTree = "<group>";
+		};
+		46110774F2C385D6D9860E6E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				418C5B9471DC924BC9FA776A /* Dataset.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		5543A03138D111CCD5228737 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				09196754EE8047DADE4A2DD3 /* HistoryView.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		5E3844840644DEC621F38440 /* Credit */ = {
+			isa = PBXGroup;
+			children = (
+				45C491D5C3C62507799130BD /* CreditView.swift */,
+			);
+			path = Credit;
+			sourceTree = "<group>";
+		};
+		69FCB517934E435FE7F4FA5A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A164C7C93D6C3C4096FA9C5D /* Lakshly-iOS.app */,
+				11AF7D13642E6E1C77A58B33 /* Lakshly-macOS.app */,
+				A8211BF33EBEFFDAD6C14160 /* LakshlyTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8C0954909CC4821FB71BA96D /* Budget */ = {
+			isa = PBXGroup;
+			children = (
+				33139522A92ACF23DB08309D /* BudgetView.swift */,
+			);
+			path = Budget;
+			sourceTree = "<group>";
+		};
+		8DC8D9CB6ACAEB47B8973430 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				8C0954909CC4821FB71BA96D /* Budget */,
+				5E3844840644DEC621F38440 /* Credit */,
+				E7EBA5B41E0A87A74B88AF43 /* Debt */,
+				B8166E6FD924F860C245AC28 /* Feedback */,
+				5543A03138D111CCD5228737 /* History */,
+				0FACC6B24B93199E53EBCE90 /* Investments */,
+				CA180775986192D9B69DF02C /* Overview */,
+				25B3935F98A1FB8515EA250F /* Rewards */,
+				DCBC624DBB3D48D1FF2E9A38 /* Settings */,
+				29AA9E4CC3E2A474741924C0 /* Spend */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		A4030BC1545CAAA43D1ADDC9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1561020E16C09792D10951B3 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B8166E6FD924F860C245AC28 /* Feedback */ = {
+			isa = PBXGroup;
+			children = (
+				B2F69415892CB1861613A1A2 /* FeedbackView.swift */,
+			);
+			path = Feedback;
+			sourceTree = "<group>";
+		};
+		BCA604719FBD40B4289B956F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */,
+				60E70F932DD22164B5A2197F /* GlassCard.swift */,
+				9FA26CFA53316EC8CD45CB55 /* Layout.swift */,
+				C561213C16F83EF1708313DD /* Money.swift */,
+				F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		CA180775986192D9B69DF02C /* Overview */ = {
+			isa = PBXGroup;
+			children = (
+				1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */,
+			);
+			path = Overview;
+			sourceTree = "<group>";
+		};
+		D276F4EE5A6FD4CF4938F62C /* LakshlyTests */ = {
+			isa = PBXGroup;
+			children = (
+				D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */,
+			);
+			path = LakshlyTests;
+			sourceTree = "<group>";
+		};
+		DCBC624DBB3D48D1FF2E9A38 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		E55B8C68406D25E158BB48EB /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E7EBA5B41E0A87A74B88AF43 /* Debt */ = {
+			isa = PBXGroup;
+			children = (
+				D89A7295D48190C72FBC6A0D /* DebtView.swift */,
+			);
+			path = Debt;
+			sourceTree = "<group>";
+		};
+		EB18B57ECF7CC76209D8A365 /* Lakshly */ = {
+			isa = PBXGroup;
+			children = (
+				E55B8C68406D25E158BB48EB /* App */,
+				BCA604719FBD40B4289B956F /* Components */,
+				8DC8D9CB6ACAEB47B8973430 /* Features */,
+				46110774F2C385D6D9860E6E /* Models */,
+				A4030BC1545CAAA43D1ADDC9 /* Resources */,
+				370289095E96F1AA554CD358 /* Security */,
+				067D58D78B2F25E86563F41D /* Store */,
+			);
+			path = Lakshly;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2AF66AC224723B24353BAE45 /* Lakshly-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 506AA76B888FDF359C78076E /* Build configuration list for PBXNativeTarget "Lakshly-iOS" */;
+			buildPhases = (
+				F57FE1B7B8F52066B09680F5 /* Sources */,
+				0DE5CF7249E7B343DD93CBD3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Lakshly-iOS";
+			packageProductDependencies = (
+			);
+			productName = "Lakshly-iOS";
+			productReference = A164C7C93D6C3C4096FA9C5D /* Lakshly-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		BAF103B12D5A5B7C7645654B /* LakshlyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5ADF7813EDD982ACBBDF94B3 /* Build configuration list for PBXNativeTarget "LakshlyTests" */;
+			buildPhases = (
+				A5A2FF0EC57F2D801F30EFF1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D53F5C013660621BC3F09BD9 /* PBXTargetDependency */,
+			);
+			name = LakshlyTests;
+			packageProductDependencies = (
+			);
+			productName = LakshlyTests;
+			productReference = A8211BF33EBEFFDAD6C14160 /* LakshlyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		ECAD97ED95EC9D0274B5AA35 /* Lakshly-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F1B46832399B0D9F253DB2AB /* Build configuration list for PBXNativeTarget "Lakshly-macOS" */;
+			buildPhases = (
+				B228070844383E4F47B9EAC1 /* Sources */,
+				845C464FEF6C0227EE4CDA01 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Lakshly-macOS";
+			packageProductDependencies = (
+			);
+			productName = "Lakshly-macOS";
+			productReference = 11AF7D13642E6E1C77A58B33 /* Lakshly-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		58BAC9B4D9C286503CC447A4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2AF66AC224723B24353BAE45 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					BAF103B12D5A5B7C7645654B = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					ECAD97ED95EC9D0274B5AA35 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 50BEEADE509090405CBC2DB8 /* Build configuration list for PBXProject "Lakshly" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2B7E2E04921CD9C0E111DB9B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 69FCB517934E435FE7F4FA5A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2AF66AC224723B24353BAE45 /* Lakshly-iOS */,
+				ECAD97ED95EC9D0274B5AA35 /* Lakshly-macOS */,
+				BAF103B12D5A5B7C7645654B /* LakshlyTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0DE5CF7249E7B343DD93CBD3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				581072DB8336FA79A69A78E3 /* Assets.xcassets in Resources */,
+				252169BFDE0EFE764BF67A53 /* sample.synthetic.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		845C464FEF6C0227EE4CDA01 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05C35B852201A988EDF25D64 /* Assets.xcassets in Resources */,
+				A46698DCF3C82DF8A70D03BA /* sample.synthetic.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A5A2FF0EC57F2D801F30EFF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				541D6B919B187F6447F84773 /* LakshlyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B228070844383E4F47B9EAC1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B0065DB896114DAB4A6E324 /* AppLock.swift in Sources */,
+				F1EC5C314BFCB6C2C248A992 /* BudgetView.swift in Sources */,
+				E2DE1AD3A7C0B7A690D2CBA3 /* ChartHelpers.swift in Sources */,
+				DB22EED984F46B0C63559719 /* CreditView.swift in Sources */,
+				C0C3EEBE95E47175483DA7A7 /* DataStore.swift in Sources */,
+				EBAE14E003D25F63DEEA3928 /* Dataset.swift in Sources */,
+				21B5A37E5BDEB015FB1A2C6D /* DebtView.swift in Sources */,
+				F8C60C4B2AD72CF65F778CE9 /* FeedbackView.swift in Sources */,
+				B485674AC3F3F6E9A0C91CE7 /* GlassCard.swift in Sources */,
+				2B1BAF27145F5FCAC975B278 /* HistoryView.swift in Sources */,
+				3069E78D8589A994E0B4F7A7 /* InvestmentsView.swift in Sources */,
+				C5C46932588768202512675C /* KeyManager.swift in Sources */,
+				E518C7D962AAC345414469BF /* LakshlyApp.swift in Sources */,
+				47DD0C747895C91F55369F07 /* Layout.swift in Sources */,
+				52FD76F0955E6152FA95EDE2 /* Money.swift in Sources */,
+				8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */,
+				2FDA84671774D6CE6EE92C31 /* RewardsView.swift in Sources */,
+				DEC6E9528C060C3F20A4EA1C /* SecureStore.swift in Sources */,
+				499B7DFAB8244DA3EC466264 /* SettingsView.swift in Sources */,
+				AEF9EC4435A9103B4921D5EB /* SpendView.swift in Sources */,
+				9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F57FE1B7B8F52066B09680F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C7CF78CB9D476B0F29676081 /* AppLock.swift in Sources */,
+				22D27F652CD49E0D4073FC3C /* BudgetView.swift in Sources */,
+				FB5D35EF600CDB9DB3C75E7C /* ChartHelpers.swift in Sources */,
+				C1F7624690A6B5BC8C3D9B0A /* CreditView.swift in Sources */,
+				79EAB566141178ADB3F43674 /* DataStore.swift in Sources */,
+				572DECB907083C9521607413 /* Dataset.swift in Sources */,
+				7B59E2AD414008DE57DB184F /* DebtView.swift in Sources */,
+				33B4C19F994177AAFDB19981 /* FeedbackView.swift in Sources */,
+				6C552DFDADD516D344F7328C /* GlassCard.swift in Sources */,
+				1EF89D89FA08E0488F6FB54E /* HistoryView.swift in Sources */,
+				15BFDA7BAE7460D08B167DE7 /* InvestmentsView.swift in Sources */,
+				0DA20D32A0936564A02BB9F3 /* KeyManager.swift in Sources */,
+				BD27BC5725BC6C238CE0364B /* LakshlyApp.swift in Sources */,
+				E795379A93E9ABF170EAE4E6 /* Layout.swift in Sources */,
+				CBA9C6D4D77CB6851E62EC3B /* Money.swift in Sources */,
+				25A23228F2A820EAF908992D /* OverviewView.swift in Sources */,
+				54C44AC7B67F542948C05324 /* RewardsView.swift in Sources */,
+				15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */,
+				AF05723EC8EEA4A429F637B8 /* SettingsView.swift in Sources */,
+				F74CCF13F9FA0C46E74D028C /* SpendView.swift in Sources */,
+				D0F8B80EB638CC979A69804A /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D53F5C013660621BC3F09BD9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2AF66AC224723B24353BAE45 /* Lakshly-iOS */;
+			targetProxy = FFFB3E94FA04F3DFE8EA71B9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		021D2AE4B46604FC42E084DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.lakshly.Lakshly;
+				PRODUCT_NAME = Lakshly;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		05928F40578F3B269174E878 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.lakshly.Lakshly.tests;
+				PRODUCT_MODULE_NAME = LakshlyTests;
+				PRODUCT_NAME = LakshlyTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lakshly.app/Lakshly";
+			};
+			name = Release;
+		};
+		1D2B81C378A76F737A5D39E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.lakshly.Lakshly.tests;
+				PRODUCT_MODULE_NAME = LakshlyTests;
+				PRODUCT_NAME = LakshlyTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lakshly.app/Lakshly";
+			};
+			name = Debug;
+		};
+		20B654A9A2B457F416BB23A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9021C7098CB8E6977ECBF088 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Lakshly/Resources/Lakshly.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = YES;
+				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9D75882622FBACCA2F6F3425 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Lakshly/Resources/Lakshly.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = YES;
+				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		9F4451780FE9EE921A9E2CF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A55F770EB2707813FCBDDD6B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = app.lakshly.Lakshly;
+				PRODUCT_NAME = Lakshly;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		506AA76B888FDF359C78076E /* Build configuration list for PBXNativeTarget "Lakshly-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F4451780FE9EE921A9E2CF1 /* Debug */,
+				20B654A9A2B457F416BB23A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		50BEEADE509090405CBC2DB8 /* Build configuration list for PBXProject "Lakshly" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A55F770EB2707813FCBDDD6B /* Debug */,
+				021D2AE4B46604FC42E084DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5ADF7813EDD982ACBBDF94B3 /* Build configuration list for PBXNativeTarget "LakshlyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D2B81C378A76F737A5D39E7 /* Debug */,
+				05928F40578F3B269174E878 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F1B46832399B0D9F253DB2AB /* Build configuration list for PBXNativeTarget "Lakshly-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9021C7098CB8E6977ECBF088 /* Debug */,
+				9D75882622FBACCA2F6F3425 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 58BAC9B4D9C286503CC447A4 /* Project object */;
+}
