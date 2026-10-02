@@ -3,7 +3,7 @@
 > ⚠️ **Everything in this folder is SYNTHETIC.** Names, institutions ("Demo Bank", "Sample Card Co"…), merchants, masks and amounts are fictional and generated from a fixed random seed. **Never add real statements, exports or screenshots here, or anywhere in this repo.**
 
 - `generate.py` is a deterministic generator (`--seed`, `--months`, `--out`). It needs only the Python 3.9+ standard library.
-- `sample.synthetic.json` is the committed sample (seed 42, 3 months), validated against `packages/schema/lakshly.schema.json`.
+- `sample.synthetic.json` is the committed sample (seed 42, 6 complete months, Apr–Sep 2026; salary always exceeds spending, ~22–33% monthly savings rate, credit card paid in full each month), validated against `packages/schema/lakshly.schema.json`.
 
 ```bash
 python3 demo-data/generate.py            # regenerate sample

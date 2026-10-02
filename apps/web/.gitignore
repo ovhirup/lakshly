@@ -1,0 +1,7 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+# synced at build time from ../../demo-data (synthetic)
+data/*.json

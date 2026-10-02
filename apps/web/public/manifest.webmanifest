@@ -1,0 +1,10 @@
+{
+  "name": "Lakshly",
+  "short_name": "Lakshly",
+  "description": "Every rupee on target. Private-by-design personal finance.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0a14",
+  "theme_color": "#f59e0b",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
