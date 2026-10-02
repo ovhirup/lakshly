@@ -68,3 +68,7 @@ venv/
 
 # Apple MVP generated build output
 apps/apple/build/
+
+# Cloudflare Workers
+.dev.vars
+.wrangler/

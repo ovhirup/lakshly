@@ -1,0 +1,22 @@
+{
+  // Lakshly feedback relay. Deploy only after Abhirup approves (see README.md).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lakshly-feedback",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  // Custom domain on the lakshly.com Cloudflare zone (DNS record is created on deploy).
+  "routes": [{ "pattern": "feedback.lakshly.com", "custom_domain": true }],
+  "vars": {
+    "FEEDBACK_REPO": "ovhirup/lakshly-feedback",
+    // Exact browser origins allowed by CORS. Native apps send no Origin and must send X-Lakshly-Client.
+    "ALLOWED_ORIGINS": "https://lakshly.com,https://www.lakshly.com,https://app.lakshly.com"
+  },
+  // Secrets (never in this file): GITHUB_TOKEN, IP_SALT  ->  npx wrangler secret put <NAME>
+  "ratelimits": [
+    { "name": "SUBMIT_LIMIT", "namespace_id": "71001", "simple": { "limit": 5, "period": 60 } },
+    { "name": "GLOBAL_LIMIT", "namespace_id": "71002", "simple": { "limit": 60, "period": 60 } },
+    { "name": "STATUS_LIMIT", "namespace_id": "71003", "simple": { "limit": 20, "period": 60 } }
+  ],
+  "observability": { "enabled": true, "head_sampling_rate": 1 }
+}
