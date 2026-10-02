@@ -108,12 +108,16 @@ final class StoreKitTests: XCTestCase {
     XCTAssertFalse(store.can(.rewardsInsights))
   }
 
-  func testYearlyWinsWhenBothSnapshotsAreActive() async throws {
+  /// Monthly and yearly share one group level, so moving to the longer yearly plan is a
+  /// crossgrade that StoreKit defers to the next renewal. Premium must stay on throughout.
+  func testCrossgradeToYearlyKeepsPremium() async throws {
     try await session.buyProduct(identifier: EntitlementStore.monthlyProductID)
     try await session.buyProduct(identifier: EntitlementStore.yearlyProductID)
     let store = EntitlementStore(syncPurchases: {})
     await waitForPremium(store, expected: true)
-    XCTAssertEqual(store.activeProductID, EntitlementStore.yearlyProductID)
+    XCTAssertTrue(store.isPremium)
+    XCTAssertEqual(store.activeProductID, EntitlementStore.monthlyProductID)
+    for feature in Feature.allCases { XCTAssertTrue(store.can(feature), feature.rawValue) }
   }
 
   func testResolverIgnoresRevokedExpiredUnverifiedAndUpgradedSnapshots() {
@@ -223,9 +227,10 @@ final class StoreKitTests: XCTestCase {
   }
 
   private func configure(_ session: SKTestSession, storefront: String, locale: String) throws {
-    session.disableDialogs = true
+    // resetToDefaultState() restores disableDialogs = false, so reset first.
     session.resetToDefaultState()
     session.clearTransactions()
+    session.disableDialogs = true
     session.storefront = storefront
     session.locale = Locale(identifier: locale)
   }

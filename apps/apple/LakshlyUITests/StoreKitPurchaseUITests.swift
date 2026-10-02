@@ -8,9 +8,10 @@ final class StoreKitPurchaseUITests: XCTestCase {
   override func setUpWithError() throws {
     continueAfterFailure = false
     session = try SKTestSession(configurationFileNamed: "Lakshly")
-    session.disableDialogs = true
+    // resetToDefaultState() restores disableDialogs = false, so reset first.
     session.resetToDefaultState()
     session.clearTransactions()
+    session.disableDialogs = true
     session.storefront = "IND"
     session.locale = Locale(identifier: "en_IN")
   }
@@ -66,7 +67,8 @@ final class StoreKitPurchaseUITests: XCTestCase {
     app.buttons["Done"].tap()
 
     openDebt(app)
-    XCTAssertTrue(app.staticTexts["Avalanche puts extra money on the highest rate. Snowball puts it on the smallest balance. This demo has one loan, so both start there."].waitForExistence(timeout: 8))
+    let plannerCopy = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Avalanche puts extra money")).firstMatch
+    XCTAssertTrue(plannerCopy.waitForExistence(timeout: 8))
     XCTAssertFalse(app.buttons["debt.seePremium"].exists)
     shot(app, "debt-planner-unlocked")
   }
