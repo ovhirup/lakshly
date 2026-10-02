@@ -1,6 +1,18 @@
 import StoreKitTest
 import XCTest
 
+/// SKTestSession cannot save its configuration on iOS 26.3+ simulators
+/// (SKInternalErrorDomain 3 / notEntitled, Apple FB22237318). Tests that need a
+/// live session skip there with this reason; run them on an iOS 26.2 simulator.
+enum StoreKitTestRuntime {
+  static let brokenReason =
+    "SKTestSession is broken on iOS 26.3+ simulators (FB22237318). Run StoreKit tests on an iOS 26.2 simulator."
+  static var isKnownBroken: Bool {
+    let v = ProcessInfo.processInfo.operatingSystemVersion
+    return v.majorVersion > 26 || (v.majorVersion == 26 && v.minorVersion >= 3)
+  }
+}
+
 @MainActor
 final class StoreKitPurchaseUITests: XCTestCase {
   private var session: SKTestSession!
@@ -43,10 +55,12 @@ final class StoreKitPurchaseUITests: XCTestCase {
     shot(app, "locked-ocean-tap-free")
   }
 
-  func testPurchaseYearlyUnlocksSettingsThemeAndDebt() {
+  func testPurchaseYearlyUnlocksSettingsThemeAndDebt() throws {
     let app = launch(["-showPaywall", "YES", "-theme", "lakshmi", "-appearance", "dark"])
     let purchase = app.buttons["paywall.continue"]
-    XCTAssertTrue(purchase.waitForExistence(timeout: 15), "Yearly plan did not appear")
+    let appeared = purchase.waitForExistence(timeout: 15)
+    if !appeared && StoreKitTestRuntime.isKnownBroken { throw XCTSkip(StoreKitTestRuntime.brokenReason) }
+    XCTAssertTrue(appeared, "Yearly plan did not appear")
     XCTAssertEqual(purchase.label, "Continue with Yearly")
     purchase.tap()
     let thanks = app.staticTexts["paywall.thanks"]
@@ -70,6 +84,7 @@ final class StoreKitPurchaseUITests: XCTestCase {
     let plannerCopy = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Avalanche puts extra money")).firstMatch
     XCTAssertTrue(plannerCopy.waitForExistence(timeout: 8))
     XCTAssertFalse(app.buttons["debt.seePremium"].exists)
+    for _ in 0..<4 where !plannerCopy.isHittable { app.swipeUp() }
     shot(app, "debt-planner-unlocked")
   }
 

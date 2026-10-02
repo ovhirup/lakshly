@@ -278,7 +278,7 @@ struct PaywallView: View {
 
   private func perMonth(_ product: Product) -> String {
     let month = product.price / 12
-    return "≈\(month.formatted(product.priceFormatStyle))/mo"
+    return "≈\(month.formatted(product.priceFormatStyle.precision(.fractionLength(0))))/mo"
   }
 
   private func planLabel(_ product: Product, yearly: Bool) -> String {
@@ -316,6 +316,6 @@ private struct PaywallFeature: Identifiable {
     PaywallFeature(feature: .creditInsights, title: "Credit insights", symbol: "creditcard"),
     PaywallFeature(feature: .investmentInsights, title: "Investment projections", symbol: "chart.line.uptrend.xyaxis"),
     PaywallFeature(feature: .rewardsInsights, title: "Rewards value & expiry tracking", symbol: "gift"),
-    PaywallFeature(feature: .priorityFeedback, title: "⭐ priority feature requests", symbol: "star.fill"),
+    PaywallFeature(feature: .priorityFeedback, title: "Priority feature requests", symbol: "star.fill"),
   ]
 }

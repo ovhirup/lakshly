@@ -4,6 +4,18 @@ import XCTest
 
 @testable import Lakshly
 
+/// SKTestSession cannot save its configuration on iOS 26.3+ simulators
+/// (SKInternalErrorDomain 3 / notEntitled, Apple FB22237318). Tests that need a
+/// live session skip there with this reason; run them on an iOS 26.2 simulator.
+enum StoreKitTestRuntime {
+  static let brokenReason =
+    "SKTestSession is broken on iOS 26.3+ simulators (FB22237318). Run StoreKit tests on an iOS 26.2 simulator."
+  static var isKnownBroken: Bool {
+    let v = ProcessInfo.processInfo.operatingSystemVersion
+    return v.majorVersion > 26 || (v.majorVersion == 26 && v.minorVersion >= 3)
+  }
+}
+
 @MainActor
 final class StoreKitTests: XCTestCase {
   private var session: SKTestSession!
@@ -13,12 +25,20 @@ final class StoreKitTests: XCTestCase {
     try configure(session, storefront: "IND", locale: "en_IN")
   }
 
+  /// Skips only when the runtime is known broken AND the session really cannot serve products.
+  private func requireWorkingSession() async throws {
+    guard StoreKitTestRuntime.isKnownBroken else { return }
+    let products = (try? await Product.products(for: EntitlementStore.productIDs)) ?? []
+    if products.isEmpty { throw XCTSkip(StoreKitTestRuntime.brokenReason) }
+  }
+
   override func tearDownWithError() throws {
     session?.clearTransactions()
     session = nil
   }
 
   func testProductsLoadInIndiaAndTheUnitedStates() async throws {
+    try await requireWorkingSession()
     let store = EntitlementStore(syncPurchases: {})
     await store.loadProducts()
     XCTAssertFalse(store.productsUnavailable)
@@ -49,6 +69,7 @@ final class StoreKitTests: XCTestCase {
   }
 
   func testPurchaseMonthlyUnlocksEveryFeature() async throws {
+    try await requireWorkingSession()
     let store = EntitlementStore(syncPurchases: {})
     await store.loadProducts()
     let monthly = try XCTUnwrap(store.products.first { $0.id == EntitlementStore.monthlyProductID })
@@ -64,6 +85,7 @@ final class StoreKitTests: XCTestCase {
   }
 
   func testNewStoreSeesPurchaseThroughRefreshAndRestore() async throws {
+    try await requireWorkingSession()
     try await session.buyProduct(identifier: EntitlementStore.yearlyProductID)
     let relaunched = EntitlementStore(syncPurchases: {})
     await relaunched.refresh()
@@ -84,6 +106,7 @@ final class StoreKitTests: XCTestCase {
   }
 
   func testExpiryRemovesAccess() async throws {
+    try await requireWorkingSession()
     try await session.buyProduct(identifier: EntitlementStore.monthlyProductID)
     let store = EntitlementStore(syncPurchases: {})
     await waitForPremium(store, expected: true)
@@ -97,6 +120,7 @@ final class StoreKitTests: XCTestCase {
   }
 
   func testRefundHonoursRevocation() async throws {
+    try await requireWorkingSession()
     try await session.buyProduct(identifier: EntitlementStore.monthlyProductID)
     let store = EntitlementStore(syncPurchases: {})
     await waitForPremium(store, expected: true)
@@ -111,6 +135,7 @@ final class StoreKitTests: XCTestCase {
   /// Monthly and yearly share one group level, so moving to the longer yearly plan is a
   /// crossgrade that StoreKit defers to the next renewal. Premium must stay on throughout.
   func testCrossgradeToYearlyKeepsPremium() async throws {
+    try await requireWorkingSession()
     try await session.buyProduct(identifier: EntitlementStore.monthlyProductID)
     try await session.buyProduct(identifier: EntitlementStore.yearlyProductID)
     let store = EntitlementStore(syncPurchases: {})
