@@ -84,7 +84,9 @@ final class StoreKitPurchaseUITests: XCTestCase {
     let plannerCopy = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Avalanche puts extra money")).firstMatch
     XCTAssertTrue(plannerCopy.waitForExistence(timeout: 8))
     XCTAssertFalse(app.buttons["debt.seePremium"].exists)
-    for _ in 0..<4 where !plannerCopy.isHittable { app.swipeUp() }
+    // isHittable is true off-screen inside a ScrollView, so scroll to the planner card explicitly.
+    let planner = app.otherElements["debt.planner"].exists ? app.otherElements["debt.planner"] : plannerCopy
+    for _ in 0..<4 where planner.frame.maxY > app.windows.firstMatch.frame.maxY - 120 { app.swipeUp() }
     shot(app, "debt-planner-unlocked")
   }
 
