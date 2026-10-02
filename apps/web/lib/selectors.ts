@@ -38,6 +38,7 @@ export function monthlyCashflow(txns: Transaction[]) {
     let income = 0, spend = 0, invested = 0;
     for (const t of txns) {
       if (!t.date.startsWith(m)) continue;
+      if (t.category === "transfers") continue;
       if (t.amount > 0) income += t.amount;
       else if (t.category === "investments") invested += -t.amount;
       else if (isSpend(t)) spend += -t.amount;
