@@ -5,7 +5,8 @@ import {
   THEME_ID_KEY, themeById, type AppearancePref, type ResolvedAppearance, type ThemeId,
 } from "@/lib/themes";
 
-export type Plan = "free" | "premium";
+import type { Plan } from "@/lib/entitlements";
+export type { Plan } from "@/lib/entitlements";
 export type { AppearancePref, ThemeId };
 
 type Snapshot = {

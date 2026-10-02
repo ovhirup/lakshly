@@ -4,6 +4,10 @@ import { useAppState, type Plan } from "@/components/AppState";
 import { Icon } from "@/components/Icon";
 import { Chips, Glass, PageHeader, PremiumBadge } from "@/components/ui";
 import { formatDate } from "@/lib/format";
+import { can } from "@/lib/entitlements";
+import { buildGitHubIssue, issueEnvironment, issueKind, type GitHubIssue } from "@/lib/github-issue";
+import { themeById } from "@/lib/themes";
+import { APP_VERSION } from "@/lib/version";
 import {
   AREAS, autoAck, displayVotes, getServerSnapshot, getSnapshot, KIND_LABEL, replyBy, reset, ROADMAP, ROADMAP_UPDATED, save,
   STATUS_LABEL, STEPS, subscribe, TEAM, type Kind, type Request, type RoadmapItem, type Status,
@@ -15,8 +19,8 @@ import "./feedback.css";
 
 // Views are hash-addressable so screens are linkable: #new, #new-bug, #new-praise, #sent, #mine, #roadmap.
 type View = "hub" | "new" | "sent" | "mine" | "roadmap";
-type Receipt = { id?: string; kind: Kind; premium: boolean; at: string; mode: "relay" | "email" };
-const DIAG = { appVersion: "web 0.2.0", platform: "Web" };
+type Receipt = { id?: string; kind: Kind; premium: boolean; at: string; mode: "relay" | "email" | "github" };
+const DIAG = { appVersion: APP_VERSION, platform: "Web" };
 
 function subscribeHash(cb: () => void) { window.addEventListener("hashchange", cb); return () => window.removeEventListener("hashchange", cb); }
 const readHash = () => window.location.hash.replace(/^#/, "");
@@ -53,7 +57,7 @@ export default function FeedbackPage() {
       {view === "mine" && <Mine mine={store.mine} plan={plan} onUpdate={(mine) => save({ ...store, mine })} />}
       {view === "roadmap" && <Roadmap mine={store.mine} votes={store.votes} plan={plan} vote={vote} />}
       <p className="tiny muted fb-demo-note">
-        {FEEDBACK_ENDPOINT ? "Feedback is sent securely to the Lakshly team only when you press Send." : `Feedback opens a prefilled email to ${FEEDBACK_EMAIL}.`}{" "}
+        {FEEDBACK_ENDPOINT ? "Feedback is sent securely to the Lakshly team only when you press Send." : "Feedback opens a prefilled GitHub issue. Review it and press Submit on GitHub to send it."}{" "}
         Your request history stays on this device. Sample requests and names are fictional. <button className="linklike" onClick={reset}>Reset demo</button>
       </p>
     </>
@@ -121,7 +125,7 @@ function PremiumLine({ mine }: { mine: Request[] }) {
         <li><strong>Priority triage</strong><span>Your requests and votes are weighted first when we plan.</span></li>
         <li><strong>Early access</strong><span>Try the features you asked for before everyone else.</span></li>
       </ul>
-      <div className="fb-stats"><div><strong>{mine.length}</strong><span>sent</span></div><div><strong>{replied}</strong><span>replied</span></div><div><strong>{mine.filter((r) => r.status === "shipped").length}</strong><span>shipped</span></div></div>
+      <div className="fb-stats"><div><strong>{mine.length}</strong><span>requests</span></div><div><strong>{replied}</strong><span>replied</span></div><div><strong>{mine.filter((r) => r.status === "shipped").length}</strong><span>shipped</span></div></div>
     </Glass>
   );
 }
@@ -146,14 +150,24 @@ function PremiumUpsell({ setPlan }: { setPlan: (p: Plan) => void }) {
 
 /* ---------- New request ---------- */
 function NewRequest({ initialKind, plan, onSent }: { initialKind: Kind; plan: Plan; onSent: (r: Receipt, req: Request) => void }) {
+  const { theme, resolved } = useAppState();
+  const [userAgent, setUserAgent] = useState("");
   const [d, setD] = useState<Draft>({ kind: initialKind, title: "", detail: "", area: initialKind === "bug" ? "Import" : "Spend", credit: "", replyEmail: "", includeDiagnostics: false });
   const [sending, setSending] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [sendErr, setSendErr] = useState<string | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
   const hpRef = useRef<HTMLInputElement>(null);
-  useEffect(() => { titleRef.current?.focus({ preventScroll: true }); }, []);
+  useEffect(() => {
+    titleRef.current?.focus({ preventScroll: true });
+    // The preview needs browser metadata after hydration; SSR must use an empty user agent.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUserAgent(window.navigator.userAgent);
+  }, []);
   const payload = useMemo(() => buildPayload(d, plan, DIAG), [d, plan]);
+  const environment = issueEnvironment({ appVersion: APP_VERSION, themeName: themeById(theme).name, appearance: resolved, plan, userAgent });
+  const issue = buildGitHubIssue({ kind: issueKind(d.kind), title: d.title, text: d.detail, environment });
+  const priority = can("priorityFeedback", plan);
   const sensitive = looksSensitive(`${d.title} ${d.detail}`);
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((x) => ({ ...x, [k]: v }));
   const copy = {
@@ -162,8 +176,22 @@ function NewRequest({ initialKind, plan, onSent }: { initialKind: Kind; plan: Pl
     praise: { t: "What do you love?", ph: "e.g. The Lakshmi theme is gorgeous", dt: "Tell us more (optional)", dph: "It makes me feel…" },
   }[d.kind];
 
+  function openGitHubIssue() {
+    const current = buildGitHubIssue({ kind: issueKind(d.kind), title: d.title, text: d.detail,
+      environment: issueEnvironment({ appVersion: APP_VERSION, themeName: themeById(theme).name, appearance: resolved, plan, userAgent: window.navigator.userAgent }) });
+    window.open(current.url, "_blank", "noopener,noreferrer");
+    const now = new Date().toISOString();
+    const today = istDate(new Date());
+    onSent({ kind: d.kind, premium: priority, at: now, mode: "github" }, {
+      id: `GITHUB-${now.replace(/\D/g, "").slice(0, 14)}`, kind: d.kind, title: current.title, detail: current.text,
+      area: d.area, status: "received", premium: priority, createdAt: today, via: "github",
+      replies: [{ from: "auto", at: today, text: "Opened in a new tab. Review it and press Submit on GitHub. Nothing is sent until you do." }],
+    });
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!FEEDBACK_ENDPOINT) { openGitHubIssue(); return; }
     if (payload.title.length < 3) { setErr("Please add a short title (at least 3 characters)."); titleRef.current?.focus(); return; }
     if (payload.replyEmail && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(payload.replyEmail)) { setErr("That reply email doesn't look right. Leave it blank for in-app replies."); return; }
     setErr(null); setSendErr(null); setSending(true);
@@ -185,7 +213,7 @@ function NewRequest({ initialKind, plan, onSent }: { initialKind: Kind; plan: Pl
     } finally { setSending(false); }
   }
 
-  const preview = <PayloadPreview payload={payload} />;
+  const preview = FEEDBACK_ENDPOINT ? <PayloadPreview payload={payload} /> : <IssuePreview issue={issue} />;
   return (
     <div className="grid g3">
       <Glass className="card span2">
@@ -193,36 +221,40 @@ function NewRequest({ initialKind, plan, onSent }: { initialKind: Kind; plan: Pl
           <Chips label="Type" value={d.kind} onChange={(k) => set("kind", k)} options={(["idea", "bug", "praise"] as Kind[]).map((k) => ({ value: k, label: KIND_LABEL[k] }))} /></div>
         <form className="fb-form" onSubmit={submit} noValidate>
           <label className="field">{copy.t}
-            <input ref={titleRef} type="text" value={d.title} onChange={(e) => set("title", e.target.value)} placeholder={copy.ph} maxLength={90} aria-invalid={!!err} />
+            <input ref={titleRef} type="text" value={d.title} onChange={(e) => set("title", e.target.value)} placeholder={copy.ph} maxLength={FEEDBACK_ENDPOINT ? 90 : 120} aria-invalid={!!err} />
           </label>
           {err && <p className="fb-err" role="alert">{err}</p>}
           <label className="field">{copy.dt}
-            <textarea rows={4} value={d.detail} onChange={(e) => set("detail", e.target.value)} placeholder={copy.dph} maxLength={1000} />
+            <textarea rows={4} value={d.detail} onChange={(e) => set("detail", e.target.value)} placeholder={copy.dph} maxLength={FEEDBACK_ENDPOINT ? 1000 : 2000} />
           </label>
           {sensitive && <p className="fb-warn" role="status"><Icon name="shield" size={14} /> That looks like an account, card or phone number, or a PAN/IFSC. Please remove it. We never need your financial details.</p>}
-          <div className="fb-two">
+          {FEEDBACK_ENDPOINT && <div className="fb-two">
             <label className="field">Area
               <select value={d.area} onChange={(e) => set("area", e.target.value)}>{AREAS.map((a) => <option key={a}>{a}</option>)}</select>
             </label>
             <label className="field">Credit me in “Built with you” as <span className="muted">(optional)</span>
               <input type="text" value={d.credit} onChange={(e) => set("credit", e.target.value)} placeholder="First name or @handle" maxLength={40} />
             </label>
-          </div>
+          </div>}
           {FEEDBACK_ENDPOINT && (
             <label className="field">Email for replies <span className="muted">(optional)</span>
               <input type="email" inputMode="email" autoComplete="email" value={d.replyEmail} onChange={(e) => set("replyEmail", e.target.value)} placeholder="Leave blank to get replies in the app only" maxLength={120} />
             </label>
           )}
-          <label className="fb-check"><input type="checkbox" checked={d.includeDiagnostics} onChange={(e) => set("includeDiagnostics", e.target.checked)} />
-            <span>Include app version and platform <span className="muted">(off by default; helps with bugs; no financial data)</span></span></label>
+          {FEEDBACK_ENDPOINT && <label className="fb-check"><input type="checkbox" checked={d.includeDiagnostics} onChange={(e) => set("includeDiagnostics", e.target.checked)} />
+            <span>Include app version and platform <span className="muted">(off by default; helps with bugs; no financial data)</span></span></label>}
           {/* Honeypot for bots: hidden from people and assistive tech. */}
           <input ref={hpRef} className="fb-hp" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" defaultValue="" />
           <div className="fb-preview-inline">{preview}</div>
           {sendErr && <p className="fb-err" role="alert">{sendErr} <a href={mailtoHref(payload)}>Email it to {FEEDBACK_EMAIL} instead</a>.</p>}
           <div className="fb-send">
-            <button className="btn primary" type="submit" disabled={sending}>{sending ? "Sending…" : FEEDBACK_ENDPOINT ? "Send with thanks" : "Write the email"}</button>
-            <span className="tiny muted">{plan === "premium" ? "Priority queue · human reply within 1 business day (IST)" : "Standard queue · best-effort reply, usually within 5 business days"}</span>
+            <button className="btn primary" type="submit" disabled={sending}>{sending ? "Sending…" : FEEDBACK_ENDPOINT ? "Send with thanks" : "Open GitHub issue"}</button>
+            {priority ? <span className="badge small">Priority label</span> : <span className="tiny muted">Premium requests get the priority label</span>}
           </div>
+          {FEEDBACK_ENDPOINT ? <>
+            <button className="linklike tiny" type="button" disabled={sending} onClick={openGitHubIssue}>Open on GitHub instead</button>
+            <IssuePreview issue={issue} />
+          </> : <a className="linklike tiny" href={mailtoHref(payload)}>Prefer email?</a>}
         </form>
       </Glass>
       <Glass className="card fb-preview fb-preview-side">{preview}</Glass>
@@ -245,8 +277,34 @@ function PayloadPreview({ payload }: { payload: Payload }) {
   );
 }
 
+function IssuePreview({ issue }: { issue: GitHubIssue }) {
+  return (
+    <div className="fb-preview-body">
+      <h2 className="heading-icon"><Icon name="shield" size={16} /> Exactly what will be sent{FEEDBACK_ENDPOINT ? " on GitHub" : ""}</h2>
+      <p className="muted tiny">GitHub opens with this draft. Review it and press Submit on GitHub. Nothing is sent until you do. Submitted issues are public.</p>
+      <dl className="fb-payload">
+        <div><dt>Title</dt><dd>{issue.title}</dd></div>
+        <div><dt>Labels</dt><dd>{issue.labels.join(",")}</dd></div>
+        <div><dt>Body</dt><dd>{issue.body}</dd></div>
+      </dl>
+      <p className="tiny muted">Only your title, message, app version, OS family, theme, appearance and plan are included. Never add account numbers, statements or other personal data.</p>
+    </div>
+  );
+}
+
 /* ---------- Thank-you ---------- */
 function ThankYou({ receipt }: { receipt: Receipt }) {
+  if (receipt.mode === "github") return (
+    <Glass className="card fb-thanks" as="div">
+      <div className="fb-heart" aria-hidden="true"><Icon name="heart" size={34} /></div>
+      <h2>Thank you for helping Lakshly 💛</h2>
+      <p className="muted">Opened in a new tab. Review it and press Submit on GitHub. Nothing is sent until you do.</p>
+      <div className="fb-actions center">
+        <button className="btn primary" onClick={() => go("mine")}>See my requests</button>
+        <button className="btn ghost" onClick={() => go("")}>Back to Feedback</button>
+      </div>
+    </Glass>
+  );
   const by = replyBy(new Date(receipt.at), receipt.premium ? 1 : 5);
   const byText = by.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "short", timeZone: "UTC" });
   const email = receipt.mode === "email";
@@ -304,15 +362,15 @@ function Mine({ mine, plan, onUpdate }: { mine: Request[]; plan: Plan; onUpdate:
           <article className="row fb-thread" key={r.id}>
             <div className="grow">
               <div className="title">{r.title} {r.premium && <PremiumBadge small />} <span className="badge small">{KIND_LABEL[r.kind]}</span></div>
-              <div className="sub">{r.via === "email" ? "Sent by email" : r.id} · {r.area} · {formatDate(r.createdAt)}</div>
-              {r.kind !== "praise" && <StatusTrack status={r.status} />}
+              <div className="sub">{r.via === "github" ? "Opened on GitHub" : r.via === "email" ? "Sent by email" : r.id} · {r.area} · {formatDate(r.createdAt)}</div>
+              {r.kind !== "praise" && r.via !== "github" && <StatusTrack status={r.status} />}
               <ul className="fb-replies">
                 {(r.replies ?? []).map((x, i) => (
                   <li key={i} className={x.from}><span className="who">{x.from === "auto" ? "Lakshly (automatic)" : x.name ?? TEAM} · {formatDate(x.at)}</span>{x.text}</li>
                 ))}
               </ul>
             </div>
-            <span className={`status ${r.status}`}>{r.kind === "praise" ? "Thanked" : STATUS_LABEL[r.status]}</span>
+            <span className={`status ${r.status}`}>{r.via === "github" ? "Draft opened" : r.kind === "praise" ? "Thanked" : STATUS_LABEL[r.status]}</span>
           </article>
         ))}
         {!mine.length && <p className="empty muted">Nothing yet. Your first idea is one tap away. 💛</p>}
@@ -392,10 +450,10 @@ function MiniRow({ r }: { r: Request }) {
     <div className="row" style={{ alignItems: "flex-start" }}>
       <div className="grow">
         <div className="title">{r.title} <span className="badge small">{KIND_LABEL[r.kind]}</span></div>
-        <StatusTrack status={r.status} />
+        {r.via === "github" ? <p className="tiny muted">Draft opened on GitHub</p> : <StatusTrack status={r.status} />}
         {last && <p className="tiny fb-last"><Icon name="heart" size={11} /> <em>{last.text}</em> <span className="muted">— {last.name}</span></p>}
       </div>
-      <span className={`status ${r.status}`}>{STATUS_LABEL[r.status]}</span>
+      <span className={`status ${r.status}`}>{r.via === "github" ? "Draft opened" : STATUS_LABEL[r.status]}</span>
     </div>
   );
 }

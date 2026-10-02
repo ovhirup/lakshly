@@ -1,7 +1,8 @@
 // What leaves the device when someone sends feedback, and how. Lakshly is local-first: feedback is the ONLY
 // user data that leaves the device, and only when the user presses Send.
 //   - NEXT_PUBLIC_FEEDBACK_ENDPOINT set  -> POST to the Lakshly feedback relay (workers/feedback).
-//   - unset                              -> open a prefilled email to hello@lakshly.com (mailto:).
+//   - unset                              -> the page opens a prefilled GitHub issue (lib/github-issue).
+// mailto remains an optional secondary path; send() still supports email drafts without a relay.
 import type { Kind, Status } from "./feedback";
 
 export const FEEDBACK_ENDPOINT = (process.env.NEXT_PUBLIC_FEEDBACK_ENDPOINT ?? "").replace(/\/+$/, "");

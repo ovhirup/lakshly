@@ -14,6 +14,12 @@ npm run gen:types  # regenerate lib/schema.gen.ts from the JSON Schema
 
 Plan, theme and feedback live in `localStorage` on your device only.
 
+## Feedback
+
+Without `NEXT_PUBLIC_FEEDBACK_ENDPOINT`, **Open GitHub issue** opens a prefilled public issue draft in a new tab. Review it and press Submit on GitHub; nothing is sent automatically. The live preview shows the title, labels and full message, including app version, OS family, theme, resolved appearance and plan. Premium adds the `priority` label; **Prefer email?** remains available. With a relay endpoint configured, Send stays primary and **Open on GitHub instead** is secondary. GitHub drafts saved in My requests are marked as opened, not received.
+
+The shared contract is [`docs/feedback-issue-link.md`](../../docs/feedback-issue-link.md). `tests/github-issue.test.ts` checks the same golden URL literal as the Apple tests.
+
 ## Themes
 
 `docs/themes.json` is the source of truth (Lakshmi, Monochrome Gold, Graphite, Ocean, Forest, Rose Quartz). `npm run gen:themes` (`node scripts/gen-themes.mjs`, stdlib only) reads it and writes `app/themes.gen.css` and `lib/themes.gen.ts`. Do not edit those files. The generator runs before `dev`, `build`, `test`, `typecheck`, and `lint`.
