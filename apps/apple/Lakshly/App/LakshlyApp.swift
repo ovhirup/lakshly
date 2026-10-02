@@ -3,6 +3,7 @@ import SwiftUI
 @main struct LakshlyApp: App {
   @State private var store: DataStore
   @State private var lock: AppLock
+  @State private var entitlements: EntitlementStore
   @AppStorage private var themeID: String
   @AppStorage private var appearanceID: String
   @State private var launchTheme: String?
@@ -14,6 +15,7 @@ import SwiftUI
     _launchTheme = State(initialValue: LaunchOptions.current.theme)
     _store = State(initialValue: DataStore())
     _lock = State(initialValue: AppLock())
+    _entitlements = State(initialValue: EntitlementStore())
   }
   private var appearance: ColorScheme? {
     switch LaunchOptions.current.appearance ?? appearanceID {
@@ -22,21 +24,37 @@ import SwiftUI
     default: nil
     }
   }
+  /// Stored Premium themes fall back to Lakshmi while Free. A DEBUG `-theme` override still wins.
+  private var effectiveThemeID: String {
+    if let launchTheme { return launchTheme }
+    let stored = ThemeID.resolve(themeID)
+    // Wait for the first entitlement read so a Premium user's theme doesn't flash to Lakshmi.
+    if stored.definition.premium && entitlements.hasResolved && !entitlements.isPremium {
+      return ThemeID.lakshmi.rawValue
+    }
+    return stored.rawValue
+  }
   var body: some Scene {
     WindowGroup {
-      let palette = ThemePalette(ThemeID.resolve(launchTheme ?? themeID))
+      let palette = ThemePalette(ThemeID.resolve(effectiveThemeID))
       RootView(store: store, lock: lock, themeSelection: Binding(
-        get: { launchTheme ?? themeID },
+        get: { effectiveThemeID },
         set: { themeID = $0; launchTheme = nil }
       ))
-        .environment(\.theme, palette).foregroundStyle(palette.text).tint(palette.gold)
+        .environment(\.theme, palette).environment(entitlements)
+        .foregroundStyle(palette.text).tint(palette.gold)
         .preferredColorScheme(appearance)
+        .task {
+          await entitlements.loadProducts()
+          await entitlements.refresh()
+        }
     }
   }
 }
 
 struct RootView: View {
   @Environment(\.theme) private var theme
+  @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
   let lock: AppLock
   @Binding var themeSelection: String
@@ -93,17 +111,25 @@ struct RootView: View {
           Tab("Feedback", systemImage: "heart.text.square", value: "feedback") {
             navigation { FeedbackView(store: store) }
           }
-          Tab("Debt", systemImage: "chart.line.downtrend.xyaxis", value: "debt") {
+          Tab(value: "debt") {
             navigation { DebtView(store: store) }
+          } label: {
+            premiumTab("Debt", systemImage: "chart.line.downtrend.xyaxis")
           }
-          Tab("Credit", systemImage: "creditcard", value: "credit") {
+          Tab(value: "credit") {
             navigation { CreditView(store: store) }
+          } label: {
+            premiumTab("Credit", systemImage: "creditcard")
           }
-          Tab("Investments", systemImage: "chart.line.uptrend.xyaxis", value: "investments") {
+          Tab(value: "investments") {
             navigation { InvestmentsView(store: store) }
+          } label: {
+            premiumTab("Investments", systemImage: "chart.line.uptrend.xyaxis")
           }
-          Tab("Rewards", systemImage: "gift", value: "rewards") {
+          Tab(value: "rewards") {
             navigation { RewardsView(store: store) }
+          } label: {
+            premiumTab("Rewards", systemImage: "gift")
           }
           Tab("History", systemImage: "clock", value: "history") {
             navigation { HistoryView(store: store) }
@@ -114,6 +140,7 @@ struct RootView: View {
         }.tabViewStyle(.sidebarAdaptable)
       }
     }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock, themeSelection: $themeSelection) }
+      .modifier(LaunchPaywallModifier(locked: lock.locked))
       .onAppear { if !lockEnabled && !lock.forced { lock.locked = false } }
       .onChange(of: phase) { _, value in
         if value == .background || (value == .inactive && !lock.authenticating) {
@@ -126,5 +153,42 @@ struct RootView: View {
     NavigationStack {
       content().toolbar { Button("Settings", systemImage: "gearshape") { settings = true } }
     }
+  }
+  private func premiumTab(_ title: String, systemImage: String) -> some View {
+    let locked = !entitlements.isPremium
+    return Label {
+      HStack(spacing: 4) {
+        Text(title)
+        if locked {
+          Image(systemName: "lock.fill")
+            .font(.caption2)
+            .accessibilityHidden(true)
+        }
+      }
+    } icon: {
+      Image(systemName: systemImage)
+    }
+    .accessibilityLabel(title)
+    .accessibilityValue(locked ? "Premium" : "")
+  }
+}
+
+/// DEBUG screenshot control. Compiled out of Release, and never a Premium grant.
+private struct LaunchPaywallModifier: ViewModifier {
+  var locked: Bool
+  #if DEBUG
+  @State private var presented = LaunchOptions.current.showPaywall ?? false
+  #endif
+  func body(content: Content) -> some View {
+    #if DEBUG
+    content.sheet(isPresented: Binding(
+      get: { presented && !locked },
+      set: { presented = $0 }
+    )) {
+      PaywallView(context: .general)
+    }
+    #else
+    content
+    #endif
   }
 }

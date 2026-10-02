@@ -3,8 +3,10 @@ import SwiftUI
 
 struct DebtView: View {
   @Environment(\.theme) private var theme
+  @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
-  @AppStorage("settings.premium") private var premium = false
+  @State private var paywallPresented = false
+  private var premium: Bool { entitlements.can(.debtPlanner) }
   private func projection(_ debt: Debt) -> [ProjectionPoint] {
     var balance = Double(debt.outstanding)
     var points = [ProjectionPoint(month: 0, amount: balance)]
@@ -19,7 +21,7 @@ struct DebtView: View {
     return points
   }
   var body: some View {
-    Page(title: "Debt", subtitle: "One payment closer to freedom.") {
+    Page(title: "Debt", subtitle: "One payment closer to freedom.", showsPremiumLock: !entitlements.isPremium) {
       ForEach(store.dataset?.debts ?? []) { debt in
         Card(title: debt.name) {
           Text(Money.format(debt.outstanding)).font(.largeTitle.bold())
@@ -47,19 +49,23 @@ struct DebtView: View {
           }
         }
       }
-      Card(title: "Payoff planner") {
-        HStack {
-          Image(systemName: premium ? "sparkles" : "lock.fill")
-          Text("Avalanche / snowball")
-          Spacer()
-          Pill(text: "Premium", color: theme.gold)
+      Card(title: "Payoff planner", access: premium ? .unlocked : .locked) {
+        if premium {
+          Text(
+            "Avalanche puts extra money on the highest rate. Snowball puts it on the smallest balance. This demo has one loan, so both start there."
+          ).foregroundStyle(theme.secondaryText)
+        } else {
+          Text(
+            "See how avalanche and snowball would order repayments, with the highest rate or the smallest balance first."
+          ).foregroundStyle(theme.secondaryText)
+          Button("See Premium") { paywallPresented = true }
+            .buttonStyle(ThemedSubmitStyle())
+            .accessibilityIdentifier("debt.seePremium")
+            .accessibilityHint("Opens Lakshly Premium")
         }
-        Text(
-          premium
-            ? "Preview: avalanche targets the highest rate; snowball targets the smallest balance. Your demo has one loan, so both start there."
-            : "Preview Premium in Settings to explore repayment strategies."
-        ).foregroundStyle(theme.secondaryText)
       }
+      .accessibilityIdentifier("debt.planner")
     }
+    .sheet(isPresented: $paywallPresented) { PaywallView(context: .feature(.debtPlanner)) }
   }
 }

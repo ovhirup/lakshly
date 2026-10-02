@@ -6,11 +6,12 @@ struct SettingsView: View {
   @Binding var themeSelection: String
   @Environment(\.theme) private var theme
   @Environment(\.dismiss) private var dismiss
-  @AppStorage("settings.premium") private var premium = false
+  @Environment(EntitlementStore.self) private var entitlements
   @AppStorage("settings.appearance") private var appearance = "system"
   @AppStorage("settings.appLock") private var appLock = true
   @State private var reset = false
-  @State private var lockedTheme: ThemeID?
+  @State private var paywall: PaywallContext?
+  private var premium: Bool { entitlements.isPremium }
   private var colorScheme: ColorScheme? {
     switch LaunchOptions.current.appearance ?? appearance { case "light": .light; case "dark": .dark; default: nil }
   }
@@ -21,12 +22,13 @@ struct SettingsView: View {
           LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
             ForEach(ThemeID.allCases) { id in
               Button {
-                if id.definition.premium && !premium { lockedTheme = id }
+                if id.definition.premium && !premium { paywall = .theme(id) }
                 else { withAnimation(.easeInOut(duration: 0.25)) { themeSelection = id.rawValue } }
               } label: {
                 ThemeCard(palette: ThemePalette(id), selected: ThemeID.resolve(themeSelection) == id,
                           locked: id.definition.premium && !premium)
               }.buttonStyle(.plain)
+                .accessibilityIdentifier("theme.\(id.rawValue)")
                 .accessibilityLabel(id.definition.name + (id.definition.premium && !premium ? ", Premium locked" : ""))
                 .accessibilityValue(ThemeID.resolve(themeSelection) == id ? "Selected" : "")
                 .accessibilityHint(id.definition.description)
@@ -40,9 +42,37 @@ struct SettingsView: View {
             Text("Dark").tag("dark")
           }.pickerStyle(.segmented)
         }.listRowBackground(theme.surface)
-        Section("Your experience") {
-          Toggle("Preview Premium (demo — no purchases)", isOn: $premium)
-          Text(premium ? "Premium preview · UI only" : "Free · Premium features display a lock")
+        Section("Lakshly Premium") {
+          if premium {
+            Text("Premium ✦")
+              .font(.headline)
+              .accessibilityIdentifier("settings.premiumStatus")
+            Text("Thank you for supporting Lakshly")
+            if !planLine.isEmpty {
+              Text(planLine).foregroundStyle(theme.secondaryText)
+                .accessibilityIdentifier("settings.plan")
+            }
+          } else {
+            Text("Free")
+              .font(.headline)
+              .accessibilityIdentifier("settings.premiumStatus")
+            Text("Lakshly Free · security and import are always free")
+              .foregroundStyle(theme.secondaryText)
+            Button("See Premium") { paywall = .general }
+              .accessibilityIdentifier("settings.seePremium")
+              .accessibilityHint("Opens Lakshly Premium")
+          }
+          Button("Restore Purchases") { Task { await entitlements.restore() } }
+            .accessibilityIdentifier("settings.restore")
+            .accessibilityHint("Checks this Apple ID for an existing Lakshly Premium subscription")
+          if !entitlements.purchaseState.isEmpty {
+            Text(entitlements.purchaseState).font(.caption).foregroundStyle(theme.secondaryText)
+          }
+          if let error = entitlements.lastError {
+            Text(error).font(.caption).foregroundStyle(theme.danger)
+          }
+        }.listRowBackground(theme.surface)
+        Section("App lock") {
           Toggle("App lock", isOn: Binding(
             get: { appLock },
             set: { enabled in
@@ -56,7 +86,7 @@ struct SettingsView: View {
         }.listRowBackground(theme.surface)
         Section("Private by design") {
           Text(store.encryptionStatus)
-          Text("No network requests, analytics, purchases or accounts. All data is synthetic. Device authentication includes passcode fallback.")
+          Text("No network requests except Apple's App Store for purchases. No analytics or accounts. All data is synthetic.")
           if let error = store.error { Text(error).foregroundStyle(theme.danger) }
         }.listRowBackground(theme.surface)
         Section { Button("Reset demo data", role: .destructive) { reset = true } }
@@ -67,18 +97,27 @@ struct SettingsView: View {
         .confirmationDialog("Reset data and local requests?", isPresented: $reset) {
           Button("Reset demo data", role: .destructive) { store.reset() }
         }
-        .sheet(item: $lockedTheme) { id in
-          PremiumThemePreview {
-            premium = true
-            withAnimation(.easeInOut(duration: 0.25)) { themeSelection = id.rawValue }
-            lockedTheme = nil
-          }
+        .sheet(item: $paywall) { context in
+          PaywallView(context: context)
+        }
+        .onChange(of: entitlements.isPremium) { _, isPremium in
+          guard isPremium, case .theme(let id) = paywall else { return }
+          withAnimation(.easeInOut(duration: 0.25)) { themeSelection = id.rawValue }
         }
     }.preferredColorScheme(colorScheme).frame(minWidth: 320, minHeight: 420)
   }
+  private var planLine: String {
+    var parts: [String] = []
+    if let name = entitlements.planName { parts.append(name) }
+    if let expiration = entitlements.expirationDate {
+      let date = expiration.formatted(date: .abbreviated, time: .omitted)
+      parts.append(entitlements.willRenew == false ? "Ends \(date)" : "Renews \(date)")
+    }
+    return parts.joined(separator: " · ")
+  }
 }
 
-private struct ThemeCard: View {
+struct ThemeCard: View {
   let palette: ThemePalette
   let selected: Bool
   let locked: Bool
@@ -116,21 +155,4 @@ private struct ThemeCard: View {
   }
 }
 
-private struct PremiumThemePreview: View {
-  let preview: () -> Void
-  @Environment(\.theme) private var theme
-  @Environment(\.dismiss) private var dismiss
-  var body: some View {
-    VStack(alignment: .leading, spacing: 24) {
-      Text("Lakshly Premium").font(.largeTitle.bold()).foregroundStyle(theme.gold)
-      Text("Themes, payoff planner, priority requests").font(.headline)
-      Label("Ocean, Forest and Rose Quartz themes", systemImage: "paintpalette")
-      Label("Payoff planner preview", systemImage: "chart.line.downtrend.xyaxis")
-      Label("Priority community requests", systemImage: "star")
-      Button("Preview Premium (demo)", action: preview).buttonStyle(ThemedSubmitStyle())
-      Button("Not now") { dismiss() }
-    }.padding(32).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-      .foregroundStyle(theme.text).background { ThemeBackground() }
-      .tint(theme.gold).frame(minWidth: 320, minHeight: 420)
-  }
-}
+

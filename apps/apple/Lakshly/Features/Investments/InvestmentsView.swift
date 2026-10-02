@@ -3,6 +3,7 @@ import SwiftUI
 
 struct InvestmentsView: View {
   @Environment(\.theme) private var theme
+  @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
   private var holdings: [Account] {
     (store.dataset?.accounts ?? []).filter {
@@ -24,7 +25,7 @@ struct InvestmentsView: View {
     return result
   }
   var body: some View {
-    Page(title: "Investments & SIPs", subtitle: "Small habits. A longer horizon.") {
+    Page(title: "Investments & SIPs", subtitle: "Small habits. A longer horizon.", showsPremiumLock: !entitlements.isPremium) {
       ForEach(holdings) { account in
         Card(title: account.name) {
           MetricRow(title: "Current value", value: Money.format(account.balance), semantic: .invest)
@@ -40,7 +41,11 @@ struct InvestmentsView: View {
           }
         }
       }
-      Card(title: "Your SIPs") {
+      PremiumGate(
+        feature: .investmentInsights,
+        title: "Your SIPs",
+        message: "Active SIP amounts, the next debit, and any annual step-up."
+      ) {
         ForEach(store.dataset?.sips ?? []) { sip in
           VStack(alignment: .leading, spacing: 8) {
             Text(sip.scheme).font(.headline)
@@ -58,7 +63,11 @@ struct InvestmentsView: View {
           }
         }
       }
-      Card(title: "A possible ten-year horizon") {
+      PremiumGate(
+        feature: .investmentInsights,
+        title: "A possible ten-year horizon",
+        message: "An illustrative ten-year horizon from today's holdings and active SIPs."
+      ) {
         Chart(projection) { point in
           LineMark(x: .value("Years", point.month), y: .value("Value", point.amount))
             .foregroundStyle(theme.invest).interpolationMethod(.monotone)

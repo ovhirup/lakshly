@@ -10,6 +10,8 @@ struct LaunchOptions {
   var showLock: Bool?
   var startTab: String?
   var openSettings: Bool?
+  /// Presents the general paywall at launch. Screenshot control only; it does not grant Premium.
+  var showPaywall: Bool?
   var importDemo: String?
   var importDemoFile: String?
 
@@ -28,6 +30,7 @@ struct LaunchOptions {
       case "showLock": options.showLock = parseBool(value)
       case "startTab": options.startTab = value
       case "openSettings": options.openSettings = parseBool(value)
+      case "showPaywall": options.showPaywall = parseBool(value)
       case "importDemo": options.importDemo = value
       case "importDemoFile": options.importDemoFile = value
       case "appearance": options.appearance = value

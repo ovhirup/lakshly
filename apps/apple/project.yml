@@ -85,8 +85,13 @@ targets:
         buildPhase: resources
       - path: ../../docs/themes.json
         buildPhase: resources
+      - path: StoreKit/Lakshly.storekit
+        buildPhase: resources
+      - path: StoreKit/Lakshly-US.storekit
+        buildPhase: resources
     dependencies:
       - target: Lakshly-iOS
+      - sdk: StoreKitTest.framework
     settings:
       base:
         PRODUCT_NAME: LakshlyTests
@@ -96,14 +101,48 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: app.lakshly.Lakshly.tests
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: ""
+  LakshlyUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: LakshlyUITests
+      - path: StoreKit/Lakshly.storekit
+        buildPhase: resources
+      - path: StoreKit/Lakshly-US.storekit
+        buildPhase: resources
+    dependencies:
+      - target: Lakshly-iOS
+      - sdk: StoreKitTest.framework
+    settings:
+      base:
+        PRODUCT_NAME: LakshlyUITests
+        PRODUCT_BUNDLE_IDENTIFIER: app.lakshly.Lakshly.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: ""
+        TEST_TARGET_NAME: Lakshly-iOS
 schemes:
   Lakshly-iOS:
     build:
       targets:
         Lakshly-iOS: all
+        LakshlyUITests: [test]
+    run:
+      config: Debug
+      storeKitConfiguration: StoreKit/Lakshly.storekit
     test:
-      targets: [LakshlyTests]
+      config: Debug
+      # Same local configuration as the Debug run action, so xcodebuild enables
+      # StoreKit testing. The file is not copied into the app bundle.
+      storeKitConfiguration: StoreKit/Lakshly.storekit
+      targets:
+        - name: LakshlyTests
+          parallelizable: false
+        - name: LakshlyUITests
+          parallelizable: false
   Lakshly-macOS:
     build:
       targets:
         Lakshly-macOS: all
+    run:
+      config: Debug
+      storeKitConfiguration: StoreKit/Lakshly.storekit

@@ -8,12 +8,13 @@ final class SecurityTests: XCTestCase {
   func testLaunchOptionsParsesScreenshotArguments() {
     let options = LaunchOptions.parse(arguments: ["Lakshly", "-demoUnlocked", "YES",
       "-startTab", "spend", "-theme", "ocean", "-appearance", "dark",
-      "-openSettings", "YES", "-showLock", "YES", "-importDemo", "preview",
+      "-openSettings", "YES", "-showPaywall", "YES", "-showLock", "YES", "-importDemo", "preview",
       "-importDemoFile", "cas"])
     XCTAssertEqual(options.demoUnlocked, true)
     XCTAssertEqual(options.showLock, true)
     XCTAssertEqual(options.startTab, "spend")
     XCTAssertEqual(options.openSettings, true)
+    XCTAssertEqual(options.showPaywall, true)
     XCTAssertEqual(options.appearance, "dark")
     XCTAssertEqual(options.theme, "ocean")
     XCTAssertEqual(options.importDemo, "preview")
@@ -26,6 +27,7 @@ final class SecurityTests: XCTestCase {
     XCTAssertNil(empty.showLock)
     XCTAssertNil(empty.startTab)
     XCTAssertNil(empty.openSettings)
+    XCTAssertNil(empty.showPaywall)
     XCTAssertNil(empty.appearance)
     XCTAssertNil(empty.theme)
     XCTAssertNil(empty.importDemo)
@@ -38,6 +40,7 @@ final class SecurityTests: XCTestCase {
     XCTAssertNil(options.demoUnlocked)
     XCTAssertEqual(options.showLock, false)
     XCTAssertEqual(options.openSettings, false)
+    XCTAssertNil(options.showPaywall)
     XCTAssertEqual(options.startTab, "budget")
     XCTAssertNil(options.theme)
     XCTAssertNil(options.appearance)
@@ -66,7 +69,7 @@ final class SecurityTests: XCTestCase {
     let defaults = try XCTUnwrap(UserDefaults(suiteName: domain))
     defer { defaults.removePersistentDomain(forName: domain) }
     defaults.setPersistentDomain(["appLock": true, "premium": false, "themeID": "forest",
-      "appearance": "light", "settings.themeID": "graphite"], forName: domain)
+      "appearance": "light", "settings.themeID": "graphite", "settings.premium": true], forName: domain)
     defaults.setVolatileDomain(["appLock": false, "premium": true,
       "settings.appLock": false, "settings.premium": true, "appearance": "dark"],
       forName: UserDefaults.argumentDomain)
@@ -74,6 +77,7 @@ final class SecurityTests: XCTestCase {
     SettingsPreferences.prepare(defaults: defaults, domainName: domain)
     XCTAssertTrue(defaults.volatileDomain(forName: UserDefaults.argumentDomain).isEmpty)
     XCTAssertTrue(defaults.bool(forKey: "settings.appLock"))
+    XCTAssertNil(defaults.object(forKey: "settings.premium"))
     XCTAssertFalse(defaults.bool(forKey: "settings.premium"))
     XCTAssertEqual(defaults.string(forKey: "settings.themeID"), "graphite")
     XCTAssertEqual(defaults.string(forKey: "settings.appearance"), "light")
