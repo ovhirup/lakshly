@@ -3,11 +3,12 @@ import { useState } from "react";
 import { AreaTrend, Donut } from "@/components/charts";
 import { MonthPicker } from "@/components/MonthPicker";
 import { Glass, PageHeader, Stat } from "@/components/ui";
-import { transactions } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatDate, formatINR, formatMonth, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, dailySpend, defaultMonth, months, spendByCategory, topMerchants } from "@/lib/selectors";
 
-export default function SpendPage() {
+function SpendView() {
+  const { transactions } = useData();
   const all = months(transactions).filter((m) => m <= defaultMonth(transactions));
   const [month, setMonth] = useState(all[all.length - 1]);
   const [q, setQ] = useState("");
@@ -91,4 +92,8 @@ export default function SpendPage() {
       </Glass>
     </>
   );
+}
+
+export default function SpendPage() {
+  return <DataGate title="Spend" need={["transactions"]}><SpendView /></DataGate>;
 }

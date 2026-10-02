@@ -3,11 +3,12 @@ import { useState } from "react";
 import { MultiLine } from "@/components/charts";
 import { Glass, PageHeader, PremiumBadge, Progress, Stat } from "@/components/ui";
 import { PremiumGate } from "@/components/ui";
-import { debts } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatPct, titleCase } from "@/lib/format";
 import { amortise } from "@/lib/selectors";
 
-export default function DebtPage() {
+function DebtView() {
+  const { debts } = useData();
   const [extra, setExtra] = useState(200000); // ₹2,000/month prepayment, in paise
   const d = debts[0];
   if (!d) return <PageHeader title="Debt" subtitle="No debts. Wonderful! 🎉" />;
@@ -49,4 +50,8 @@ export default function DebtPage() {
       </PremiumGate>
     </>
   );
+}
+
+export default function DebtPage() {
+  return <DataGate title="Debt" need={["debts"]}><DebtView /></DataGate>;
 }

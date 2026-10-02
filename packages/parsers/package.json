@@ -1,0 +1,27 @@
+{
+  "name": "@lakshly/parsers",
+  "version": "0.1.0",
+  "private": true,
+  "description": "On-device statement & CAS parsers for Lakshly. Pure TypeScript, no network. Tested only with SYNTHETIC fixtures.",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "fixtures": "node --experimental-strip-types tests/fixtures/write-fixtures.ts"
+  },
+  "devDependencies": {
+    "@cantoo/pdf-lib": "^2.11.1",
+    "@types/node": "^26.6.4",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "pdfjs-dist": "^6.3.289",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3"
+  }
+}

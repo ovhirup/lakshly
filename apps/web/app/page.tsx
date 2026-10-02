@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Icon } from "@/components/Icon";
 import { CashflowBars, Donut } from "@/components/charts";
 import { Glass, PageHeader, Progress, Stat } from "@/components/ui";
-import { accounts, transactions, dataset } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -11,7 +11,8 @@ const TYPE_COLOR: Record<string, string> = {
   savings: "var(--lk-income)", credit_card: "var(--lk-spend)", mutual_fund: "var(--lk-invest)", fixed_deposit: "var(--lk-gold-text)", loan: "var(--lk-danger)",
 };
 
-export default function OverviewPage() {
+function OverviewView() {
+  const { accounts, transactions, dataset, source } = useData();
   const nw = netWorth(accounts);
   const month = defaultMonth(transactions);
   const flow = monthlyCashflow(transactions).filter((m) => m.month <= month);
@@ -23,7 +24,7 @@ export default function OverviewPage() {
 
   return (
     <>
-      <PageHeader title="Overview" subtitle={`Synthetic demo data · as of ${formatDate(accounts[0].asOf)}`} />
+      <PageHeader title="Overview" subtitle={`${source === "mine" ? "Your data" : "Synthetic demo data"} · as of ${formatDate(accounts.reduce((m, a) => (a.asOf > m ? a.asOf : m), accounts[0].asOf))}`} />
 
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>
@@ -61,7 +62,7 @@ export default function OverviewPage() {
       </div>
 
       <Glass className="card">
-        <div className="card-head"><h2>Accounts</h2><span className="muted tiny">{dataset.notice}</span></div>
+        <div className="card-head"><h2>Accounts</h2><span className="muted tiny">{dataset.notice ?? "Your imported accounts. Encrypted on this device."}</span></div>
         <div className="list">
           {accounts.map((a) => (
             <div className="row" key={a.id}>
@@ -78,4 +79,8 @@ export default function OverviewPage() {
       </Glass>
     </>
   );
+}
+
+export default function OverviewPage() {
+  return <DataGate title="Overview" need={["accounts", "transactions"]}><OverviewView /></DataGate>;
 }

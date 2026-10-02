@@ -2,13 +2,14 @@
 import { AreaTrend } from "@/components/charts";
 import { useAppState } from "@/components/AppState";
 import { Glass, PageHeader, PremiumBadge, Stat } from "@/components/ui";
-import { accounts, transactions } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatDate, formatINR } from "@/lib/format";
 import { balanceHistory, monthlyCashflow } from "@/lib/selectors";
 
-export default function HistoryPage() {
+function HistoryView() {
+  const { accounts, transactions } = useData();
   const { plan } = useAppState();
-  const savings = accounts.find((a) => a.type === "savings")!;
+  const savings = accounts.find((a) => a.type === "savings") ?? accounts.find((a) => a.type === "current")!;
   const hist = balanceHistory(savings, transactions).map((p) => ({ ...p, label: formatDate(p.date).replace(/ \d{4}$/, "") }));
   const flow = monthlyCashflow(transactions);
   const cumSaved = flow.reduce((s, f) => s + f.saved, 0);
@@ -29,4 +30,8 @@ export default function HistoryPage() {
       </Glass>
     </>
   );
+}
+
+export default function HistoryPage() {
+  return <DataGate title="History" need={["savings", "transactions"]}><HistoryView /></DataGate>;
 }

@@ -1,0 +1,6 @@
+/* Data-source UI shared across pages (empty states, data pill). Uses --lk-* tokens only. */
+.empty-state { display: grid; justify-items: start; gap: 10px; }
+.empty-state h2 { margin: 0; }
+.empty-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--lk-ambient-gold); color: var(--lk-gold-text); border: 1px solid var(--lk-border); }
+.demo-pill.mine { background: var(--lk-ambient-gold); color: var(--lk-gold-text); }
+.row-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }

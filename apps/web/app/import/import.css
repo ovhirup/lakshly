@@ -1,0 +1,55 @@
+/* Import flow. Uses the shared --lk-* tokens only (no token changes). */
+.device-banner { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+.device-banner h2 { margin: 0 0 4px; font-size: 1rem; }
+.device-banner p { margin: 0; line-height: 1.55; }
+.device-icon, .drop-icon { display: inline-grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 14px; background: var(--lk-ambient-gold); color: var(--lk-gold-text); border: 1px solid var(--lk-border); }
+.import-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; }
+.import-grid.reviewing { grid-template-columns: minmax(0, 1fr); }
+.import-grid.reviewing .import-side { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: start; }
+.import-main, .import-side { display: grid; gap: 20px; min-width: 0; }
+.dropzone { padding: 0; }
+.drop-target { display: grid; justify-items: center; gap: 8px; text-align: center; padding: 48px 24px; border: 2px dashed var(--lk-border); border-radius: var(--lk-radius); cursor: pointer; transition: background var(--lk-motion) ease, border-color var(--lk-motion) ease, transform var(--lk-motion) var(--lk-spring); }
+.drop-target:hover, .dropzone.drag .drop-target { background: var(--lk-ambient-gold); border-color: var(--lk-gold); }
+.dropzone.drag .drop-target { transform: scale(1.01); }
+.drop-target:focus-visible { outline: 3px solid var(--lk-focus); outline-offset: 2px; }
+.drop-icon { width: 56px; height: 56px; border-radius: 18px; }
+.spinner { width: 22px; height: 22px; border-radius: 50%; border: 3px solid var(--lk-grid); border-top-color: var(--lk-gold); animation: lk-spin .8s linear infinite; }
+@keyframes lk-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
+.password-card form { display: grid; gap: 14px; }
+.password-card h2 { display: inline-flex; gap: 8px; align-items: center; font-size: 1rem; }
+.password-card input[type="password"] { width: 100%; padding: 11px 14px; min-height: 48px; border-radius: 14px; border: 1px solid var(--lk-border); background: var(--lk-surface); color: var(--lk-text); font: inherit; font-size: 1rem; }
+.review { display: grid; gap: 18px; }
+.review h2 { margin: 0; font-size: 1.05rem; overflow-wrap: anywhere; }
+.badge.on-device { background: var(--lk-ambient-indigo); }
+.review-stats { gap: 12px; }
+.warnings { margin: 0; padding: 12px 16px 12px 32px; border-radius: 14px; background: var(--lk-ambient-gold); font-size: .85rem; }
+.table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--lk-border); }
+.review-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.review-table th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--lk-text-muted); padding: 10px 12px; background: var(--lk-glass); position: sticky; top: 0; }
+.review-table td { padding: 8px 12px; border-top: 1px solid var(--lk-grid); vertical-align: middle; }
+.review-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+.review-table .nowrap { white-space: nowrap; }
+.review-table .desc { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.review-table select { min-height: 36px; padding: 6px 10px; font-size: .85rem; min-width: 130px; }
+.review-table input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--lk-gold-text); }
+.review-table tr.skipped td { opacity: .45; }
+.review-table .m-date { display: none; }
+.review-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+.supported { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; font-size: .88rem; }
+.supported li { display: flex; gap: 8px; align-items: center; }
+.side-note { margin: 12px 0; }
+.btn.danger { background: var(--lk-danger); color: #fff; }
+.btn.danger-text { color: var(--lk-danger); }
+.danger-zone { display: grid; gap: 8px; padding: 12px; border-radius: 14px; border: 1px solid var(--lk-danger); }
+@media (max-width: 860px) {
+  .import-grid { grid-template-columns: minmax(0, 1fr); }
+  .review-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .review-table { font-size: .8rem; }
+  .review-table .desc { max-width: 92px; }
+  .review-table .col-date, .review-table .raw { display: none; }
+  .review-table .m-date { display: block; }
+  .review-table td, .review-table th { padding: 8px 6px; }
+  .review-table select { min-width: 0; width: 92px; padding: 4px; font-size: .78rem; }
+  .review-table input[type="checkbox"] { width: 16px; height: 16px; }
+}

@@ -14,7 +14,8 @@
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./*"] }
+    "allowImportingTsExtensions": true,
+    "paths": { "@/*": ["./*"], "@lakshly/parsers": ["../../packages/parsers/src/index.ts"] }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
   "exclude": ["node_modules", "out"]

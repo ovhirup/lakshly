@@ -3,11 +3,12 @@ import { useState } from "react";
 import { MonthPicker } from "@/components/MonthPicker";
 import { useAppState } from "@/components/AppState";
 import { Glass, PageHeader, PremiumBadge, Progress, Stat } from "@/components/ui";
-import { budgets, transactions } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { budgetProgress, CATEGORY_COLORS, defaultMonth, months } from "@/lib/selectors";
 
-export default function BudgetPage() {
+function BudgetView() {
+  const { budgets, transactions } = useData();
   const { plan, setPlan } = useAppState();
   const all = months(transactions).filter((m) => m <= defaultMonth(transactions));
   const [month, setMonth] = useState(all[all.length - 1]);
@@ -64,4 +65,8 @@ export default function BudgetPage() {
       </div>
     </>
   );
+}
+
+export default function BudgetPage() {
+  return <DataGate title="Budget" need={["transactions"]}><BudgetView /></DataGate>;
 }

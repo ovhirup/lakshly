@@ -2,11 +2,12 @@
 import { useState } from "react";
 import { MultiLine } from "@/components/charts";
 import { Glass, PageHeader, PremiumBadge, PremiumGate, Stat } from "@/components/ui";
-import { accounts, sips } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatPct, titleCase } from "@/lib/format";
 import { sipProjection } from "@/lib/selectors";
 
-export default function InvestmentsPage() {
+function InvestmentsView() {
+  const { accounts, sips } = useData();
   const [ret, setRet] = useState(11);
   const holdings = accounts.filter((a) => ["mutual_fund", "fixed_deposit", "stocks", "epf", "ppf", "nps"].includes(a.type));
   const value = holdings.reduce((s, a) => s + a.balance, 0);
@@ -71,4 +72,8 @@ export default function InvestmentsPage() {
       </PremiumGate>
     </>
   );
+}
+
+export default function InvestmentsPage() {
+  return <DataGate title="Investments & SIPs" need={["sips"]}><InvestmentsView /></DataGate>;
 }
