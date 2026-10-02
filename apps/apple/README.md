@@ -33,7 +33,7 @@ XCODEBUILD_EXTRA="OTHER_SWIFT_FLAGS='\$(inherited) -disable-sandbox'" scripts/ch
 
 Choose Feedback, Request or Bug, optionally add a title, and write your message. **Exactly what GitHub will show** previews the title, labels and full decoded body live. **Open GitHub issue** opens the matching issue form in your browser, then records a local copy and clears the fields. Nothing is sent until you review and press Submit on GitHub. Premium adds the `priority` label through `can(.priorityFeedback)`; Free keeps only the kind label. The environment contains exactly app version/build, iOS/iPadOS/macOS version, current theme display name with Light/Dark appearance, and Free/Premium tier. No device model, name, locale or identifiers are included.
 
-`AGENT_CONTRACT.md` defines query order, clipping, fallbacks and strict UTF-8 percent encoding. `GitHubIssueLinkTests` checks the literal golden URL in `AGENT_GOLDEN_apple.txt`, decoded form fields, privacy boundaries, template mappings and entitlement labels.
+[`docs/feedback-issue-link.md`](../../docs/feedback-issue-link.md) defines query order, clipping, fallbacks and strict UTF-8 percent encoding, shared with the web app. `GitHubIssueLinkTests` checks the literal golden URL (identical to the web test), decoded form fields, privacy boundaries, template mappings and entitlement labels.
 
 ## Import
 

@@ -59,7 +59,7 @@ struct IssueEnvironment {
   let appearance: String
   let tier: Tier
 
-  /// Collect only the four public environment values in AGENT_CONTRACT.md.
+  /// Collect only the four public environment values in docs/feedback-issue-link.md.
   @MainActor
   static func current(themeName: String, isDark: Bool, tier: Tier) -> IssueEnvironment {
     let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0"

@@ -124,9 +124,9 @@ final class GitHubIssueLinkTests: XCTestCase {
   func testAllCasesMatchContract() throws {
     XCTAssertEqual(FeedbackKind.allCases.map(\.template), ["feedback.yml", "feature_request.yml", "bug_report.yml"])
     XCTAssertEqual(FeedbackKind.allCases.map(\.displayName), ["Feedback", "Request", "Bug"])
-    let contractURL = repositoryRoot.appendingPathComponent("AGENT_CONTRACT.md")
+    let contractURL = repositoryRoot.appendingPathComponent("docs/feedback-issue-link.md")
     guard FileManager.default.fileExists(atPath: contractURL.path) else {
-      throw XCTSkip("AGENT_CONTRACT.md is not readable from this test process.")
+      throw XCTSkip("docs/feedback-issue-link.md is not readable from this test process.")
     }
     let contract = try String(contentsOf: contractURL, encoding: .utf8)
     let lines = contract.components(separatedBy: "\n").filter { $0.hasPrefix("- ") && $0.contains(".yml") }
