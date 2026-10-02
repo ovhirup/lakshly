@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CreditView: View {
+  @Environment(\.theme) private var theme
   let store: DataStore
   var body: some View {
     Page(title: "Credit", subtitle: "Keep your headroom healthy.") {
@@ -11,7 +12,7 @@ struct CreditView: View {
             Text("Utilisation")
           } currentValueLabel: {
             Text("\(Int(utilisation * 100))%")
-          }.gaugeStyle(.accessoryCircular).tint(utilisation > 0.3 ? Theme.danger : Theme.invest).scaleEffect(
+          }.gaugeStyle(.accessoryCircular).tint(utilisation > 0.3 ? theme.danger : theme.invest).scaleEffect(
             1.3
           ).padding(12)
           MetricRow(title: "Balance", value: Money.format(abs(account.balance)))
@@ -20,7 +21,7 @@ struct CreditView: View {
           MetricRow(title: "Next due", value: nextMonthlyDate(day: account.dueDay ?? 1))
           Text(
             "Aim to keep utilisation below 30% and pay the statement balance in full. This demo is a snapshot, not a credit score."
-          ).font(.subheadline).foregroundStyle(Theme.secondaryText)
+          ).font(.subheadline).foregroundStyle(theme.secondaryText)
         }
       }
     }

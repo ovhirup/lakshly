@@ -2,6 +2,7 @@ import Charts
 import SwiftUI
 
 struct OverviewView: View {
+  @Environment(\.theme) private var theme
   let store: DataStore
   let showFeedback: () -> Void
   private var accounts: [Account] { store.dataset?.accounts ?? [] }
@@ -20,12 +21,14 @@ struct OverviewView: View {
       Card(title: "Net worth") {
         Text(Money.format(assets - liabilities)).font(
           .system(size: 38, weight: .bold, design: .rounded)
-        ).foregroundStyle(Theme.gold).minimumScaleFactor(0.5)
+        ).foregroundStyle(theme.gold).minimumScaleFactor(0.5)
         Pill(text: "Demo data")
         MetricRow(title: "Assets", value: Money.format(assets))
         MetricRow(title: "Liabilities", value: Money.format(liabilities))
       }
       Card(title: "Cash flow") {
+        MetricRow(title: "Income", value: Money.format(store.transactions.filter { $0.amount > 0 }.reduce(0) { $0 + $1.amount }), semantic: .income)
+        MetricRow(title: "Spend", value: Money.format(-store.transactions.filter { $0.amount < 0 }.reduce(0) { $0 + $1.amount }), semantic: .spend)
         Chart {
           ForEach(store.months, id: \.self) { month in
             let rows = (store.dataset?.transactions ?? []).filter { $0.date.hasPrefix(month) }
@@ -38,16 +41,16 @@ struct OverviewView: View {
               by: .value("Flow", "Spend")
             ).position(by: .value("Flow", "Spend"))
           }
-        }.chartForegroundStyleScale(["Income": Theme.income, "Spend": Theme.spend]).modifier(
+        }.chartForegroundStyleScale(["Income": theme.income, "Spend": theme.spend]).modifier(
           MoneyChartAxis()
         ).frame(height: 220)
         Text("All inflows and outflows, including investments and EMI.").font(.caption)
-          .foregroundStyle(Theme.secondaryText)
+          .foregroundStyle(theme.secondaryText)
       }
       Card(title: "Top categories · \(store.selectedMonth)") {
         MonthPicker(store: store)
         ForEach(Array(store.categoryTotals.prefix(5))) { group in
-          MetricRow(title: group.name.capitalized, value: Money.format(group.amount))
+          MetricRow(title: group.name.capitalized, value: Money.format(group.amount), semantic: group.name == "investments" ? .invest : .spend)
         }
       }
       Card(title: "Upcoming dues") {
@@ -59,11 +62,11 @@ struct OverviewView: View {
         ForEach(store.dataset?.debts ?? []) { debt in
           MetricRow(
             title: "\(debt.name) EMI · \(nextMonthlyDate(day: Int(debt.startDate.suffix(2)) ?? 1))",
-            value: Money.format(debt.emi))
+            value: Money.format(debt.emi), semantic: .spend)
         }
         ForEach((store.dataset?.sips ?? []).filter { $0.status == "active" }) { sip in
           MetricRow(
-            title: "SIP · \(nextMonthlyDate(day: sip.dayOfMonth))", value: Money.format(sip.amount))
+            title: "SIP · \(nextMonthlyDate(day: sip.dayOfMonth))", value: Money.format(sip.amount), semantic: .invest)
         }
       }
     }

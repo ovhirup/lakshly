@@ -2,6 +2,7 @@ import Charts
 import SwiftUI
 
 struct DebtView: View {
+  @Environment(\.theme) private var theme
   let store: DataStore
   @AppStorage("settings.premium") private var premium = false
   private func projection(_ debt: Debt) -> [ProjectionPoint] {
@@ -22,27 +23,27 @@ struct DebtView: View {
       ForEach(store.dataset?.debts ?? []) { debt in
         Card(title: debt.name) {
           Text(Money.format(debt.outstanding)).font(.largeTitle.bold())
-          MetricRow(title: "Monthly EMI", value: Money.format(debt.emi))
+          MetricRow(title: "Monthly EMI", value: Money.format(debt.emi), semantic: .spend)
           MetricRow(title: "Annual interest", value: String(format: "%.2f%%", debt.annualRatePct))
           ProgressView(
             value: max(0, min(1, 1 - Double(debt.outstanding) / Double(max(1, debt.principal))))
-          ).tint(Theme.spend)
+          ).tint(theme.spend)
           Text(
             "Repaid \(Money.format(max(0, debt.principal - debt.outstanding))) of \(Money.format(debt.principal))"
-          ).font(.caption).foregroundStyle(Theme.secondaryText)
+          ).font(.caption).foregroundStyle(theme.secondaryText)
           Chart(projection(debt)) { point in
             AreaMark(
               x: .value("Months from now", point.month), y: .value("Outstanding", point.amount)
-            ).foregroundStyle(Theme.spend.opacity(0.16))
+            ).foregroundStyle(theme.spend.opacity(0.16))
             LineMark(
               x: .value("Months from now", point.month), y: .value("Outstanding", point.amount)
-            ).foregroundStyle(Theme.spend)
+            ).foregroundStyle(theme.spend)
           }.modifier(MoneyChartAxis()).frame(height: 190)
           Text(
             "Illustrative reducing-balance amortisation at the current rate and EMI; excludes fees and rate changes. Horizontal axis: months from now."
-          ).font(.caption).foregroundStyle(Theme.secondaryText)
+          ).font(.caption).foregroundStyle(theme.secondaryText)
           if projection(debt).count == 1 {
-            Text("The EMI does not cover monthly interest.").foregroundStyle(Theme.danger)
+            Text("The EMI does not cover monthly interest.").foregroundStyle(theme.danger)
           }
         }
       }
@@ -51,13 +52,13 @@ struct DebtView: View {
           Image(systemName: premium ? "sparkles" : "lock.fill")
           Text("Avalanche / snowball")
           Spacer()
-          Pill(text: "Premium", color: Theme.gold)
+          Pill(text: "Premium", color: theme.gold)
         }
         Text(
           premium
             ? "Preview: avalanche targets the highest rate; snowball targets the smallest balance. Your demo has one loan, so both start there."
             : "Preview Premium in Settings to explore repayment strategies."
-        ).foregroundStyle(Theme.secondaryText)
+        ).foregroundStyle(theme.secondaryText)
       }
     }
   }

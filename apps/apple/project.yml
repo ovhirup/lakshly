@@ -40,7 +40,10 @@ targets:
   LakshlyTests:
     type: bundle.unit-test
     platform: iOS
-    sources: [LakshlyTests]
+    sources:
+      - path: LakshlyTests
+      - path: ../../docs/themes.json
+        buildPhase: resources
     dependencies:
       - target: Lakshly-iOS
     settings:
