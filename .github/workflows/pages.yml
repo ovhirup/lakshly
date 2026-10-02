@@ -1,0 +1,36 @@
+# Deploys the static landing page in site/ to GitHub Pages.
+# MANUAL ONLY: runs solely via "Run workflow" (workflow_dispatch). Nothing deploys on push.
+# Before the first run, a maintainer must enable Pages (Settings → Pages → Source: GitHub Actions).
+name: Deploy landing page (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check site has no third-party resources
+        run: |
+          if grep -RInE '(src|href)="(https?:)?//' site --include='*.html' | grep -vE 'href="https://github.com/'; then
+            echo "Third-party resource found in site/"; exit 1
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

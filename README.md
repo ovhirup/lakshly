@@ -71,6 +71,7 @@ apps/apple/          SwiftUI multiplatform app (iOS + macOS), placeholder
 apps/web/            Next.js PWA, placeholder
 packages/schema/     JSON Schema for accounts, transactions, budgets, debts, SIPs, rewards
 packages/parsers/    On-device statement & CAS parsers (pdf.js in a Web Worker, synthetic fixtures only)
+site/                Static landing page + waitlist (no tracking; manual Pages deploy)
 demo-data/           Synthetic INR data generator + committed synthetic sample
 services/            (future) optional stateless relay; no user data stored
 docs/PLAN.md         Product & launch plan (pricing benchmarks, connectors, LLM costs, roadmap)
