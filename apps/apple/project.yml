@@ -1,0 +1,65 @@
+name: Lakshly
+options:
+  deploymentTarget:
+    iOS: "26.0"
+    macOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    PRODUCT_BUNDLE_IDENTIFIER: app.lakshly.Lakshly
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    INFOPLIST_FILE: Lakshly/Resources/Info.plist
+    PRODUCT_NAME: Lakshly
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+targets:
+  Lakshly-iOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: Lakshly
+        excludes: [Resources/Info.plist, Resources/Lakshly.entitlements]
+      - path: ../../demo-data/sample.synthetic.json
+        buildPhase: resources
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1,2"
+  Lakshly-macOS:
+    type: application
+    platform: macOS
+    sources:
+      - path: Lakshly
+        excludes: [Resources/Info.plist, Resources/Lakshly.entitlements]
+      - path: ../../demo-data/sample.synthetic.json
+        buildPhase: resources
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: Lakshly/Resources/Lakshly.entitlements
+        ENABLE_APP_SANDBOX: YES
+  LakshlyTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [LakshlyTests]
+    dependencies:
+      - target: Lakshly-iOS
+    settings:
+      base:
+        PRODUCT_NAME: LakshlyTests
+        PRODUCT_MODULE_NAME: LakshlyTests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Lakshly.app/Lakshly"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        PRODUCT_BUNDLE_IDENTIFIER: app.lakshly.Lakshly.tests
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: ""
+schemes:
+  Lakshly-iOS:
+    build:
+      targets:
+        Lakshly-iOS: all
+    test:
+      targets: [LakshlyTests]
+  Lakshly-macOS:
+    build:
+      targets:
+        Lakshly-macOS: all
