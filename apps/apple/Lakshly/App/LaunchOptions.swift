@@ -10,6 +10,8 @@ struct LaunchOptions {
   var showLock: Bool?
   var startTab: String?
   var openSettings: Bool?
+  var importDemo: String?
+  var importDemoFile: String?
 
   static func parse(arguments: [String]) -> LaunchOptions {
     var options = LaunchOptions()
@@ -26,6 +28,8 @@ struct LaunchOptions {
       case "showLock": options.showLock = parseBool(value)
       case "startTab": options.startTab = value
       case "openSettings": options.openSettings = parseBool(value)
+      case "importDemo": options.importDemo = value
+      case "importDemoFile": options.importDemoFile = value
       case "appearance": options.appearance = value
       case "theme": options.theme = value
       default: break

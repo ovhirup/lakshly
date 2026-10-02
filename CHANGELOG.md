@@ -6,6 +6,7 @@
 _No releases yet. Your idea could be the first one listed here._
 
 ## [Unreleased]
+- Apple: on-device statement and CAS import with PDFKit. The Import tab parses bank, credit-card, and CAMS/KFintech PDFs plus generic CSV on the device, asks for a password only in memory, and merges transactions into the encrypted local store.
 - `packages/parsers`: on-device statement and CAS parsers. Adapters for CAMS/KFintech CAS, HDFC/SBI/ICICI bank statements and HDFC/SBI credit-card statements, plus generic bank and card fallbacks and CSV import. Supports password-protected PDFs, masks numbers to the last 4 digits, and dedupes on re-import.
 - Web: Import flow (drag-drop, password prompt, review and edit categories, confirm), AES-GCM-encrypted IndexedDB vault, toggle between demo data and my data, and "delete all my data".
 - `site/`: static landing page with waitlist (no tracking, no third-party resources, strict CSP, DPDP consent; endpoint not wired yet). There is also a manual-only GitHub Pages workflow.

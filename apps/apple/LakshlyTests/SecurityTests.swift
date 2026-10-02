@@ -8,13 +8,16 @@ final class SecurityTests: XCTestCase {
   func testLaunchOptionsParsesScreenshotArguments() {
     let options = LaunchOptions.parse(arguments: ["Lakshly", "-demoUnlocked", "YES",
       "-startTab", "spend", "-theme", "ocean", "-appearance", "dark",
-      "-openSettings", "YES", "-showLock", "YES"])
+      "-openSettings", "YES", "-showLock", "YES", "-importDemo", "preview",
+      "-importDemoFile", "cas"])
     XCTAssertEqual(options.demoUnlocked, true)
     XCTAssertEqual(options.showLock, true)
     XCTAssertEqual(options.startTab, "spend")
     XCTAssertEqual(options.openSettings, true)
     XCTAssertEqual(options.appearance, "dark")
     XCTAssertEqual(options.theme, "ocean")
+    XCTAssertEqual(options.importDemo, "preview")
+    XCTAssertEqual(options.importDemoFile, "cas")
   }
 
   func testLaunchOptionsRejectsMalformedAndPersistedKeys() {
@@ -25,6 +28,8 @@ final class SecurityTests: XCTestCase {
     XCTAssertNil(empty.openSettings)
     XCTAssertNil(empty.appearance)
     XCTAssertNil(empty.theme)
+    XCTAssertNil(empty.importDemo)
+    XCTAssertNil(empty.importDemoFile)
 
     let options = LaunchOptions.parse(arguments: ["Lakshly", "-appLock", "NO",
       "-premium", "YES", "-settings.appLock", "NO", "-demoUnlocked", "invalid",
@@ -36,6 +41,8 @@ final class SecurityTests: XCTestCase {
     XCTAssertEqual(options.startTab, "budget")
     XCTAssertNil(options.theme)
     XCTAssertNil(options.appearance)
+    XCTAssertNil(options.importDemo)
+    XCTAssertNil(options.importDemoFile)
     XCTAssertEqual(LaunchOptions.parse(arguments: ["Lakshly", "-demoUnlocked", "YES",
       "-demoUnlocked", "NO"]).demoUnlocked, false)
   }
