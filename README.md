@@ -7,7 +7,7 @@
 **Private-by-design personal finance for iOS, macOS and web.**
 Net worth, spending, budgets, debt, credit cards, SIPs, rewards and payouts in one calm, fluid view, without handing your financial life to anyone.
 
-`Status: early development (Phase 0)` · `Demo data only` · `Not yet on the App Store`
+`Status: early development (Phase 1: web MVP)` · `Demo data only` · `Not yet on the App Store`
 
 </div>
 
@@ -81,8 +81,8 @@ AI: OpenAI **GPT-6 Luna** for bulk on-device-redacted extraction and categorisat
 
 | Phase | Duration | Highlights |
 |---|---|---|
-| **0: Foundations** | ~2 weeks | Repo, schema, synthetic demo data, security & privacy docs ← *we are here* |
-| **1: MVP (local-only)** | 6–8 weeks | Liquid Glass app, core tabs, encrypted store, biometric lock, statement/CAS import, in-app Feedback & Feature Requests |
+| **0: Foundations** | ~2 weeks | Repo, schema, synthetic demo data, security & privacy docs ✅ |
+| **1: MVP (local-only)** | 6–8 weeks | Liquid Glass app, core tabs, encrypted store, biometric lock, statement/CAS import, in-app Feedback & Feature Requests ← *we are here* (local-first web MVP in `apps/web`) |
 | **2: Private beta** | ~6 weeks | Gmail/Outlook on-device import, AI categorisation & insights, Premium, TestFlight |
 | **3: Public launch** | ~4 weeks | App Store, Mac App Store, web; E2EE sync; remaining tabs |
 | **Later (demand-gated)** | — | India Account Aggregator live sync, only if Premium users ask for it in numbers |
