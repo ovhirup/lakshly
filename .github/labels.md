@@ -7,5 +7,6 @@
 | `status: in progress` | Being built |
 | `status: shipped` | Released; credited in CHANGELOG "Built with you" |
 | `status: not now` | Not planned for now (with a reason) |
-| `premium-priority` | ⭐ From a Premium member; triage first |
+| `priority` | ⭐ From a Premium member; triage first |
+| `feedback` | General feedback from the app or community |
 | `feature-request`, `bug`, `parser`, `design`, `privacy` | Type and area |

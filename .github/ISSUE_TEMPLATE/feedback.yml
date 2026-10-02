@@ -1,0 +1,26 @@
+name: 💬 Feedback
+description: Share feedback about Lakshly
+labels: ["feedback", "status: received"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping make Lakshly better! 💛
+        **Please never include real account numbers, statements, amounts or personal data.** Use demo data or redact screenshots.
+  - type: textarea
+    id: details
+    attributes:
+      label: Your feedback
+    validations: { required: true }
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (filled in by the app)
+      description: App version, platform, theme and tier only. No personal data.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I confirm this feedback contains no real financial or personal data.
+          required: true
