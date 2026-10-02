@@ -1,0 +1,42 @@
+name: ✨ Feature request
+description: Suggest an idea. Shipped ideas are credited in "Built with you"
+labels: ["feature-request", "status: received"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you! Every request is read by a human and gets a visible status: **Received → Planned → In progress → Shipped**.
+        ⭐ Premium members' requests get the `premium-priority` label and are triaged first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to do, and why?
+      description: Describe the problem or goal. "I want to see… so that…"
+    validations: { required: true }
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea (optional)
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [Overview, Spend, Budget, Debt, Credit, Platforms, SIPs, Rewards, Payouts, History, Import / connectors, AI insights, Sync, Design, Other]
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Are you a Premium member?
+      description: Premium requests get priority triage (we may verify in-app).
+      options: ["No / not yet", "Yes, Premium"]
+  - type: input
+    id: credit
+    attributes:
+      label: Credit me in "Built with you" as (optional)
+      placeholder: "First name or @handle; leave blank to stay anonymous"
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I confirm this request contains no real financial or personal data.
+          required: true

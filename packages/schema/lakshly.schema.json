@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ovhirup/lakshly/packages/schema/lakshly.schema.json",
+  "title": "Lakshly dataset",
+  "description": "Portable, versioned data model shared by the Apple and web apps. Amounts are integers in minor units (paise for INR) to avoid floating-point errors.",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "currency", "accounts", "transactions"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": "0.1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "synthetic": { "type": "boolean", "description": "true when the dataset is generated demo data" },
+    "notice": { "type": "string" },
+    "currency": { "$ref": "#/$defs/currency" },
+    "accounts": { "type": "array", "items": { "$ref": "#/$defs/account" } },
+    "transactions": { "type": "array", "items": { "$ref": "#/$defs/transaction" } },
+    "budgets": { "type": "array", "items": { "$ref": "#/$defs/budget" } },
+    "debts": { "type": "array", "items": { "$ref": "#/$defs/debt" } },
+    "sips": { "type": "array", "items": { "$ref": "#/$defs/sip" } },
+    "rewards": { "type": "array", "items": { "$ref": "#/$defs/reward" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z]+_[A-Za-z0-9]{6,}$" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$", "default": "INR" },
+    "money": { "type": "integer", "description": "Minor units (e.g. paise). Negative = outflow." },
+    "date": { "type": "string", "format": "date" },
+    "category": {
+      "type": "string",
+      "enum": ["income", "groceries", "dining", "transport", "fuel", "shopping", "utilities", "rent", "health", "education", "entertainment", "travel", "subscriptions", "insurance", "investments", "emi", "fees", "transfers", "cash", "gifts", "other"]
+    },
+    "account": {
+      "type": "object",
+      "required": ["id", "name", "type", "institution", "currency", "balance", "asOf"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "maxLength": 80 },
+        "type": { "enum": ["savings", "current", "credit_card", "fixed_deposit", "mutual_fund", "stocks", "epf", "ppf", "nps", "wallet", "loan", "cash", "other"] },
+        "institution": { "type": "string", "maxLength": 80 },
+        "mask": { "type": "string", "pattern": "^[0-9X]{4}$", "description": "Last 4 only; never store full numbers" },
+        "currency": { "$ref": "#/$defs/currency" },
+        "balance": { "$ref": "#/$defs/money" },
+        "invested": { "$ref": "#/$defs/money" },
+        "creditLimit": { "$ref": "#/$defs/money" },
+        "statementDay": { "type": "integer", "minimum": 1, "maximum": 31 },
+        "dueDay": { "type": "integer", "minimum": 1, "maximum": 31 },
+        "asOf": { "$ref": "#/$defs/date" },
+        "source": { "enum": ["manual", "statement", "cas", "email", "aggregator"] }
+      }
+    },
+    "transaction": {
+      "type": "object",
+      "required": ["id", "accountId", "date", "amount", "description", "category"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "accountId": { "$ref": "#/$defs/id" },
+        "date": { "$ref": "#/$defs/date" },
+        "amount": { "$ref": "#/$defs/money" },
+        "description": { "type": "string", "maxLength": 140 },
+        "merchant": { "type": "string", "maxLength": 80 },
+        "category": { "$ref": "#/$defs/category" },
+        "method": { "enum": ["upi", "card", "netbanking", "neft", "imps", "cash", "autodebit", "other"] },
+        "recurring": { "type": "boolean" },
+        "tags": { "type": "array", "items": { "type": "string", "maxLength": 32 }, "uniqueItems": true },
+        "categorisedBy": { "enum": ["rule", "on_device_model", "llm", "user"] }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "required": ["id", "month", "category", "limit"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "month": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])$" },
+        "category": { "$ref": "#/$defs/category" },
+        "limit": { "type": "integer", "minimum": 0 },
+        "rollover": { "type": "boolean", "default": false }
+      }
+    },
+    "debt": {
+      "type": "object",
+      "required": ["id", "name", "kind", "principal", "outstanding", "annualRatePct", "emi", "startDate", "tenureMonths"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "maxLength": 80 },
+        "kind": { "enum": ["home_loan", "car_loan", "personal_loan", "education_loan", "credit_card_emi", "bnpl", "gold_loan", "family", "other"] },
+        "lender": { "type": "string", "maxLength": 80 },
+        "principal": { "type": "integer", "minimum": 0 },
+        "outstanding": { "type": "integer", "minimum": 0 },
+        "annualRatePct": { "type": "number", "minimum": 0, "maximum": 60 },
+        "emi": { "type": "integer", "minimum": 0 },
+        "startDate": { "$ref": "#/$defs/date" },
+        "tenureMonths": { "type": "integer", "minimum": 1 },
+        "accountId": { "$ref": "#/$defs/id" }
+      }
+    },
+    "sip": {
+      "type": "object",
+      "required": ["id", "scheme", "amount", "dayOfMonth", "startDate", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "scheme": { "type": "string", "maxLength": 120 },
+        "platform": { "type": "string", "maxLength": 60 },
+        "amount": { "type": "integer", "minimum": 0 },
+        "dayOfMonth": { "type": "integer", "minimum": 1, "maximum": 28 },
+        "startDate": { "$ref": "#/$defs/date" },
+        "stepUpPctYearly": { "type": "number", "minimum": 0, "maximum": 100 },
+        "status": { "enum": ["active", "paused", "stopped"] },
+        "accountId": { "$ref": "#/$defs/id" }
+      }
+    },
+    "reward": {
+      "type": "object",
+      "required": ["id", "program", "kind", "balance", "asOf"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "program": { "type": "string", "maxLength": 80 },
+        "kind": { "enum": ["points", "cashback", "miles", "voucher"] },
+        "balance": { "type": "integer", "minimum": 0 },
+        "valuePerUnitPaise": { "type": "integer", "minimum": 0 },
+        "expiresOn": { "$ref": "#/$defs/date" },
+        "accountId": { "$ref": "#/$defs/id" },
+        "asOf": { "$ref": "#/$defs/date" }
+      }
+    }
+  }
+}
