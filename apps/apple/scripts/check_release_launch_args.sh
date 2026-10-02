@@ -54,7 +54,7 @@ for binary in \
   while IFS= read -r -d '' dylib; do binaries+=("$dylib"); done < <(find "$app_path" -type f -name '*.debug.dylib' -print0)
   for executable in "${binaries[@]}"; do
     /usr/bin/strings -a "$executable" > "$strings_file"
-    if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile|showPaywall' "$strings_file"; then
+    if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile|showPaywall|feedbackDemo' "$strings_file"; then
       echo "FAIL: DEBUG launch controls found in $executable" >&2
       exit 1
     fi
