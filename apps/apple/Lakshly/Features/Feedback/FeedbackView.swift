@@ -1,18 +1,19 @@
 import SwiftUI
 
 struct FeedbackView: View {
+  @Environment(\.theme) private var theme
   let store: DataStore
-  @AppStorage("premium") private var premium = false
+  @AppStorage("settings.premium") private var premium = false
   @State private var title = ""
   @State private var details = ""
   @State private var type = "Feature"
   @State private var confirmation = false
   private func statusColor(_ status: String) -> Color {
     switch status {
-    case "Planned": Theme.indigo
-    case "In progress": Theme.invest
-    case "Shipped": Theme.success
-    default: Theme.slate
+    case "Planned": theme.indigo
+    case "In progress": theme.invest
+    case "Shipped": theme.success
+    default: theme.slate
     }
   }
   var body: some View {
@@ -21,14 +22,14 @@ struct FeedbackView: View {
         Text("Every request is read by a human.").font(.headline)
         Text(
           "This demo saves requests only on this device. Share them manually on GitHub for a human to read."
-        ).foregroundStyle(Theme.secondaryText)
+        ).foregroundStyle(theme.secondaryText)
         Link(
           "GitHub Issues", destination: URL(string: "https://github.com/ovhirup/lakshly/issues")!)
       }
       Card(title: "Your next idea") {
         if store.encryptionStatus == "Encryption key not persisted (dev build)" {
           Text("Dev build: requests are kept in memory for this session only.").font(.caption)
-            .foregroundStyle(Theme.secondaryText)
+            .foregroundStyle(theme.secondaryText)
         }
         TextField("Title", text: $title).textFieldStyle(ThemedFieldStyle())
         TextField("Details", text: $details, axis: .vertical).lineLimit(3...6).textFieldStyle(ThemedFieldStyle())
@@ -47,7 +48,7 @@ struct FeedbackView: View {
         }.buttonStyle(ThemedSubmitStyle()).disabled(
           title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             || details.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        if let error = store.error { Text(error).foregroundStyle(Theme.danger) }
+        if let error = store.error { Text(error).foregroundStyle(theme.danger) }
       }
       Card(title: "Community requests · synthetic") {
         ForEach(
@@ -60,16 +61,16 @@ struct FeedbackView: View {
             HStack {
               Text(request.title).font(.headline)
               Spacer()
-              if request.priority { Pill(text: "Priority", color: Theme.lotus, symbol: "star.fill") }
+              if request.priority { Pill(text: "Priority", color: theme.lotus, symbol: "star.fill") }
               Pill(text: request.status, color: statusColor(request.status))
             }
-            Text(request.details).font(.subheadline).foregroundStyle(Theme.secondaryText)
+            Text(request.details).font(.subheadline).foregroundStyle(theme.secondaryText)
             Text("\(request.author) · \(request.type)").font(.caption)
           }.padding(.vertical, 8)
         }
       }
       Card(title: "Built with you") {
-        Text("Synthetic community contributors").foregroundStyle(Theme.secondaryText)
+        Text("Synthetic community contributors").foregroundStyle(theme.secondaryText)
         ForEach(store.requests.filter { $0.status == "Shipped" }) {
           Text("\($0.author) · \($0.title)")
         }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HistoryView: View {
+  @Environment(\.theme) private var theme
   let store: DataStore
   @State private var search = ""
   @State private var category = "All"
@@ -39,12 +40,13 @@ struct HistoryView: View {
             HStack(alignment: .top) {
               VStack(alignment: .leading, spacing: 6) {
                 Text(row.merchant ?? row.description).font(.headline)
-                Text(row.date).font(.caption).foregroundStyle(Theme.secondaryText)
+                Text(row.date).font(.caption).foregroundStyle(theme.secondaryText)
                 Pill(text: row.category.capitalized)
               }
               Spacer()
-              Text(Money.format(row.amount)).font(.subheadline.bold()).foregroundStyle(
-                row.amount < 0 ? Color.primary : Theme.income)
+              SemanticAmount(value: Money.format(row.amount),
+                semantic: row.amount > 0 ? .income : (row.category == "investments" ? .invest : .spend))
+                .font(.subheadline.bold())
             }
             Divider()
           }

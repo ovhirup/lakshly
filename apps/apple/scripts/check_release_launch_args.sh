@@ -1,0 +1,46 @@
+#!/bin/bash
+set -euo pipefail
+
+apple_dir="$(cd "$(dirname "$0")/.." && pwd)"
+derived_data="$apple_dir/build/ReleaseCheck"
+extra_file="$(mktemp)"
+strings_file="$(mktemp)"
+trap 'rm -f "$extra_file" "$strings_file"' EXIT
+
+# Shell-style quoting supports flags containing spaces without executing shell code.
+python3 -c 'import os, shlex, sys; sys.stdout.buffer.write(b"".join(arg.encode() + b"\0" for arg in shlex.split(os.environ.get("XCODEBUILD_EXTRA", ""))))' > "$extra_file"
+extra=()
+while IFS= read -r -d '' flag; do extra+=("$flag"); done < "$extra_file"
+
+for platform in macOS iOS; do
+  if [[ "$platform" == macOS ]]; then
+    destination='generic/platform=macOS'
+  else
+    destination='generic/platform=iOS Simulator'
+  fi
+  xcodebuild -project "$apple_dir/Lakshly.xcodeproj" -scheme "Lakshly-$platform" \
+    -configuration Release -destination "$destination" -derivedDataPath "$derived_data" \
+    -disableAutomaticPackageResolution -skipPackageUpdates \
+    CODE_SIGNING_ALLOWED=NO ${extra[@]+"${extra[@]}"} build
+done
+
+for binary in \
+  "$derived_data/Build/Products/Release/Lakshly.app/Contents/MacOS/Lakshly" \
+  "$derived_data/Build/Products/Release-iphonesimulator/Lakshly.app/Lakshly"; do
+  if [[ ! -f "$binary" ]]; then
+    echo "FAIL: missing Release binary: $binary" >&2
+    exit 1
+  fi
+  app_path="${binary%%.app/*}.app"
+  binaries=("$binary")
+  while IFS= read -r -d '' dylib; do binaries+=("$dylib"); done < <(find "$app_path" -type f -name '*.debug.dylib' -print0)
+  for executable in "${binaries[@]}"; do
+    /usr/bin/strings -a "$executable" > "$strings_file"
+    if grep -nE 'demoUnlocked|showLock|startTab|openSettings' "$strings_file"; then
+      echo "FAIL: DEBUG launch controls found in $executable" >&2
+      exit 1
+    fi
+  done
+done
+
+echo 'PASS: macOS and iOS Simulator Release binaries contain no DEBUG launch controls.'
