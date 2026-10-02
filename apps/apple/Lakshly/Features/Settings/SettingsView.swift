@@ -2,9 +2,10 @@ import SwiftUI
 
 struct SettingsView: View {
   let store: DataStore
+  let lock: AppLock
   @Environment(\.dismiss) private var dismiss
-  @AppStorage("premium") private var premium = false
-  @AppStorage("appLock") private var appLock = true
+  @AppStorage("settings.premium") private var premium = false
+  @AppStorage("settings.appLock") private var appLock = true
   @State private var reset = false
   var body: some View {
     NavigationStack {
@@ -12,7 +13,15 @@ struct SettingsView: View {
         Section("Your experience") {
           Toggle("Preview Premium (demo — no purchases)", isOn: $premium)
           Text(premium ? "Premium preview · UI only" : "Free · Premium features display a lock")
-          Toggle("App lock", isOn: $appLock)
+          Toggle("App lock", isOn: Binding(
+            get: { appLock },
+            set: { enabled in
+              if enabled { appLock = true }
+              // Turning the lock off requires device authentication when the device has one.
+              else { Task { if await lock.authorizeDisablingLock() { appLock = false } } }
+            }
+          )).disabled(lock.authenticating)
+          if let message = lock.message { Text(message).font(.caption).foregroundStyle(Theme.danger) }
         }
         Section("Private by design") {
           Text(store.encryptionStatus)

@@ -1,10 +1,18 @@
 import SwiftUI
 
 @main struct LakshlyApp: App {
-  @State private var store = DataStore()
-  @State private var lock = AppLock()
+  @State private var store: DataStore
+  @State private var lock: AppLock
+
+  init() {
+    // Clear launch-argument overrides of persisted settings before any state is read.
+    SettingsPreferences.prepare()
+    _store = State(initialValue: DataStore())
+    _lock = State(initialValue: AppLock())
+  }
+  /// DEBUG-only screenshot override; Release always follows the system appearance.
   private var appearance: ColorScheme? {
-    switch UserDefaults.standard.string(forKey: "appearance") {
+    switch LaunchOptions.current.appearance {
     case "light": .light
     case "dark": .dark
     default: nil
@@ -19,9 +27,15 @@ struct RootView: View {
   let store: DataStore
   let lock: AppLock
   @Environment(\.scenePhase) private var phase
-  @AppStorage("appLock") private var lockEnabled = true
+  @AppStorage("settings.appLock") private var lockEnabled = true
   @State private var settings = false
-  @State private var selected = UserDefaults.standard.string(forKey: "startTab") ?? "overview"
+  @State private var selected: String = {
+    #if DEBUG
+    LaunchOptions.current.startTab ?? "overview"
+    #else
+    "overview"
+    #endif
+  }()
   var body: some View {
     ZStack {
       ThemeBackground()
@@ -74,7 +88,7 @@ struct RootView: View {
           }
         }.tabViewStyle(.sidebarAdaptable)
       }
-    }.tint(Theme.gold).sheet(isPresented: $settings) { SettingsView(store: store) }
+    }.tint(Theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock) }
       .onAppear { if !lockEnabled && !lock.forced { lock.locked = false } }
       .onChange(of: phase) { _, value in
         if value == .background || (value == .inactive && !lock.authenticating) {
