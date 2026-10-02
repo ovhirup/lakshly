@@ -1,0 +1,38 @@
+{
+  "first": {
+    "added": 12,
+    "duplicates": 0,
+    "accountsAdded": 1,
+    "accountsUpdated": 0,
+    "sipsUpserted": 0
+  },
+  "firstTransactionIds": [
+    "txn_28uymn10gkm",
+    "txn_29v5ias2hfj",
+    "txn_1eihjm25l54",
+    "txn_1gc3jzzvax5",
+    "txn_0pjtwo0avt1",
+    "txn_027y65fxqvu",
+    "txn_21deaqfeab8",
+    "txn_1tiveb5zeuj",
+    "txn_22035wf5myl",
+    "txn_0h1qd1u2chu",
+    "txn_07bs89eo6cd",
+    "txn_1osqp6xp707"
+  ],
+  "againSbi": {
+    "added": 12,
+    "duplicates": 0,
+    "accountsAdded": 1,
+    "accountsUpdated": 0,
+    "sipsUpserted": 0
+  },
+  "sameHdfcLocked": {
+    "added": 0,
+    "duplicates": 12,
+    "accountsAdded": 0,
+    "accountsUpdated": 1,
+    "sipsUpserted": 0
+  },
+  "sameTransactionCount": 12
+}

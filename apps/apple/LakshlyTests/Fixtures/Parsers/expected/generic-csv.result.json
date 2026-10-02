@@ -1,0 +1,67 @@
+{
+  "adapter": "csv.generic",
+  "adapterLabel": "CSV export (generic columns)",
+  "kind": "bank",
+  "confidence": 0.6,
+  "accounts": [
+    {
+      "id": "acc_11y4drzhhb1",
+      "name": "Bank Savings",
+      "type": "savings",
+      "institution": "Bank",
+      "currency": "INR",
+      "balance": 18220450,
+      "asOf": "2026-09-05",
+      "source": "statement"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_0i8p329l8am",
+      "accountId": "acc_11y4drzhhb1",
+      "date": "2026-09-01",
+      "amount": 12500000,
+      "description": "NEFT CR-DEMO EMPLOYER, SALARY",
+      "category": "income",
+      "method": "neft",
+      "categorisedBy": "rule",
+      "merchant": "Demo Employer, Salary"
+    },
+    {
+      "id": "txn_0kz9lbty4z8",
+      "accountId": "acc_11y4drzhhb1",
+      "date": "2026-09-03",
+      "amount": -45000,
+      "description": "UPI-SWIGGY-swiggy@demo-XXXX9012-Food",
+      "category": "dining",
+      "method": "upi",
+      "categorisedBy": "rule",
+      "merchant": "Swiggy"
+    },
+    {
+      "id": "txn_23glmpveyfr",
+      "accountId": "acc_11y4drzhhb1",
+      "date": "2026-09-05",
+      "amount": -234550,
+      "description": "POS DEMO BIGBASKET",
+      "category": "groceries",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Demo Bigbasket"
+    }
+  ],
+  "sips": [],
+  "holdings": [],
+  "meta": [
+    {
+      "adapter": "bank.generic",
+      "kind": "bank",
+      "institution": "Bank",
+      "accountId": "acc_11y4drzhhb1",
+      "closingBalance": 18220450
+    }
+  ],
+  "warnings": [
+    "Account number not found; account will be matched by bank name only."
+  ]
+}

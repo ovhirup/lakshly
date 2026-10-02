@@ -1,0 +1,71 @@
+{
+  "adapter": "card.generic",
+  "adapterLabel": "Credit card statement (generic layout)",
+  "kind": "card",
+  "confidence": 0.48,
+  "accounts": [
+    {
+      "id": "acc_1t2qjuzqhok",
+      "name": "Demo Finance Card Credit Card ••3456",
+      "type": "credit_card",
+      "institution": "Demo Finance Card",
+      "currency": "INR",
+      "balance": -543210,
+      "asOf": "2026-09-05",
+      "source": "statement",
+      "mask": "3456",
+      "statementDay": 5,
+      "dueDay": 25
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_2fvr9rglshr",
+      "accountId": "acc_1t2qjuzqhok",
+      "date": "2026-08-12",
+      "amount": -25000,
+      "description": "DEMO CAFE",
+      "category": "dining",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Demo Cafe"
+    },
+    {
+      "id": "txn_07646vtlioe",
+      "accountId": "acc_1t2qjuzqhok",
+      "date": "2026-08-15",
+      "amount": 49900,
+      "description": "REFUND DEMO STORE",
+      "category": "other",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Refund Demo Store"
+    },
+    {
+      "id": "txn_0cyw33agpt0",
+      "accountId": "acc_1t2qjuzqhok",
+      "date": "2026-08-20",
+      "amount": -568110,
+      "description": "DEMO BOOKS ONLINE",
+      "category": "other",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Demo Books Online"
+    }
+  ],
+  "sips": [],
+  "holdings": [],
+  "meta": [
+    {
+      "adapter": "card.generic",
+      "kind": "card",
+      "institution": "Demo Finance Card",
+      "accountId": "acc_1t2qjuzqhok",
+      "statementDate": "2026-09-05",
+      "dueDate": "2026-09-25",
+      "totalDue": 543210,
+      "minDue": 30000
+    }
+  ],
+  "warnings": []
+}

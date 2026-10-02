@@ -1,0 +1,74 @@
+[
+  {
+    "page": 1,
+    "text": "State Bank of India"
+  },
+  {
+    "page": 1,
+    "text": "Account Name : DEMO CUSTOMER B"
+  },
+  {
+    "page": 1,
+    "text": "Account Number : 00000039876543   Opening Balance   : 60,000.00"
+  },
+  {
+    "page": 1,
+    "text": "Account Statement from 1 Sep 2026 to 30 Sep 2026"
+  },
+  {
+    "page": 1,
+    "text": "Txn Date   Value Date   Description   Ref No./Cheque No.   Debit   Credit   Balance"
+  },
+  {
+    "page": 1,
+    "text": "1 Sep 2026   1 Sep 2026   NEFT CR-DEMO EMPLOYER PVT LTD-SALARY SEP 2026   TRF700000   1,25,000.00   1,85,000.00"
+  },
+  {
+    "page": 1,
+    "text": "2 Sep 2026   2 Sep 2026   ACH D- DEMO HOUSING RENT-0000123   TRF700001   25,000.00   1,60,000.00"
+  },
+  {
+    "page": 1,
+    "text": "3 Sep 2026   3 Sep 2026   UPI-SWIGGY-swiggy@demo-123456789012-Food order   TRF700002   450.00   1,59,550.00"
+  },
+  {
+    "page": 1,
+    "text": "5 Sep 2026   5 Sep 2026   POS 416021XXXXXX1234 BIGBASKET DEMO   TRF700003   2,345.50   1,57,204.50"
+  },
+  {
+    "page": 1,
+    "text": "7 Sep 2026   7 Sep 2026   UPI-ZEPTO-zepto@demo-223456789012   TRF700004   678.00   1,56,526.50"
+  },
+  {
+    "page": 1,
+    "text": "DEMO GROCERIES ORDER"
+  },
+  {
+    "page": 1,
+    "text": "10 Sep 2026   10 Sep 2026   ATM WDL-DEMO ATM BLR   TRF700005   5,000.00   1,51,526.50"
+  },
+  {
+    "page": 1,
+    "text": "12 Sep 2026   12 Sep 2026   IMPS-CASHBACK-DEMO WALLET   TRF700006   150.00   1,51,676.50"
+  },
+  {
+    "page": 1,
+    "text": "15 Sep 2026   15 Sep 2026   CC 000XXXXXXXX1234 AUTOPAY SI-TAD CREDIT CARD   TRF700007   18,240.00   1,33,436.50"
+  },
+  {
+    "page": 1,
+    "text": "20 Sep 2026   20 Sep 2026   NACH-DEMO AMC SIP MUTUAL FUND   TRF700008   5,000.00   1,28,436.50"
+  },
+  {
+    "page": 1,
+    "text": "25 Sep 2026   25 Sep 2026   UPI-UBER INDIA-uber@demo-323456789012-Ride   TRF700009   312.00   1,28,124.50"
+  },
+  {
+    "page": 1,
+    "text": "28 Sep 2026   28 Sep 2026   INT.PD:DEMO SAVINGS INTEREST   TRF700010   412.00   1,28,536.50"
+  },
+  {
+    "page": 1,
+    "text": "30 Sep 2026   30 Sep 2026   UPI-NETFLIX-netflix@demo-423456789012-Subscription   TRF700011   649.00   1,27,887.50"
+  }
+]
