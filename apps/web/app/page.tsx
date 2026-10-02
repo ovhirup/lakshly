@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Icon } from "@/components/Icon";
 import { CashflowBars, Donut } from "@/components/charts";
 import { Glass, PageHeader, Progress, Stat } from "@/components/ui";
 import { accounts, transactions, dataset } from "@/lib/data";
@@ -7,7 +8,7 @@ import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
 const TYPE_COLOR: Record<string, string> = {
-  savings: "#10b981", credit_card: "#ec4899", mutual_fund: "#8b5cf6", fixed_deposit: "#f59e0b", loan: "#f43f5e",
+  savings: "var(--lk-income)", credit_card: "var(--lk-spend)", mutual_fund: "var(--lk-invest)", fixed_deposit: "var(--lk-gold-text)", loan: "var(--lk-danger)",
 };
 
 export default function OverviewPage() {
@@ -32,7 +33,7 @@ export default function OverviewPage() {
           <span className="pill">{formatINR(-nw.liabilities)} owed</span>
           {mf?.invested ? <span className="pill">{formatINR(mfGain, { signed: true })} fund gains · {formatPct((mfGain / mf.invested) * 100)}</span> : null}
         </div>
-        <p className="tagline">Every rupee on target. 🎯</p>
+        <p className="tagline">Every rupee on target. <Icon name="sparkle" size={14} /></p>
       </Glass>
 
       <div className="grid g4">
@@ -50,7 +51,7 @@ export default function OverviewPage() {
         </Glass>
         <Glass className="card">
           <div className="card-head"><h2>Where it went</h2><Link href="/spend/" className="muted tiny">See all →</Link></div>
-          <Donut height={180} data={cats.map((c) => ({ name: titleCase(c.category), value: c.amount, color: CATEGORY_COLORS[c.category] ?? "#999" }))} />
+          <Donut totalLabel="Shown spend" height={180} data={cats.map((c) => ({ name: titleCase(c.category), value: c.amount, color: CATEGORY_COLORS[c.category] ?? "var(--lk-text-muted)" }))} />
           <div className="legend">
             {cats.slice(0, 4).map((c) => (
               <div key={c.category}><span className="dot" style={{ background: CATEGORY_COLORS[c.category] }} />{titleCase(c.category)}<b>{formatINR(c.amount)}</b></div>
@@ -64,7 +65,7 @@ export default function OverviewPage() {
         <div className="list">
           {accounts.map((a) => (
             <div className="row" key={a.id}>
-              <div className="avatar" style={{ background: TYPE_COLOR[a.type] ?? "#64748b" }}>{a.name[0]}</div>
+              <div className="avatar" style={{ borderColor: TYPE_COLOR[a.type] ?? "var(--lk-text-muted)" }}>{a.name[0]}</div>
               <div className="grow">
                 <div className="title">{a.name}</div>
                 <div className="sub">{a.institution}{a.mask ? ` ·••${a.mask}` : ""} · {titleCase(a.type)}</div>

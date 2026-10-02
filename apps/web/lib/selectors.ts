@@ -1,9 +1,9 @@
 import type { Account, Budget, Category, Debt, Sip, Transaction } from "./schema.gen";
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  groceries: "#34d399", dining: "#f59e0b", transport: "#60a5fa", fuel: "#f97316", shopping: "#ec4899",
-  utilities: "#a78bfa", rent: "#f43f5e", health: "#2dd4bf", entertainment: "#facc15", subscriptions: "#818cf8",
-  travel: "#38bdf8", insurance: "#94a3b8", investments: "#22c55e", emi: "#fb7185", income: "#10b981", other: "#9ca3af",
+  groceries: "var(--lk-income)", dining: "var(--lk-gold-text)", transport: "var(--lk-blue)", fuel: "var(--lk-spend)", shopping: "var(--lk-lotus)",
+  utilities: "var(--lk-indigo)", rent: "var(--lk-danger)", health: "var(--lk-invest)", entertainment: "var(--lk-gold-text)", subscriptions: "var(--lk-indigo)",
+  travel: "var(--lk-blue)", insurance: "var(--lk-text-muted)", investments: "var(--lk-invest)", emi: "var(--lk-spend)", income: "var(--lk-income)", other: "var(--lk-text-muted)",
 };
 
 const LIABILITY = new Set(["credit_card", "loan"]);

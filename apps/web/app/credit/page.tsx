@@ -25,7 +25,7 @@ export default function CreditPage() {
                 <h2>{c.name}</h2>
                 <p className="muted">{c.institution} ·••{c.mask}</p>
                 <Donut height={190} data={[
-                  { name: "Used", value: c.owed, color: c.utilisation < 30 ? "#10b981" : "#ec4899" },
+                  { name: "Used", value: c.owed, color: c.utilisation < 30 ? "var(--lk-income)" : "var(--lk-spend)" },
                   { name: "Available", value: c.available, color: "var(--grid)" },
                 ]} />
                 <p style={{ textAlign: "center" }}><strong className={tone} style={{ fontSize: "1.6rem" }}>{formatPct(c.utilisation, 0)}</strong> <span className="muted">utilised</span></p>
@@ -36,7 +36,7 @@ export default function CreditPage() {
                   <Stat label="Available" value={formatINR(c.available)} />
                   <Stat label="Limit" value={formatINR(c.limit)} />
                 </div>
-                <Progress pct={c.utilisation} color={c.utilisation < 30 ? "#10b981" : undefined} />
+                <Progress pct={c.utilisation} color={c.utilisation < 30 ? "var(--lk-income)" : undefined} />
                 <div className="list">
                   <div className="row"><div className="grow"><div className="title">Next statement</div><div className="sub">Day {c.statementDay} of each month</div></div><div className="amt">{nextDate(c.statementDay ?? 1, c.asOf)}</div></div>
                   <div className="row"><div className="grow"><div className="title">Payment due</div><div className="sub">Pay in full to avoid interest</div></div><div className="amt">{nextDate(c.dueDay ?? 1, c.asOf)}</div></div>
