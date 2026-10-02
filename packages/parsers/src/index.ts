@@ -1,0 +1,11 @@
+export * from "./types.ts";
+export { extractPdfText, itemsToLines, textDocFromLines, PasswordRequiredError, type PdfJsLike } from "./pdf.ts";
+export { parseDocument, rankAdapters, listAdapters, registerAdapter, SPECIFIC_THRESHOLD } from "./registry.ts";
+export { parseCsv, splitCsv, csvToTextDoc } from "./csv.ts";
+export { mergeResult, emptyDataset, type MergeReport } from "./merge.ts";
+export { categorise, detectMethod, guessMerchant } from "./categorise.ts";
+export { parseAmount } from "./util/money.ts";
+export { parseDate } from "./util/dates.ts";
+export { last4 } from "./util/mask.ts";
+export { stableId } from "./util/hash.ts";
+export const CATEGORIES = ["income", "groceries", "dining", "transport", "fuel", "shopping", "utilities", "rent", "health", "education", "entertainment", "travel", "subscriptions", "insurance", "investments", "emi", "fees", "transfers", "cash", "gifts", "other"] as const;

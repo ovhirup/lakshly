@@ -15,6 +15,7 @@ export const NAV = [
   { href: "/investments/", label: "Investments", icon: "invest", premium: true },
   { href: "/rewards/", label: "Rewards", icon: "rewards", premium: true },
   { href: "/history/", label: "History", icon: "history" },
+  { href: "/import/", label: "Import", icon: "import" },
   { href: "/feedback/", label: "Feedback & Requests", icon: "feedback" },
 ];
 const MOBILE = ["/", "/spend/", "/budget/", "/history/"];

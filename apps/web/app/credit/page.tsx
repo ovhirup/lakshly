@@ -1,7 +1,7 @@
 "use client";
 import { Donut } from "@/components/charts";
 import { Glass, PageHeader, PremiumBadge, PremiumGate, Progress, Stat } from "@/components/ui";
-import { accounts } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatPct } from "@/lib/format";
 import { creditCards } from "@/lib/selectors";
 
@@ -11,7 +11,8 @@ function nextDate(day: number, from: string) {
   return dt.toISOString().slice(0, 10);
 }
 
-export default function CreditPage() {
+function CreditView() {
+  const { accounts } = useData();
   const cards = creditCards(accounts);
   return (
     <>
@@ -49,4 +50,8 @@ export default function CreditPage() {
       </PremiumGate>
     </>
   );
+}
+
+export default function CreditPage() {
+  return <DataGate title="Credit" need={["cards"]}><CreditView /></DataGate>;
 }

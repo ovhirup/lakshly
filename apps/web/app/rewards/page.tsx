@@ -1,9 +1,10 @@
 "use client";
 import { Glass, PageHeader, PremiumBadge, PremiumGate, Stat } from "@/components/ui";
-import { rewards } from "@/lib/data";
+import { DataGate, useData } from "@/components/DataState";
 import { formatDate, formatINR, titleCase } from "@/lib/format";
 
-export default function RewardsPage() {
+function RewardsView() {
+  const { rewards } = useData();
   const total = rewards.reduce((s, r) => s + r.balance * (r.valuePerUnitPaise ?? 0), 0);
   return (
     <>
@@ -26,4 +27,8 @@ export default function RewardsPage() {
       </PremiumGate>
     </>
   );
+}
+
+export default function RewardsPage() {
+  return <DataGate title="Rewards" need={["rewards"]}><RewardsView /></DataGate>;
 }

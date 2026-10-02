@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { AppStateProvider, themeScript } from "@/components/AppState";
 import { Shell } from "@/components/Shell";
+import { DataProvider } from "@/components/DataState";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <AppStateProvider>
-          <Shell>{children}</Shell>
+          <DataProvider>
+            <Shell>{children}</Shell>
+          </DataProvider>
         </AppStateProvider>
       </body>
     </html>

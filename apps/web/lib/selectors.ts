@@ -22,6 +22,9 @@ export function months(txns: Transaction[]): string[] {
   return [...new Set(txns.map((t) => t.date.slice(0, 7)))].sort();
 }
 
+/** CAS rows live on the fund account (units/NAV tags); they are holdings movements, not cash flow. */
+const isFundLedger = (t: Transaction) => !!t.tags?.some((x) => x.startsWith("units:"));
+
 const isSpend = (t: Transaction) => t.amount < 0 && !["investments", "transfers"].includes(t.category);
 
 export function spendByCategory(txns: Transaction[], month?: string) {
@@ -38,13 +41,13 @@ export function monthlyCashflow(txns: Transaction[]) {
     let income = 0, spend = 0, invested = 0;
     for (const t of txns) {
       if (!t.date.startsWith(m)) continue;
-      if (t.category === "transfers") continue;
+      if (t.category === "transfers" || isFundLedger(t)) continue;
       if (t.amount > 0) income += t.amount;
       else if (t.category === "investments") invested += -t.amount;
       else if (isSpend(t)) spend += -t.amount;
     }
     return { month: m, income, spend, invested, saved: income - spend - invested };
-  });
+  }).filter((f) => f.income || f.spend || f.invested);
 }
 
 export function topMerchants(txns: Transaction[], month?: string, n = 5) {
