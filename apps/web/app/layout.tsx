@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { AppStateProvider, themeScript } from "@/components/AppState";
+import { AppStateProvider } from "@/components/AppState";
 import { Shell } from "@/components/Shell";
 import { DataProvider } from "@/components/DataState";
+import { themeBootScript } from "@/lib/themes";
+import "./themes.gen.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,10 +14,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FBF8F1" },
-    { media: "(prefers-color-scheme: dark)", color: "#0E1430" },
-  ],
+  themeColor: "#FBF8F1",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -25,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-IN" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>
       <body>
         <AppStateProvider>

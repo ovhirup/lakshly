@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppState } from "./AppState";
 import { Icon } from "./Icon";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 import { PremiumBadge } from "./ui";
 
 export const NAV = [
@@ -31,7 +32,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }, [menuOpen]);
   const closeMenu = () => { setMenuOpen(false); moreRef.current?.focus(); };
   const path = norm(usePathname() || "/");
-  const { plan, setPlan, theme, toggleTheme } = useAppState();
+  const { plan, setPlan } = useAppState();
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const mobileIndex = menuOpen ? 4 : MOBILE.findIndex(active);
 
@@ -69,9 +70,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <span className="demo-pill">Demo data</span>
           <div className="topbar-actions">
             {plan === "premium" ? <PremiumBadge small /> : null}
-            <button className="icon-btn" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>
-              <Icon name={theme === "dark" ? "sun" : "moon"} size={18} stroke={theme === "dark"} />
-            </button>
+            <ThemeSwitcher />
           </div>
         </div>
         <main id="main-content" className="content" key={path}>{children}</main>
