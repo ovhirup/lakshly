@@ -7,18 +7,19 @@
   "type": "module",
   "scripts": {
     "sync-data": "node scripts/sync-data.mjs",
+    "gen:themes": "node scripts/gen-themes.mjs",
     "gen:types": "json2ts -i ../../packages/schema/lakshly.schema.json -o lib/schema.gen.ts --bannerComment \"/* Generated from packages/schema/lakshly.schema.json. Do not edit. */\"",
-    "predev": "npm run sync-data",
+    "predev": "npm run sync-data && npm run gen:themes",
     "dev": "next dev",
-    "prebuild": "npm run sync-data",
+    "prebuild": "npm run sync-data && npm run gen:themes",
     "build": "next build",
     "start": "npx serve out",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "pretest": "npm run sync-data",
+    "pretest": "npm run sync-data && npm run gen:themes",
     "test": "vitest run",
-    "pretypecheck": "npm run sync-data",
-    "prelint": "npm run sync-data"
+    "pretypecheck": "npm run sync-data && npm run gen:themes",
+    "prelint": "npm run sync-data && npm run gen:themes"
   },
   "dependencies": {
     "next": "^16.3.8",

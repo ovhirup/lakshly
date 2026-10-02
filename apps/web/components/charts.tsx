@@ -56,10 +56,10 @@ export function CashflowBars({ data }: { data: { label: string; income: number; 
             </linearGradient>
           ))}
         </defs>
-        <CartesianGrid vertical={false} stroke="var(--grid)" />
+        <CartesianGrid vertical={false} stroke="var(--lk-grid)" />
         <XAxis dataKey="label" {...axis} />
         <YAxis {...axis} tickFormatter={(v) => formatINRCompact(v)} width={56} />
-        <Tooltip content={<ChartTooltip />} cursor={{ fill: "var(--grid)" }} isAnimationActive={animate} animationDuration={700} animationEasing="ease-out" />
+        <Tooltip content={<ChartTooltip />} cursor={{ fill: "var(--lk-grid)" }} isAnimationActive={animate} animationDuration={700} animationEasing="ease-out" />
         <Bar dataKey="income" name="Income" fill={`url(#${id}-income)`} radius={[7, 7, 3, 3]} maxBarSize={24} isAnimationActive={animate} {...chartMotion} />
         <Bar dataKey="spend" name="Spend" fill={`url(#${id}-spend)`} radius={[7, 7, 3, 3]} maxBarSize={24} isAnimationActive={animate} {...chartMotion} />
         <Bar dataKey="invested" name="Invested" fill={`url(#${id}-invest)`} radius={[7, 7, 3, 3]} maxBarSize={24} isAnimationActive={animate} {...chartMotion} />
@@ -68,7 +68,7 @@ export function CashflowBars({ data }: { data: { label: string; income: number; 
   );
 }
 
-export function AreaTrend({ data, x, y, name, height = 220, color = "var(--accent)" }: {
+export function AreaTrend({ data, x, y, name, height = 220, color = "var(--lk-gold-text)" }: {
   data: object[]; x: string; y: string; name: string; height?: number; color?: string;
 }) {
   const id = useId().replace(/:/g, "");
@@ -82,7 +82,7 @@ export function AreaTrend({ data, x, y, name, height = 220, color = "var(--accen
             <stop offset="100%" stopColor={color} stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid vertical={false} stroke="var(--grid)" />
+        <CartesianGrid vertical={false} stroke="var(--lk-grid)" />
         <XAxis dataKey={x} {...axis} minTickGap={24} />
         <YAxis {...axis} tickFormatter={(v) => formatINRCompact(v)} width={56} />
         <Tooltip content={<ChartTooltip />} isAnimationActive={animate} animationDuration={700} animationEasing="ease-out" />
@@ -99,7 +99,7 @@ export function MultiLine({ data, x, lines, height = 240 }: {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <LineChart data={data}>
-        <CartesianGrid vertical={false} stroke="var(--grid)" />
+        <CartesianGrid vertical={false} stroke="var(--lk-grid)" />
         <XAxis dataKey={x} {...axis} minTickGap={20} />
         <YAxis {...axis} tickFormatter={(v) => formatINRCompact(v)} width={60} />
         <Tooltip content={<ChartTooltip />} isAnimationActive={animate} animationDuration={700} animationEasing="ease-out" />

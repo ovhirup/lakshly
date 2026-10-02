@@ -1,9 +1,29 @@
 import type { Account, Budget, Category, Debt, Sip, Transaction } from "./schema.gen";
 
+const categoryColor = (name: string, fallback: string) => `var(--lk-cat-${name}, ${fallback})`;
+
 export const CATEGORY_COLORS: Record<string, string> = {
-  groceries: "var(--lk-income)", dining: "var(--lk-gold-text)", transport: "var(--lk-blue)", fuel: "var(--lk-spend)", shopping: "var(--lk-lotus)",
-  utilities: "var(--lk-indigo)", rent: "var(--lk-danger)", health: "var(--lk-invest)", entertainment: "var(--lk-gold-text)", subscriptions: "var(--lk-indigo)",
-  travel: "var(--lk-blue)", insurance: "var(--lk-text-muted)", investments: "var(--lk-invest)", emi: "var(--lk-spend)", income: "var(--lk-income)", other: "var(--lk-text-muted)",
+  income: categoryColor("income", "var(--lk-income)"),
+  groceries: categoryColor("groceries", "var(--lk-income)"),
+  dining: categoryColor("dining", "var(--lk-gold-text)"),
+  transport: categoryColor("transport", "var(--lk-blue)"),
+  fuel: categoryColor("fuel", "var(--lk-spend)"),
+  shopping: categoryColor("shopping", "var(--lk-lotus)"),
+  utilities: categoryColor("utilities", "var(--lk-indigo)"),
+  rent: categoryColor("rent", "var(--lk-danger)"),
+  health: categoryColor("health", "var(--lk-invest)"),
+  education: categoryColor("education", "var(--lk-indigo)"),
+  entertainment: categoryColor("entertainment", "var(--lk-gold-text)"),
+  travel: categoryColor("travel", "var(--lk-blue)"),
+  subscriptions: categoryColor("subscriptions", "var(--lk-indigo)"),
+  insurance: categoryColor("insurance", "var(--lk-text-muted)"),
+  investments: categoryColor("investments", "var(--lk-invest)"),
+  emi: categoryColor("emi", "var(--lk-spend)"),
+  fees: categoryColor("fees", "var(--lk-text-muted)"),
+  transfers: categoryColor("transfers", "var(--lk-text-muted)"),
+  cash: categoryColor("cash", "var(--lk-text-muted)"),
+  gifts: categoryColor("gifts", "var(--lk-lotus)"),
+  other: categoryColor("other", "var(--lk-text-muted)"),
 };
 
 const LIABILITY = new Set(["credit_card", "loan"]);
