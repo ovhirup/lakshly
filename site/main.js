@@ -64,8 +64,22 @@
   function show(el, on) { el.hidden = !on; }
   function say(html, tone) { status.className = "status " + (tone || ""); status.innerHTML = html; }
 
+  // Native-form mode: point the real form at the provider, with the provider's field names.
+  if (endpoint && cfg.WAITLIST_MODE === "form") {
+    var fm = cfg.WAITLIST_FIELDS || { email: "email", track: "track" };
+    form.action = endpoint; form.method = "post"; form.target = "_blank";
+    form.setAttribute("rel", "noopener noreferrer");
+    email.name = fm.email;
+    if (fm.track) track.name = fm.track; else track.removeAttribute("name");
+    consent.removeAttribute("name"); // consent is checked here; the provider doesn't need it
+    Object.keys(cfg.WAITLIST_EXTRA || {}).forEach(function (k) {
+      var i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = cfg.WAITLIST_EXTRA[k]; form.appendChild(i);
+    });
+  }
+
   form.addEventListener("submit", function (e) {
-    e.preventDefault();
+    var valid = function () { return email.checkValidity() && /\S+@\S+\.\S+/.test(email.value) && consent.checked; };
+    if (!(endpoint && cfg.WAITLIST_MODE === "form" && valid())) e.preventDefault();
     var okEmail = email.checkValidity() && /\S+@\S+\.\S+/.test(email.value);
     show(emailErr, !okEmail); email.setAttribute("aria-invalid", String(!okEmail));
     show(consentErr, !consent.checked); consent.setAttribute("aria-invalid", String(!consent.checked));
@@ -80,15 +94,12 @@
     }
     var f = cfg.WAITLIST_FIELDS || { email: "email", track: "track" };
     if (cfg.WAITLIST_MODE === "form") {
-      // Native POST that navigates to the provider (Buttondown's documented embed flow).
-      var native = document.createElement("form");
-      native.method = "post"; native.action = endpoint; native.hidden = true;
-      var add = function (n, v) { var i = document.createElement("input"); i.type = "hidden"; i.name = n; i.value = v; native.appendChild(i); };
-      add(f.email, email.value.trim());
-      if (track.value && f.track) add(f.track, track.value);
-      if (cfg.WAITLIST_EXTRA) Object.keys(cfg.WAITLIST_EXTRA).forEach(function (k) { add(k, cfg.WAITLIST_EXTRA[k]); });
-      document.body.appendChild(native); native.submit();
-      return;
+      // Native POST (Buttondown's documented embed flow; it must not be called with fetch). The real form
+      // submits itself into a new tab, where Buttondown shows its confirmation (or a CAPTCHA if needed).
+      track.disabled = !track.value; // don't send an empty optional answer
+      say("<strong>Almost there! 💛</strong> Check your inbox to confirm your email. Buttondown, our email provider, has opened a new tab to finish signing you up. You’re on the list once you click the link in the confirmation email.", "ok");
+      setTimeout(function () { track.disabled = false; form.reset(); }, 0);
+      return; // no preventDefault: let the browser POST the form
     }
     var body = new FormData();
     body.append(f.email, email.value.trim());

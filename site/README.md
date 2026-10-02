@@ -27,7 +27,12 @@ cd site && python3 -m http.server 4173   # http://localhost:4173
 2. Allow its origin in the CSP `<meta>` in `index.html`: `connect-src` for `cors`/`no-cors`, `form-action` for `form`.
 3. Name the provider and a contact/grievance email in `privacy.html`.
 
-While `WAITLIST_ENDPOINT` is empty, the form validates input and shows a "coming soon" thank-you,
+The waitlist is wired to Buttondown (newsletter `lakshly`, double opt-in) via its
+[embed-subscribe endpoint](https://docs.buttondown.com/building-your-subscriber-base) in `form` mode:
+a native POST of `email`, `embed=1`, `tag=waitlist` and optional `metadata__track`, opened in a new tab.
+Buttondown says not to call this endpoint with `fetch`. `tag` and `metadata__*` are Buttondown paid add-ons.
+
+If `WAITLIST_ENDPOINT` is set back to `""`, the form validates input and shows a "coming soon" thank-you,
 but sends, stores and logs nothing.
 
 ## Deploying
