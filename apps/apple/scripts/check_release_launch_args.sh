@@ -73,6 +73,44 @@ for binary in \
     find "$app_path" -name '*.synthetic.pdf' -print >&2
     exit 1
   fi
+  appex="$(find "$app_path" -type d -path '*/PlugIns/LakshlyWidgets.appex' -print -quit)"
+  if [[ -z "$appex" ]]; then
+    echo "FAIL: Release app is missing PlugIns/LakshlyWidgets.appex: $app_path" >&2
+    exit 1
+  fi
+  if [[ "$binary" == *MacOS/Lakshly ]]; then
+    appex_binary="$appex/Contents/MacOS/LakshlyWidgets"
+    info_plist="$app_path/Contents/Info.plist"
+    if /usr/libexec/PlistBuddy -c 'Print :NSSupportsLiveActivities' "$info_plist" >/dev/null 2>&1; then
+      echo "FAIL: macOS Release Info.plist must not contain NSSupportsLiveActivities" >&2
+      exit 1
+    fi
+  else
+    appex_binary="$appex/LakshlyWidgets"
+    info_plist="$app_path/Info.plist"
+    live="$(/usr/libexec/PlistBuddy -c 'Print :NSSupportsLiveActivities' "$info_plist" 2>/dev/null || true)"
+    if [[ "$live" != "true" ]]; then
+      echo "FAIL: iOS Release Info.plist missing NSSupportsLiveActivities=true (got '${live}')" >&2
+      exit 1
+    fi
+  fi
+  if [[ ! -f "$appex_binary" ]]; then
+    echo "FAIL: missing widget extension binary: $appex_binary" >&2
+    exit 1
+  fi
+  /usr/bin/strings -a "$appex_binary" > "$strings_file"
+  if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile|showPaywall|feedbackDemo|appIconDemo|settingsScroll' "$strings_file"; then
+    echo "FAIL: DEBUG launch controls found in $appex_binary" >&2
+    exit 1
+  fi
+  if grep -n 'SKTestSession' "$strings_file"; then
+    echo "FAIL: SKTestSession referenced by Release widget $appex_binary" >&2
+    exit 1
+  fi
+  if find "$appex" -name '*.synthetic.pdf' -print | grep -q .; then
+    echo "FAIL: synthetic statement PDF bundled in widget extension: $appex" >&2
+    exit 1
+  fi
 done
 
-echo 'PASS: Release binaries contain no DEBUG launch controls, synthetic statement PDFs, StoreKit test configuration, or SKTestSession. App sources use StoreKit as the only network framework.'
+echo 'PASS: Release binaries contain no DEBUG launch controls, synthetic statement PDFs, StoreKit test configuration, or SKTestSession. Both apps embed LakshlyWidgets.appex. iOS supports Live Activities and macOS does not. App sources use StoreKit as the only network framework.'

@@ -114,9 +114,7 @@ final class StoreKitTests: XCTestCase {
     await waitForPremium(store, expected: false)
     XCTAssertEqual(store.tier, .free)
     XCTAssertNil(store.activeProductID)
-    for feature in Feature.allCases {
-      XCTAssertFalse(store.can(feature), feature.rawValue)
-    }
+    assertFreeKeepsBasicWidgetsOnly(store)
   }
 
   func testRefundHonoursRevocation() async throws {
@@ -188,9 +186,16 @@ final class StoreKitTests: XCTestCase {
   func testEntitlementsMapFailsClosed() {
     XCTAssertLessThan(Tier.free, Tier.premium)
     XCTAssertEqual(Set(EntitlementsMap.standard.keys), Set(Feature.allCases))
+    XCTAssertEqual(EntitlementsMap.standard[.basicWidgets], .free)
+    XCTAssertEqual(EntitlementsMap.standard[.extraWidgets], .premium)
     for feature in Feature.allCases {
-      XCTAssertEqual(EntitlementsMap.standard[feature], .premium)
-      XCTAssertFalse(can(feature, tier: .free))
+      if feature == .basicWidgets {
+        XCTAssertEqual(EntitlementsMap.standard[feature], .free)
+        XCTAssertTrue(can(feature, tier: .free))
+      } else {
+        XCTAssertEqual(EntitlementsMap.standard[feature], .premium)
+        XCTAssertFalse(can(feature, tier: .free))
+      }
       XCTAssertTrue(can(feature, tier: .premium))
     }
     XCTAssertFalse(can(.debtPlanner, tier: .free, map: [:]))
@@ -219,9 +224,17 @@ final class StoreKitTests: XCTestCase {
     await store.refresh()
     XCTAssertFalse(store.isPremium)
     XCTAssertEqual(store.tier, .free)
-    for feature in Feature.allCases {
-      XCTAssertFalse(store.can(feature))
-      XCTAssertFalse(can(feature, tier: .free))
+    assertFreeKeepsBasicWidgetsOnly(store)
+  }
+
+  /// Budget and bill widgets stay on Free. Every other feature, including extra widgets, does not.
+  private func assertFreeKeepsBasicWidgetsOnly(_ store: EntitlementStore) {
+    XCTAssertTrue(store.can(.basicWidgets))
+    XCTAssertTrue(can(.basicWidgets, tier: .free))
+    XCTAssertFalse(store.can(.extraWidgets))
+    for feature in Feature.allCases where feature != .basicWidgets {
+      XCTAssertFalse(store.can(feature), feature.rawValue)
+      XCTAssertFalse(can(feature, tier: .free), feature.rawValue)
     }
   }
 

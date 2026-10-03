@@ -10,6 +10,14 @@ struct SettingsView: View {
   @Environment(AppIconController.self) private var appIcons
   @AppStorage("settings.appearance") private var appearance = "system"
   @AppStorage("settings.appLock") private var appLock = true
+  @AppStorage(GlancePreferences.showAmountsKey, store: GlanceStore.preferences) private var showAmounts = true
+  @AppStorage(GlancePreferences.lockScreenAmountsKey, store: GlanceStore.preferences) private var lockScreenAmounts = false
+  #if os(iOS)
+  @AppStorage(GlancePreferences.liveActivitiesKey, store: GlanceStore.preferences) private var liveActivities = true
+  #endif
+  #if os(macOS)
+  @AppStorage(GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences) private var menuBarExtra = true
+  #endif
   @State private var reset = false
   @State private var paywall: PaywallContext?
   @State private var pendingIcon: ThemeID?
@@ -51,6 +59,7 @@ struct SettingsView: View {
               Text("Dark").tag("dark")
             }.pickerStyle(.segmented)
           }.listRowBackground(theme.surface)
+          glanceSection
           Section("Lakshly Premium") {
             if premium {
               Text("Premium ✦")
@@ -122,6 +131,11 @@ struct SettingsView: View {
           }) { context in
             PaywallView(context: context)
           }
+          .onChange(of: showAmounts) { _, _ in publishGlance() }
+          .onChange(of: lockScreenAmounts) { _, _ in publishGlance() }
+          #if os(iOS)
+          .onChange(of: liveActivities) { _, _ in LiveActivityManager.shared.sync() }
+          #endif
           .onChange(of: entitlements.isPremium) { _, isPremium in
             guard isPremium, case .theme(let id) = paywall else { return }
             if pendingIcon == id {
@@ -139,6 +153,52 @@ struct SettingsView: View {
       }
     }.preferredColorScheme(colorScheme).frame(minWidth: 320, minHeight: 420)
   }
+  private var glanceSection: some View {
+    Section {
+      Toggle("Show amounts in widgets", isOn: $showAmounts)
+      Toggle("Show amounts on Lock Screen", isOn: $lockScreenAmounts)
+      Text("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
+        .font(.caption).foregroundStyle(theme.secondaryText)
+      #if os(iOS)
+      Toggle("Live Activities", isOn: $liveActivities)
+      #endif
+      #if os(macOS)
+      Toggle("Show in menu bar", isOn: $menuBarExtra)
+      #endif
+      glanceKind("Budget pace", feature: .basicWidgets)
+      glanceKind("Upcoming bill", feature: .basicWidgets)
+      glanceKind("Net worth", feature: .extraWidgets)
+      glanceKind("Debt", feature: .extraWidgets)
+    } header: {
+      Text("Widgets & glance")
+    }
+    .listRowBackground(theme.surface)
+  }
+
+  private func glanceKind(_ title: String, feature: Feature) -> some View {
+    HStack {
+      Text(title)
+      Spacer()
+      if feature == .extraWidgets && !premium {
+        Pill(text: "✦ Premium", color: theme.gold)
+          .accessibilityLabel("\(title), Premium")
+      } else {
+        Text("Included").font(.caption).foregroundStyle(theme.secondaryText)
+      }
+    }
+  }
+
+  private func publishGlance() {
+    GlancePublisher.configure(
+      themeID: themeSelection,
+      appearance: LaunchOptions.current.appearance ?? appearance,
+      tier: entitlements.tier)
+    GlancePublisher.publish(dataset: store.dataset)
+    #if os(iOS)
+    LiveActivityManager.shared.sync()
+    #endif
+  }
+
   private func selectTheme(_ id: ThemeID, afterUnlock: Bool = false) {
     guard afterUnlock || ThemeID.resolve(themeSelection) != id else { return }
     withAnimation(.easeInOut(duration: 0.25)) { themeSelection = id.rawValue }

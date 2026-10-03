@@ -17,6 +17,11 @@ enum Money {
     let decimal = dropZero && fraction == 0 ? "" : String(format: ".%02d", Int(fraction))
     return (paise < 0 ? "−" : "") + "₹" + groups.joined(separator: ",") + decimal
   }
+  /// Glance surfaces (widgets, Live Activity, menu bar) round to whole rupees.
+  static func glance(_ paise: Int64) -> String {
+    let rounded = paise >= 0 ? (paise + 50) / 100 * 100 : (paise - 50) / 100 * 100
+    return format(rounded)
+  }
   static func compact(_ paise: Int64) -> String {
     let rupees = Double(paise) / 100
     if abs(rupees) >= 10_000_000 { return String(format: "₹%.1fCr", rupees / 10_000_000) }

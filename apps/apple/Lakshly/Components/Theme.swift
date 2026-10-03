@@ -59,13 +59,21 @@ extension Color {
 
 struct ThemePalette {
   let id: ThemeID
-  init(_ id: ThemeID = .lakshmi) { self.id = id }
+  /// When set, tokens resolve to that appearance instead of following the system trait collection.
+  var forcedScheme: ColorScheme?
+  init(_ id: ThemeID = .lakshmi, scheme: ColorScheme? = nil) {
+    self.id = id
+    self.forcedScheme = scheme
+  }
   var definition: ThemeDefinition { id.definition }
   var usesSemanticIcons: Bool { definition.usesSemanticIcons }
   var spacious: Bool { definition.spacious }
   var clearGlass: Bool { definition.clearGlass }
   private func color(_ token: String) -> Color {
-    Color(light: definition.light.tokens[token]!, dark: definition.dark.tokens[token]!)
+    let light = definition.light.tokens[token]!
+    let dark = definition.dark.tokens[token]!
+    if let forcedScheme { return Color(hex: forcedScheme == .dark ? dark : light) }
+    return Color(light: light, dark: dark)
   }
   var bg: Color { color("bg") }
   var surface: Color { color("surface") }
@@ -86,8 +94,10 @@ struct ThemePalette {
   var clear: Color { .clear }
   func category(_ name: String) -> Color {
     let key = name.lowercased()
-    return Color(light: definition.light.categories[key] ?? definition.light.categories["other"]!,
-                 dark: definition.dark.categories[key] ?? definition.dark.categories["other"]!)
+    let light = definition.light.categories[key] ?? definition.light.categories["other"]!
+    let dark = definition.dark.categories[key] ?? definition.dark.categories["other"]!
+    if let forcedScheme { return Color(hex: forcedScheme == .dark ? dark : light) }
+    return Color(light: light, dark: dark)
   }
 }
 extension EnvironmentValues {

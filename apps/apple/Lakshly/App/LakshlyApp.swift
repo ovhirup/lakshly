@@ -8,12 +8,24 @@ import SwiftUI
   @AppStorage private var themeID: String
   @AppStorage private var appearanceID: String
   @State private var launchTheme: String?
+  #if os(macOS)
+  @AppStorage private var menuBarExtra: Bool
+  #endif
 
   init() {
     SettingsPreferences.prepare()
+    let storedTheme = UserDefaults.standard.string(forKey: "settings.themeID") ?? "lakshmi"
+    let storedAppearance = UserDefaults.standard.string(forKey: "settings.appearance") ?? "system"
+    GlancePublisher.configure(
+      themeID: LaunchOptions.current.theme ?? storedTheme,
+      appearance: LaunchOptions.current.appearance ?? storedAppearance,
+      tier: .free)
     _themeID = AppStorage(wrappedValue: "lakshmi", "settings.themeID")
     _appearanceID = AppStorage(wrappedValue: "system", "settings.appearance")
     _launchTheme = State(initialValue: LaunchOptions.current.theme)
+    #if os(macOS)
+    _menuBarExtra = AppStorage(wrappedValue: true, GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences)
+    #endif
     _store = State(initialValue: DataStore())
     _lock = State(initialValue: AppLock())
     _entitlements = State(initialValue: EntitlementStore())
@@ -37,8 +49,8 @@ import SwiftUI
     return stored.rawValue
   }
   var body: some Scene {
-    WindowGroup {
-      let palette = ThemePalette(ThemeID.resolve(effectiveThemeID))
+    WindowGroup(id: "main") {
+      let palette = ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance)
       RootView(store: store, lock: lock, themeSelection: Binding(
         get: { effectiveThemeID },
         set: { themeID = $0; launchTheme = nil }
@@ -58,6 +70,16 @@ import SwiftUI
           Task { await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved) }
         }
     }
+    #if os(macOS)
+    MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: $menuBarExtra) {
+      MenuBarPanel()
+        .environment(\.theme, ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance))
+        .environment(store)
+        .environment(entitlements)
+        .preferredColorScheme(appearance)
+    }
+    .menuBarExtraStyle(.window)
+    #endif
   }
 }
 
@@ -71,6 +93,8 @@ struct RootView: View {
   @AppStorage("settings.appLock") private var lockEnabled = true
   @State private var settings = false
   @State private var selected = "overview"
+  @State private var pendingTab: String?
+  @AppStorage("settings.appearance") private var appearanceStored = "system"
 
   init(store: DataStore, lock: AppLock, themeSelection: Binding<String>) {
     self.store = store
@@ -150,13 +174,42 @@ struct RootView: View {
       }
     }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock, themeSelection: $themeSelection) }
       .modifier(LaunchPaywallModifier(locked: lock.locked))
-      .onAppear { if !lockEnabled && !lock.forced { lock.locked = false } }
+      .onAppear {
+        if !lockEnabled && !lock.forced { lock.locked = false }
+        publishGlance()
+      }
+      .onOpenURL { url in
+        switch GlanceLinks.effect(for: url, locked: lock.locked) {
+        case .ignore: break
+        case .select(let tab): selected = tab
+        case .deferUntilUnlock(let tab): pendingTab = tab
+        }
+      }
+      .onChange(of: lock.locked) { _, locked in
+        guard !locked else { return }
+        if let pendingTab {
+          selected = pendingTab
+          self.pendingTab = nil
+        }
+        publishGlance()
+      }
+      .onChange(of: themeSelection) { _, _ in publishGlance() }
+      .onChange(of: entitlements.tier) { _, _ in publishGlance() }
+      .onChange(of: entitlements.hasResolved) { _, _ in publishGlance() }
       .onChange(of: phase) { _, value in
+        if value == .background || value == .active { publishGlance() }
         if value == .background || (value == .inactive && !lock.authenticating) {
           settings = false
           lock.relock(enabled: lockEnabled)
         }
       }
+  }
+  private func publishGlance() {
+    GlancePublisher.configure(
+      themeID: themeSelection,
+      appearance: LaunchOptions.current.appearance ?? appearanceStored,
+      tier: entitlements.tier)
+    GlancePublisher.publish(dataset: store.dataset)
   }
   private func navigation<Content: View>(@ViewBuilder content: () -> Content) -> some View {
     NavigationStack {
