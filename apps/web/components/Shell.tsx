@@ -6,6 +6,7 @@ import { useAppState } from "./AppState";
 import { Icon } from "./Icon";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { PremiumBadge } from "./ui";
+import { DataNote, DataPill } from "./DataState";
 
 export const NAV = [
   { href: "/", label: "Overview", icon: "overview" },
@@ -60,14 +61,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="sidebar-foot">
           <PlanSwitch plan={plan} setPlan={setPlan} />
-          <p className="tiny muted">Synthetic demo data · stored only on this device</p>
+          <DataNote />
         </div>
       </aside>
 
       <div className="main">
         <div className="topbar glass">
           <Link href="/" className="brand compact"><span className="logo"><Lotus /></span><strong>Lakshly</strong></Link>
-          <span className="demo-pill">Demo data</span>
+          <DataPill />
           <div className="topbar-actions">
             {plan === "premium" ? <PremiumBadge small /> : null}
             <ThemeSwitcher />
@@ -80,7 +81,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <div className="card-head"><h2>Explore Lakshly</h2><button className="icon-btn" onClick={closeMenu} aria-label="Close navigation">×</button></div>
         <nav aria-label="All pages">{NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setMenuOpen(false)} className={`nav-item ${active(n.href) ? "active" : ""}`} aria-current={active(n.href) ? "page" : undefined}><Icon name={n.icon} size={18} /><span>{n.label}</span>{n.premium && plan === "free" && <Icon name="lock" size={13} />}</Link>)}</nav>
         <PlanSwitch plan={plan} setPlan={setPlan} />
-        <p className="tiny muted">Synthetic demo data. Stored only on this device.</p>
+        <DataNote />
       </div>}
       <nav className="tabbar glass" aria-label="Quick" style={{ "--tab-index": mobileIndex < 0 ? 4 : mobileIndex } as CSSProperties}>
         <span className="tab-indicator" aria-hidden="true" />
