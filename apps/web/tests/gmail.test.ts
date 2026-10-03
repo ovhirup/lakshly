@@ -88,7 +88,9 @@ describe("GmailClient with a mocked API (synthetic mail)", () => {
     expect(files[0].name).toBe("Acct_Statement_SEP2026.pdf");
     expect(new TextDecoder().decode(files[0].bytes)).toContain("%PDF");
     // Never a full-format read or attachment for the dropped sender.
-    expect(calls.some((u) => u.includes("/messages/m2?format=full") || u.includes("/messages/m2/attachments"))).toBe(false);
+    expect(calls.some((u) => u.includes("/messages/m2/attachments"))).toBe(false);
+    // Message reads ask for headers + MIME structure only (a fields mask without body data).
+    expect(calls.filter((u) => /\/messages\/m\d\?/.test(u)).every((u) => new URL(u).searchParams.get("fields")?.includes("body(attachmentId,size)"))).toBe(true);
     expect(calls.every((u) => u.startsWith("https://gmail.googleapis.com/gmail/v1/users/me/messages"))).toBe(true);
     expect(c.log.map((e) => e.action)).toEqual(expect.arrayContaining(["search", "headers", "skipped", "attachment"]));
   });

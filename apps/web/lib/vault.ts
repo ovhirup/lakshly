@@ -7,7 +7,7 @@ import type { Holding, LakshlyDataset, StatementMeta } from "@lakshly/parsers";
 
 import type { SetupGoal } from "./setup";
 
-export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number; /** Setup source this file was attributed to. */ sourceId?: string }
+export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number; /** Setup source this file was attributed to. */ sourceId?: string; /** Where it came from, e.g. "gmail:<message id>" (marks Gmail rows as already imported). */ ref?: string }
 export interface UserData {
   version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[];
   /** When each transaction first arrived on this device (used by the weekly review for late imports). */

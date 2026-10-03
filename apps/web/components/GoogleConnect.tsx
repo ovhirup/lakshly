@@ -6,10 +6,10 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { GOOGLE_CLIENT_ID } from "@/lib/edition";
 import { decodeIdToken, financeSources, GMAIL_SCOPE, GmailApiError, GmailClient, interpretPopupError, interpretTokenResponse, revokeToken, senderDomains, type FoundMessage, type GoogleIdentity, type ReadLogEntry } from "@/lib/gmail";
 import { CATALOG } from "@/lib/sources.gen";
-import { formatDate } from "@/lib/format";
 import { Glass } from "./ui";
 import { Icon } from "./Icon";
 import { Importer, importToast } from "./Importer";
+import { GmailResults, gmailRef } from "./GmailResults";
 import type { MergeReport, ParseResult } from "@lakshly/parsers";
 
 /* ───────── minimal GIS typings ───────── */
@@ -156,7 +156,7 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
   const g = useGoogle();
   const [consent, setConsent] = useState(false);
   const [showDomains, setShowDomains] = useState(false);
-  const [incoming, setIncoming] = useState<{ file: File; sourceId: string } | null>(null);
+  const [incoming, setIncoming] = useState<{ file: File; sourceId: string; ref?: string } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [showLog, setShowLog] = useState(false);
   const sources = financeSources(picked);
@@ -172,17 +172,27 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
     try { const found = await client.findStatements(5); set({ found, busy: null, log: logNow() }); }
     catch (e) { onGmailFailure(e); }
   }
+  /** Downloads the first statement attachment of one listed email (browser ↔ Google only). */
+  async function fetchFile(m: FoundMessage): Promise<File | null> {
+    if (!client) throw new Error("Gmail isn't connected any more. Connect again.");
+    try {
+      const files = await client.fetchStatementFiles(m);
+      set({ log: logNow() });
+      const f = files[0];
+      return f ? new File([f.bytes.slice().buffer as ArrayBuffer], f.name, { type: f.mimeType }) : null;
+    } catch (e) { set({ log: logNow() }); onGmailFailure(e); throw e; }
+  }
   async function fetchOne(m: FoundMessage) {
     if (!client) return;
     set({ busy: `Downloading ${m.subject}…`, error: null });
     try {
-      const files = await client.fetchStatementFiles(m);
-      set({ busy: null, log: logNow() });
-      if (!files.length) { set({ error: "That email has no PDF or CSV statement attached." }); return; }
-      const f = files[0];
-      setIncoming({ file: new File([f.bytes.slice().buffer as ArrayBuffer], f.name, { type: f.mimeType }), sourceId: m.sourceId });
-    } catch (e) { onGmailFailure(e); }
+      const file = await fetchFile(m);
+      set({ busy: null });
+      if (!file) { set({ error: "That email has no PDF or CSV statement attached." }); return; }
+      setIncoming({ file, sourceId: m.sourceId, ref: gmailRef(m.id) });
+    } catch { set({ busy: null }); }
   }
+  const hintsFor = (id: string) => CATALOG.sources.find((s) => s.id === id)?.passwordHints.map((k) => CATALOG.passwordHintFormats[k]).filter(Boolean);
 
   return (
     <Glass className="card connect-card gmail-card" as="div">
@@ -229,19 +239,13 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
           </div>
           {g.found && (
             g.found.length ? (
-              <ul className="found-list" aria-label="Statement emails found">
-                {g.found.map((m) => (
-                  <li key={m.id}>
-                    <span className="grow"><strong>{m.subject || "(no subject)"}</strong><small className="muted">{formatDate(m.date)} · {nameOf(m.sourceId)} · {m.from}</small></span>
-                    <button className="btn ghost small" disabled={!!g.busy} onClick={() => void fetchOne(m)}>Import</button>
-                  </li>
-                ))}
-              </ul>
+              <GmailResults key={g.found.map((m) => m.id).join(",")} found={g.found} disabled={!!g.busy} nameOf={nameOf} passwordHintsFor={hintsFor}
+                fetchFile={fetchFile} onImportOne={(m) => void fetchOne(m)} onImported={onImported} />
             ) : <p className="muted tiny">No statement emails from these senders yet. Try the guided search, or pick more accounts.</p>
           )}
           {incoming && (
-            <Importer incoming={incoming.file} sourceId={incoming.sourceId} prompt="Or drop another statement here"
-              passwordHints={CATALOG.sources.find((s) => s.id === incoming.sourceId)?.passwordHints.map((k) => CATALOG.passwordHintFormats[k]).filter(Boolean)}
+            <Importer incoming={incoming.file} sourceId={incoming.sourceId} importRef={incoming.ref} prompt="Or drop another statement here"
+              passwordHints={hintsFor(incoming.sourceId)}
               onImported={(r, report) => { setToast(importToast(report)); setTimeout(() => setToast(null), 4000); onImported?.(incoming.sourceId, r, report); setIncoming(null); }} />
           )}
           {showLog && (

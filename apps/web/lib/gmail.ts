@@ -5,7 +5,6 @@
 //   messages.get / attachments.get on users/me are allowed. Senders are re-checked before any body is read.
 // Spec: setup-wizard.md §4 step 2 and §4.2a, google-oauth/account-login.md §3 (ported by hand).
 import { CATALOG } from "./sources.gen";
-import { gmailQuery } from "./setup";
 import type { Source, SourceKind } from "./setup-types";
 
 export const GOOGLE_CLIENT_ID_DEFAULT = "285824172297-123lnqmgv8mmfmcjd53pa9ev6q9iknsb.apps.googleusercontent.com";
@@ -72,9 +71,89 @@ export function senderAllowed(src: Source, from: string): boolean {
   return src.senders.addresses.map((a) => a.toLowerCase()).includes(addr) || src.senders.domains.some(match);
 }
 
-/** Statement searches only (those that expect an attachment). */
-export function statementQueries(sources: readonly Source[]): { sourceId: string; searchId: string; q: string }[] {
-  return sources.flatMap((s) => s.searches.filter((x) => x.attachment).map((x) => ({ sourceId: s.id, searchId: x.id, q: gmailQuery(s, x.id) })));
+/* ───────────── statement filter ───────────── */
+/** Subject terms a real statement email carries. */
+export const STATEMENT_SUBJECT_TERMS = ["statement", "\"e-statement\"", "estatement", "CAS", "\"consolidated account statement\"", "mailback"] as const;
+/** Subject terms that mark non-statement mail (promos, EMI offers, OTPs, alerts, welcome mail). */
+export const NON_STATEMENT_SUBJECT_TERMS = ["EMI", "offer", "offers", "\"thank you\"", "OTP", "alert", "alerts", "cashback", "reward", "rewards", "welcome", "congratulations", "\"pre-approved\"", "reminder", "upgrade"] as const;
+export const STATEMENT_FILE_EXTS = ["pdf", "csv", "xls", "xlsx"] as const;
+
+const STATEMENT_SUBJECT_RE = /\b(e-?statements?|statements?|cas|consolidated account statement|mail\s?back)\b/i;
+const NON_STATEMENT_SUBJECT_RE = /\b(emi|offers?|thank\s+you|thanks for|otp|one[- ]time password|alerts?|cashback|rewards?|welcome|congratulations|pre-?approved|reminder|upgrade|promo(tion)?s?|sale|transaction alert|debited|credited|limit (increase|enhancement)|loan offer)\b/i;
+const STATEMENT_FILE_RE = /\.(pdf|csv|xlsx?)$/i;
+
+/** Gmail search for one sender group: statement subject, a statement-file attachment, and no promo/EMI/OTP subjects. */
+export function gmailStatementQuery(source: Source, window = "2y"): string {
+  const senders = [...source.senders.domains, ...source.senders.addresses];
+  const from = senders.length === 1 ? `from:${senders[0]}` : `from:(${senders.join(" OR ")})`;
+  return [
+    from,
+    `subject:(${STATEMENT_SUBJECT_TERMS.join(" OR ")})`,
+    "has:attachment",
+    `{${STATEMENT_FILE_EXTS.map((e) => `filename:${e}`).join(" ")}}`,
+    `-subject:(${NON_STATEMENT_SUBJECT_TERMS.join(" OR ")})`,
+    `newer_than:${window}`,
+    ...source.senders.excludeDomains.map((d) => `-from:${d}`),
+  ].join(" ");
+}
+
+/** One tight statement search per sender group (sources sharing senders, e.g. HDFC Bank + HDFC Card, share one search). */
+export function statementQueries(sources: readonly Source[]): { sourceId: string; searchId: string; q: string; sourceIds: string[] }[] {
+  const out: { sourceId: string; searchId: string; q: string; sourceIds: string[] }[] = [];
+  for (const s of sources) {
+    const search = s.searches.find((x) => x.attachment);
+    if (!search) continue;
+    const q = gmailStatementQuery(s, search.window || "2y");
+    const same = out.find((x) => x.q === q);
+    if (same) same.sourceIds.push(s.id);
+    else out.push({ sourceId: s.id, searchId: search.id, q, sourceIds: [s.id] });
+  }
+  return out;
+}
+
+export type StatementVerdict = { ok: true } | { ok: false; reason: "no-statement-file" | "not-statement-subject" | "non-statement-subject" };
+/** Client-side check after reading headers: a statement-like subject, no promo/EMI/OTP terms, and a PDF/CSV/XLS attachment. */
+export function classifyStatement(subject: string, attachmentNames: readonly string[]): StatementVerdict {
+  if (NON_STATEMENT_SUBJECT_RE.test(subject)) return { ok: false, reason: "non-statement-subject" };
+  if (!STATEMENT_SUBJECT_RE.test(subject)) return { ok: false, reason: "not-statement-subject" };
+  if (!attachmentNames.some((n) => STATEMENT_FILE_RE.test(n))) return { ok: false, reason: "no-statement-file" };
+  return { ok: true };
+}
+const VERDICT_TEXT: Record<Exclude<StatementVerdict, { ok: true }>["reason"], string> = {
+  "no-statement-file": "no PDF/CSV/XLS statement attached",
+  "not-statement-subject": "subject isn't a statement",
+  "non-statement-subject": "promo, EMI, OTP or alert mail",
+};
+
+/** Sources sharing a sender: card statements go to the card source, the rest to the bank/CAS source. */
+export function pickSource(candidates: readonly Source[], subject: string): Source {
+  const card = /credit\s*card|card\s*statement/i.test(subject);
+  return candidates.find((s) => (s.kinds[0] === "card") === card) ?? candidates[0];
+}
+
+const normSubject = (s: string) => s.toLowerCase().replace(/^((re|fwd?|fw)\s*:\s*)+/i, "").replace(/[^a-z0-9]+/g, " ").trim();
+/** Same statement sent twice (or in one thread): keep the newest, count copies. Keyed by thread, then subject + sender + attachment. */
+export function dedupeStatements(found: readonly FoundMessage[]): FoundMessage[] {
+  const sorted = [...found].sort((a, b) => b.date.localeCompare(a.date) || (b.internalDate ?? 0) - (a.internalDate ?? 0));
+  const out: FoundMessage[] = [];
+  const byKey = new Map<string, FoundMessage>();
+  const seenIds = new Set<string>();
+  for (const m of sorted) {
+    if (seenIds.has(m.id)) continue;
+    seenIds.add(m.id);
+    const att = m.attachments?.[0];
+    const keys = [
+      ...(m.threadId ? [`t:${m.threadId}`] : []),
+      `s:${normSubject(m.subject)}|${m.from}`,
+      ...(att ? [`a:${normSubject(m.subject)}|${m.from}|${att.name.toLowerCase()}|${att.size ?? ""}`] : []),
+    ];
+    const keep = keys.map((k) => byKey.get(k)).find(Boolean);
+    if (keep) { keep.copies = (keep.copies ?? 1) + 1; keep.dupIds = [...(keep.dupIds ?? []), m.id]; continue; }
+    const row = { ...m, copies: 1, dupIds: [] as string[] };
+    keys.forEach((k) => byKey.set(k, row));
+    out.push(row);
+  }
+  return out;
 }
 
 /** Throws unless the URL is one of the three allowed read-only Gmail endpoints (list must carry a q). */
@@ -95,14 +174,23 @@ export function assertAllowedGmailUrl(url: string, allowedQueries: readonly stri
 /* ───────────── Gmail client ───────────── */
 export interface GmailPart { partId?: string; mimeType?: string; filename?: string; headers?: { name: string; value: string }[]; body?: { attachmentId?: string; size?: number; data?: string }; parts?: GmailPart[] }
 export interface GmailMessage { id: string; threadId?: string; internalDate?: string; payload?: GmailPart; snippet?: string }
-export interface FoundMessage { id: string; sourceId: string; searchId: string; from: string; subject: string; date: string }
+export interface FoundMessage {
+  id: string; sourceId: string; searchId: string; from: string; subject: string; date: string;
+  threadId?: string; internalDate?: number;
+  /** Statement attachments (name + size only, read from the MIME structure; no body). */
+  attachments?: { name: string; size?: number }[];
+  /** Identical statement emails folded into this row (newest kept). */
+  copies?: number; dupIds?: string[];
+}
 export interface ReadLogEntry { at: string; action: "search" | "headers" | "attachment" | "skipped" | "revoked" | "error" | "check"; detail: string; sourceId?: string }
 export interface StatementFile { name: string; mimeType: string; bytes: Uint8Array }
 
 export type FetchLike = (url: string, init?: { method?: string; headers?: Record<string, string> }) => Promise<{ ok: boolean; status: number; json: () => Promise<unknown> }>;
 
 const header = (m: GmailMessage, name: string) => m.payload?.headers?.find((h) => h.name.toLowerCase() === name.toLowerCase())?.value ?? "";
-const ATTACH_RE = /\.(pdf|csv)$/i;
+const ATTACH_RE = STATEMENT_FILE_RE;
+/** MIME structure + headers only: never the message body or attachment bytes. */
+const STRUCTURE_FIELDS = "id,threadId,internalDate,payload(headers,filename,mimeType,body(attachmentId,size),parts(filename,mimeType,body(attachmentId,size),parts(filename,mimeType,body(attachmentId,size),parts(filename,mimeType,body(attachmentId,size)))))";
 
 /** Statement attachments (PDF/CSV) anywhere in the MIME tree. */
 export function statementParts(part: GmailPart | undefined): GmailPart[] {
@@ -178,39 +266,46 @@ export class GmailClient {
     return email;
   }
 
-  /** Searches each picked finance source (statements only), then reads headers to re-check the sender. */
-  async findStatements(maxPerSearch = 5): Promise<FoundMessage[]> {
+  /** Searches each finance sender group with the tight statement query, reads only headers + MIME structure,
+   *  re-checks sender, subject and attachment on this device, then folds duplicates (newest kept). */
+  async findStatements(maxPerSearch = 10): Promise<FoundMessage[]> {
     const found: FoundMessage[] = [];
     const seen = new Set<string>();
-    for (const { sourceId, searchId, q } of statementQueries(this.sources)) {
-      const src = this.sources.find((s) => s.id === sourceId)!;
-      const list = await this.get<{ messages?: { id: string }[]; resultSizeEstimate?: number }>(`${GMAIL_API}/messages?${new URLSearchParams({ q, maxResults: String(maxPerSearch) })}`);
-      this.note("search", `${src.name}: ${list.messages?.length ?? 0} match${list.messages?.length === 1 ? "" : "es"} · ${q}`, sourceId);
+    for (const { searchId, q, sourceIds } of statementQueries(this.sources)) {
+      const cands = sourceIds.map((id) => this.sources.find((s) => s.id === id)!);
+      const label = cands.map((c) => c.name).join(" / ");
+      const list = await this.get<{ messages?: { id: string; threadId?: string }[]; resultSizeEstimate?: number }>(`${GMAIL_API}/messages?${new URLSearchParams({ q, maxResults: String(maxPerSearch) })}`);
+      this.note("search", `${label}: ${list.messages?.length ?? 0} match${list.messages?.length === 1 ? "" : "es"} · ${q}`, cands[0].id);
       for (const { id } of list.messages ?? []) {
         if (seen.has(id)) continue;
         seen.add(id);
-        const m = await this.get<GmailMessage>(`${GMAIL_API}/messages/${id}?${new URLSearchParams([["format", "metadata"], ["metadataHeaders", "From"], ["metadataHeaders", "Subject"], ["metadataHeaders", "Date"]])}`);
+        const m = await this.get<GmailMessage>(`${GMAIL_API}/messages/${id}?${new URLSearchParams({ format: "full", fields: STRUCTURE_FIELDS })}`);
         const from = header(m, "From");
-        if (!senderAllowed(src, from)) { this.note("skipped", `Not a listed ${src.name} sender, dropped unread`, sourceId); continue; }
         const subject = header(m, "Subject");
-        const date = m.internalDate ? new Date(Number(m.internalDate)).toISOString().slice(0, 10) : header(m, "Date");
-        this.note("headers", `${date} · ${fromAddress(from)} · ${subject}`, sourceId);
-        found.push({ id, sourceId, searchId, from: fromAddress(from), subject, date });
+        const src = pickSource(cands.filter((c) => senderAllowed(c, from)).length ? cands.filter((c) => senderAllowed(c, from)) : cands, subject);
+        if (!senderAllowed(src, from)) { this.note("skipped", `Not a listed ${src.name} sender, dropped unread`, src.id); continue; }
+        const parts = statementParts(m.payload);
+        const verdict = classifyStatement(subject, parts.map((p) => p.filename ?? ""));
+        if (!verdict.ok) { this.note("skipped", `${subject || "(no subject)"}: ${VERDICT_TEXT[verdict.reason]}, not listed`, src.id); continue; }
+        const internalDate = m.internalDate ? Number(m.internalDate) : undefined;
+        const date = internalDate ? new Date(internalDate).toISOString().slice(0, 10) : header(m, "Date");
+        this.note("headers", `${date} · ${fromAddress(from)} · ${subject}`, src.id);
+        found.push({ id, sourceId: src.id, searchId, from: fromAddress(from), subject, date, ...(m.threadId ? { threadId: m.threadId } : {}), ...(internalDate ? { internalDate } : {}), attachments: parts.map((p) => ({ name: p.filename!, ...(p.body?.size ? { size: p.body.size } : {}) })) });
       }
     }
-    return found.sort((a, b) => b.date.localeCompare(a.date));
+    return dedupeStatements(found);
   }
 
   /** Downloads the PDF/CSV attachments of one allow-listed message. */
   async fetchStatementFiles(msg: FoundMessage): Promise<StatementFile[]> {
     const src = this.sources.find((s) => s.id === msg.sourceId);
     if (!src || !senderAllowed(src, msg.from)) throw new Error("Blocked: sender not in the finance list");
-    const m = await this.get<GmailMessage>(`${GMAIL_API}/messages/${msg.id}?format=full`);
+    const m = await this.get<GmailMessage>(`${GMAIL_API}/messages/${msg.id}?${new URLSearchParams({ format: "full", fields: STRUCTURE_FIELDS })}`);
     if (!senderAllowed(src, header(m, "From"))) throw new Error("Blocked: sender not in the finance list");
     const files: StatementFile[] = [];
     for (const p of statementParts(m.payload)) {
       const a = await this.get<{ data: string; size?: number }>(`${GMAIL_API}/messages/${msg.id}/attachments/${p.body!.attachmentId!}`);
-      files.push({ name: p.filename!, mimeType: p.mimeType || (p.filename!.toLowerCase().endsWith(".csv") ? "text/csv" : "application/pdf"), bytes: b64urlToBytes(a.data) });
+      files.push({ name: p.filename!, mimeType: p.mimeType || (/\.csv$/i.test(p.filename!) ? "text/csv" : /\.xlsx?$/i.test(p.filename!) ? "application/vnd.ms-excel" : "application/pdf"), bytes: b64urlToBytes(a.data) });
       this.note("attachment", `${p.filename} from ${msg.from} (${msg.date})`, msg.sourceId);
     }
     return files;

@@ -21,7 +21,7 @@ export function importToast(report: MergeReport): string {
   return `Imported ${report.added} new transaction${report.added === 1 ? "" : "s"}${report.duplicates ? `, skipped ${report.duplicates} already imported` : ""}. Thank you for trusting Lakshly 💛`;
 }
 
-export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints, incoming }: {
+export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints, incoming, importRef }: {
   onImported?: (r: ParseResult, report: MergeReport, fileName: string) => void;
   onPhase?: (step: Phase["step"]) => void;
   /** Setup source this import belongs to (recorded in the import log). */
@@ -31,6 +31,8 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
   passwordHints?: string[];
   /** A file handed in by another flow (e.g. a Gmail attachment fetched in this browser); read like a dropped file. */
   incoming?: File | null;
+  /** Where the incoming file came from (e.g. "gmail:<id>"), recorded in the import log. */
+  importRef?: string;
 }) {
   const { setSource, saveImport } = useData();
   const [phase, setPhase] = useState<Phase>({ step: "idle" });
@@ -68,7 +70,7 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
       .filter((t) => !skip[t.id])
       .map((t) => (edits[t.id] && edits[t.id] !== t.category ? { ...t, category: edits[t.id], categorisedBy: "user" as const } : t));
     const final = { ...result, transactions };
-    const report = await saveImport(final, fileName, sourceId);
+    const report = await saveImport(final, fileName, sourceId, incoming && fileName === incoming.name ? importRef : undefined);
     setSaving(false);
     setSource("mine");
     setPhase({ step: "idle" });
