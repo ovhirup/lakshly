@@ -78,7 +78,7 @@ enum GlanceShotCatalog {
       title: snapshot.nextBill?.name ?? "Rewards Card",
       subtitle: "Due today",
       progress: 1,
-      amount: revealed ? snapshot.nextBill?.amount.map { Money.format($0) } : nil)
+      amount: revealed ? snapshot.nextBill?.amount.map { Money.glance($0) } : nil)
   }
 
   private static func frame<V: View>(_ view: V, size: CGSize, theme: ThemeID, scheme: ColorScheme) -> some View {

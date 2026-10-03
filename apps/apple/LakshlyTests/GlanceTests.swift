@@ -375,3 +375,12 @@ private final class ScriptedAuthenticator: GlanceAuthenticating, @unchecked Send
     }
   }
 }
+
+final class GlanceMoneyTests: XCTestCase {
+  func testGlanceAmountsRoundToWholeRupees() {
+    XCTAssertEqual(Money.glance(62_147), "₹621")
+    XCTAssertEqual(Money.glance(62_150), "₹622")
+    XCTAssertEqual(Money.glance(1_38_59_00), "₹13,859")
+    XCTAssertEqual(Money.glance(-62_150), "−₹622")
+  }
+}

@@ -252,7 +252,7 @@ struct GlanceAmountText: Equatable, Sendable {
   var isPrivate: Bool
   static let masked = GlanceAmountText(text: "••••", isPrivate: false)
   static func shown(_ paise: Int64) -> GlanceAmountText {
-    GlanceAmountText(text: Money.format(paise), isPrivate: true)
+    GlanceAmountText(text: Money.glance(paise), isPrivate: true)
   }
 }
 

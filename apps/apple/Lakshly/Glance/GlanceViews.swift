@@ -207,12 +207,13 @@ struct GlanceWidgetView: View {
       HStack(spacing: 8) {
         GlanceRing(percent: pace.monthSpendPercent, tint: tint, lineWidth: 6).frame(width: 36, height: 36)
         VStack(alignment: .leading, spacing: 2) {
-          Text("Budget · \(pace.status.word)").font(.caption.weight(.bold)).lineLimit(1)
-          Text("\(GlanceFormat.percent(pace.monthElapsedPercent)) of the month")
-            .font(.caption2).foregroundStyle(theme.secondaryText)
+          Text("Budget").font(.caption2.weight(.semibold)).foregroundStyle(theme.secondaryText).lineLimit(1)
+          Text(pace.status.word).font(.caption.weight(.bold)).lineLimit(1).minimumScaleFactor(0.8)
+          Text("\(GlanceFormat.percent(pace.monthElapsedPercent)) of month")
+            .font(.caption2).foregroundStyle(theme.secondaryText).lineLimit(1).minimumScaleFactor(0.8)
         }
         Spacer(minLength: 4)
-        GlanceMoneyLabel(amount: money(pace.safeToSpendPerDay)).font(.caption.weight(.semibold))
+        GlanceMoneyLabel(amount: money(pace.safeToSpendPerDay)).font(.caption.weight(.semibold)).lineLimit(1)
       }
       .padding(.horizontal, 4)
     case .medium:
@@ -244,7 +245,7 @@ struct GlanceWidgetView: View {
 
   private func budgetInline(_ pace: GlanceBudgetPace) -> String {
     var text = "Budget \(GlanceFormat.percent(pace.monthSpendPercent)) · \(pace.status.word)"
-    if showsAmounts, let safe = pace.safeToSpendPerDay { text += " · \(Money.format(safe))/day" }
+    if showsAmounts, let safe = pace.safeToSpendPerDay { text += " · \(Money.glance(safe))/day" }
     else if !showsAmounts { text += " · ••••" }
     return text
   }
@@ -301,7 +302,7 @@ struct GlanceWidgetView: View {
 
   private func billInline(_ bill: GlanceBill) -> String {
     let date = bill.dueDate.formatted(.dateTime.day().month(.abbreviated))
-    if showsAmounts, let amount = bill.amount { return "\(bill.name) · \(date) · \(Money.format(amount))" }
+    if showsAmounts, let amount = bill.amount { return "\(bill.name) · \(date) · \(Money.glance(amount))" }
     return "\(bill.name) · \(date)"
   }
 

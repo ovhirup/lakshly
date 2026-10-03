@@ -67,7 +67,7 @@ import LakshlyGlance
     guard GlancePreferences.lockScreenAmounts(in: GlanceStore.preferences), let paise = plan.amountPaise else {
       return nil
     }
-    return Money.format(paise)
+    return Money.glance(paise)
   }
 
   private func endAll(immediate: Bool) {
