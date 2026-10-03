@@ -10,6 +10,7 @@ import { GameProvider } from "@/components/Game";
 import "./themes.gen.css";
 import "./globals.css";
 import "./themes-v2.css";
+import "./beta-glass.css";
 import { IS_BETA } from "@/lib/edition";
 import { themeV2BootScript } from "@/lib/themes-v2";
 
