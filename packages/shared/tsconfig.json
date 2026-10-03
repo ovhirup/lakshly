@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "lib": ["ES2023", "DOM"],
+    "module": "esnext", "moduleResolution": "bundler", "strict": true,
+    "noEmit": true, "skipLibCheck": true, "isolatedModules": true,
+    "erasableSyntaxOnly": true, "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "typeRoots": ["../parsers/node_modules/@types"],
+    "baseUrl": ".", "paths": { "vitest": ["../parsers/node_modules/vitest"] },
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["index.ts", "setup/**/*.ts", "mailsync/**/*.ts", "tests/**/*.ts"]
+}
