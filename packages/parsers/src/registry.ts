@@ -1,11 +1,11 @@
 import type { Adapter, ParseResult, TextDoc } from "./types.ts";
-import { cas } from "./adapters/cas.ts";
+import { cas, depositoryCas } from "./adapters/cas.ts";
 import { hdfcBank, iciciBank, sbiBank } from "./adapters/banks.ts";
 import { hdfcCard, sbiCard } from "./adapters/cards.ts";
 import { genericBank, genericCard } from "./adapters/generic.ts";
 
 /** Specific adapters first; generic fallbacks last. Add a bank by appending an Adapter here. */
-const adapters: Adapter[] = [cas, hdfcBank, sbiBank, iciciBank, hdfcCard, sbiCard];
+const adapters: Adapter[] = [depositoryCas, cas, hdfcBank, sbiBank, iciciBank, hdfcCard, sbiCard];
 const fallbacks: Adapter[] = [genericCard, genericBank];
 
 /** Minimum score for a specific (bank-branded) adapter to win over the generic fallback. */

@@ -1,6 +1,27 @@
 import CryptoKit
 import Foundation
 
+protocol StoredDataBacking: AnyObject {
+  var keyPersisted: Bool { get }
+  var keyEnclaveWrapped: Bool { get }
+  func load() throws -> StoredData?
+  func save(_ value: StoredData) throws
+}
+
+/// In-memory JSON round-trip used by tests. Never writes a file.
+final class MemoryStoredData: StoredDataBacking {
+  var payload: Data?
+  var keyPersisted: Bool { false }
+  var keyEnclaveWrapped: Bool { false }
+  func load() throws -> StoredData? {
+    guard let payload else { return nil }
+    return try JSONDecoder().decode(StoredData.self, from: payload)
+  }
+  func save(_ value: StoredData) throws {
+    payload = try JSONEncoder().encode(value)
+  }
+}
+
 /// Encrypts local demo data and preserves saved files when a persistent key is unavailable.
 final class SecureStore {
   let keys = KeyManager()
@@ -31,4 +52,9 @@ final class SecureStore {
       at: file.deletingLastPathComponent(), withIntermediateDirectories: true)
     try Self.seal(JSONEncoder().encode(value), key: key).write(to: file, options: .atomic)
   }
+}
+
+extension SecureStore: StoredDataBacking {
+  var keyPersisted: Bool { keys.persisted }
+  var keyEnclaveWrapped: Bool { keys.enclaveWrapped }
 }

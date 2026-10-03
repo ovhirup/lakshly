@@ -88,6 +88,18 @@ struct Dataset: Codable {
   let sips: [SIP]?
   let rewards: [Reward]?
 }
+
+/// One imported file, kept with the encrypted dataset so a later setup pass can attribute it.
+struct ImportLogEntry: Codable, Equatable, Identifiable {
+  var id: String
+  var at: String
+  var file: String
+  var adapter: String
+  var accountIds: [String]
+  var added: Int
+  var duplicates: Int
+  var confidence: Double?
+}
 struct AmountGroup: Identifiable {
   var id: String { name }
   let name: String
@@ -102,7 +114,92 @@ struct CommunityRequest: Codable, Identifiable {
   let priority: Bool
   var status: String
 }
+enum DataSource: String, Codable, CaseIterable {
+  case demo, mine
+}
+
 struct StoredData: Codable {
-  let dataset: Dataset
+  var dataset: Dataset
   var requests: [CommunityRequest]
+  var source: DataSource?
+  var userDataset: Dataset?
+  var setup: SetupState?
+  var goals: [Goal]?
+  var imports: [ImportLogEntry]?
+
+  init(
+    dataset: Dataset,
+    requests: [CommunityRequest],
+    source: DataSource? = nil,
+    userDataset: Dataset? = nil,
+    setup: SetupState? = nil,
+    goals: [Goal]? = nil,
+    imports: [ImportLogEntry]? = nil
+  ) {
+    self.dataset = dataset
+    self.requests = requests
+    self.source = source
+    self.userDataset = userDataset
+    self.setup = setup
+    self.goals = goals
+    self.imports = imports
+  }
+
+  /// Splits a pre-source saved file: rows whose ids are not in the bundled seed become `userDataset`.
+  func separatingUserRows(seed: Dataset) -> StoredData {
+    if source != nil {
+      return StoredData(
+        dataset: seed,
+        requests: requests,
+        source: source ?? .demo,
+        userDataset: userDataset,
+        setup: setup,
+        goals: goals,
+        imports: imports)
+    }
+    let user = dataset.userRows(notIn: seed)
+    return StoredData(
+      dataset: seed,
+      requests: requests,
+      source: user == nil ? .demo : .mine,
+      userDataset: user)
+  }
+}
+
+extension Dataset {
+  func userRows(notIn seed: Dataset) -> Dataset? {
+    let seedAccounts = Set(seed.accounts.map(\.id))
+    let seedTransactions = Set(seed.transactions.map(\.id))
+    let seedSips = Set((seed.sips ?? []).map(\.id))
+    let accounts = accounts.filter { !seedAccounts.contains($0.id) }
+    let transactions = transactions.filter { !seedTransactions.contains($0.id) }
+    let sips = (sips ?? []).filter { !seedSips.contains($0.id) }
+    guard !accounts.isEmpty || !transactions.isEmpty || !sips.isEmpty else { return nil }
+    return Dataset(
+      schemaVersion: schemaVersion,
+      generatedAt: generatedAt,
+      synthetic: false,
+      notice: notice,
+      currency: currency,
+      accounts: accounts,
+      transactions: transactions,
+      budgets: nil,
+      debts: nil,
+      sips: sips,
+      rewards: nil)
+  }
+
+  func replacingBudgets(_ budgets: [Budget]?) -> Dataset {
+    Dataset(
+      schemaVersion: schemaVersion, generatedAt: generatedAt, synthetic: synthetic, notice: notice,
+      currency: currency, accounts: accounts, transactions: transactions, budgets: budgets, debts: debts,
+      sips: sips, rewards: rewards)
+  }
+
+  func replacingCurrency(_ currency: String) -> Dataset {
+    Dataset(
+      schemaVersion: schemaVersion, generatedAt: generatedAt, synthetic: synthetic, notice: notice,
+      currency: currency, accounts: accounts, transactions: transactions, budgets: budgets, debts: debts,
+      sips: sips, rewards: rewards)
+  }
 }

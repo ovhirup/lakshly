@@ -22,6 +22,12 @@ targets:
         excludes: [Resources/Info.plist, Resources/Lakshly.entitlements, Resources/Lakshly-iOS.entitlements]
       - path: ../../demo-data/sample.synthetic.json
         buildPhase: resources
+      - path: ../../packages/shared/setup/sources.catalog.json
+        buildPhase: resources
+      - path: ../../packages/shared/setup/__fixtures__/state.midway.json
+        buildPhase: resources
+      - path: ../../packages/shared/setup/__fixtures__/dataset.after-import.json
+        buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/hdfc-bank.synthetic.pdf
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/hdfc-bank-locked.synthetic.pdf
@@ -29,6 +35,12 @@ targets:
       - path: LakshlyTests/Fixtures/Parsers/cas.synthetic.pdf
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/cas-locked.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/nsdl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas-locked.synthetic.pdf
         buildPhase: resources
     dependencies:
       - target: LakshlyGlance
@@ -43,6 +55,8 @@ targets:
         script: |
           if [ "$CONFIGURATION" = "Release" ]; then
             find "$TARGET_BUILD_DIR/$WRAPPER_NAME" -name '*.synthetic.pdf' -delete
+            find "$TARGET_BUILD_DIR/$WRAPPER_NAME" -name 'state.midway.json' -delete
+            find "$TARGET_BUILD_DIR/$WRAPPER_NAME" -name 'dataset.after-import.json' -delete
           fi
       - name: Mark iOS Live Activities support
         basedOnDependencyAnalysis: false
@@ -59,7 +73,7 @@ targets:
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
       configs:
         Release:
-          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf
+          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf nsdl-cas.synthetic.pdf cdsl-cas.synthetic.pdf cdsl-cas-locked.synthetic.pdf state.midway.json dataset.after-import.json
   Lakshly-macOS:
     type: application
     platform: macOS
@@ -67,6 +81,12 @@ targets:
       - path: Lakshly
         excludes: [Resources/Info.plist, Resources/Lakshly.entitlements, Resources/Lakshly-iOS.entitlements]
       - path: ../../demo-data/sample.synthetic.json
+        buildPhase: resources
+      - path: ../../packages/shared/setup/sources.catalog.json
+        buildPhase: resources
+      - path: ../../packages/shared/setup/__fixtures__/state.midway.json
+        buildPhase: resources
+      - path: ../../packages/shared/setup/__fixtures__/dataset.after-import.json
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/hdfc-bank.synthetic.pdf
         buildPhase: resources
@@ -76,12 +96,20 @@ targets:
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/cas-locked.synthetic.pdf
         buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/nsdl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas-locked.synthetic.pdf
+        buildPhase: resources
     postBuildScripts:
       - name: Strip synthetic statement PDFs from Release
         basedOnDependencyAnalysis: false
         script: |
           if [ "$CONFIGURATION" = "Release" ]; then
             find "$TARGET_BUILD_DIR/$WRAPPER_NAME" -name '*.synthetic.pdf' -delete
+            find "$TARGET_BUILD_DIR/$WRAPPER_NAME" -name 'state.midway.json' -delete
+            find "$TARGET_BUILD_DIR/$WRAPPER_NAME" -name 'dataset.after-import.json' -delete
           fi
     dependencies:
       - target: LakshlyWidgets-macOS
@@ -94,7 +122,7 @@ targets:
         ENABLE_APP_SANDBOX: YES
       configs:
         Release:
-          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf
+          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf nsdl-cas.synthetic.pdf cdsl-cas.synthetic.pdf cdsl-cas-locked.synthetic.pdf state.midway.json dataset.after-import.json
   LakshlyTests:
     type: bundle.unit-test
     platform: iOS
@@ -103,6 +131,9 @@ targets:
         excludes:
           - "Fixtures/**"
       - path: LakshlyTests/Fixtures/Parsers
+        type: folder
+        buildPhase: resources
+      - path: ../../packages/shared/setup/__fixtures__
         type: folder
         buildPhase: resources
       - path: ../../docs/themes.json
@@ -175,6 +206,10 @@ targets:
       - path: Lakshly/Components/ThemeDefinitions.swift
       - path: Lakshly/Components/Money.swift
       - path: Lakshly/Models/Dataset.swift
+      - path: Lakshly/Setup/SetupState.swift
+      - path: Lakshly/Setup/SetupLinks.swift
+      - path: Lakshly/Setup/SourcesCatalog.swift
+      - path: Lakshly/Setup/SetupSuggest.swift
       - path: Lakshly/Store/Entitlements.swift
     dependencies:
       - target: LakshlyGlance
@@ -209,6 +244,10 @@ targets:
       - path: Lakshly/Components/ThemeDefinitions.swift
       - path: Lakshly/Components/Money.swift
       - path: Lakshly/Models/Dataset.swift
+      - path: Lakshly/Setup/SetupState.swift
+      - path: Lakshly/Setup/SetupLinks.swift
+      - path: Lakshly/Setup/SourcesCatalog.swift
+      - path: Lakshly/Setup/SetupSuggest.swift
       - path: Lakshly/Store/Entitlements.swift
     settings:
       base:
@@ -237,6 +276,10 @@ schemes:
       # Same local configuration as the Debug run action, so xcodebuild enables
       # StoreKit testing. The file is not copied into the app bundle.
       storeKitConfiguration: StoreKit/Lakshly.storekit
+      environmentVariables:
+        - variable: LAKSHLY_SHOTS_DIR
+          value: $(LAKSHLY_SHOTS_DIR)
+          isEnabled: true
       targets:
         - name: LakshlyTests
           parallelizable: false

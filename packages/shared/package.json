@@ -1,0 +1,15 @@
+{
+  "name": "@lakshly/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pure on-device setup and mail sync planning; SYNTHETIC test fixtures only.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": { ".": "./index.ts" },
+  "scripts": {
+    "typecheck": "../parsers/node_modules/.bin/tsc --noEmit",
+    "test": "../parsers/node_modules/.bin/vitest run"
+  }
+}

@@ -2,6 +2,7 @@ import SwiftUI
 
 @main struct LakshlyApp: App {
   @State private var store: DataStore
+  @State private var session: SetupSession
   @State private var lock: AppLock
   @State private var entitlements: EntitlementStore
   @State private var appIcons: AppIconController
@@ -26,7 +27,9 @@ import SwiftUI
     #if os(macOS)
     _menuBarExtra = AppStorage(wrappedValue: true, GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences)
     #endif
-    _store = State(initialValue: DataStore())
+    let store = DataStore()
+    _store = State(initialValue: store)
+    _session = State(initialValue: SetupSession(store: store))
     _lock = State(initialValue: AppLock())
     _entitlements = State(initialValue: EntitlementStore())
     _appIcons = State(initialValue: AppIconController())
@@ -49,13 +52,50 @@ import SwiftUI
     return stored.rawValue
   }
   var body: some Scene {
+    #if os(macOS)
+    mainScene
+      .commands {
+        CommandGroup(after: .appSettings) {
+          Button("Set Up Lakshly…") { session.requestOpen(health: false, step: nil) }
+        }
+        CommandGroup(after: .windowArrangement) {
+          Button("Data Sources Health") { session.requestOpen(health: true, step: nil) }
+        }
+      }
+    Window("Set up Lakshly", id: "setup") {
+      let palette = ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance)
+      SetupHost(store: store)
+        .environment(\.theme, palette).environment(store).environment(session).environment(entitlements)
+        .environment(\.selectTheme) { themeID = $0; launchTheme = nil }
+        .foregroundStyle(palette.text).tint(palette.gold)
+        .preferredColorScheme(appearance)
+    }
+    .defaultSize(width: 760, height: 600)
+    .windowResizability(.contentMinSize)
+    MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: $menuBarExtra) {
+      MenuBarPanel()
+        .environment(\.theme, ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance))
+        .environment(store)
+        .environment(session)
+        .environment(entitlements)
+        .preferredColorScheme(appearance)
+    }
+    .menuBarExtraStyle(.window)
+    #else
+    mainScene
+    #endif
+  }
+
+  private var mainScene: some Scene {
     WindowGroup(id: "main") {
       let palette = ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance)
       RootView(store: store, lock: lock, themeSelection: Binding(
         get: { effectiveThemeID },
         set: { themeID = $0; launchTheme = nil }
       ))
-        .environment(\.theme, palette).environment(entitlements).environment(appIcons)
+        .environment(\.theme, palette).environment(entitlements).environment(appIcons).environment(session)
+        .environment(\.selectTheme) { themeID = $0; launchTheme = nil }
+        .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
         .foregroundStyle(palette.text).tint(palette.gold)
         .preferredColorScheme(appearance)
         .task {
@@ -70,16 +110,6 @@ import SwiftUI
           Task { await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved) }
         }
     }
-    #if os(macOS)
-    MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: $menuBarExtra) {
-      MenuBarPanel()
-        .environment(\.theme, ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance))
-        .environment(store)
-        .environment(entitlements)
-        .preferredColorScheme(appearance)
-    }
-    .menuBarExtraStyle(.window)
-    #endif
   }
 }
 
@@ -90,10 +120,15 @@ struct RootView: View {
   let lock: AppLock
   @Binding var themeSelection: String
   @Environment(\.scenePhase) private var phase
+  @Environment(SetupSession.self) private var session
+  #if os(macOS)
+  @Environment(\.openWindow) private var openWindow
+  #endif
   @AppStorage("settings.appLock") private var lockEnabled = true
   @State private var settings = false
   @State private var selected = "overview"
   @State private var pendingTab: String?
+  @State private var deferredSetup: String?? = nil
   @AppStorage("settings.appearance") private var appearanceStored = "system"
 
   init(store: DataStore, lock: AppLock, themeSelection: Binding<String>) {
@@ -133,56 +168,107 @@ struct RootView: View {
       } else {
         TabView(selection: $selected) {
           Tab("Overview", systemImage: "square.grid.2x2", value: "overview") {
-            navigation { OverviewView(store: store, showFeedback: { selected = "feedback" }) }
+            navigation {
+              DataGate(store: store, title: "Overview", need: [.accounts, .transactions]) {
+                OverviewView(store: store, showFeedback: { selected = "feedback" })
+              }
+            }
           }
           Tab("Spend", systemImage: "chart.pie", value: "spend") {
-            navigation { SpendView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Spend", need: [.transactions]) {
+                SpendView(store: store)
+              }
+            }
           }
           Tab("Budget", systemImage: "target", value: "budget") {
-            navigation { BudgetView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Budget", need: [.transactions]) {
+                BudgetView(store: store)
+              }
+            }
           }
           Tab("Feedback", systemImage: "heart.text.square", value: "feedback") {
             navigation { FeedbackView(store: store) }
           }
           Tab(value: "debt") {
-            navigation { DebtView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Debt", need: [.debts]) {
+                DebtView(store: store)
+              }
+            }
           } label: {
             premiumTab("Debt", systemImage: "chart.line.downtrend.xyaxis")
           }
           Tab(value: "credit") {
-            navigation { CreditView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Credit", need: [.cards]) {
+                CreditView(store: store)
+              }
+            }
           } label: {
             premiumTab("Credit", systemImage: "creditcard")
           }
           Tab(value: "investments") {
-            navigation { InvestmentsView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Investments & SIPs", need: [.sips]) {
+                InvestmentsView(store: store)
+              }
+            }
           } label: {
             premiumTab("Investments", systemImage: "chart.line.uptrend.xyaxis")
           }
           Tab(value: "rewards") {
-            navigation { RewardsView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Rewards", need: [.rewards]) {
+                RewardsView(store: store)
+              }
+            }
           } label: {
             premiumTab("Rewards", systemImage: "gift")
           }
           Tab("History", systemImage: "clock", value: "history") {
-            navigation { HistoryView(store: store) }
+            navigation {
+              DataGate(store: store, title: "History", need: [.savings, .transactions]) {
+                HistoryView(store: store)
+              }
+            }
           }
           Tab("Import", systemImage: "square.and.arrow.down", value: "import") {
             navigation { ImportView(store: store) }
           }
         }.tabViewStyle(.sidebarAdaptable)
+          .environment(\.openImport) { selected = "import" }
+          .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
       }
     }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock, themeSelection: $themeSelection) }
+      #if os(iOS)
+      .fullScreenCover(isPresented: Bindable(session).presented) {
+        SetupHost(store: store)
+          .environment(\.theme, theme).environment(entitlements).environment(session)
+          .environment(\.selectTheme) { themeSelection = $0 }
+      }
+      #endif
       .modifier(LaunchPaywallModifier(locked: lock.locked))
       .onAppear {
         if !lockEnabled && !lock.forced { lock.locked = false }
         publishGlance()
+        #if DEBUG
+        let options = LaunchOptions.current
+        let suppress = options.openSettings == true || options.showPaywall == true || options.startTab != nil
+          || options.importDemo != nil
+        #else
+        let suppress = false
+        #endif
+        session.consumeLaunch(suppressAuto: suppress)
       }
       .onOpenURL { url in
         switch GlanceLinks.effect(for: url, locked: lock.locked) {
         case .ignore: break
         case .select(let tab): selected = tab
         case .deferUntilUnlock(let tab): pendingTab = tab
+        case .openSetup(let step): session.requestOpen(health: false, step: step)
+        case .deferSetup(let step): deferredSetup = .some(step)
         }
       }
       .onChange(of: lock.locked) { _, locked in
@@ -191,8 +277,24 @@ struct RootView: View {
           selected = pendingTab
           self.pendingTab = nil
         }
+        if let deferredSetup {
+          session.requestOpen(health: false, step: deferredSetup)
+          self.deferredSetup = nil
+        }
         publishGlance()
       }
+      .onChange(of: session.requestSettings) { _, requested in
+        if requested {
+          settings = true
+          session.requestSettings = false
+        }
+      }
+      .onChange(of: store.setupEpoch) { _, _ in session.syncFromStore() }
+      #if os(macOS)
+      .onChange(of: session.presented) { _, shown in
+        if shown { openWindow(id: "setup") }
+      }
+      #endif
       .onChange(of: themeSelection) { _, _ in publishGlance() }
       .onChange(of: entitlements.tier) { _, _ in publishGlance() }
       .onChange(of: entitlements.hasResolved) { _, _ in publishGlance() }

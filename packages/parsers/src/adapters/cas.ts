@@ -4,7 +4,7 @@ import { parseDate } from "../util/dates.ts";
 import { stableId } from "../util/hash.ts";
 import { last4 } from "../util/mask.ts";
 import { parseAmount, parseNumber } from "../util/money.ts";
-import { normDesc } from "../engines.ts";
+import { findPeriod, normDesc } from "../engines.ts";
 
 /**
  * CAMS / KFintech consolidated account statement (detailed CAS, as emailed by the RTAs).
@@ -154,5 +154,116 @@ export const cas: Adapter = {
     }
     const meta: StatementMeta[] = [{ adapter: "cas.cams-kfintech", kind: "cas", institution: "CAMS / KFintech", accountId: accounts[0]?.id ?? "acc_none000", periodFrom, periodTo }];
     return { accounts, transactions, sips, holdings, meta, warnings };
+  },
+};
+
+// NSDL / CDSL depository CAS: demat holdings and MF folio tables.
+const NUMBER = String.raw`(?:INR\s*|Rs\.?\s*|₹\s*)?\(?-?[\d,]+(?:\.\d+)?\)?`;
+const CELL = String.raw`(?:${NUMBER}|-)`;
+const HOLDING_ROW = new RegExp(String.raw`^([A-Z0-9]{12})\s+(.+?)\s+(${NUMBER})\s+(${CELL})\s+(${CELL})\s+(${NUMBER})\s+(${NUMBER})$`);
+const FOLIO_ROW = new RegExp(String.raw`^(.+?)\s+([A-Z0-9]{12})\s+(\d+(?:\s*/\s*\d+)?)\s+(${NUMBER})\s+(${NUMBER})\s+(${CELL})\s+(${NUMBER})\s+(${CELL})$`);
+const MOVEMENT_ROW = new RegExp(String.raw`^(\d{2}-(?:[A-Za-z]{3}|\d{2})-\d{4})\s+([A-Z0-9]{12})\s+(.+?)\s+(${CELL})\s+(${CELL})\s+(${NUMBER})$`);
+const quantity = (s: string) => parseNumber(s.replace(/^(?:INR|Rs\.?|₹)\s*/i, ""));
+// Account identifiers must also stay out of free-text names and institutions.
+const safeName = (s: string) => s.replace(/\bIN30\d{4,6}\b/gi, "XXXX").replace(/\d{5,}/g, (n) => `XXXX${last4(n)}`).trim();
+
+interface Demat {
+  issuer: "NSDL" | "CDSL";
+  dp: string;
+  dpId: string;
+  clientId: string;
+  boId: string;
+  holdings: { isin: string; name: string; units: number; price: number; value: number }[];
+}
+
+/** Depository CAS tables contain quantities, not transaction amounts. */
+export const depositoryCas: Adapter = {
+  id: "cas.depository",
+  label: "Depository CAS (NSDL / CDSL)",
+  kind: "cas",
+  institution: "NSDL / CDSL",
+  detect: (doc) => {
+    const text = docText(doc);
+    const fullTitle = /Consolidated Account Statement/i.test(text);
+    if (!fullTitle && !/^CAS\b/im.test(text)) return 0;
+    if (/Registrar\s*:\s*(CAMS|KFINTECH|KARVY)/i.test(text) && /Closing Unit Balance/i.test(text)) return 0;
+    return /\b(?:NSDL|CDSL)\b|Central Depository/i.test(text) && /\bdemat\b|\bBO\s*ID\b|\bDP\s*ID\b/i.test(text) ? (fullTitle ? 0.95 : 0.85) : 0;
+  },
+  parse: (doc) => {
+    const { from: periodFrom, to: periodTo } = findPeriod(doc);
+    const lines = doc.lines.map((l) => l.text.replace(/\s+/g, " ").trim());
+    const issuerLine = lines.find((t) => /\bNSDL\b|\bCDSL\b|Central Depository/i.test(t) && !/Demat Account/i.test(t)) ?? "";
+    const issuer = /CDSL|Central Depository/i.test(issuerLine) ? "cdsl" : "nsdl";
+    const demats: Demat[] = [];
+    const folios: { scheme: string; isin: string; folio: string; units: number; nav: number; cost?: number; value: number }[] = [];
+    let current: Demat | undefined;
+    let mode: "holdings" | "movements" | "folios" | undefined;
+    let totalValue: number | undefined;
+    let quantityTransactionCount = 0;
+    for (const t of lines) {
+      const total = t.match(new RegExp(String.raw`^Total Portfolio Value\s*:?\s*(${NUMBER})$`, "i"));
+      if (total) { totalValue = parseAmount(total[1]) ?? undefined; continue; }
+      const section = t.match(/^(NSDL|CDSL) Demat Account(?:\s.*)?$/i);
+      if (section) {
+        current = { issuer: section[1].toUpperCase() as Demat["issuer"], dp: "", dpId: "", clientId: "", boId: "", holdings: [] };
+        demats.push(current); mode = "holdings"; continue;
+      }
+      if (/^Mutual Fund Units held with.*\(MF Folios\)/i.test(t)) { current = undefined; mode = "folios"; continue; }
+      if (current) {
+        const dp = t.match(/^DP Name\s*:\s*(.+)$/i);
+        if (dp) { current.dp = safeName(dp[1]); continue; }
+        const dpId = t.match(/\bDP ID\s*:\s*(IN30\d{4,6}|\d{8})\b/i);
+        const clientId = t.match(/\bClient ID\s*:\s*(\d{8})\b/i);
+        const boId = t.match(/\bBO ID\s*:\s*(\d{16})\b/i);
+        if (dpId) current.dpId = dpId[1];
+        if (clientId) current.clientId = clientId[1];
+        if (boId) current.boId = boId[1];
+        if (dpId || clientId || boId) continue;
+        if (/^Transactions\b/i.test(t)) { mode = "movements"; continue; }
+        if (/^(?:Equities\b|Mutual Fund Units(?! held with)|ISIN\s+(?:Security|Company))/i.test(t)) { mode = "holdings"; continue; }
+        if (mode === "movements") {
+          const row = t.match(MOVEMENT_ROW);
+          if (row && parseDate(row[1]) && quantity(row[6]) !== null) quantityTransactionCount++;
+          continue;
+        }
+        const row = mode === "holdings" ? t.match(HOLDING_ROW) : null;
+        if (row) {
+          const units = quantity(row[3]), price = quantity(row[6]), value = parseAmount(row[7]);
+          if (units !== null && price !== null && value !== null) current.holdings.push({ isin: row[1], name: safeName(row[2]), units, price, value });
+        }
+      } else if (mode === "folios") {
+        const row = t.match(FOLIO_ROW);
+        if (!row) continue;
+        const units = quantity(row[4]), nav = quantity(row[5]), value = parseAmount(row[7]);
+        if (units !== null && nav !== null && value !== null) folios.push({ scheme: safeName(row[1]), isin: row[2], folio: row[3].replace(/\s/g, ""), units, nav, cost: parseAmount(row[6]) ?? undefined, value });
+      }
+    }
+    const accounts: Account[] = [];
+    const holdings: Holding[] = [];
+    const warnings: string[] = [];
+    const asOf = periodTo ?? "1970-01-01";
+    if (!periodTo) warnings.push("Statement period end not found; please review the valuation date.");
+    for (const d of demats) {
+      const identifier = d.boId || (d.dpId + d.clientId);
+      const validIdentifier = d.issuer === "NSDL" ? /^IN30\d{4,6}$/i.test(d.dpId) && !!d.clientId : !!d.boId || /^\d{8}$/.test(d.dpId) && !!d.clientId;
+      if (!validIdentifier) { warnings.push("Demat account identifier not found; account skipped."); continue; }
+      const mask = last4(d.boId || d.clientId) ?? "XXXX";
+      const institution = `${d.issuer}${d.dp ? ` / ${d.dp}` : ""}`.slice(0, 80);
+      const accountId = stableId("acc", "cas.depository", d.issuer, identifier);
+      accounts.push({ id: accountId, name: `${d.issuer} Demat ••${mask}`, type: "stocks", institution, mask, currency: "INR", balance: d.holdings.reduce((n, h) => n + h.value, 0), asOf, source: "cas" });
+      for (const h of d.holdings) holdings.push({ accountId, scheme: h.name, amc: institution, registrar: "Unknown", folioMask: mask, isin: h.isin, units: h.units, nav: h.price, navDate: asOf, costValue: 0, marketValue: h.value });
+    }
+    for (const f of folios) {
+      const mask = last4(f.folio.split("/")[0]) ?? "XXXX";
+      const accountId = stableId("acc", "cas.depository", "folio", f.folio, f.isin);
+      const institution = `${issuer.toUpperCase()} / Mutual Fund Folios`;
+      const account: Account = { id: accountId, name: f.scheme.slice(0, 80), type: "mutual_fund", institution, mask, currency: "INR", balance: f.value, asOf, source: "cas" };
+      if (f.cost !== undefined) account.invested = f.cost;
+      accounts.push(account);
+      holdings.push({ accountId, scheme: f.scheme, amc: "Mutual Fund", registrar: "Unknown", folioMask: mask, isin: f.isin, units: f.units, nav: f.nav, navDate: asOf, costValue: f.cost ?? 0, marketValue: f.value });
+    }
+    if (!holdings.length) warnings.push("No holdings found in the depository CAS.");
+    const meta: StatementMeta = { adapter: "cas.depository", kind: "cas", institution: issuer.toUpperCase(), accountId: accounts[0]?.id ?? "acc_none000", issuer, periodFrom, periodTo, totalValue: totalValue ?? accounts.reduce((n, a) => n + a.balance, 0), quantityTransactionCount };
+    return { accounts, holdings, transactions: [], sips: [], meta: [meta], warnings };
   },
 };

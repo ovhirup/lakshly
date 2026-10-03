@@ -291,3 +291,88 @@ export function casPdf(password?: string) {
     }
   }], password, [842, 1100]);
 }
+
+// ---------- Depository CAS (all identifiers and securities are fictional) ----------
+const dematCols: Col[] = [
+  { title: "ISIN", x: 30 }, { title: "Security / Company name", x: 135 },
+  { title: "Current Bal.", x: 490, right: true }, { title: "Free Bal", x: 555, right: true },
+  { title: "Lent/Pledged", x: 635, right: true }, { title: "Market Price (Rs.)", x: 740, right: true }, { title: "Value (Rs.)", x: 835, right: true },
+];
+const folioCols: Col[] = [
+  { title: "Scheme name", x: 30 }, { title: "ISIN", x: 265 }, { title: "Folio No.", x: 365 },
+  { title: "Closing Bal. Units", x: 520, right: true }, { title: "NAV (Rs.)", x: 600, right: true },
+  { title: "Cumulative Amount Invested (Rs.)", x: 795, right: true }, { title: "Valuation (Rs.)", x: 905, right: true }, { title: "Unrealised P/L", x: 1010, right: true },
+];
+const movementCols: Col[] = [
+  { title: "Date", x: 30 }, { title: "ISIN", x: 130 }, { title: "Security", x: 235 }, { title: "Description", x: 420 },
+  { title: "Debit qty", x: 650, right: true }, { title: "Credit qty", x: 740, right: true }, { title: "Balance", x: 835, right: true },
+];
+const folioRows = [
+  ["Demo Balanced Fund - Growth", "INF000K01AB2", "70001234", "200.250", "50.1250", "9,000.00", "10,037.53", "1,037.53"],
+  ["Demo Short Term Fund - Growth", "INF000K01AB3", "70005678", "100.000", "25.5000", "2,400.00", "2,550.00", "150.00"],
+];
+
+function depositoryHeader(p: Pen, issuer: "NSDL" | "CDSL", numericDates = false) {
+  p.text("Consolidated Account Statement (CAS) - SYNTHETIC", 30, 30, { size: 14, bold: true });
+  p.text(issuer === "NSDL" ? "NSDL" : "Central Depository Services (India) Limited / CDSL", 30, 50);
+  p.text(numericDates ? "Statement for the period from 01-08-2026 to 31-08-2026" : "Statement for the period from 01-Aug-2026 to 31-Aug-2026", 30, 65);
+  p.text("Asha Demo", 30, 80);
+  p.text("Address: **** Demo Lane, Fictional City ****", 30, 95);
+}
+
+function cdslDemat(p: Pen, y: number) {
+  p.text("CDSL Demat Account", 30, y, { bold: true });
+  p.text("DP Name: Demo Securities Ltd", 30, y + 15);
+  p.text("BO ID: 1200000000002468", 30, y + 30);
+  p.text("Equities (E)", 30, y + 45, { bold: true });
+  table(p, dematCols, [["INE000A01012", "Demo Tools Ltd", "8.000", "6.000", "2.000", "99.50", "796.00"]], y + 60);
+  p.text("Mutual Fund Units held in demat", 30, y + 95, { bold: true });
+  table(p, dematCols, [["INF000K01AB1", "Demo Index Fund - Growth", "125.125", "125.125", "0.000", "32.4800", "4,064.06"]], y + 110);
+  p.text("Transactions", 30, y + 150, { bold: true });
+  table(p, movementCols, [
+    ["10-08-2026", "INE000A01012", "Demo Tools Ltd", "Sale", "2.000", "-", "8.000"],
+    ["12-Aug-2026", "INF000K01AB1", "Demo Index Fund", "Purchase", "0.000", "25.125", "125.125"],
+  ], y + 165);
+}
+
+export function nsdlCasPdf() {
+  return makePdf([
+    (p) => {
+      depositoryHeader(p, "NSDL");
+      p.text("Summary", 30, 120, { bold: true });
+      p.text("Total Portfolio Value: Rs. 23,967.59", 30, 135);
+      p.text("NSDL Demat: Rs. 6,520.00", 30, 150);
+      p.text("CDSL Demat: Rs. 4,860.06", 30, 165);
+      p.text("Mutual Fund Folios: Rs. 12,587.53", 30, 180);
+      p.text("NSDL Demat Account", 30, 210, { bold: true });
+      p.text("DP Name: Demo Securities Ltd", 30, 225);
+      p.text("DP ID: IN30000001  Client ID: 00001357", 30, 240);
+      p.text("Equities (E)", 30, 255, { bold: true });
+      table(p, dematCols, [
+        ["INE000A01011", "Demo Industries Ltd", "12.500", "10.500", "2.000", "120.40", "1,505.00"],
+        ["INE000A01013", "Demo Energy Ltd", "20.000", "20.000", "0.000", "250.75", "5,015.00"],
+      ], 270);
+      p.text("Transactions", 30, 330, { bold: true });
+      table(p, movementCols, [["05-Aug-2026", "INE000A01011", "Demo Industries Ltd", "By Transfer", "-", "2.500", "12.500"]], 345);
+    },
+    (p) => {
+      p.text("SYNTHETIC - continued", 30, 30);
+      cdslDemat(p, 55);
+      p.text("Mutual Fund Units held with RTAs (MF Folios)", 30, 300, { bold: true });
+      table(p, folioCols, folioRows, 320);
+    },
+  ], undefined, [1040, 595]);
+}
+
+export function cdslCasPdf(password?: string) {
+  return makePdf([(p) => {
+    depositoryHeader(p, "CDSL", true);
+    p.text("Summary", 30, 120, { bold: true });
+    p.text("Total Portfolio Value: Rs. 14,897.59", 30, 135);
+    p.text("CDSL Demat: Rs. 4,860.06", 30, 150);
+    p.text("Mutual Fund Folios: Rs. 10,037.53", 30, 165);
+    cdslDemat(p, 195);
+    p.text("Mutual Fund Units held with RTAs (MF Folios)", 30, 440, { bold: true });
+    table(p, folioCols, folioRows.slice(0, 1), 460);
+  }], password, [1040, 595]);
+}

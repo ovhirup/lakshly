@@ -32,6 +32,8 @@ build/
 .build/
 .swiftpm/
 Packages/
+# Swift PM's Packages/ above must not hide the repo's packages/ (case-insensitive filesystems)
+!/packages/
 *.ipa
 *.dSYM.zip
 *.dSYM
