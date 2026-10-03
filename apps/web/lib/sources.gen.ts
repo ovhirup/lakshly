@@ -1,0 +1,2692 @@
+/* Generated from packages/shared/setup/sources.json by scripts/gen-entitlements.mjs. Do not edit. */
+import type { SourcesCatalog } from "./setup-types";
+
+export const CATALOG: SourcesCatalog = {
+  "version": 1,
+  "updated": "2026-10-03",
+  "kinds": {
+    "bank": "Bank accounts",
+    "card": "Credit cards",
+    "paylater": "Pay later & credit lines",
+    "cas": "Consolidated statements (CAS)",
+    "invest": "Investment apps",
+    "insurance": "Insurance",
+    "subscription": "Subscriptions",
+    "score": "Credit score (optional)"
+  },
+  "kindOrder": [
+    "bank",
+    "card",
+    "paylater",
+    "cas",
+    "invest",
+    "insurance",
+    "subscription",
+    "score"
+  ],
+  "passwordHintFormats": {
+    "customer_id": "Your customer ID / CRN (as on your passbook or welcome letter)",
+    "name4_ddmm": "First 4 letters of your name in capitals, then your birth day and month (DDMM)",
+    "dob_ddmmyyyy": "Your date of birth as DDMMYYYY",
+    "dob_ddmmyyyy_card_last4": "Your date of birth (DDMMYYYY) followed by the last 4 digits of the card",
+    "mobile_last5_dob": "Last 5 digits of your registered mobile number, then your date of birth (DDMMYY)",
+    "pan_caps": "Your PAN in capital letters",
+    "cas_chosen": "The password you chose when you requested the CAS",
+    "folio": "Your folio number",
+    "name4_dob_ddmm": "First 4 letters of your name (the email says upper or lower case) followed by your birth day and month as DDMM.",
+    "name4_card_last4": "First 4 letters of the name on the card followed by the last 4 digits of the card.",
+    "mobile_last5_dob_ddmmyy": "Last 5 digits of your registered mobile number followed by your date of birth as DDMMYY.",
+    "crn": "Your CRN (customer relationship number), as shown in the bank's app or alert emails."
+  },
+  "guides": {
+    "gmail": "Open the email, ⋮ ▸ Download message saves it as .eml; or download the PDF attachment directly.",
+    "outlook": "Open the email ▸ … ▸ Save as, or download the PDF attachment.",
+    "appleMail": "Drag the PDF attachment to Finder, or on iPhone tap it ▸ Share ▸ Save to Files."
+  },
+  "sources": [
+    {
+      "id": "hdfc-bank",
+      "name": "HDFC Bank",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "bank"
+      ],
+      "senders": {
+        "domains": [
+          "hdfcbank.net",
+          "hdfcbank.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Transaction alerts",
+          "subjectAny": [
+            "debited",
+            "credited",
+            "UPI",
+            "transaction",
+            "alert"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Statements (PDF)",
+          "subjectAny": [
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "bank.hdfc"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "customer_id"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 8,
+        "graceDays": 10
+      },
+      "download": "NetBanking ▸ Accounts ▸ Download statement ▸ PDF or CSV, last 3–6 months.",
+      "verified": null,
+      "accountTypes": [
+        "savings",
+        "current"
+      ]
+    },
+    {
+      "id": "sbi-bank",
+      "name": "State Bank of India",
+      "aliases": [
+        "SBI",
+        "YONO"
+      ],
+      "region": "IN",
+      "kinds": [
+        "bank"
+      ],
+      "senders": {
+        "domains": [
+          "sbi.co.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Transaction alerts",
+          "subjectAny": [
+            "debited",
+            "credited",
+            "UPI",
+            "transaction",
+            "alert"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Statements (PDF)",
+          "subjectAny": [
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "bank.sbi"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "mobile_last5_dob"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 8,
+        "graceDays": 10
+      },
+      "download": "YONO / OnlineSBI ▸ Account statement ▸ choose dates ▸ Download PDF.",
+      "verified": null
+    },
+    {
+      "id": "icici-bank",
+      "name": "ICICI Bank",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "bank"
+      ],
+      "senders": {
+        "domains": [
+          "icicibank.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Transaction alerts",
+          "subjectAny": [
+            "debited",
+            "credited",
+            "UPI",
+            "transaction",
+            "alert"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Statements (PDF)",
+          "subjectAny": [
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "bank.icici"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "name4_ddmm"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 8,
+        "graceDays": 10
+      },
+      "download": "iMobile / Net banking ▸ Accounts ▸ Statement ▸ Download PDF.",
+      "verified": null
+    },
+    {
+      "id": "axis-bank",
+      "name": "Axis Bank",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "bank"
+      ],
+      "senders": {
+        "domains": [
+          "axisbank.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Transaction alerts",
+          "subjectAny": [
+            "debited",
+            "credited",
+            "UPI",
+            "transaction",
+            "alert"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Statements (PDF)",
+          "subjectAny": [
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "bank.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "name4_ddmm"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 8,
+        "graceDays": 10
+      },
+      "download": "Internet banking ▸ Accounts ▸ Statement ▸ PDF.",
+      "verified": null
+    },
+    {
+      "id": "kotak-bank",
+      "name": "Kotak Mahindra Bank",
+      "aliases": [
+        "Kotak811",
+        "Kotak 811"
+      ],
+      "region": "IN",
+      "kinds": [
+        "bank"
+      ],
+      "senders": {
+        "domains": [
+          "kotak.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Transaction alerts",
+          "subjectAny": [
+            "debited",
+            "credited",
+            "UPI",
+            "transaction",
+            "alert"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Statements (PDF)",
+          "subjectAny": [
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "bank.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "customer_id"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 8,
+        "graceDays": 10
+      },
+      "download": "Net banking ▸ Statements ▸ Download PDF.",
+      "verified": null
+    },
+    {
+      "id": "idfc-first",
+      "name": "IDFC FIRST Bank",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "bank"
+      ],
+      "senders": {
+        "domains": [
+          "idfcfirstbank.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Transaction alerts",
+          "subjectAny": [
+            "debited",
+            "credited",
+            "UPI",
+            "transaction",
+            "alert"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Statements (PDF)",
+          "subjectAny": [
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "bank.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "dob_ddmmyyyy"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 8,
+        "graceDays": 10
+      },
+      "download": "App ▸ Accounts ▸ Statement ▸ Email or download PDF.",
+      "verified": null
+    },
+    {
+      "id": "hdfc-card",
+      "name": "HDFC Bank credit cards",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "card"
+      ],
+      "senders": {
+        "domains": [
+          "hdfcbank.net",
+          "hdfcbank.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Card alerts",
+          "subjectAny": [
+            "\"credit card\"",
+            "spent",
+            "transaction"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Card statements (PDF)",
+          "subjectAny": [
+            "\"credit card\"",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "card.hdfc"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "name4_ddmm"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 5,
+        "graceDays": 10
+      },
+      "download": "NetBanking ▸ Cards ▸ Statements ▸ Download PDF (or use the emailed statement).",
+      "verified": null
+    },
+    {
+      "id": "sbi-card",
+      "name": "SBI Card",
+      "aliases": [
+        "SimplyCLICK",
+        "Cashback card"
+      ],
+      "region": "IN",
+      "kinds": [
+        "card"
+      ],
+      "senders": {
+        "domains": [
+          "sbicard.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Card alerts",
+          "subjectAny": [
+            "spent",
+            "transaction",
+            "alert"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Card statements (PDF)",
+          "subjectAny": [
+            "\"credit card\"",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "card.sbi"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "dob_ddmmyyyy_card_last4"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 5,
+        "graceDays": 10
+      },
+      "download": "SBI Card app ▸ Statements ▸ Download.",
+      "verified": null
+    },
+    {
+      "id": "icici-card",
+      "name": "ICICI Bank credit cards",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "card"
+      ],
+      "senders": {
+        "domains": [
+          "icicibank.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "statements",
+          "label": "Card statements (PDF)",
+          "subjectAny": [
+            "\"credit card\"",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "card.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "name4_ddmm"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 5,
+        "graceDays": 10
+      },
+      "download": "iMobile ▸ Cards ▸ Statements ▸ Download PDF.",
+      "verified": null
+    },
+    {
+      "id": "amex-in",
+      "name": "American Express India",
+      "aliases": [
+        "Amex"
+      ],
+      "region": "IN",
+      "kinds": [
+        "card"
+      ],
+      "senders": {
+        "domains": [
+          "americanexpress.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "statements",
+          "label": "Card statements (PDF)",
+          "subjectAny": [
+            "\"credit card\"",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "card.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 5,
+        "graceDays": 10
+      },
+      "download": "amex app ▸ Statements & activity ▸ Download PDF.",
+      "verified": null
+    },
+    {
+      "id": "onecard",
+      "name": "OneCard",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "card"
+      ],
+      "senders": {
+        "domains": [
+          "getonecard.app"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "statements",
+          "label": "Card statements (PDF)",
+          "subjectAny": [
+            "\"credit card\"",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "card.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 5,
+        "graceDays": 10
+      },
+      "download": "OneCard app ▸ Statements ▸ Download.",
+      "verified": null
+    },
+    {
+      "id": "lazypay",
+      "name": "LazyPay",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "paylater"
+      ],
+      "senders": {
+        "domains": [
+          "lazypay.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "bills",
+          "label": "Bills and repayments",
+          "subjectAny": [
+            "bill",
+            "due",
+            "repayment"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "No LazyPay importer yet: repayments show up in your bank statement. Track the limit by hand for now."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 3,
+        "graceDays": 10
+      },
+      "download": "LazyPay app ▸ Transactions.",
+      "verified": null
+    },
+    {
+      "id": "simpl",
+      "name": "Simpl",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "paylater"
+      ],
+      "senders": {
+        "domains": [
+          "getsimpl.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "bills",
+          "label": "Bills",
+          "subjectAny": [
+            "bill",
+            "due"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "No Simpl importer yet: repayments show up in your bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 3,
+        "graceDays": 10
+      },
+      "download": "Simpl app ▸ Bills.",
+      "verified": null
+    },
+    {
+      "id": "cams-cas",
+      "name": "CAMS / KFintech CAS",
+      "aliases": [
+        "Karvy",
+        "KFin",
+        "Mutual fund CAS"
+      ],
+      "region": "IN",
+      "kinds": [
+        "cas"
+      ],
+      "senders": {
+        "domains": [
+          "camsonline.com",
+          "kfintech.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "cas",
+          "label": "Consolidated Account Statement",
+          "subjectAny": [
+            "\"consolidated account statement\"",
+            "CAS"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf",
+          "csv"
+        ],
+        "adapters": [
+          "cas.cams-kfintech"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "cas_chosen",
+        "pan_caps"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 10,
+        "graceDays": 10
+      },
+      "download": "camsonline.com ▸ Investors ▸ Statements ▸ CAS ▸ Detailed, choose a password and email it to yourself.",
+      "verified": null
+    },
+    {
+      "id": "cdsl-cas",
+      "name": "CDSL eCAS",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "cas"
+      ],
+      "senders": {
+        "domains": [
+          "cdslstatement.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "cas",
+          "label": "Monthly eCAS",
+          "subjectAny": [
+            "CAS",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "cas.depository"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "pan_caps"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 12,
+        "graceDays": 10
+      },
+      "download": "Arrives monthly by email if you hold a CDSL demat account.",
+      "verified": null,
+      "accountTypes": [
+        "mutual_fund",
+        "stocks"
+      ]
+    },
+    {
+      "id": "nsdl-cas",
+      "name": "NSDL CAS",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "cas"
+      ],
+      "senders": {
+        "domains": [
+          "nsdl.co.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "cas",
+          "label": "Monthly CAS",
+          "subjectAny": [
+            "CAS",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "cas.depository"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "pan_caps"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 12,
+        "graceDays": 10
+      },
+      "download": "Arrives monthly by email if you hold an NSDL demat account.",
+      "verified": null,
+      "accountTypes": [
+        "mutual_fund",
+        "stocks"
+      ]
+    },
+    {
+      "id": "groww",
+      "name": "Groww",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "senders": {
+        "domains": [
+          "groww.in"
+        ],
+        "addresses": [],
+        "excludeDomains": [
+          "digest.groww.in"
+        ]
+      },
+      "searches": [
+        {
+          "id": "orders",
+          "label": "Order and SIP confirmations",
+          "subjectAny": [
+            "order",
+            "SIP",
+            "allotment"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Import your CAS for Groww mutual funds; for stocks, import the CDSL or NSDL depository CAS."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 10,
+        "graceDays": 10
+      },
+      "download": "Your Groww mutual funds are in your CAMS/KFintech CAS.",
+      "verified": null,
+      "suggestsCas": true
+    },
+    {
+      "id": "zerodha",
+      "name": "Zerodha / Coin",
+      "aliases": [
+        "Kite",
+        "Coin"
+      ],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "senders": {
+        "domains": [
+          "zerodha.com",
+          "zerodha.net"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "contract",
+          "label": "Contract notes",
+          "subjectAny": [
+            "\"contract note\""
+          ],
+          "attachment": true,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Import your CDSL or NSDL depository CAS for stocks and funds held in demat."
+      },
+      "passwordHints": [
+        "pan_caps"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 10,
+        "graceDays": 10
+      },
+      "download": "Console ▸ Reports ▸ Holdings ▸ Download.",
+      "verified": null,
+      "suggestsCas": true
+    },
+    {
+      "id": "kuvera",
+      "name": "Kuvera",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "senders": {
+        "domains": [
+          "kuvera.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "orders",
+          "label": "Order confirmations",
+          "subjectAny": [
+            "order",
+            "SIP"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Import your CAS for Kuvera mutual funds."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 10,
+        "graceDays": 10
+      },
+      "download": "Your Kuvera funds are in your CAMS/KFintech CAS.",
+      "verified": null,
+      "suggestsCas": true
+    },
+    {
+      "id": "lic",
+      "name": "LIC of India",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "insurance"
+      ],
+      "senders": {
+        "domains": [
+          "licindia.in",
+          "licindia.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "premium",
+          "label": "Premium receipts and reminders",
+          "subjectAny": [
+            "premium",
+            "receipt",
+            "due"
+          ],
+          "attachment": false,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Insurance isn't imported yet. Premiums already show in your bank statement; track the policy by hand."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "LIC customer portal ▸ Policy status.",
+      "verified": null
+    },
+    {
+      "id": "star-health",
+      "name": "Star Health",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "insurance"
+      ],
+      "senders": {
+        "domains": [
+          "starhealth.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "premium",
+          "label": "Renewal notices",
+          "subjectAny": [
+            "renewal",
+            "premium",
+            "policy"
+          ],
+          "attachment": false,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Insurance isn't imported yet; track renewals by hand."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "Star Health app ▸ My policies.",
+      "verified": null
+    },
+    {
+      "id": "jiohotstar",
+      "name": "JioHotstar",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "subscription"
+      ],
+      "senders": {
+        "domains": [
+          "hotstar.com",
+          "jiohotstar.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Payment receipts",
+          "subjectAny": [
+            "payment",
+            "receipt",
+            "subscription"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Your charges already come in through your bank or card statement. Receipt import is coming."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 1,
+        "graceDays": 5
+      },
+      "download": "Receipts arrive by email after each renewal.",
+      "verified": null
+    },
+    {
+      "id": "airtel",
+      "name": "Airtel",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "subscription"
+      ],
+      "senders": {
+        "domains": [
+          "airtel.in",
+          "airtel.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "bills",
+          "label": "Bills and recharges",
+          "subjectAny": [
+            "bill",
+            "recharge",
+            "payment"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Your charges already come in through your bank or card statement. Receipt import is coming."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 1,
+        "graceDays": 5
+      },
+      "download": "Airtel Thanks app ▸ Bills.",
+      "verified": null
+    },
+    {
+      "id": "netflix",
+      "name": "Netflix",
+      "aliases": [],
+      "region": "GLOBAL",
+      "kinds": [
+        "subscription"
+      ],
+      "senders": {
+        "domains": [
+          "netflix.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts",
+          "subjectAny": [
+            "receipt",
+            "payment",
+            "membership"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Your charges already come in through your bank or card statement. Receipt import is coming."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 1,
+        "graceDays": 5
+      },
+      "download": "Account ▸ Billing details.",
+      "verified": null
+    },
+    {
+      "id": "spotify",
+      "name": "Spotify",
+      "aliases": [],
+      "region": "GLOBAL",
+      "kinds": [
+        "subscription"
+      ],
+      "senders": {
+        "domains": [
+          "spotify.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts",
+          "subjectAny": [
+            "receipt",
+            "Premium"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Your charges already come in through your bank or card statement. Receipt import is coming."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 1,
+        "graceDays": 5
+      },
+      "download": "Account ▸ Order history.",
+      "verified": null
+    },
+    {
+      "id": "cibil",
+      "name": "CIBIL",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "score"
+      ],
+      "senders": {
+        "domains": [
+          "cibil.com",
+          "transunioncibil.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "report",
+          "label": "Score updates",
+          "subjectAny": [
+            "score",
+            "report"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [],
+        "adapters": [],
+        "supported": false,
+        "note": "Credit reports aren't imported. This is just a reminder to check yours."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "myscore.cibil.com ▸ Download report.",
+      "verified": null,
+      "optional": true
+    },
+    {
+      "id": "sbm-bank",
+      "name": "SBM Bank India",
+      "aliases": [
+        "SBM",
+        "ZET",
+        "credit builder"
+      ],
+      "region": "IN",
+      "kinds": [
+        "bank",
+        "card"
+      ],
+      "accountTypes": [
+        "fixed_deposit",
+        "credit_card"
+      ],
+      "senders": {
+        "domains": [
+          "sbmbank.co.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "statements",
+          "label": "Statements (PDF)",
+          "subjectAny": [
+            "statement",
+            "e-receipt",
+            "FD"
+          ],
+          "attachment": true,
+          "window": "2y"
+        },
+        {
+          "id": "payments",
+          "label": "Bill payment receipts",
+          "subjectAny": [
+            "payment",
+            "received",
+            "bill"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "card.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "name4_dob_ddmm"
+      ],
+      "cadence": {
+        "every": "month",
+        "expectedDay": 10,
+        "graceDays": 10
+      },
+      "download": "Card app ▸ Statements, or the monthly statement email.",
+      "verified": "2026-10-03"
+    },
+    {
+      "id": "axis-card",
+      "name": "Axis Bank credit cards",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "card"
+      ],
+      "accountTypes": [
+        "credit_card"
+      ],
+      "senders": {
+        "domains": [
+          "axis.bank.in",
+          "axisbank.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Card spend alerts",
+          "subjectAny": [
+            "\"credit card\"",
+            "transaction",
+            "spent"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Card statements (PDF)",
+          "subjectAny": [
+            "statement",
+            "e-statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "card.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "name4_dob_ddmm"
+      ],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "Card app or net banking ▸ Credit card ▸ Statements ▸ download the last 3–6 statements (PDF).",
+      "verified": null
+    },
+    {
+      "id": "kotak-card",
+      "name": "Kotak credit cards",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "card"
+      ],
+      "accountTypes": [
+        "credit_card"
+      ],
+      "senders": {
+        "domains": [
+          "kotak.bank.in",
+          "kotak.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "alerts",
+          "label": "Card spend alerts",
+          "subjectAny": [
+            "\"credit card\"",
+            "transaction",
+            "spent"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Card statements (PDF)",
+          "subjectAny": [
+            "statement",
+            "e-statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "card.generic"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "crn",
+        "name4_dob_ddmm"
+      ],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "Card app or net banking ▸ Credit card ▸ Statements ▸ download the last 3–6 statements (PDF).",
+      "verified": null
+    },
+    {
+      "id": "amazon-pay-later",
+      "name": "Amazon Pay Later",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "paylater"
+      ],
+      "accountTypes": [
+        "loan"
+      ],
+      "senders": {
+        "domains": [
+          "amazon.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "bills",
+          "label": "Bills and repayments",
+          "subjectAny": [
+            "\"Amazon Pay Later\""
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Add manually."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "Amazon ▸ Amazon Pay ▸ Pay Later ▸ Statements.",
+      "verified": null
+    },
+    {
+      "id": "flipkart-pay-later",
+      "name": "Flipkart Pay Later",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "paylater"
+      ],
+      "accountTypes": [
+        "loan"
+      ],
+      "senders": {
+        "domains": [
+          "flipkart.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "bills",
+          "label": "Bills and repayments",
+          "subjectAny": [
+            "\"Pay Later\""
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Add manually."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "slice",
+      "name": "slice",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "paylater",
+        "bank"
+      ],
+      "accountTypes": [
+        "loan",
+        "savings"
+      ],
+      "senders": {
+        "domains": [
+          "sliceit.com",
+          "slice.bank.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "bills",
+          "label": "Bills and statements",
+          "subjectAny": [
+            "statement",
+            "bill",
+            "due"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Add manually."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "kfintech-cas",
+      "name": "KFintech (mutual fund CAS and statements)",
+      "aliases": [
+        "Karvy"
+      ],
+      "region": "IN",
+      "kinds": [
+        "cas",
+        "invest"
+      ],
+      "accountTypes": [
+        "mutual_fund"
+      ],
+      "senders": {
+        "domains": [
+          "kfintech.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "cas",
+          "label": "CAS and account statements",
+          "subjectAny": [
+            "CAS",
+            "\"Consolidated Account Statement\"",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "cas.cams-kfintech"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "cas_chosen",
+        "pan_caps"
+      ],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "mfs.kfintech.com ▸ Investor services ▸ Consolidated Account Statement ▸ Detailed, set a password.",
+      "verified": "2026-10-03"
+    },
+    {
+      "id": "mfcentral",
+      "name": "MF Central",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "cas",
+        "invest"
+      ],
+      "accountTypes": [
+        "mutual_fund"
+      ],
+      "senders": {
+        "domains": [
+          "mfcentral.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "cas",
+          "label": "CAS",
+          "subjectAny": [
+            "CAS",
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "cas.cams-kfintech"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "cas_chosen",
+        "pan_caps"
+      ],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "mfcentral.com ▸ CAS ▸ Detailed.",
+      "verified": null
+    },
+    {
+      "id": "navi-mf",
+      "name": "Navi Mutual Fund",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "accountTypes": [
+        "mutual_fund"
+      ],
+      "senders": {
+        "domains": [
+          "navi.com"
+        ],
+        "addresses": [
+          "enq_navi@camsonline.com"
+        ],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "orders",
+          "label": "Purchase confirmations",
+          "subjectAny": [
+            "purchase",
+            "processed",
+            "SIP"
+          ],
+          "attachment": false,
+          "window": "1y"
+        },
+        {
+          "id": "statements",
+          "label": "Account statements",
+          "subjectAny": [
+            "statement"
+          ],
+          "attachment": true,
+          "window": "2y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "cas.cams-kfintech"
+        ],
+        "supported": true
+      },
+      "passwordHints": [
+        "pan_caps",
+        "dob_ddmmyyyy",
+        "folio"
+      ],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "Navi units are in your CAMS CAS; import that.",
+      "verified": "2026-10-03"
+    },
+    {
+      "id": "wint-wealth",
+      "name": "Wint Wealth (bonds)",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "accountTypes": [
+        "other"
+      ],
+      "senders": {
+        "domains": [
+          "wintwealth.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "orders",
+          "label": "Orders, receipts and interest",
+          "subjectAny": [
+            "order",
+            "receipt",
+            "interest",
+            "SIP",
+            "credited"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Bonds sit in your demat, so a depository CAS can now be imported to cover them."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "Wint app ▸ Portfolio ▸ Reports.",
+      "verified": "2026-10-03"
+    },
+    {
+      "id": "upstox",
+      "name": "Upstox",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "accountTypes": [
+        "stocks",
+        "mutual_fund"
+      ],
+      "senders": {
+        "domains": [
+          "upstox.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "orders",
+          "label": "Contract notes",
+          "subjectAny": [
+            "\"contract note\"",
+            "order"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Use your CAS."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "angel-one",
+      "name": "Angel One",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "accountTypes": [
+        "stocks"
+      ],
+      "senders": {
+        "domains": [
+          "angelone.in",
+          "angelbroking.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "orders",
+          "label": "Contract notes",
+          "subjectAny": [
+            "\"contract note\"",
+            "order"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Use your CAS."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "motilal-oswal",
+      "name": "Motilal Oswal (broking)",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "invest"
+      ],
+      "accountTypes": [
+        "stocks"
+      ],
+      "senders": {
+        "domains": [
+          "motilaloswal.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "statements",
+          "label": "Ledgers and DP statements",
+          "subjectAny": [
+            "ledger",
+            "\"holding\"",
+            "\"contract note\""
+          ],
+          "attachment": true,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Use your CAS."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": "2026-10-03"
+    },
+    {
+      "id": "hdfc-life",
+      "name": "HDFC Life",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "insurance"
+      ],
+      "accountTypes": [
+        "other"
+      ],
+      "senders": {
+        "domains": [
+          "hdfclife.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "premiums",
+          "label": "Premium receipts",
+          "subjectAny": [
+            "premium",
+            "receipt",
+            "renewal"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: premiums show up in your bank or card statement. Add the policy by hand for now."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "icici-pru",
+      "name": "ICICI Prudential Life",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "insurance"
+      ],
+      "accountTypes": [
+        "other"
+      ],
+      "senders": {
+        "domains": [
+          "iciciprulife.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "premiums",
+          "label": "Premium receipts",
+          "subjectAny": [
+            "premium",
+            "receipt",
+            "renewal"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: premiums show up in your bank or card statement. Add the policy by hand for now."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "sbi-life",
+      "name": "SBI Life",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "insurance"
+      ],
+      "accountTypes": [
+        "other"
+      ],
+      "senders": {
+        "domains": [
+          "sbilife.co.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "premiums",
+          "label": "Premium receipts",
+          "subjectAny": [
+            "premium",
+            "receipt",
+            "renewal"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: premiums show up in your bank or card statement. Add the policy by hand for now."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "acko",
+      "name": "ACKO",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "insurance"
+      ],
+      "accountTypes": [
+        "other"
+      ],
+      "senders": {
+        "domains": [
+          "acko.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "premiums",
+          "label": "Policy and renewal",
+          "subjectAny": [
+            "policy",
+            "renewal"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: premiums show up in your bank or card statement. Add the policy by hand for now."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "policybazaar",
+      "name": "Policybazaar",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "insurance"
+      ],
+      "accountTypes": [
+        "other"
+      ],
+      "senders": {
+        "domains": [
+          "policybazaar.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "premiums",
+          "label": "Policy and renewal",
+          "subjectAny": [
+            "policy",
+            "renewal",
+            "payment"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: premiums show up in your bank or card statement. Add the policy by hand for now."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "year",
+        "graceDays": 30
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "swiggy-one",
+      "name": "Swiggy One",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "swiggy.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "\"Swiggy One\"",
+            "membership"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "zomato-gold",
+      "name": "Zomato Gold",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "zomato.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "Gold",
+            "membership"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "jio",
+      "name": "Jio",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "jio.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "recharge",
+            "bill",
+            "payment"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "amazon-prime",
+      "name": "Amazon Prime",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "amazon.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "Prime",
+            "membership"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "youtube-premium",
+      "name": "YouTube Premium",
+      "aliases": [],
+      "region": "GLOBAL",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [
+        "other"
+      ],
+      "senders": {
+        "domains": [
+          "youtube.com",
+          "google.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "\"YouTube Premium\"",
+            "membership"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "apple",
+      "name": "Apple (App Store, iCloud+, Apple Music)",
+      "aliases": [],
+      "region": "GLOBAL",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "email.apple.com",
+          "apple.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "\"Your receipt from Apple\"",
+            "subscription",
+            "invoice"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "google-play",
+      "name": "Google Play (apps, Google One)",
+      "aliases": [],
+      "region": "GLOBAL",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "google.com"
+        ],
+        "addresses": [
+          "googleplay-noreply@google.com"
+        ],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "\"Google Play Order Receipt\"",
+            "\"Google One\"",
+            "subscription"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "microsoft",
+      "name": "Microsoft 365 / Xbox",
+      "aliases": [],
+      "region": "GLOBAL",
+      "kinds": [
+        "subscription"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "microsoft.com"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "receipts",
+          "label": "Receipts and renewals",
+          "subjectAny": [
+            "subscription",
+            "order",
+            "renewal"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "eml"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "No importer yet: renewals show up in your card or bank statement."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 10
+      },
+      "download": "",
+      "verified": null
+    },
+    {
+      "id": "experian",
+      "name": "Experian",
+      "aliases": [],
+      "region": "IN",
+      "kinds": [
+        "score"
+      ],
+      "accountTypes": [],
+      "senders": {
+        "domains": [
+          "experian.com",
+          "experian.in"
+        ],
+        "addresses": [],
+        "excludeDomains": []
+      },
+      "searches": [
+        {
+          "id": "reports",
+          "label": "Score updates",
+          "subjectAny": [
+            "score",
+            "report"
+          ],
+          "attachment": false,
+          "window": "1y"
+        }
+      ],
+      "importer": {
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [],
+        "supported": false,
+        "note": "Credit reports aren't imported. Keep the PDF for your own records."
+      },
+      "passwordHints": [],
+      "cadence": {
+        "every": "month",
+        "graceDays": 30
+      },
+      "download": "",
+      "verified": "2026-10-03"
+    }
+  ]
+};

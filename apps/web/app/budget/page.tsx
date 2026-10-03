@@ -2,24 +2,26 @@
 import { useState } from "react";
 import { MonthPicker } from "@/components/MonthPicker";
 import { useAppState } from "@/components/AppState";
+import { useTier } from "@/components/useTier";
 import { Glass, PageHeader, PremiumBadge, Progress, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
-import { budgetProgress, CATEGORY_COLORS, defaultMonth, months } from "@/lib/selectors";
+import { budgetProgress, CATEGORY_COLORS, defaultMonth, months, planFor } from "@/lib/selectors";
 
 function BudgetView() {
-  const { budgets, transactions, source } = useData();
-  const { plan, setPlan } = useAppState();
-  const all = source === "mine"
-    ? [...new Set([...months(transactions), ...budgets.map(b => b.month)])].sort()
-    : months(transactions).filter((m) => m <= defaultMonth(transactions));
+  const { budgets, transactions } = useData();
+  const { setPlan } = useAppState();
+  const { limit } = useTier();
+  // Free: one monthly budget with up to budgets.lines category lines; Premium: no caps.
+  const max = limit("budgets.lines");
+  const all = months(transactions).filter((m) => m <= defaultMonth(transactions));
   const [month, setMonth] = useState(all[all.length - 1]);
-  const rows = budgetProgress(budgets, transactions, month);
+  const rows = budgetProgress(planFor(budgets, month), transactions, month);
   const totalLimit = rows.reduce((s, r) => s + r.limit, 0);
   const totalSpent = rows.reduce((s, r) => s + r.spent, 0);
   const onTrack = rows.filter((r) => r.pct <= 100).length;
-  const visibleRows = plan === "free" && source === "demo" ? rows.slice(0, 1) : rows;
-  const lockedRows = plan === "free" && source === "demo" ? rows.slice(1) : [];
+  const visibleRows = max === null ? rows : rows.slice(0, max);
+  const lockedRows = max === null ? [] : rows.slice(max);
 
   return (
     <>
@@ -52,7 +54,7 @@ function BudgetView() {
         {lockedRows.length > 0 && (
           <Glass className="card budget-upsell">
             <div className="card-head">
-              <h2>Unlock {lockedRows.length} more budgets</h2>
+              <h2>Unlock {lockedRows.length} more budget lines</h2>
               <PremiumBadge small />
             </div>
             <ul className="budget-category-chips" aria-label="Locked budgets">
@@ -60,7 +62,7 @@ function BudgetView() {
                 <li key={r.id}><span className="dot" style={{ background: CATEGORY_COLORS[r.category] }} />{titleCase(r.category)}</li>
               ))}
             </ul>
-            <p className="muted tiny">Unlimited budgets, rollovers and smart nudges with Premium.</p>
+            <p className="muted tiny">Free covers one monthly budget with up to {max} category lines. Premium adds unlimited lines and budgets, rollovers and smart nudges.</p>
             <button className="btn ghost" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
           </Glass>
         )}

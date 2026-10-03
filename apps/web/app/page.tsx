@@ -1,10 +1,13 @@
 "use client";
 import Link from "next/link";
-import { SetupCard } from "@/components/SetupCard";
 import { Icon } from "@/components/Icon";
 import { CashflowBars, Donut } from "@/components/charts";
 import { Glass, PageHeader, Progress, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
+import { SetupCard } from "@/components/SetupParts";
+import { Amount, useDoubleTapToggle } from "@/components/Privacy";
+import { ReviewEntryCard, SundayBanner, WorthItCard } from "@/components/ReviewParts";
+import { BackfillCard, NextUpStrip, NudgeCard } from "@/components/Game";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -21,15 +24,18 @@ function OverviewView() {
   const mf = accounts.find((a) => a.type === "mutual_fund");
   const mfGain = mf && mf.invested ? mf.balance - mf.invested : 0;
   const cats = spendByCategory(transactions, month).slice(0, 6);
+  const doubleTap = useDoubleTapToggle();
   const maxAsset = Math.max(...accounts.map((a) => Math.abs(a.balance)));
 
   return (
     <>
       <PageHeader title="Overview" subtitle={`${source === "mine" ? "Your data" : "Synthetic demo data"} · as of ${formatDate(accounts.reduce((m, a) => (a.asOf > m ? a.asOf : m), accounts[0].asOf))}`} />
 
+      <SetupCard />
+
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>
-        <p className="big">{formatINR(nw.net)}</p>
+        <p className="big" {...doubleTap} title="Double-tap to hide or show amounts"><Amount>{formatINR(nw.net)}</Amount></p>
         <div className="pills">
           <span className="pill">{formatINR(nw.assets)} assets</span>
           <span className="pill">{formatINR(-nw.liabilities)} owed</span>
@@ -37,6 +43,17 @@ function OverviewView() {
         </div>
         <p className="tagline">Every rupee on target. <Icon name="sparkle" size={14} /></p>
       </Glass>
+
+      <BackfillCard />
+      <NudgeCard screen="overview" />
+      <SundayBanner />
+      <Glass className="card overview-review-card">
+        <div className="overview-review">
+          <ReviewEntryCard />
+          <WorthItCard compact />
+        </div>
+      </Glass>
+      <NextUpStrip />
 
       <div className="grid g4">
         <Glass className="card"><Stat label={`Income · ${formatMonth(month, true)}`} value={formatINR(cur.income)} /></Glass>
@@ -83,5 +100,5 @@ function OverviewView() {
 }
 
 export default function OverviewPage() {
-  return <><SetupCard /><DataGate title="Overview" need={["accounts", "transactions"]}><OverviewView /></DataGate></>;
+  return <DataGate title="Overview" need={["accounts", "transactions"]}><OverviewView /></DataGate>;
 }

@@ -141,7 +141,7 @@ function PremiumUpsell({ setPlan }: { setPlan: (p: Plan) => void }) {
         <li><strong>Priority triage for your requests and votes</strong></li>
         <li><strong>Early access to what you asked for</strong></li>
       </ul>
-      <p className="price"><strong>₹119</strong>/month · or <strong>₹999</strong>/year</p>
+      <p className="price" data-lk-price><strong>₹119</strong>/month · or <strong>₹999</strong>/year</p>
       <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
       <p className="tiny muted">Demo only. No payment is taken in this preview.</p>
     </Glass>

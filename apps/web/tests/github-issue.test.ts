@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { can, ENTITLEMENTS_MAP } from "../lib/entitlements";
+import { can, FEATURES } from "../lib/entitlements";
 import { buildGitHubIssue, issueEnvironment, issueKind, strictEncode, webPlatform, type IssueEnvironment, type IssueKind } from "../lib/github-issue";
 
 const GOLDEN_URL = "https://github.com/ovhirup/lakshly/issues/new?template=feature_request.yml&title=%5BRequest%5D%20Split%20bills%20with%20friends&body=%23%23%23%20Feature%20request%0A%0ALet%20me%20split%20a%20bill%20%26%20track%20who%20paid.%0AThanks%21%20%231%20%2B%2050%25%20%3D%20%F0%9F%99%8F%0A%0A%23%23%23%20Environment%0A%0A-%20App%3A%20Lakshly%200.1.0%20%281%29%0A-%20Platform%3A%20iOS%2026.2%0A-%20Theme%3A%20Lakshmi%20%C2%B7%20Dark%0A-%20Tier%3A%20Premium%0A%0A_Opened%20from%20the%20Lakshly%20app.%20Nothing%20was%20sent%20automatically.%20Please%20don%27t%20add%20account%20numbers%2C%20statements%20or%20other%20personal%20data._&labels=feature-request%2Cpriority&problem=Let%20me%20split%20a%20bill%20%26%20track%20who%20paid.%0AThanks%21%20%231%20%2B%2050%25%20%3D%20%F0%9F%99%8F&environment=-%20App%3A%20Lakshly%200.1.0%20%281%29%0A-%20Platform%3A%20iOS%2026.2%0A-%20Theme%3A%20Lakshmi%20%C2%B7%20Dark%0A-%20Tier%3A%20Premium";
@@ -97,7 +97,7 @@ describe("shared GitHub issue contract", () => {
 
 describe("entitlements", () => {
   it("requires Premium for priorityFeedback and unknown features", () => {
-    expect(ENTITLEMENTS_MAP).toMatchObject({ priorityFeedback: "premium" });
+    expect(FEATURES.priorityFeedback.minTier).toBe("premium");
     for (const feature of ["priorityFeedback", "unknown", "toString", "constructor", "__proto__"]) {
       expect(can(feature, "free")).toBe(false);
       expect(can(feature, "premium")).toBe(true);

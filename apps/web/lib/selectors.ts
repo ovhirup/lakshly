@@ -165,3 +165,15 @@ export function defaultMonth(txns: Transaction[], min = 15): string {
   for (let i = ms.length - 1; i >= 0; i--) if (txns.filter((t) => t.date.startsWith(ms[i])).length >= min) return ms[i];
   return ms[ms.length - 1];
 }
+
+/**
+ * A monthly budget repeats until it is changed: use the month's own lines, else the latest earlier plan,
+ * else the earliest later plan (e.g. a plan saved in October shown against September's data).
+ */
+export function planFor(budgets: Budget[], month: string): Budget[] {
+  const own = budgets.filter((b) => b.month === month);
+  if (own.length) return own;
+  const ms = [...new Set(budgets.map((b) => b.month))].sort();
+  const src = [...ms].reverse().find((m) => m < month) ?? ms.find((m) => m > month);
+  return src ? budgets.filter((b) => b.month === src).map((b) => ({ ...b, month })) : [];
+}

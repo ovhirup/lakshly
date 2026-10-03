@@ -5,10 +5,15 @@
 // planned follow-up.
 import type { Holding, LakshlyDataset, StatementMeta } from "@lakshly/parsers";
 
-import type { SetupState, SetupGoal } from "@lakshly/shared";
+import type { SetupGoal } from "./setup";
 
-export interface ImportLog { id: string; accountIds: string[]; confidence?: number; at: string; file: string; adapter: string; added: number; duplicates: number }
-export interface UserData { version: 2; setup?: SetupState; goals?: SetupGoal[]; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[] }
+export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number; /** Setup source this file was attributed to. */ sourceId?: string }
+export interface UserData {
+  version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[];
+  /** When each transaction first arrived on this device (used by the weekly review for late imports). */
+  importedAt?: Record<string, string>;
+  goals?: SetupGoal[];
+}
 
 const DB = "lakshly-vault";
 const STORE = "kv";
@@ -55,7 +60,24 @@ export async function loadUserData(): Promise<UserData | null> {
   const rec = await tx<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>("readonly", (s) => s.get("vault") as IDBRequest<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>);
   if (!rec) return null;
   const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: rec.iv as Uint8Array<ArrayBuffer> }, await key(), rec.ct);
-  return migrateUserData(JSON.parse(new TextDecoder().decode(plain)) as LegacyUserData | UserData);
+  return JSON.parse(new TextDecoder().decode(plain)) as UserData;
+}
+
+/** Named records (setup progress, review state, …) encrypted with the same device key as the dataset. */
+export type RecordName = "setup.state" | "review.state" | "review.demo" | "game.ledger" | "game.demo" | "game.nudges";
+
+export async function saveRecord(name: RecordName, value: unknown): Promise<void> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const plain = new TextEncoder().encode(JSON.stringify(value));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await key(), plain);
+  await tx("readwrite", (s) => s.put({ v: 1, alg: "AES-GCM-256", iv, ct }, `rec:${name}`));
+}
+
+export async function loadRecord<T>(name: RecordName): Promise<T | null> {
+  const rec = await tx<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>("readonly", (s) => s.get(`rec:${name}`) as IDBRequest<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>);
+  if (!rec) return null;
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: rec.iv as Uint8Array<ArrayBuffer> }, await key(), rec.ct);
+  return JSON.parse(new TextDecoder().decode(plain)) as T;
 }
 
 /** Peek at the stored record without decrypting (used to prove the data is encrypted at rest). */
@@ -71,15 +93,4 @@ export function deleteVault(): Promise<void> {
     req.onblocked = () => resolve();
     req.onerror = () => reject(req.error);
   });
-}
-
-/** Payload migration only: the encrypted envelope and dataset are unchanged. */
-export type LegacyUserData = Omit<UserData, "version" | "imports"> & {
-  version: 1; imports: Omit<ImportLog, "id" | "accountIds">[];
-};
-export function migrateUserData(data: LegacyUserData | UserData): UserData {
-  if (data.version === 2) return data;
-  return { ...data, version: 2, imports: data.imports.map((entry, index) => ({
-    ...entry, id: `imp_legacy${String(index + 1).padStart(6, "0")}`, accountIds: [],
-  })) };
 }

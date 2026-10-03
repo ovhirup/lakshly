@@ -1,4 +1,6 @@
 // INR formatting helpers. All amounts in Lakshly are integers in paise.
+// Privacy mode: when masked, money renders as a fixed-width "₹ •••••" so the DOM never holds the digits.
+import { MASK, moneyMasked, PCT_MASK, pctMasked } from "./privacy";
 
 const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
 const inr2 = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -6,7 +8,7 @@ const inr2 = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR"
 /** ₹1,23,456 (Indian digit grouping), from paise. */
 export function formatINR(paise: number, opts: { decimals?: boolean; signed?: boolean } = {}): string {
   const rupees = paise / 100;
-  const body = (opts.decimals ? inr2 : inr).format(Math.abs(rupees));
+  const body = moneyMasked() ? MASK : (opts.decimals ? inr2 : inr).format(Math.abs(rupees));
   if (rupees < 0) return `−${body}`;
   return opts.signed && rupees > 0 ? `+${body}` : body;
 }
@@ -15,6 +17,7 @@ export function formatINR(paise: number, opts: { decimals?: boolean; signed?: bo
 export function formatINRCompact(paise: number): string {
   const r = Math.abs(paise / 100);
   const sign = paise < 0 ? "−" : "";
+  if (moneyMasked()) return `${sign}${MASK}`;
   const trim = (n: number) => (Math.round(n * 10) / 10).toString().replace(/\.0$/, "");
   if (r >= 1e7) return `${sign}₹${trim(r / 1e7)}Cr`;
   if (r >= 1e5) return `${sign}₹${trim(r / 1e5)}L`;
@@ -22,7 +25,14 @@ export function formatINRCompact(paise: number): string {
   return `${sign}₹${Math.round(r)}`;
 }
 
+/** Plain counts that reveal wealth (e.g. reward points). Masked like money in privacy mode. */
+export function formatCount(n: number): string {
+  if (moneyMasked()) return "•••••";
+  return Math.round(n).toLocaleString("en-IN");
+}
+
 export function formatPct(v: number, digits = 1): string {
+  if (pctMasked()) return PCT_MASK;
   return `${(Math.round(v * 10 ** digits) / 10 ** digits).toFixed(digits)}%`;
 }
 
@@ -44,13 +54,4 @@ const ACRONYMS: Record<string, string> = { emi: "EMI", upi: "UPI", sip: "SIP", f
 
 export function titleCase(s: string): string {
   return s.replace(/_/g, " ").replace(/\b\w+/g, (w) => ACRONYMS[w.toLowerCase()] ?? w[0].toUpperCase() + w.slice(1));
-}
-
-/** Wizard/import money follows the app's hide-amounts preference. Values remain integer paise. */
-export function formatMoney(paise: number, opts: { privacy?: boolean; currency?: string; decimals?: boolean; signed?: boolean } = {}): string {
-  if (opts.privacy) return "••••";
-  if (!opts.currency || opts.currency === "INR") return formatINR(paise, opts);
-  const body = new Intl.NumberFormat("en-IN", { style: "currency", currency: opts.currency,
-    maximumFractionDigits: opts.decimals ? 2 : 0 }).format(Math.abs(paise) / 100);
-  return paise < 0 ? `−${body}` : opts.signed && paise > 0 ? `+${body}` : body;
 }
