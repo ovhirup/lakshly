@@ -1,7 +1,7 @@
 // Beta edition + Theme System v2 mapping (synthetic, no storage).
 import { describe, expect, it } from "vitest";
 import { editionFrom } from "../lib/edition";
-import { withEditionDefaults } from "../lib/profile";
+import { displayName } from "../lib/profile";
 import { ACCENTS, effectiveThemeV2, LEGACY_TO_V2, legacyIdFor, parseThemeV2, resolveThemeV2, BETA_DEFAULT } from "../lib/themes-v2";
 
 describe("edition flag", () => {
@@ -10,10 +10,9 @@ describe("edition flag", () => {
     expect(editionFrom(undefined)).toBe("public");
     expect(editionFrom("BETA")).toBe("public");
   });
-  it("Tester is the default beta name, never overriding a typed name", () => {
-    expect(withEditionDefaults({ v: 1, name: "" }, true).name).toBe("Tester");
-    expect(withEditionDefaults({ v: 1, name: "Asha" }, true).name).toBe("Asha");
-    expect(withEditionDefaults({ v: 1, name: "" }, false).name).toBe("");
+  it("no default person in any edition: an unset name shows the neutral 'You'", () => {
+    expect(displayName({ name: "" })).toBe("You");
+    expect(displayName({ name: "Asha" })).toBe("Asha");
   });
 });
 

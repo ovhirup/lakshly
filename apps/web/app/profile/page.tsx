@@ -58,7 +58,7 @@ export default function ProfilePage() {
             {editing ? (
               <form className="profile-name-form" onSubmit={(e) => { e.preventDefault(); saveProfile({ name: draft ?? "" }); setDraft(null); }}>
                 <label className="field">What should we call you?
-                  <input value={draft ?? name} onChange={(e) => setDraft(e.target.value)} maxLength={40} autoComplete="given-name" placeholder="Your first name" />
+                  <input value={draft ?? name} onChange={(e) => setDraft(e.target.value)} maxLength={40} autoComplete="given-name" placeholder="Your name" />
                 </label>
                 <button className="btn primary" type="submit" disabled={!(draft ?? name).trim()}>Save</button>
                 {name && <button className="btn ghost" type="button" onClick={() => setDraft(null)}>Cancel</button>}

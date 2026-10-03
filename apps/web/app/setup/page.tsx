@@ -12,7 +12,7 @@ import { Ring } from "@/components/SetupParts";
 import { useTier } from "@/components/useTier";
 import { Glass } from "@/components/ui";
 import { formatINR, formatMonth, titleCase } from "@/lib/format";
-import { saveProfile, useProfile } from "@/lib/profile";
+import { googlePrefill, NAME_MAX, saveProfile, useProfile } from "@/lib/profile";
 import { themes } from "@/lib/themes";
 import { CATALOG } from "@/lib/sources.gen";
 import type { Source, SourceKind } from "@/lib/setup-types";
@@ -184,17 +184,21 @@ function Welcome({ continueRef }: StepProps) {
   const { setSource } = useData();
   const { state, dispatch } = useSetup();
   const [name, setName] = useState(profile.name);
+  const [touched, setTouched] = useState(false);
+  // The profile loads from the encrypted vault after first paint: fill the field once it arrives, unless already typed in.
+  const [seeded, setSeeded] = useState(profile.loaded);
+  if (!seeded && profile.loaded) { setSeeded(true); if (!touched && !name) setName(profile.name); }
   const free = themes.filter((t) => !t.premium);
   const resolved = typeof document !== "undefined" && document.documentElement.dataset.appearance === "dark" ? "dark" : "light";
 
   function mine() {
-    saveProfile({ name });
+    if (touched) saveProfile({ name });
     dispatch({ type: "start", mode: "mine" });
     setSource("mine");
     dispatch({ type: "complete", step: "welcome" });
   }
   function demo() {
-    saveProfile({ name });
+    if (touched) saveProfile({ name });
     dispatch({ type: "start", mode: "demo" });
     setSource("demo");
     writeFlags({ seen: true, mode: "demo" });
@@ -209,15 +213,17 @@ function Welcome({ continueRef }: StepProps) {
       {GMAIL_CONNECT && (
         <Glass className="card gsi-card">
           <div className="card-head"><h3>Sign in with Google <span className="muted tiny">(optional)</span></h3><span className="badge">Beta</span></div>
-          <SignInWithGoogle onIdentity={(id) => { const n = id.givenName || id.name.split(" ")[0] || ""; if (n && (!name || name === "Tester")) { setName(n); saveProfile({ name: n }); } }} />
+          <SignInWithGoogle onIdentity={(id) => { const n = googlePrefill(name, id.givenName, id.name); if (n) { setName(n); saveProfile({ name: n, nameSource: "google" }); } }} />
         </Glass>
       )}
 
       <div className="setup-grid">
         <Glass className="card">
-          <label className="field">What should we call you?
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} onBlur={() => saveProfile({ name })} maxLength={40} autoComplete="given-name" placeholder="Your first name" />
+          <label className="field">What should we call you? <span className="muted tiny">(optional)</span>
+            <input type="text" value={name} onChange={(e) => { setTouched(true); setName(e.target.value.slice(0, NAME_MAX)); }}
+              onBlur={() => { if (touched) saveProfile({ name }); }} maxLength={NAME_MAX} autoComplete="given-name" placeholder="Your name" data-testid="welcome-name" />
           </label>
+          <p className="tiny muted">Shown on your profile card. Stays on this device, encrypted.</p>
           <label className="field">Currency
             <select value="INR" disabled aria-describedby="cur-note"><option value="INR">₹ Indian rupee (INR)</option></select>
           </label>
