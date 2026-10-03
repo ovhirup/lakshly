@@ -317,5 +317,6 @@ private struct PaywallFeature: Identifiable {
     PaywallFeature(feature: .investmentInsights, title: "Investment projections", symbol: "chart.line.uptrend.xyaxis"),
     PaywallFeature(feature: .rewardsInsights, title: "Rewards value & expiry tracking", symbol: "gift"),
     PaywallFeature(feature: .priorityFeedback, title: "Priority feature requests", symbol: "star.fill"),
+    PaywallFeature(feature: .extraWidgets, title: "Net worth and debt widgets", symbol: "rectangle.3.group"),
   ]
 }

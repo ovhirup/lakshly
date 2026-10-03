@@ -67,6 +67,7 @@ import Observation
       try secure.save(StoredData(dataset: dataset, requests: requests))
       error = nil
     } catch { self.error = "Could not save locally: \(error.localizedDescription)" }
+    GlancePublisher.publish(dataset: dataset)
   }
   func submit(title: String, details: String, type: String, premium: Bool) -> Bool {
     requests.append(
