@@ -1,10 +1,14 @@
 // On-device profile: the name you want Lakshly to use, and when you started Premium (demo).
 // Plain localStorage: a display name is not financial data. Never sent anywhere.
 import { useSyncExternalStore } from "react";
+import { BETA_PROFILE_NAME, IS_BETA } from "./edition";
 
 export const PROFILE_KEY = "lakshly.profile";
 export type Profile = { v: 1; name: string; premiumSince?: string };
-const EMPTY: Profile = { v: 1, name: "" };
+// Beta edition: everyone is "Tester" until they type their own name (never stored unless they do).
+const EMPTY: Profile = { v: 1, name: IS_BETA ? BETA_PROFILE_NAME : "" };
+/** Applies the edition default name to a parsed profile. */
+export function withEditionDefaults(p: Profile, beta = IS_BETA): Profile { return beta && !p.name ? { ...p, name: BETA_PROFILE_NAME } : p; }
 
 export function cleanName(raw: string): string {
   return raw.replace(/[\u0000-\u001f\u007f\u202a-\u202e\u2066-\u2069]/g, "").replace(/\s+/g, " ").trim().slice(0, 40);
@@ -43,7 +47,7 @@ let cache: Profile = EMPTY;
 function read(): Profile {
   let raw: string | null = null;
   try { raw = localStorage.getItem(PROFILE_KEY); } catch { /* storage blocked */ }
-  if (raw !== cacheRaw) { cacheRaw = raw; cache = parseProfile(raw); }
+  if (raw !== cacheRaw) { cacheRaw = raw; cache = withEditionDefaults(parseProfile(raw)); }
   return cache;
 }
 

@@ -9,6 +9,7 @@ import { useData } from "./DataState";
 import { useSetup, useSetupFlags, writeFlags } from "./SetupState";
 import { isFirstRun } from "@/lib/setup";
 import "./setup.css";
+import { IS_BETA } from "@/lib/edition";
 
 export function Ring({ pct, size = 40, label }: { pct: number; size?: number; label?: boolean }) {
   const w = Math.max(3, size / 14);
@@ -85,7 +86,7 @@ export function SetupAutoOpen() {
   const flags = useSetupFlags();
   const data = useData();
   useEffect(() => {
-    if (path !== "/" || !data.ready) return;
+    if (IS_BETA || path !== "/" || !data.ready) return; // beta opens on the demo Overview; setup stays one tap away
     let chosen = false;
     try { chosen = localStorage.getItem("lakshly.source") !== null; } catch { /* blocked */ }
     if (isFirstRun(flags, chosen, !!data.user)) { writeFlags({ seen: true }); router.replace("/setup/"); }
