@@ -63,6 +63,129 @@ final class ParserFixtureTests: XCTestCase {
     }
   }
 
+  func testDepositoryCasMatchesFiguresAndLockedPdf() throws {
+    let nsdl = try parsedResult("nsdl-cas")
+    let cdsl = try parsedResult("cdsl-cas")
+    let locked = try parsedResult("cdsl-cas-locked", password: "DEMO1234")
+    XCTAssertEqual(nsdl.adapter, "cas.depository")
+    XCTAssertEqual(nsdl.confidence, 0.95)
+    XCTAssertEqual(nsdl.accounts.map(\.balance), [652000, 486006, 1003753, 255000])
+    XCTAssertEqual(nsdl.accounts.map(\.mask), ["1357", "2468", "1234", "5678"])
+    XCTAssertEqual(nsdl.accounts.map(\.type), ["stocks", "stocks", "mutual_fund", "mutual_fund"])
+    XCTAssertEqual(nsdl.accounts.map(\.invested), [nil, nil, 900000, 240000])
+    XCTAssertEqual(nsdl.accounts.map(\.asOf), ["2026-08-31", "2026-08-31", "2026-08-31", "2026-08-31"])
+    XCTAssertEqual(nsdl.accounts.first?.institution, "NSDL / Demo Securities Ltd")
+    XCTAssertEqual(nsdl.accounts.first { $0.mask == "2468" }?.institution, "CDSL / Demo Securities Ltd")
+    XCTAssertEqual(nsdl.transactions.count, 0)
+    XCTAssertEqual(nsdl.sips.count, 0)
+    XCTAssertEqual(nsdl.warnings, [])
+    XCTAssertEqual(nsdl.meta.first?.issuer, "nsdl")
+    XCTAssertEqual(nsdl.meta.first?.periodFrom, "2026-08-01")
+    XCTAssertEqual(nsdl.meta.first?.periodTo, "2026-08-31")
+    XCTAssertEqual(nsdl.meta.first?.totalValue, 2396759)
+    XCTAssertEqual(nsdl.meta.first?.quantityTransactionCount, 3)
+    XCTAssertEqual(nsdl.accounts.reduce(0) { $0 + $1.balance }, 2396759)
+    let nsdlIndex = nsdl.holdings.first { $0.isin == "INF000K01AB1" }
+    XCTAssertEqual(nsdlIndex?.units, 125.125)
+    XCTAssertEqual(nsdlIndex?.nav, 32.48)
+    XCTAssertEqual(nsdlIndex?.marketValue, 406406)
+    XCTAssertEqual(nsdlIndex?.costValue, 0)
+    XCTAssertEqual(nsdl.holdings.first?.isin, "INE000A01011")
+    XCTAssertEqual(nsdl.holdings.first?.units, 12.5)
+    XCTAssertEqual(nsdl.holdings.first?.nav, 120.4)
+    XCTAssertEqual(nsdl.holdings.first?.marketValue, 150500)
+    XCTAssertEqual(nsdl.holdings[1].units, 20)
+    XCTAssertEqual(nsdl.holdings[1].nav, 250.75)
+    XCTAssertEqual(nsdl.holdings[1].marketValue, 501500)
+    XCTAssertEqual(nsdl.holdings.last?.units, 100)
+    XCTAssertEqual(nsdl.holdings.last?.nav, 25.5)
+    XCTAssertEqual(nsdl.holdings.last?.marketValue, 255000)
+    XCTAssertEqual(nsdl.accounts.last?.invested, 240000)
+
+    XCTAssertEqual(cdsl.accounts.map(\.balance), [486006, 1003753])
+    XCTAssertEqual(cdsl.accounts.map(\.mask), ["2468", "1234"])
+    XCTAssertEqual(cdsl.accounts.filter { $0.type == "stocks" }.count, 1)
+    XCTAssertEqual(cdsl.accounts.first { $0.mask == "1234" }?.invested, 900000)
+    XCTAssertNil(cdsl.accounts.first { $0.type == "stocks" }?.invested)
+    XCTAssertEqual(cdsl.meta.first?.issuer, "cdsl")
+    XCTAssertEqual(cdsl.meta.first?.totalValue, 1489759)
+    XCTAssertEqual(cdsl.meta.first?.quantityTransactionCount, 2)
+    XCTAssertEqual(cdsl.holdings.first { $0.isin == "INE000A01012" }?.units, 8)
+    XCTAssertEqual(cdsl.holdings.first { $0.isin == "INE000A01012" }?.nav, 99.5)
+    XCTAssertEqual(cdsl.holdings.first { $0.isin == "INE000A01012" }?.marketValue, 79600)
+    let folio = cdsl.holdings.first { $0.isin == "INF000K01AB2" }
+    XCTAssertEqual(folio?.units, 200.25)
+    XCTAssertEqual(folio?.nav, 50.125)
+    XCTAssertEqual(folio?.costValue, 900000)
+    XCTAssertEqual(folio?.marketValue, 1003753)
+    try assertJSONEqual(JSONEncoder().encode(locked), JSONEncoder().encode(cdsl), label: "cdsl-cas-locked")
+    let secrets = ["IN30000001", "00001357", "1200000000002468", "70001234", "70005678", "DEMO1234"]
+    for result in [nsdl, cdsl, locked] {
+      let json = String(data: try JSONEncoder().encode(result), encoding: .utf8) ?? ""
+      for secret in secrets { XCTAssertFalse(json.contains(secret), "\(result.adapter) leaked \(secret)") }
+    }
+  }
+
+  func testDepositoryDetectionAndTextRows() throws {
+    func score(_ lines: [String]) -> Double {
+      rankAdapters(textDocFromLines(lines)).first { $0.adapter.id == "cas.depository" }?.score ?? -1
+    }
+    XCTAssertEqual(score(["Consolidated Account Statement", "NSDL", "DP ID: IN30000001"]), 0.95)
+    XCTAssertEqual(score(["Consolidated Account Statement", "Central Depository Services (India) Limited", "BO ID: 1200000000002468"]), 0.95)
+    XCTAssertEqual(score(["Consolidated Account Statement", "CDSL", "Demat Account"]), 0.95)
+    XCTAssertEqual(score(["CAS - SYNTHETIC", "CDSL", "BO ID: 1200000000002468"]), 0.85)
+    XCTAssertEqual(score(["Account Statement", "NSDL", "DP ID"]), 0)
+    XCTAssertEqual(score(["Consolidated Account Statement", "NSDL"]), 0)
+    XCTAssertEqual(score(["Consolidated Account Statement", "DP ID"]), 0)
+
+    let parsed = parseDocument(textDocFromLines([
+      "Consolidated Account Statement - SYNTHETIC", "NSDL", "Statement for the period from 01-Aug-2026 to 31-Aug-2026",
+      "NSDL Demat Account", "DP Name: Demo Securities Ltd", "DP ID: IN300001", "Client ID: 00001357",
+      "Equities (E)", "INE000A01011 Demo Industries Ltd 12.5 10.5 2 120.40 1,505.00",
+      "CDSL Demat Account", "DP Name: Demo Securities Ltd", "DP ID: 12000000", "Client ID: 00002468",
+      "INE000A01012 Demo Tools Ltd 8 6 2 99.50 796.00",
+      "Mutual Fund Units held with RTAs (MF Folios)",
+      "Demo Balanced Fund INF000K01AB2 70001234 / 12 200.25 50.125 - 10,037.53 -",
+      "Demo Short Term Fund INF000K01AB3 70001234 / 12 100 25.5 2,400.00 2,550.00 150.00",
+    ]))
+    XCTAssertEqual(parsed.accounts.map { [$0.type, $0.mask ?? "", String($0.balance)] }, [
+      ["stocks", "1357", "150500"], ["stocks", "2468", "79600"], ["mutual_fund", "1234", "1003753"], ["mutual_fund", "1234", "255000"],
+    ])
+    XCTAssertEqual(Set(parsed.accounts.map(\.id)).count, 4)
+    XCTAssertNil(parsed.accounts[2].invested)
+    XCTAssertEqual(parsed.holdings[2].costValue, 0)
+    XCTAssertEqual(parsed.accounts[3].invested, 240000)
+    XCTAssertEqual(parsed.meta.first?.totalValue, 1488853)
+    XCTAssertEqual(parsed.meta.first?.quantityTransactionCount, 0)
+    XCTAssertEqual(parsed.warnings, [])
+    let textJSON = String(data: try JSONEncoder().encode(parsed), encoding: .utf8) ?? ""
+    for secret in ["IN300001", "00001357", "12000000", "00002468", "70001234"] {
+      XCTAssertFalse(textJSON.contains(secret), textJSON)
+    }
+
+    let skipped = parseDocument(textDocFromLines([
+      "Consolidated Account Statement", "NSDL", "NSDL Demat Account", "DP Name: Demo Securities Ltd",
+    ]))
+    XCTAssertEqual(skipped.warnings, [
+      "Statement period end not found; please review the valuation date.",
+      "Demat account identifier not found; account skipped.",
+      "No holdings found in the depository CAS.",
+    ])
+    XCTAssertTrue(skipped.accounts.isEmpty)
+    XCTAssertEqual(skipped.meta.first?.accountId, "acc_none000")
+    XCTAssertEqual(skipped.meta.first?.issuer, "nsdl")
+    XCTAssertEqual(skipped.meta.first?.totalValue, 0)
+    XCTAssertEqual(skipped.meta.first?.quantityTransactionCount, 0)
+
+    let casData = try Data(contentsOf: fixtureURL("cas.synthetic.pdf", directory: "Parsers"))
+    let casDoc = try extractPdfText(data: casData, password: nil, fileName: "cas.synthetic.pdf")
+    XCTAssertEqual(parseDocument(casDoc).adapter, "cas.cams-kfintech")
+    XCTAssertEqual(rankAdapters(casDoc).first { $0.adapter.id == "cas.depository" }?.score, 0)
+    let augmented = textDocFromLines(casDoc.lines.map(\.text) + ["NSDL Demat Account"])
+    XCTAssertEqual(parseDocument(augmented).adapter, "cas.cams-kfintech")
+    XCTAssertEqual(rankAdapters(augmented).first { $0.adapter.id == "cas.depository" }?.score, 0)
+  }
+
   func testCsvAndMergeMatchGoldens() throws {
     let csv = try String(contentsOf: fixtureURL("generic.synthetic.csv", directory: "Parsers"), encoding: .utf8)
     let parsed = parseCsv(csv, fileName: "generic.synthetic.csv")
