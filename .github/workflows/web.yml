@@ -50,6 +50,9 @@ jobs:
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
       - run: npm ci
+      - name: Install parser fixture dependencies
+        working-directory: packages/parsers
+        run: npm ci
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
