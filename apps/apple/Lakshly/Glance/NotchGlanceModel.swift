@@ -72,7 +72,9 @@ enum NotchGlanceCopy {
 
 enum NotchMetrics {
   static let width: CGFloat = 360
-  static let bodyHeight: CGFloat = 292
+  /// Upper bound for the panel body. The live panel is sized to the face's fitting height.
+  static let bodyHeight: CGFloat = 340
+  static let minBodyHeight: CGFloat = 120
   static let cornerRadius: CGFloat = 20
   static let hoverDelay: TimeInterval = 0.25
   static let leaveDelay: TimeInterval = 0.6

@@ -113,7 +113,8 @@ enum NotchScreens {
       removePanels()
       return
     }
-    let size = CGSize(width: NotchMetrics.width, height: NotchMetrics.bodyHeight + screen.safeAreaTop)
+    capHeight = max(screen.safeAreaTop, 1)
+    let size = CGSize(width: NotchMetrics.width, height: fittedHeight(capHeight: capHeight))
     guard let placed = NotchGeometry.layout(
       frame: screen.frame,
       safeAreaTop: screen.safeAreaTop,
@@ -123,13 +124,26 @@ enum NotchScreens {
       removePanels()
       return
     }
-    capHeight = max(screen.safeAreaTop, 1)
     contentFrame = placed.panelRect
     ensureHot(frame: placed.notchRect)
     if expanded {
       contentPanel?.setFrame(contentFrame, display: true)
       contentPanel?.orderFrontRegardless()
     }
+  }
+
+  /// Height of the face for the current content (hidden vs revealed rows differ), clamped.
+  private func fittedHeight(capHeight: CGFloat) -> CGFloat {
+    let face = NotchPanelFace(content: currentModel(), message: session.message, capHeight: capHeight)
+      .environment(\.theme, theme)
+    let fitted = NSHostingView(rootView: face).fittingSize.height
+    return min(max(fitted, capHeight + NotchMetrics.minBodyHeight), capHeight + NotchMetrics.bodyHeight)
+  }
+
+  /// Re-fit an open panel after its rows change. Top edge stays flush with the screen top.
+  private func refit() {
+    guard expanded, contentPanel != nil else { return }
+    layout()
   }
 
   private func expand() {
@@ -282,6 +296,7 @@ enum NotchScreens {
       expiryTask?.cancel()
       revealState = NotchRevealPolicy.hidingAmounts(revealState)
       renderFace()
+      refit()
       return
     }
     guard revealState.panelEnabled else { return }
@@ -300,6 +315,7 @@ enum NotchScreens {
         armExpiry()
       }
       renderFace()
+      refit()
       if expanded && !pointerInside() { pointerExited() }
     }
   }
@@ -314,6 +330,7 @@ enum NotchScreens {
         if !session.isRevealed {
           revealState = NotchRevealPolicy.hidingAmounts(revealState)
           renderFace()
+          refit()
           return
         }
       }

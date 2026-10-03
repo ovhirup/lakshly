@@ -51,10 +51,12 @@ private struct NotchPanelGlass: View {
         reveal
       }
       .padding(16)
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+      .frame(maxWidth: .infinity, alignment: .topLeading)
       .background { glass }
     }
     .frame(width: NotchMetrics.width)
+    // Hug the content: the panel ends just under Reveal instead of filling a fixed height.
+    .fixedSize(horizontal: false, vertical: true)
     .foregroundStyle(theme.text)
     .clipShape(
       UnevenRoundedRectangle(
