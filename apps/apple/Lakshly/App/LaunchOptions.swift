@@ -15,6 +15,8 @@ struct LaunchOptions {
   var importDemo: String?
   var importDemoFile: String?
   var feedbackDemo: Bool?
+  var appIconDemo: String?
+  var settingsScroll: String?
 
   static func parse(arguments: [String]) -> LaunchOptions {
     var options = LaunchOptions()
@@ -34,6 +36,8 @@ struct LaunchOptions {
       case "showPaywall": options.showPaywall = parseBool(value)
       case "importDemo": options.importDemo = value
       case "importDemoFile": options.importDemoFile = value
+      case "appIconDemo": options.appIconDemo = value
+      case "settingsScroll": options.settingsScroll = value
       case "feedbackDemo": options.feedbackDemo = parseBool(value)
       case "appearance": options.appearance = value
       case "theme": options.theme = value

@@ -7,105 +7,207 @@ struct SettingsView: View {
   @Environment(\.theme) private var theme
   @Environment(\.dismiss) private var dismiss
   @Environment(EntitlementStore.self) private var entitlements
+  @Environment(AppIconController.self) private var appIcons
   @AppStorage("settings.appearance") private var appearance = "system"
   @AppStorage("settings.appLock") private var appLock = true
   @State private var reset = false
   @State private var paywall: PaywallContext?
+  @State private var pendingIcon: ThemeID?
+  @State private var offeredIcon: ThemeID?
+  @State private var showIconOffer = false
   private var premium: Bool { entitlements.isPremium }
   private var colorScheme: ColorScheme? {
     switch LaunchOptions.current.appearance ?? appearance { case "light": .light; case "dark": .dark; default: nil }
   }
   var body: some View {
     NavigationStack {
-      Form {
-        Section("Theme") {
-          LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
-            ForEach(ThemeID.allCases) { id in
-              Button {
-                if id.definition.premium && !premium { paywall = .theme(id) }
-                else { withAnimation(.easeInOut(duration: 0.25)) { themeSelection = id.rawValue } }
-              } label: {
-                ThemeCard(palette: ThemePalette(id), selected: ThemeID.resolve(themeSelection) == id,
-                          locked: id.definition.premium && !premium)
-              }.buttonStyle(.plain)
-                .accessibilityIdentifier("theme.\(id.rawValue)")
-                .accessibilityLabel(id.definition.name + (id.definition.premium && !premium ? ", Premium locked" : ""))
-                .accessibilityValue(ThemeID.resolve(themeSelection) == id ? "Selected" : "")
-                .accessibilityHint(id.definition.description)
-            }
-          }.padding(.vertical, 8)
-        }.listRowBackground(theme.surface)
-        Section("Appearance") {
-          Picker("Appearance", selection: $appearance) {
-            Text("System").tag("system")
-            Text("Light").tag("light")
-            Text("Dark").tag("dark")
-          }.pickerStyle(.segmented)
-        }.listRowBackground(theme.surface)
-        Section("Lakshly Premium") {
-          if premium {
-            Text("Premium ✦")
-              .font(.headline)
-              .accessibilityIdentifier("settings.premiumStatus")
-            Text("Thank you for supporting Lakshly")
-            if !planLine.isEmpty {
-              Text(planLine).foregroundStyle(theme.secondaryText)
-                .accessibilityIdentifier("settings.plan")
-            }
-          } else {
-            Text("Free")
-              .font(.headline)
-              .accessibilityIdentifier("settings.premiumStatus")
-            Text("Lakshly Free · security and import are always free")
-              .foregroundStyle(theme.secondaryText)
-            Button("See Premium") { paywall = .general }
-              .accessibilityIdentifier("settings.seePremium")
-              .accessibilityHint("Opens Lakshly Premium")
-          }
-          Button("Restore Purchases") { Task { await entitlements.restore() } }
-            .accessibilityIdentifier("settings.restore")
-            .accessibilityHint("Checks this Apple ID for an existing Lakshly Premium subscription")
-          if !entitlements.purchaseState.isEmpty {
-            Text(entitlements.purchaseState).font(.caption).foregroundStyle(theme.secondaryText)
-          }
-          if let error = entitlements.lastError {
-            Text(error).font(.caption).foregroundStyle(theme.danger)
-          }
-        }.listRowBackground(theme.surface)
-        Section("App lock") {
-          Toggle("App lock", isOn: Binding(
-            get: { appLock },
-            set: { enabled in
-              if enabled { appLock = true }
-              else {
-                Task { if await lock.authorizeDisablingLock() { appLock = false } }
+      ScrollViewReader { scroll in
+        Form {
+          Section("Theme") {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
+              ForEach(ThemeID.allCases) { id in
+                Button {
+                  if ThemeAppIcon.isLocked(id, isPremium: premium) {
+                    pendingIcon = nil
+                    paywall = .theme(id)
+                  } else { selectTheme(id) }
+                } label: {
+                  ThemeCard(palette: ThemePalette(id), selected: ThemeID.resolve(themeSelection) == id,
+                            locked: id.definition.premium && !premium)
+                }.buttonStyle(.plain)
+                  .accessibilityIdentifier("theme.\(id.rawValue)")
+                  .accessibilityLabel(id.definition.name + (id.definition.premium && !premium ? ", Premium locked" : ""))
+                  .accessibilityValue(ThemeID.resolve(themeSelection) == id ? "Selected" : "")
+                  .accessibilityHint(id.definition.description)
               }
+            }.padding(.vertical, 8)
+          }.listRowBackground(theme.surface)
+          appIconSection
+            .id("appIcon")
+          Section("Appearance") {
+            Picker("Appearance", selection: $appearance) {
+              Text("System").tag("system")
+              Text("Light").tag("light")
+              Text("Dark").tag("dark")
+            }.pickerStyle(.segmented)
+          }.listRowBackground(theme.surface)
+          Section("Lakshly Premium") {
+            if premium {
+              Text("Premium ✦")
+                .font(.headline)
+                .accessibilityIdentifier("settings.premiumStatus")
+              Text("Thank you for supporting Lakshly")
+              if !planLine.isEmpty {
+                Text(planLine).foregroundStyle(theme.secondaryText)
+                  .accessibilityIdentifier("settings.plan")
+              }
+            } else {
+              Text("Free")
+                .font(.headline)
+                .accessibilityIdentifier("settings.premiumStatus")
+              Text("Lakshly Free · security and import are always free")
+                .foregroundStyle(theme.secondaryText)
+              Button("See Premium") { paywall = .general }
+                .accessibilityIdentifier("settings.seePremium")
+                .accessibilityHint("Opens Lakshly Premium")
             }
-          )).disabled(lock.authenticating)
-          if let message = lock.message { Text(message).font(.caption).foregroundStyle(theme.danger) }
-        }.listRowBackground(theme.surface)
-        Section("Private by design") {
-          Text(store.encryptionStatus)
-          Text("No network requests except Apple's App Store for purchases. No analytics or accounts. All data is synthetic.")
-          if let error = store.error { Text(error).foregroundStyle(theme.danger) }
-        }.listRowBackground(theme.surface)
-        Section { Button("Reset demo data", role: .destructive) { reset = true } }
-          .listRowBackground(theme.surface)
-      }.scrollContentBackground(.hidden).background { ThemeBackground() }
-        .foregroundStyle(theme.text).tint(theme.gold).navigationTitle("Settings")
-        .toolbar { Button("Done") { dismiss() } }
-        .confirmationDialog("Reset data and local requests?", isPresented: $reset) {
-          Button("Reset demo data", role: .destructive) { store.reset() }
+            Button("Restore Purchases") { Task { await entitlements.restore() } }
+              .accessibilityIdentifier("settings.restore")
+              .accessibilityHint("Checks this Apple ID for an existing Lakshly Premium subscription")
+            if !entitlements.purchaseState.isEmpty {
+              Text(entitlements.purchaseState).font(.caption).foregroundStyle(theme.secondaryText)
+            }
+            if let error = entitlements.lastError {
+              Text(error).font(.caption).foregroundStyle(theme.danger)
+            }
+          }.listRowBackground(theme.surface)
+          Section("App lock") {
+            Toggle("App lock", isOn: Binding(
+              get: { appLock },
+              set: { enabled in
+                if enabled { appLock = true }
+                else {
+                  Task { if await lock.authorizeDisablingLock() { appLock = false } }
+                }
+              }
+            )).disabled(lock.authenticating)
+            if let message = lock.message { Text(message).font(.caption).foregroundStyle(theme.danger) }
+          }.listRowBackground(theme.surface)
+          Section("Private by design") {
+            Text(store.encryptionStatus)
+            Text("No network requests except Apple's App Store for purchases. No analytics or accounts. All data is synthetic.")
+            if let error = store.error { Text(error).foregroundStyle(theme.danger) }
+          }.listRowBackground(theme.surface)
+          Section { Button("Reset demo data", role: .destructive) { reset = true } }
+            .listRowBackground(theme.surface)
+        }.scrollContentBackground(.hidden).background { ThemeBackground() }
+          .foregroundStyle(theme.text).tint(theme.gold).navigationTitle("Settings")
+          .toolbar { Button("Done") { dismiss() } }
+          .confirmationDialog("Reset data and local requests?", isPresented: $reset) {
+            Button("Reset demo data", role: .destructive) { store.reset() }
+          }
+          .confirmationDialog("Use the \(offeredIcon?.definition.name ?? "Lakshmi") app icon too?",
+                              isPresented: $showIconOffer, titleVisibility: .visible) {
+            Button("Switch app icon") {
+              if let id = offeredIcon { applyIcon(id) }
+              offeredIcon = nil
+            }.accessibilityIdentifier("appIcon.offer.switch")
+            // Not `.cancel`: iOS 26 hides cancel actions in popover dialogs, and this choice should stay visible.
+            Button("Keep current icon") { offeredIcon = nil }
+              .accessibilityIdentifier("appIcon.offer.keep")
+          }
+          .sheet(item: $paywall, onDismiss: {
+            pendingIcon = nil
+            if offeredIcon != nil { showIconOffer = true }
+          }) { context in
+            PaywallView(context: context)
+          }
+          .onChange(of: entitlements.isPremium) { _, isPremium in
+            guard isPremium, case .theme(let id) = paywall else { return }
+            if pendingIcon == id {
+              applyIcon(id)
+            } else {
+              selectTheme(id, afterUnlock: true)
+            }
+            paywall = nil
+          }
+        #if DEBUG
+        .task {
+          if LaunchOptions.current.settingsScroll == "appIcon" { scroll.scrollTo("appIcon", anchor: .top) }
         }
-        .sheet(item: $paywall) { context in
-          PaywallView(context: context)
-        }
-        .onChange(of: entitlements.isPremium) { _, isPremium in
-          guard isPremium, case .theme(let id) = paywall else { return }
-          withAnimation(.easeInOut(duration: 0.25)) { themeSelection = id.rawValue }
-        }
+        #endif
+      }
     }.preferredColorScheme(colorScheme).frame(minWidth: 320, minHeight: 420)
   }
+  private func selectTheme(_ id: ThemeID, afterUnlock: Bool = false) {
+    guard afterUnlock || ThemeID.resolve(themeSelection) != id else { return }
+    withAnimation(.easeInOut(duration: 0.25)) { themeSelection = id.rawValue }
+    if appIcons.current != id {
+      offeredIcon = id
+      if paywall == nil { showIconOffer = true }
+    }
+  }
+
+  private func applyIcon(_ id: ThemeID) {
+    Task {
+      await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved)
+      await appIcons.apply(id)
+    }
+  }
+
+  private var appIconSection: some View {
+    Section {
+      LazyVGrid(columns: [GridItem(.adaptive(minimum: 88), spacing: 12)], spacing: 16) {
+        ForEach(ThemeID.allCases) { id in
+          let locked = ThemeAppIcon.isLocked(id, isPremium: premium)
+          Button {
+            if locked {
+              pendingIcon = id
+              paywall = .theme(id)
+            } else { applyIcon(id) }
+          } label: {
+            VStack(spacing: 6) {
+              Image(ThemeAppIcon.previewImageName(for: id))
+                .resizable().scaledToFit().frame(width: 64, height: 64)
+                .clipShape(RoundedRectangle(cornerRadius: 64 * 0.22, style: .continuous))
+                .overlay(alignment: .bottomTrailing) {
+                  HStack(spacing: 2) {
+                    if locked { iconBadge("lock.fill") }
+                    if appIcons.current == id { iconBadge("checkmark.circle.fill") }
+                  }
+                }
+              Text(id.definition.name).font(.caption)
+                .foregroundStyle(theme.text)
+                .fixedSize(horizontal: false, vertical: true)
+            }.frame(maxWidth: .infinity)
+          }.buttonStyle(.plain)
+            .disabled(appIcons.isApplying || (!appIcons.supportsAlternateIcons && !locked))
+            .accessibilityElement(children: .ignore)
+            .accessibilityIdentifier("appIcon.\(id.rawValue)")
+            .accessibilityLabel(id.definition.name + " app icon" + (locked ? ", Premium locked" : ""))
+            .accessibilityValue(appIcons.current == id ? "Selected" : "")
+        }
+      }.padding(.vertical, 8)
+      if let error = appIcons.lastError {
+        Text(error).font(.caption).foregroundStyle(theme.danger)
+      }
+    } header: {
+      Text("App icon")
+    } footer: {
+      #if os(iOS)
+      Text("Your Home Screen icon. iOS confirms the change.")
+      #else
+      Text("Changes the Dock icon while Lakshly runs. The Finder icon stays the default.")
+      #endif
+    }.listRowBackground(theme.surface)
+  }
+
+  private func iconBadge(_ name: String) -> some View {
+    Image(systemName: name).font(.caption.weight(.semibold))
+      .foregroundStyle(theme.gold).padding(4)
+      .background(theme.surface, in: Circle()).accessibilityHidden(true)
+  }
+
   private var planLine: String {
     var parts: [String] = []
     if let name = entitlements.planName { parts.append(name) }

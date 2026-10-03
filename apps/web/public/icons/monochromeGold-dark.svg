@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<title>Lakshly Monochrome Gold (dark)</title>
+<defs><linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#000000"/><stop offset="1" stop-color="#161616"/></linearGradient><linearGradient id="mark" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D9AF52"/><stop offset="1" stop-color="#806000"/></linearGradient></defs>
+
+<rect x="0" y="0" width="1024" height="1024" rx="256" fill="url(#tile)"/>
+<g transform="translate(0 0) scale(16)"><path d="M32 14c5 6 7 12 7 18s-3 12-7 16c-4-4-7-10-7-16s2-12 7-18zm-14 12c5 1 9 4 11 9s2 10 0 13c-5-1-9-4-11-9s-2-10 0-13zm28 0c2 3 2 8 0 13s-6 8-11 9c-2-3-2-8 0-13s6-8 11-9z" fill="url(#mark)"/></g>
+</svg>

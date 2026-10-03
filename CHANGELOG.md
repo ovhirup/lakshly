@@ -6,6 +6,7 @@
 _No releases yet. Your idea could be the first one listed here._
 
 ## [Unreleased]
+- Theme app icons: independent Apple icon picker with Premium gating, iOS alternate icons and a macOS Dock icon that follows appearance; web favicons follow the theme, with installable PWA icons.
 - Apple: Feedback, Request and Bug forms now preview and open a prefilled GitHub issue for you to review and submit, with privacy-limited environment details and Premium priority labels.
 - Apple: StoreKit 2 Lakshly Premium for local testing (`app.lakshly.premium.monthly` ₹119, `app.lakshly.premium.yearly` ₹999) with a custom paywall. No App Store Connect products yet.
 - Apple: on-device statement and CAS import with PDFKit. The Import tab parses bank, credit-card, and CAMS/KFintech PDFs plus generic CSV on the device, asks for a password only in memory, and merges transactions into the encrypted local store.

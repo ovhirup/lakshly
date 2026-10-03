@@ -40,6 +40,8 @@ targets:
     settings:
       base:
         TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: "AppIcon-MonochromeGold AppIcon-Graphite AppIcon-Ocean AppIcon-Forest AppIcon-RoseQuartz"
+        ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
       configs:
         Release:
           EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf

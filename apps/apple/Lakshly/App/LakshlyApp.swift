@@ -4,6 +4,7 @@ import SwiftUI
   @State private var store: DataStore
   @State private var lock: AppLock
   @State private var entitlements: EntitlementStore
+  @State private var appIcons: AppIconController
   @AppStorage private var themeID: String
   @AppStorage private var appearanceID: String
   @State private var launchTheme: String?
@@ -16,6 +17,7 @@ import SwiftUI
     _store = State(initialValue: DataStore())
     _lock = State(initialValue: AppLock())
     _entitlements = State(initialValue: EntitlementStore())
+    _appIcons = State(initialValue: AppIconController())
   }
   private var appearance: ColorScheme? {
     switch LaunchOptions.current.appearance ?? appearanceID {
@@ -41,12 +43,19 @@ import SwiftUI
         get: { effectiveThemeID },
         set: { themeID = $0; launchTheme = nil }
       ))
-        .environment(\.theme, palette).environment(entitlements)
+        .environment(\.theme, palette).environment(entitlements).environment(appIcons)
         .foregroundStyle(palette.text).tint(palette.gold)
         .preferredColorScheme(appearance)
         .task {
+          await appIcons.start(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved)
           await entitlements.loadProducts()
           await entitlements.refresh()
+        }
+        .onChange(of: entitlements.isPremium) { _, _ in
+          Task { await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved) }
+        }
+        .onChange(of: entitlements.hasResolved) { _, _ in
+          Task { await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved) }
         }
     }
   }

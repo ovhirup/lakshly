@@ -69,14 +69,24 @@ final class StoreKitPurchaseUITests: XCTestCase {
     app.buttons["paywall.done"].tap()
 
     app.buttons["Settings"].tap()
-    XCTAssertTrue(app.staticTexts["Thank you for supporting Lakshly"].waitForExistence(timeout: 8))
+    // The App icon section sits between Theme and Premium; Form rows load lazily, so scroll to Premium.
+    let thankYou = app.staticTexts["Thank you for supporting Lakshly"]
+    XCTAssertTrue(app.buttons["theme.ocean"].waitForExistence(timeout: 8))
+    for _ in 0..<4 where !thankYou.exists { app.swipeUp() }
+    XCTAssertTrue(thankYou.waitForExistence(timeout: 8))
     XCTAssertTrue(app.staticTexts["settings.premiumStatus"].waitForExistence(timeout: 4)
       || app.staticTexts["Premium ✦"].waitForExistence(timeout: 4))
     shot(app, "settings-premium-unlocked")
 
     let ocean = app.buttons["theme.ocean"]
+    for _ in 0..<4 where !(ocean.exists && ocean.isHittable) { app.swipeDown() }
     XCTAssertTrue(ocean.waitForExistence(timeout: 6))
     ocean.tap()
+    // Changing the theme offers the matching app icon; keep the current one so no system alert appears.
+    let keepIcon = app.buttons["appIcon.offer.keep"].firstMatch
+    XCTAssertTrue(keepIcon.waitForExistence(timeout: 6) || app.buttons["Keep current icon"].waitForExistence(timeout: 2))
+    shot(app, "ocean-icon-offer")
+    (keepIcon.exists ? keepIcon : app.buttons["Keep current icon"].firstMatch).tap()
     shot(app, "ocean-applied-premium")
     app.buttons["Done"].tap()
 

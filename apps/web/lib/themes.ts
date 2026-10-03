@@ -26,6 +26,10 @@ export function isPremiumTheme(id: string | null | undefined) {
   return theme.premium && theme.id === id;
 }
 
+export function faviconHref(themeId: string | null | undefined, appearance: ResolvedAppearance): string {
+  return `/icons/${themeById(themeId).id}${appearance === "dark" ? "-dark" : ""}.svg`;
+}
+
 /** Paint `data-theme`, `data-appearance`, theme flags, and the browser theme-color. */
 export function applyDocumentTheme(themeId: ThemeId, appearance: ResolvedAppearance) {
   if (typeof document === "undefined") return;
@@ -36,6 +40,16 @@ export function applyDocumentTheme(themeId: ThemeId, appearance: ResolvedAppeara
   root.dataset.semanticIcons = theme.usesSemanticIcons ? "true" : "false";
   root.dataset.spacious = theme.spacious ? "true" : "false";
   root.dataset.clearGlass = theme.clearGlass ? "true" : "false";
+  let icon = document.querySelector<HTMLLinkElement>('link[rel="icon"][data-theme-icon]')
+    ?? document.querySelector<HTMLLinkElement>('link[rel="icon"][type="image/svg+xml"]');
+  if (!icon) {
+    icon = document.createElement("link");
+    icon.rel = "icon";
+    document.head.appendChild(icon);
+  }
+  icon.type = "image/svg+xml";
+  icon.setAttribute("data-theme-icon", "");
+  icon.setAttribute("href", faviconHref(theme.id, appearance));
   const bg = theme.swatches[appearance].bg;
   const metas = document.querySelectorAll('meta[name="theme-color"]');
   if (metas.length === 0) {

@@ -39,7 +39,9 @@
 		3069E78D8589A994E0B4F7A7 /* InvestmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */; };
 		33B4C19F994177AAFDB19981 /* FeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F69415892CB1861613A1A2 /* FeedbackView.swift */; };
 		36BAF6DF369DE8BF8F5B7106 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84953A55098AE165AB074C74 /* Merge.swift */; };
+		37C20B2DCE501454699A5A86 /* ThemeAppIconTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C39C0C81D202886DC9C23 /* ThemeAppIconTests.swift */; };
 		3951F3C3F0E0026EF1A962AF /* EntitlementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF21C6AA51CCEBB389BF1E1B /* EntitlementStore.swift */; };
+		3D508658750E3B14468DF264 /* AppIconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29A5CC7C7B613ACB9225925 /* AppIconController.swift */; };
 		4182A3ACAF38E9887D3BD4A6 /* Adapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF5DFD35C93699E099BC806 /* Adapters.swift */; };
 		446C47404DDAD759C0F8E5A0 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B9F77425187C4185625AFF /* Table.swift */; };
 		44EBEDC2781D9E5CC78E6285 /* Lakshly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 4F17FA443322997C13606406 /* Lakshly.storekit */; };
@@ -65,6 +67,7 @@
 		79EAB566141178ADB3F43674 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DBDB7CE6050917F3757B1 /* DataStore.swift */; };
 		7B59E2AD414008DE57DB184F /* DebtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A7295D48190C72FBC6A0D /* DebtView.swift */; };
 		7F2E57D0910B2EA686606F8B /* SettingsPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */; };
+		822B3FE321B289AF407099B4 /* ThemeAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B5A2D1A980D9058420A06 /* ThemeAppIcon.swift */; };
 		82A9C1C34B0E48A2D0B15179 /* Hash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4413307D726DB4AA063551A0 /* Hash.swift */; };
 		8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */; };
 		88118E87EB44369EE879EF2E /* Categorise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5722192061116EA95AA606E6 /* Categorise.swift */; };
@@ -92,12 +95,14 @@
 		B93AC3623F971FA921581BC3 /* DatasetImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFE826506D24F85B432AED /* DatasetImport.swift */; };
 		BA064F8B3E93414F126E01B9 /* ThemeDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0601B2921DE123B3023E9DF8 /* ThemeDefinitions.swift */; };
 		BD27BC5725BC6C238CE0364B /* LakshlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */; };
+		BF2765866278ADA03E754AFA /* ThemeAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B5A2D1A980D9058420A06 /* ThemeAppIcon.swift */; };
 		C0C3EEBE95E47175483DA7A7 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09DBDB7CE6050917F3757B1 /* DataStore.swift */; };
 		C1F7624690A6B5BC8C3D9B0A /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
 		C3FC0FA1D90FE6268D75F843 /* SecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */; };
 		C531A1838CF9EB931C70F45C /* ThemeDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0601B2921DE123B3023E9DF8 /* ThemeDefinitions.swift */; };
 		C5C46932588768202512675C /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
 		C791CEF9120175915E67ED85 /* DatasetImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8EFE826506D24F85B432AED /* DatasetImport.swift */; };
+		C7A3FDBBC06DD66CAE613781 /* AppIconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29A5CC7C7B613ACB9225925 /* AppIconController.swift */; };
 		C7CF78CB9D476B0F29676081 /* AppLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */; };
 		C9A6B49717BF8E2808FDFDF1 /* cas.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7ADC76490AA8645EF4E2834D /* cas.synthetic.pdf */; };
 		CBA9C6D4D77CB6851E62EC3B /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561213C16F83EF1708313DD /* Money.swift */; };
@@ -186,6 +191,7 @@
 		84953A55098AE165AB074C74 /* Merge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Merge.swift; sourceTree = "<group>"; };
 		8BC93836F5D851C23D6397B4 /* themes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = themes.json; sourceTree = "<group>"; };
 		901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPreferences.swift; sourceTree = "<group>"; };
+		916C39C0C81D202886DC9C23 /* ThemeAppIconTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeAppIconTests.swift; sourceTree = "<group>"; };
 		958223EAAA07FB46C1C3D745 /* StoreKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitTests.swift; sourceTree = "<group>"; };
 		98DAF70A5C9EAB07B7BE9577 /* Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Text.swift; sourceTree = "<group>"; };
 		9A5372977627F456E0B68D8E /* StoreKitPurchaseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitPurchaseUITests.swift; sourceTree = "<group>"; };
@@ -197,11 +203,13 @@
 		A8211BF33EBEFFDAD6C14160 /* LakshlyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LakshlyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2F69415892CB1861613A1A2 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
 		B98525A8284CAF7C518983B0 /* LakshlyUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LakshlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C29A5CC7C7B613ACB9225925 /* AppIconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconController.swift; sourceTree = "<group>"; };
 		C2FE03F0B1A9EF46808A2E3C /* Amounts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Amounts.swift; sourceTree = "<group>"; };
 		C561213C16F83EF1708313DD /* Money.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
 		C8AE531D64E0D77981F4E98D /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakshlyTests.swift; sourceTree = "<group>"; };
 		D89A7295D48190C72FBC6A0D /* DebtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebtView.swift; sourceTree = "<group>"; };
+		E68B5A2D1A980D9058420A06 /* ThemeAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeAppIcon.swift; sourceTree = "<group>"; };
 		EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubIssueLinkTests.swift; sourceTree = "<group>"; };
 		F09DBDB7CE6050917F3757B1 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLock.swift; sourceTree = "<group>"; };
@@ -445,12 +453,14 @@
 		BCA604719FBD40B4289B956F /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				C29A5CC7C7B613ACB9225925 /* AppIconController.swift */,
 				2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */,
 				60E70F932DD22164B5A2197F /* GlassCard.swift */,
 				9FA26CFA53316EC8CD45CB55 /* Layout.swift */,
 				C561213C16F83EF1708313DD /* Money.swift */,
 				325AA735767E52909FF4FCEF /* PremiumGate.swift */,
 				F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */,
+				E68B5A2D1A980D9058420A06 /* ThemeAppIcon.swift */,
 				0601B2921DE123B3023E9DF8 /* ThemeDefinitions.swift */,
 			);
 			path = Components;
@@ -492,6 +502,7 @@
 				5796053083CD3E0031D2B848 /* ParserFixtureTests.swift */,
 				19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */,
 				958223EAAA07FB46C1C3D745 /* StoreKitTests.swift */,
+				916C39C0C81D202886DC9C23 /* ThemeAppIconTests.swift */,
 			);
 			path = LakshlyTests;
 			sourceTree = "<group>";
@@ -785,6 +796,7 @@
 				B187FDAA13F3C6BEBC36211B /* ParserFixtureTests.swift in Sources */,
 				C3FC0FA1D90FE6268D75F843 /* SecurityTests.swift in Sources */,
 				08334A0E63C49A5328D7EFD9 /* StoreKitTests.swift in Sources */,
+				37C20B2DCE501454699A5A86 /* ThemeAppIconTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -794,6 +806,7 @@
 			files = (
 				4182A3ACAF38E9887D3BD4A6 /* Adapters.swift in Sources */,
 				A92028B9AB31506A6DD19ACC /* Amounts.swift in Sources */,
+				C7A3FDBBC06DD66CAE613781 /* AppIconController.swift in Sources */,
 				5B0065DB896114DAB4A6E324 /* AppLock.swift in Sources */,
 				F1EC5C314BFCB6C2C248A992 /* BudgetView.swift in Sources */,
 				FFEB8B9B1EDAAED268A57AFC /* CSV.swift in Sources */,
@@ -836,6 +849,7 @@
 				446C47404DDAD759C0F8E5A0 /* Table.swift in Sources */,
 				8B44EFB5901620B688C663CC /* Text.swift in Sources */,
 				9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */,
+				BF2765866278ADA03E754AFA /* ThemeAppIcon.swift in Sources */,
 				C531A1838CF9EB931C70F45C /* ThemeDefinitions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -846,6 +860,7 @@
 			files = (
 				A60114DE6F219D31D578C12C /* Adapters.swift in Sources */,
 				0DA71AF97C629EF17170EED8 /* Amounts.swift in Sources */,
+				3D508658750E3B14468DF264 /* AppIconController.swift in Sources */,
 				C7CF78CB9D476B0F29676081 /* AppLock.swift in Sources */,
 				22D27F652CD49E0D4073FC3C /* BudgetView.swift in Sources */,
 				9468AF85D6B8F0C48627091B /* CSV.swift in Sources */,
@@ -888,6 +903,7 @@
 				692BEB41527001F12ADD0B94 /* Table.swift in Sources */,
 				673556CFA971A4C4EFBEA3D4 /* Text.swift in Sources */,
 				D0F8B80EB638CC979A69804A /* Theme.swift in Sources */,
+				822B3FE321B289AF407099B4 /* ThemeAppIcon.swift in Sources */,
 				BA064F8B3E93414F126E01B9 /* ThemeDefinitions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1013,7 +1029,9 @@
 		20B654A9A2B457F416BB23A2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-MonochromeGold AppIcon-Graphite AppIcon-Ocean AppIcon-Forest AppIcon-RoseQuartz";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				EXCLUDED_SOURCE_FILE_NAMES = "hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf";
 				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
@@ -1081,7 +1099,9 @@
 		9F4451780FE9EE921A9E2CF1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "AppIcon-MonochromeGold AppIcon-Graphite AppIcon-Ocean AppIcon-Forest AppIcon-RoseQuartz";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Lakshly/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

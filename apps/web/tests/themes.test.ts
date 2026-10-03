@@ -1,9 +1,10 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { applyDocumentTheme, faviconHref } from "../lib/themes";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const webRoot = resolve(here, "..");
@@ -417,5 +418,62 @@ describe("pre-paint script", () => {
     expect(mono.dataset.spacious).toBe("true");
     expect(mono.dataset.clearGlass).toBe("true");
     expect(mono.writes).toEqual([]);
+  });
+});
+
+
+describe("theme icons", () => {
+  it("creates or reuses the SVG favicon, including when theme-color is absent", () => {
+    for (const existing of [false, true]) {
+      const attributes: Record<string, string> = {};
+      const icon = { type: "image/svg+xml", setAttribute: (key: string, value: string) => { attributes[key] = value; } };
+      const children: unknown[] = [];
+      const doc = {
+        documentElement: { dataset: {} },
+        head: { appendChild: (child: unknown) => { children.push(child); } },
+        querySelector: () => existing || children.includes(icon) ? icon : null,
+        querySelectorAll: () => [],
+        createElement: (tag: string) => tag === "link" ? icon : {},
+      };
+      vi.stubGlobal("document", doc);
+      try {
+        applyDocumentTheme("ocean", "dark");
+        expect(attributes.href).toBe("/icons/ocean-dark.svg");
+        expect(attributes["data-theme-icon"]).toBe("");
+        applyDocumentTheme("graphite", "light");
+        expect(attributes.href).toBe("/icons/graphite.svg");
+        expect(children.filter((child) => child === icon)).toHaveLength(existing ? 0 : 1);
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    }
+  });
+
+  it("maps every theme and appearance to a shipped favicon", () => {
+    for (const theme of manifest.themes) {
+      for (const appearance of ["light", "dark"] as const) {
+        const href = faviconHref(theme.id, appearance);
+        expect(href).toBe(`/icons/${theme.id}${appearance === "dark" ? "-dark" : ""}.svg`);
+        expect(existsSync(resolve(webRoot, "public", href.slice(1))), href).toBe(true);
+      }
+    }
+  });
+
+  it("falls back to Lakshmi for an unknown theme", () => {
+    expect(faviconHref("unknown", "light")).toBe("/icons/lakshmi.svg");
+    expect(faviconHref("unknown", "dark")).toBe("/icons/lakshmi-dark.svg");
+  });
+
+  it("ships every manifest icon", () => {
+    const pwa = JSON.parse(readFileSync(resolve(webRoot, "public/manifest.webmanifest"), "utf8")) as {
+      icons: { src: string; sizes: string; purpose?: string }[];
+    };
+    expect(pwa.icons.map((icon) => icon.src)).toEqual([
+      "/icon.svg", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/maskable-512.png",
+    ]);
+    for (const icon of pwa.icons) {
+      expect(existsSync(resolve(webRoot, "public", icon.src.slice(1))), icon.src).toBe(true);
+    }
+    expect(pwa.icons.find((icon) => icon.purpose === "maskable")?.sizes).toBe("512x512");
   });
 });
