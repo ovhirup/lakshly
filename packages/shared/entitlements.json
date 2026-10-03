@@ -35,7 +35,12 @@
     "privacy.mode": { "minTier": "free", "label": "Privacy mode (hide amounts)" },
     "privacy.shake": { "minTier": "free", "label": "Shake to hide" },
     "privacy.autoHide": { "minTier": "free", "label": "Hide when switching away" },
-    "privacy.widgetMask": { "minTier": "free", "label": "Widgets without amounts" }
+    "privacy.widgetMask": { "minTier": "free", "label": "Widgets without amounts" },
+    "review.inbox": { "minTier": "free", "label": "Weekly review inbox" },
+    "review.merchantRules": { "minTier": "free", "label": "Remember a category for a merchant", "limits": { "free": null } },
+    "review.reminder": { "minTier": "free", "label": "Sunday review reminder" },
+    "review.widget": { "minTier": "free", "label": "Review count widget" },
+    "review.worthIt": { "minTier": "free", "label": "Worth-it tags" }
   },
   "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect", "privacy.mode"]
 }

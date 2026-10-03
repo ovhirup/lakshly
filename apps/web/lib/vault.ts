@@ -8,7 +8,12 @@ import type { Holding, LakshlyDataset, StatementMeta } from "@lakshly/parsers";
 import type { SetupGoal } from "./setup";
 
 export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number; /** Setup source this file was attributed to. */ sourceId?: string }
-export interface UserData { version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[]; goals?: SetupGoal[] }
+export interface UserData {
+  version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[];
+  /** When each transaction first arrived on this device (used by the weekly review for late imports). */
+  importedAt?: Record<string, string>;
+  goals?: SetupGoal[];
+}
 
 const DB = "lakshly-vault";
 const STORE = "kv";
@@ -58,12 +63,13 @@ export async function loadUserData(): Promise<UserData | null> {
   return JSON.parse(new TextDecoder().decode(plain)) as UserData;
 }
 
-/** Small named records (e.g. setup progress), encrypted with the same device key as the dataset. */
-export type RecordName = "setup.state";
+/** Named records (setup progress, review state, …) encrypted with the same device key as the dataset. */
+export type RecordName = "setup.state" | "review.state" | "review.demo" | "game.ledger" | "game.demo" | "game.nudges";
 
 export async function saveRecord(name: RecordName, value: unknown): Promise<void> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await key(), new TextEncoder().encode(JSON.stringify(value)));
+  const plain = new TextEncoder().encode(JSON.stringify(value));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await key(), plain);
   await tx("readwrite", (s) => s.put({ v: 1, alg: "AES-GCM-256", iv, ct }, `rec:${name}`));
 }
 

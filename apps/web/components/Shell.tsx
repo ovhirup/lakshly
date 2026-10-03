@@ -11,10 +11,13 @@ import { useTier } from "./useTier";
 import type { FeatureId } from "@/lib/entitlements";
 import { DataNote, DataPill } from "./DataState";
 import { SetupAutoOpen, SetupNavLink } from "./SetupParts";
+import { ReviewCountBadge } from "./ReviewParts";
+import "./review.css";
 
 export const NAV: { href: string; label: string; icon: string; feature?: FeatureId }[] = [
   { href: "/", label: "Overview", icon: "overview" },
   { href: "/spend/", label: "Spend", icon: "spend" },
+  { href: "/review/", label: "Weekly review", icon: "check" },
   { href: "/budget/", label: "Budget", icon: "budget" },
   { href: "/debt/", label: "Debt", icon: "debt", feature: "debt.planner" },
   { href: "/credit/", label: "Credit", icon: "credit", feature: "credit.insights" },
@@ -65,6 +68,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <Icon name={n.icon} size={18} />
               <span>{n.label}</span>
               {locked(n) && <PremiumDot />}
+              {n.href === "/review/" && <ReviewCountBadge />}
             </Link>
           ))}
         </nav>
@@ -92,7 +96,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {menuOpen && <div className="mobile-menu-scrim" aria-hidden="true" onClick={closeMenu} />}
       {menuOpen && <div ref={menuRef} className="mobile-menu glass" id="more-navigation" role="region" aria-label="More navigation" onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); closeMenu(); } }}>
         <div className="card-head"><h2>Explore Lakshly</h2><button className="icon-btn" onClick={closeMenu} aria-label="Close navigation">×</button></div>
-        <nav aria-label="All pages">{NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setMenuOpen(false)} className={`nav-item ${active(n.href) ? "active" : ""}`} aria-current={active(n.href) ? "page" : undefined}><Icon name={n.icon} size={18} /><span>{n.label}</span>{locked(n) && <PremiumDot />}</Link>)}</nav>
+        <nav aria-label="All pages">{NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setMenuOpen(false)} className={`nav-item ${active(n.href) ? "active" : ""}`} aria-current={active(n.href) ? "page" : undefined}><Icon name={n.icon} size={18} /><span>{n.label}</span>{locked(n) && <PremiumDot />}{n.href === "/review/" && <ReviewCountBadge />}</Link>)}</nav>
         <PlanSwitch plan={plan} setPlan={setPlan} />
         <DataNote />
       </div>}

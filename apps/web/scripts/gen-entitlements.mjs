@@ -39,8 +39,21 @@ export function renderSources(json) {
   ].join("\n");
 }
 
+export function renderLevels(json) {
+  const data = JSON.parse(json);
+  const levels = [...data.levels].sort((a, b) => a.minXP - b.minXP);
+  return [
+    "/* Generated from packages/shared/levels.json by scripts/gen-entitlements.mjs. Do not edit. */",
+    "",
+    "export type Level = { level: number; minXP: number; name: string };",
+    `export const LEVELS: readonly Level[] = ${JSON.stringify(levels, null, 2)};`,
+    "",
+  ].join("\n");
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   writeFileSync(dest, render(readFileSync(src, "utf8")));
   writeFileSync(resolve(here, "../lib/sources.gen.ts"), renderSources(readFileSync(resolve(here, "../../../packages/shared/setup/sources.json"), "utf8")));
-  console.log("generated lib/entitlements.gen.ts, lib/sources.gen.ts");
+  writeFileSync(resolve(here, "../lib/levels.gen.ts"), renderLevels(readFileSync(resolve(here, "../../../packages/shared/levels.json"), "utf8")));
+  console.log("generated lib/entitlements.gen.ts, lib/sources.gen.ts, lib/levels.gen.ts");
 }
