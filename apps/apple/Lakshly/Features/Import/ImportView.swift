@@ -127,12 +127,31 @@ struct ImportView: View {
 
   var body: some View {
     Page(title: "Import", subtitle: "Statements stay on this device.") {
+      Card(title: "Your data") {
+        Picker("Data shown in the app", selection: Binding(
+          get: { store.source },
+          set: { store.setSource($0) }
+        )) {
+          Text("Demo data").tag(DataSource.demo)
+          Text("My data").tag(DataSource.mine)
+        }.pickerStyle(.segmented)
+        if store.hasUserData {
+          let user = store.userDataset
+          Text(
+            "\(user?.accounts.count ?? 0) accounts · \(user?.transactions.count ?? 0) transactions, encrypted on this device."
+          )
+          .font(.caption).foregroundStyle(theme.secondaryText)
+        } else {
+          Text("No imported data yet.").font(.caption).foregroundStyle(theme.secondaryText)
+        }
+      }
       switch model.stage {
       case .picker: picker
       case .password: passwordPrompt
       case .preview: preview
       case .done: done
       }
+      DataNote(source: store.source)
     }
     .fileImporter(isPresented: $picking, allowedContentTypes: [.pdf, .commaSeparatedText], allowsMultipleSelection: false) { result in
       switch result {

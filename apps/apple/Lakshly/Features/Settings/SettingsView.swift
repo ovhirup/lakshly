@@ -19,6 +19,7 @@ struct SettingsView: View {
   @AppStorage(GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences) private var menuBarExtra = true
   #endif
   @State private var reset = false
+  @State private var deleteMine = false
   @State private var paywall: PaywallContext?
   @State private var pendingIcon: ThemeID?
   @State private var offeredIcon: ThemeID?
@@ -104,16 +105,27 @@ struct SettingsView: View {
           }.listRowBackground(theme.surface)
           Section("Private by design") {
             Text(store.encryptionStatus)
-            Text("No network requests except Apple's App Store for purchases. No analytics or accounts. All data is synthetic.")
+            Text(
+              store.source == .mine
+                ? "No network requests except Apple's App Store for purchases. No analytics or accounts. Your imported data is encrypted on this device."
+                : "No network requests except Apple's App Store for purchases. No analytics or accounts. All data is synthetic."
+            )
             if let error = store.error { Text(error).foregroundStyle(theme.danger) }
           }.listRowBackground(theme.surface)
-          Section { Button("Reset demo data", role: .destructive) { reset = true } }
-            .listRowBackground(theme.surface)
+          Section("Data") {
+            Button("Reset demo data", role: .destructive) { reset = true }
+            if store.hasUserData {
+              Button("Delete my data", role: .destructive) { deleteMine = true }
+            }
+          }.listRowBackground(theme.surface)
         }.scrollContentBackground(.hidden).background { ThemeBackground() }
           .foregroundStyle(theme.text).tint(theme.gold).navigationTitle("Settings")
           .toolbar { Button("Done") { dismiss() } }
-          .confirmationDialog("Reset data and local requests?", isPresented: $reset) {
+          .confirmationDialog("Reset demo data and local requests? Imported data is kept.", isPresented: $reset) {
             Button("Reset demo data", role: .destructive) { store.reset() }
+          }
+          .confirmationDialog("Delete all imported data from this device? This cannot be undone.", isPresented: $deleteMine) {
+            Button("Delete my data", role: .destructive) { store.deleteMyData() }
           }
           .confirmationDialog("Use the \(offeredIcon?.definition.name ?? "Lakshmi") app icon too?",
                               isPresented: $showIconOffer, titleVisibility: .visible) {

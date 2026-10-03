@@ -22,7 +22,7 @@ struct OverviewView: View {
         Text(Money.format(assets - liabilities)).font(
           .system(size: 38, weight: .bold, design: .rounded)
         ).foregroundStyle(theme.gold).minimumScaleFactor(0.5)
-        Pill(text: "Demo data")
+        DataPill(source: store.source)
         MetricRow(title: "Assets", value: Money.format(assets))
         MetricRow(title: "Liabilities", value: Money.format(liabilities))
       }
@@ -69,6 +69,7 @@ struct OverviewView: View {
             title: "SIP · \(nextMonthlyDate(day: sip.dayOfMonth))", value: Money.format(sip.amount), semantic: .invest)
         }
       }
+      DataNote(source: store.source)
     }
   }
 }

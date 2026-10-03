@@ -112,6 +112,7 @@
 		91943EBC135E77B9877BC84A /* EntitlementStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF21C6AA51CCEBB389BF1E1B /* EntitlementStore.swift */; };
 		91E40F25774824CBFDEF7859 /* cas.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7ADC76490AA8645EF4E2834D /* cas.synthetic.pdf */; };
 		9468AF85D6B8F0C48627091B /* CSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6D1F870CCB6D7D4AB9C387 /* CSV.swift */; };
+		99ACCCA2C5170EA7120D3DDD /* DataState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B797213272B358002AD5B13F /* DataState.swift */; };
 		9BA75EEED35EF4E0D4202AD1 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F8B8CDFC7203FA83677173 /* Regex.swift */; };
 		9BC3AFD8AB841E3EC336D1C0 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84953A55098AE165AB074C74 /* Merge.swift */; };
 		9EADD65DC30094C01D19718C /* LakshlyWidgets-macOS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8B34595B30F2E1F765833567 /* LakshlyWidgets-macOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -158,11 +159,13 @@
 		D54176348B4D1ADE4750C8FE /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */; };
 		D5E47AEAADCC7D3D93D80634 /* GlancePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4498503F9C90BA58BF0AD38 /* GlancePublisher.swift */; };
 		D60435D636B4A7F6E0826B39 /* GlanceShots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F273986D740F324224001 /* GlanceShots.swift */; };
+		D6B84E1AAE76BD218845C859 /* DataSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5B1AEE84382BAB7ED43C58 /* DataSourceTests.swift */; };
 		D7508065396FD082002C7803 /* GitHubIssueLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */; };
 		D8ABDF22ED8854941A8689CA /* hdfc-bank.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7380D31D1CE0F85E5B522C5D /* hdfc-bank.synthetic.pdf */; };
 		DB22EED984F46B0C63559719 /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
 		DBC4233FB564B58ED569329A /* StoreKitPurchaseUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5372977627F456E0B68D8E /* StoreKitPurchaseUITests.swift */; };
 		DBD7454D7FB958B631D0FBBF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461F5116A2CC07DF443BBA73 /* Models.swift */; };
+		DD8C5F0F914E91766C95EA7C /* DataState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B797213272B358002AD5B13F /* DataState.swift */; };
 		DEC6E9528C060C3F20A4EA1C /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
 		E0606528B0D0FC0B13D96E62 /* GlanceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7C047934458E69157FD001 /* GlanceSnapshot.swift */; };
 		E2AC0FA375B1D56A01E25E82 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561213C16F83EF1708313DD /* Money.swift */; };
@@ -312,6 +315,7 @@
 		82A3B9ED2BCBAEF8F924FB4F /* Parsers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Parsers; path = LakshlyTests/Fixtures/Parsers; sourceTree = SOURCE_ROOT; };
 		847E16FAD3DDEBADE4116595 /* MenuBarPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPanel.swift; sourceTree = "<group>"; };
 		84953A55098AE165AB074C74 /* Merge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Merge.swift; sourceTree = "<group>"; };
+		8A5B1AEE84382BAB7ED43C58 /* DataSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceTests.swift; sourceTree = "<group>"; };
 		8B34595B30F2E1F765833567 /* LakshlyWidgets-macOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "LakshlyWidgets-macOS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BC93836F5D851C23D6397B4 /* themes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = themes.json; sourceTree = "<group>"; };
 		901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPreferences.swift; sourceTree = "<group>"; };
@@ -330,6 +334,7 @@
 		A74D83B4AD1381D1E54EC44F /* SpendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendView.swift; sourceTree = "<group>"; };
 		A8211BF33EBEFFDAD6C14160 /* LakshlyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LakshlyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2F69415892CB1861613A1A2 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
+		B797213272B358002AD5B13F /* DataState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataState.swift; sourceTree = "<group>"; };
 		B98525A8284CAF7C518983B0 /* LakshlyUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LakshlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C29A5CC7C7B613ACB9225925 /* AppIconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconController.swift; sourceTree = "<group>"; };
 		C2FE03F0B1A9EF46808A2E3C /* Amounts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Amounts.swift; sourceTree = "<group>"; };
@@ -646,6 +651,7 @@
 			children = (
 				C29A5CC7C7B613ACB9225925 /* AppIconController.swift */,
 				2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */,
+				B797213272B358002AD5B13F /* DataState.swift */,
 				60E70F932DD22164B5A2197F /* GlassCard.swift */,
 				9FA26CFA53316EC8CD45CB55 /* Layout.swift */,
 				C561213C16F83EF1708313DD /* Money.swift */,
@@ -688,6 +694,7 @@
 		D276F4EE5A6FD4CF4938F62C /* LakshlyTests */ = {
 			isa = PBXGroup;
 			children = (
+				8A5B1AEE84382BAB7ED43C58 /* DataSourceTests.swift */,
 				EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */,
 				379DCC9C3D1B54CBF3F10CEA /* GlanceRenderTests.swift */,
 				A296E05D13D8E69E92F24C52 /* GlanceTests.swift */,
@@ -1108,6 +1115,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6B84E1AAE76BD218845C859 /* DataSourceTests.swift in Sources */,
 				D7508065396FD082002C7803 /* GitHubIssueLinkTests.swift in Sources */,
 				C064F524A2573B8D5AEAA0D6 /* GlanceRenderTests.swift in Sources */,
 				7B33F1302387E76587328537 /* GlanceTests.swift in Sources */,
@@ -1132,6 +1140,7 @@
 				88118E87EB44369EE879EF2E /* Categorise.swift in Sources */,
 				E2DE1AD3A7C0B7A690D2CBA3 /* ChartHelpers.swift in Sources */,
 				DB22EED984F46B0C63559719 /* CreditView.swift in Sources */,
+				DD8C5F0F914E91766C95EA7C /* DataState.swift in Sources */,
 				C0C3EEBE95E47175483DA7A7 /* DataStore.swift in Sources */,
 				EBAE14E003D25F63DEEA3928 /* Dataset.swift in Sources */,
 				C791CEF9120175915E67ED85 /* DatasetImport.swift in Sources */,
@@ -1198,6 +1207,7 @@
 				9054FC3C0E403CF31940FBDB /* Categorise.swift in Sources */,
 				FB5D35EF600CDB9DB3C75E7C /* ChartHelpers.swift in Sources */,
 				C1F7624690A6B5BC8C3D9B0A /* CreditView.swift in Sources */,
+				99ACCCA2C5170EA7120D3DDD /* DataState.swift in Sources */,
 				79EAB566141178ADB3F43674 /* DataStore.swift in Sources */,
 				572DECB907083C9521607413 /* Dataset.swift in Sources */,
 				B93AC3623F971FA921581BC3 /* DatasetImport.swift in Sources */,

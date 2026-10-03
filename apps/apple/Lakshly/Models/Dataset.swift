@@ -102,7 +102,57 @@ struct CommunityRequest: Codable, Identifiable {
   let priority: Bool
   var status: String
 }
+enum DataSource: String, Codable, CaseIterable {
+  case demo, mine
+}
+
 struct StoredData: Codable {
-  let dataset: Dataset
+  var dataset: Dataset
   var requests: [CommunityRequest]
+  var source: DataSource?
+  var userDataset: Dataset?
+
+  init(dataset: Dataset, requests: [CommunityRequest], source: DataSource? = nil, userDataset: Dataset? = nil) {
+    self.dataset = dataset
+    self.requests = requests
+    self.source = source
+    self.userDataset = userDataset
+  }
+
+  /// Splits a pre-source saved file: rows whose ids are not in the bundled seed become `userDataset`.
+  func separatingUserRows(seed: Dataset) -> StoredData {
+    if source != nil {
+      return StoredData(dataset: seed, requests: requests, source: source ?? .demo, userDataset: userDataset)
+    }
+    let user = dataset.userRows(notIn: seed)
+    return StoredData(
+      dataset: seed,
+      requests: requests,
+      source: user == nil ? .demo : .mine,
+      userDataset: user)
+  }
+}
+
+extension Dataset {
+  func userRows(notIn seed: Dataset) -> Dataset? {
+    let seedAccounts = Set(seed.accounts.map(\.id))
+    let seedTransactions = Set(seed.transactions.map(\.id))
+    let seedSips = Set((seed.sips ?? []).map(\.id))
+    let accounts = accounts.filter { !seedAccounts.contains($0.id) }
+    let transactions = transactions.filter { !seedTransactions.contains($0.id) }
+    let sips = (sips ?? []).filter { !seedSips.contains($0.id) }
+    guard !accounts.isEmpty || !transactions.isEmpty || !sips.isEmpty else { return nil }
+    return Dataset(
+      schemaVersion: schemaVersion,
+      generatedAt: generatedAt,
+      synthetic: false,
+      notice: notice,
+      currency: currency,
+      accounts: accounts,
+      transactions: transactions,
+      budgets: nil,
+      debts: nil,
+      sips: sips,
+      rewards: nil)
+  }
 }

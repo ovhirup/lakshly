@@ -81,9 +81,8 @@ protocol GlanceAuthenticating {
 }
 
 @MainActor enum GlanceVault {
-  /// Decrypts through SecureStore when a saved file exists. Falls back to the in-memory dataset.
+  /// Active dataset already held in memory (demo seed or imported rows).
   static func dataset(from store: DataStore) throws -> Dataset {
-    if let saved = try SecureStore().load() { return saved.dataset }
     if let dataset = store.dataset { return dataset }
     throw CocoaError(.fileReadNoSuchFile)
   }

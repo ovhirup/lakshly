@@ -133,44 +133,77 @@ struct RootView: View {
       } else {
         TabView(selection: $selected) {
           Tab("Overview", systemImage: "square.grid.2x2", value: "overview") {
-            navigation { OverviewView(store: store, showFeedback: { selected = "feedback" }) }
+            navigation {
+              DataGate(store: store, title: "Overview", need: [.accounts, .transactions]) {
+                OverviewView(store: store, showFeedback: { selected = "feedback" })
+              }
+            }
           }
           Tab("Spend", systemImage: "chart.pie", value: "spend") {
-            navigation { SpendView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Spend", need: [.transactions]) {
+                SpendView(store: store)
+              }
+            }
           }
           Tab("Budget", systemImage: "target", value: "budget") {
-            navigation { BudgetView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Budget", need: [.transactions]) {
+                BudgetView(store: store)
+              }
+            }
           }
           Tab("Feedback", systemImage: "heart.text.square", value: "feedback") {
             navigation { FeedbackView(store: store) }
           }
           Tab(value: "debt") {
-            navigation { DebtView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Debt", need: [.debts]) {
+                DebtView(store: store)
+              }
+            }
           } label: {
             premiumTab("Debt", systemImage: "chart.line.downtrend.xyaxis")
           }
           Tab(value: "credit") {
-            navigation { CreditView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Credit", need: [.cards]) {
+                CreditView(store: store)
+              }
+            }
           } label: {
             premiumTab("Credit", systemImage: "creditcard")
           }
           Tab(value: "investments") {
-            navigation { InvestmentsView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Investments & SIPs", need: [.sips]) {
+                InvestmentsView(store: store)
+              }
+            }
           } label: {
             premiumTab("Investments", systemImage: "chart.line.uptrend.xyaxis")
           }
           Tab(value: "rewards") {
-            navigation { RewardsView(store: store) }
+            navigation {
+              DataGate(store: store, title: "Rewards", need: [.rewards]) {
+                RewardsView(store: store)
+              }
+            }
           } label: {
             premiumTab("Rewards", systemImage: "gift")
           }
           Tab("History", systemImage: "clock", value: "history") {
-            navigation { HistoryView(store: store) }
+            navigation {
+              DataGate(store: store, title: "History", need: [.savings, .transactions]) {
+                HistoryView(store: store)
+              }
+            }
           }
           Tab("Import", systemImage: "square.and.arrow.down", value: "import") {
             navigation { ImportView(store: store) }
           }
         }.tabViewStyle(.sidebarAdaptable)
+          .environment(\.openImport) { selected = "import" }
       }
     }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock, themeSelection: $themeSelection) }
       .modifier(LaunchPaywallModifier(locked: lock.locked))

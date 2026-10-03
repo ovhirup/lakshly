@@ -21,9 +21,8 @@ func datasetByMerging(_ existing: Dataset?, _ result: ParseResult, now: Date = D
 extension DataStore {
   @discardableResult
   func importParsed(_ result: ParseResult, now: Date = Date()) -> MergeReport {
-    let merged = datasetByMerging(dataset, result, now: now)
-    dataset = merged.dataset
-    save()
+    let merged = datasetByMerging(userDataset, result, now: now)
+    adoptUserDataset(merged.dataset)
     return merged.report
   }
 }

@@ -17,6 +17,8 @@ struct LaunchOptions {
   var feedbackDemo: Bool?
   var appIconDemo: String?
   var settingsScroll: String?
+  /// Screenshot control: force Demo data or My data. Ignored in Release.
+  var dataSource: String?
 
   static func parse(arguments: [String]) -> LaunchOptions {
     var options = LaunchOptions()
@@ -39,6 +41,8 @@ struct LaunchOptions {
       case "appIconDemo": options.appIconDemo = value
       case "settingsScroll": options.settingsScroll = value
       case "feedbackDemo": options.feedbackDemo = parseBool(value)
+      case "dataSource":
+        if value == "demo" || value == "mine" { options.dataSource = value }
       case "appearance": options.appearance = value
       case "theme": options.theme = value
       default: break
