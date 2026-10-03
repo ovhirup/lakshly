@@ -2,12 +2,32 @@ import SwiftUI
 
 struct FeedbackView: View {
   @Environment(\.theme) private var theme
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.openURL) private var openURL
   @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
   @State private var title = ""
   @State private var details = ""
-  @State private var type = "Feature"
+  @State private var kind: FeedbackKind = .feedback
   @State private var confirmation = false
+
+  init(store: DataStore) {
+    self.store = store
+    #if DEBUG
+    if LaunchOptions.current.feedbackDemo == true {
+      _kind = State(initialValue: .request)
+      _title = State(initialValue: "Split bills with friends")
+      _details = State(initialValue: "Let me split a bill & track who paid.")
+    }
+    #endif
+  }
+
+  private var issueEnvironment: IssueEnvironment {
+    .current(themeName: theme.definition.name, isDark: colorScheme == .dark, tier: entitlements.tier)
+  }
+  private var issueTitle: String { GitHubIssueLink.title(kind: kind, title: title, text: details) }
+  private var priority: Bool { entitlements.can(.priorityFeedback) }
+
   private func statusColor(_ status: String) -> Color {
     switch status {
     case "Planned": theme.indigo
@@ -17,39 +37,64 @@ struct FeedbackView: View {
     }
   }
   var body: some View {
+    ScrollViewReader { proxy in
+      page.task {
+        #if DEBUG
+        // Screenshot control only: bring the live GitHub preview into view.
+        if LaunchOptions.current.feedbackDemo == true {
+          try? await Task.sleep(for: .milliseconds(400))
+          proxy.scrollTo("issuePreview", anchor: .top)
+        }
+        #endif
+      }
+    }
+  }
+
+  private var page: some View {
     Page(title: "Feedback & Requests", subtitle: "Built with you") {
       Card(title: "Thank you for helping shape Lakshly 💛") {
         Text("Every request is read by a human.").font(.headline)
         Text(
-          "This demo saves requests only on this device. Share them manually on GitHub for a human to read."
+          "Feedback opens a prefilled GitHub issue in your browser. It includes only your message, the app version, platform, theme and tier. You review it and submit it yourself."
         ).foregroundStyle(theme.secondaryText)
-        Link(
-          "GitHub Issues", destination: URL(string: "https://github.com/ovhirup/lakshly/issues")!)
       }
       Card(title: "Your next idea") {
         if store.encryptionStatus == "Encryption key not persisted (dev build)" {
           Text("Dev build: requests are kept in memory for this session only.").font(.caption)
             .foregroundStyle(theme.secondaryText)
         }
-        TextField("Title", text: $title).textFieldStyle(ThemedFieldStyle())
-        TextField("Details", text: $details, axis: .vertical).lineLimit(3...6).textFieldStyle(ThemedFieldStyle())
-        Picker("Type", selection: $type) {
-          ForEach(["Feature", "Bug", "Idea"], id: \.self) { Text($0) }
+        Picker("Kind", selection: $kind) {
+          ForEach(FeedbackKind.allCases) { Text($0.displayName).tag($0) }
         }.pickerStyle(.segmented)
-        Button("Submit") {
-          if store.submit(
-            title: title.trimmingCharacters(in: .whitespacesAndNewlines), details: details,
-            type: type, premium: entitlements.can(.priorityFeedback))
-          {
-            title = ""
-            details = ""
-            confirmation = true
-          }
-        }.buttonStyle(ThemedSubmitStyle()).disabled(
-          title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            || details.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        if let error = store.error { Text(error).foregroundStyle(theme.danger) }
+        TextField("Title (optional)", text: $title).textFieldStyle(ThemedFieldStyle())
+        TextField("Your message", text: $details, axis: .vertical).lineLimit(3...6)
+          .textFieldStyle(ThemedFieldStyle())
+        if priority {
+          Pill(text: "Priority label", color: theme.lotus, symbol: "star.fill")
+          Text("Premium requests get the priority label and are triaged first")
+            .font(.caption).foregroundStyle(theme.secondaryText)
+        } else {
+          Text("Premium requests get the priority label")
+            .font(.caption).foregroundStyle(theme.secondaryText)
+        }
       }
+      Card(title: "Exactly what GitHub will show") {
+        Text("Title: \(issueTitle)\nLabels: \(GitHubIssueLink.labels(kind: kind, priority: priority))\n\n\(GitHubIssueLink.body(kind: kind, text: details, environment: issueEnvironment))")
+          .font(.system(.caption, design: .monospaced))
+          .foregroundStyle(theme.text).textSelection(.enabled)
+        Button("Open GitHub issue", systemImage: "arrow.up.forward.app") {
+          let localTitle = issueTitle
+          openURL(GitHubIssueLink.url(kind: kind, title: title, text: details,
+            environment: issueEnvironment, priority: priority))
+          _ = store.submit(title: localTitle, details: GitHubIssueLink.message(details),
+            type: kind.displayName, premium: priority)
+          title = ""
+          details = ""
+          confirmation = true
+        }.buttonStyle(ThemedSubmitStyle())
+          .disabled(details.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        if let error = store.error { Text(error).foregroundStyle(theme.danger) }
+      }.id("issuePreview")
       Card(title: "Community requests · synthetic") {
         ForEach(
           store.requests.sorted {
@@ -75,10 +120,10 @@ struct FeedbackView: View {
           Text("\($0.author) · \($0.title)")
         }
       }
-    }.alert("Thank you 💛", isPresented: $confirmation) {
+    }.alert("Opened in your browser", isPresented: $confirmation) {
       Button("Done", role: .cancel) {}
     } message: {
-      Text("Your request was received locally. Thank you for helping shape Lakshly.")
+      Text("Review it and press Submit on GitHub. Nothing is sent until you do.")
     }
   }
 }

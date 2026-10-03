@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Thank you! Every request is read by a human and gets a visible status: **Received → Planned → In progress → Shipped**.
-        ⭐ Premium members' requests get the `premium-priority` label and are triaged first.
+        ⭐ Premium members' requests get the `priority` label and are triaged first.
   - type: textarea
     id: problem
     attributes:
@@ -33,6 +33,11 @@ body:
     attributes:
       label: Credit me in "Built with you" as (optional)
       placeholder: "First name or @handle; leave blank to stay anonymous"
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (filled in by the app)
+      description: App version, platform, theme and tier only. No personal data.
   - type: checkboxes
     id: privacy
     attributes:

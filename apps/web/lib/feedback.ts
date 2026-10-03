@@ -9,7 +9,7 @@ export type Request = {
   id: string; kind: Kind; title: string; detail: string; area: string; status: Status;
   premium: boolean; createdAt: string; credit?: string; shippedIn?: string; replies?: Reply[];
   /** Relay secret for status lookups (only on this device). Absent for demo items and email-sent items. */
-  secret?: string; via?: "relay" | "email" | "demo"; roadmapId?: string;
+  secret?: string; via?: "relay" | "email" | "github" | "demo"; roadmapId?: string;
 };
 export type RoadmapItem = {
   id: string; title: string; area: string; status: Exclude<Status, "received">; votes: number;

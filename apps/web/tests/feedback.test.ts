@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DEMO_MINE, displayVotes, replyBy, ROADMAP } from "../lib/feedback";
 import { buildPayload, fetchStatus, looksSensitive, mailtoHref, send, SendError } from "../lib/feedback-transport";
+import { APP_VERSION } from "../lib/version";
 
-const diag = { appVersion: "web 0.2.0", platform: "Web" };
+const diag = { appVersion: APP_VERSION, platform: "Web" };
 const base = { kind: "idea" as const, title: "  Remind me before SIP dates ", detail: "", area: "SIPs", includeDiagnostics: false };
 afterEach(() => vi.unstubAllGlobals());
 
@@ -13,6 +14,7 @@ describe("feedback payload", () => {
   it("adds credit, reply email and diagnostics only when given / opted in", () => {
     const p = buildPayload({ ...base, credit: "Kavya", replyEmail: "k@example.invalid", includeDiagnostics: true }, "premium", diag);
     expect(Object.keys(p).sort()).toEqual(["area", "credit", "detail", "diagnostics", "kind", "plan", "replyEmail", "title"]);
+    expect(p.diagnostics).toEqual({ appVersion: "0.2.0 (web)", platform: "Web" });
   });
   it("clips long text", () => { expect(buildPayload({ ...base, title: "x".repeat(200) }, "free", diag).title).toHaveLength(90); });
 });
