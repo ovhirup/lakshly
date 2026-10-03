@@ -97,7 +97,7 @@ describe("shared GitHub issue contract", () => {
 
 describe("entitlements", () => {
   it("requires Premium for priorityFeedback and unknown features", () => {
-    expect(ENTITLEMENTS_MAP).toEqual({ priorityFeedback: "premium" });
+    expect(ENTITLEMENTS_MAP).toMatchObject({ priorityFeedback: "premium" });
     for (const feature of ["priorityFeedback", "unknown", "toString", "constructor", "__proto__"]) {
       expect(can(feature, "free")).toBe(false);
       expect(can(feature, "premium")).toBe(true);

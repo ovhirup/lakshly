@@ -25,6 +25,7 @@
 		10409700C2E045FC23E0B4C6 /* hdfc-bank.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7380D31D1CE0F85E5B522C5D /* hdfc-bank.synthetic.pdf */; };
 		10961773053B522B4DD2F3CA /* Mask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E7F17A3B420C09D69AA682 /* Mask.swift */; };
 		11B4FD36D526D662386AE3EF /* Dates.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD413F4C464C3D6FEA7B738F /* Dates.swift */; };
+		15191387FA7F87D969E2A560 /* SetupEntitlementsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEBE3EE720257A408CCE67E /* SetupEntitlementsTests.swift */; };
 		152085EF69ACD979CCA9988E /* GlanceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4627BEF8AC1B21D856D7BF9 /* GlanceViews.swift */; };
 		159FB81A3E6B2E2E02164A2E /* ThemeDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0601B2921DE123B3023E9DF8 /* ThemeDefinitions.swift */; };
 		15BFDA7BAE7460D08B167DE7 /* InvestmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */; };
@@ -336,6 +337,7 @@
 		B2F69415892CB1861613A1A2 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
 		B797213272B358002AD5B13F /* DataState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataState.swift; sourceTree = "<group>"; };
 		B98525A8284CAF7C518983B0 /* LakshlyUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LakshlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEEBE3EE720257A408CCE67E /* SetupEntitlementsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupEntitlementsTests.swift; sourceTree = "<group>"; };
 		C29A5CC7C7B613ACB9225925 /* AppIconController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconController.swift; sourceTree = "<group>"; };
 		C2FE03F0B1A9EF46808A2E3C /* Amounts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Amounts.swift; sourceTree = "<group>"; };
 		C561213C16F83EF1708313DD /* Money.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
@@ -701,6 +703,7 @@
 				D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */,
 				5796053083CD3E0031D2B848 /* ParserFixtureTests.swift */,
 				19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */,
+				BEEBE3EE720257A408CCE67E /* SetupEntitlementsTests.swift */,
 				958223EAAA07FB46C1C3D745 /* StoreKitTests.swift */,
 				916C39C0C81D202886DC9C23 /* ThemeAppIconTests.swift */,
 			);
@@ -1122,6 +1125,7 @@
 				541D6B919B187F6447F84773 /* LakshlyTests.swift in Sources */,
 				B187FDAA13F3C6BEBC36211B /* ParserFixtureTests.swift in Sources */,
 				C3FC0FA1D90FE6268D75F843 /* SecurityTests.swift in Sources */,
+				15191387FA7F87D969E2A560 /* SetupEntitlementsTests.swift in Sources */,
 				08334A0E63C49A5328D7EFD9 /* StoreKitTests.swift in Sources */,
 				37C20B2DCE501454699A5A86 /* ThemeAppIconTests.swift in Sources */,
 			);
