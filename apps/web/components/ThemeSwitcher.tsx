@@ -5,6 +5,7 @@ import { useAppState, type AppearancePref, type ThemeId } from "./AppState";
 import { Icon } from "./Icon";
 import { isPremiumTheme, themes } from "@/lib/themes";
 import { useTier } from "./useTier";
+import { formatINR } from "@/lib/format";
 
 const APPEARANCES: { value: AppearancePref; label: string }[] = [
   { value: "system", label: "System" },
@@ -175,7 +176,7 @@ export function ThemeSwitcher() {
                 <span className="theme-preview" style={{ background: sw.bg, color: sw.text }}>
                   <span className="theme-preview-surface" style={{ background: sw.surface }}>
                     <span className="theme-preview-top">
-                      <span className="theme-preview-figure" style={{ color: sw.gold }}>₹24,800</span>
+                      <span className="theme-preview-figure" style={{ color: sw.gold }}>{formatINR(2480000)}</span>
                       <span className="theme-preview-accent" style={{ background: sw.accent }} />
                     </span>
                     <span className="theme-dots" aria-hidden="true">
