@@ -14,7 +14,9 @@ and a unit test fails if one of them is ever moved behind Premium.
 
 Free budgets: one monthly budget with up to 6 category lines (Premium removes both limits).
 
-Also always free: privacy mode (hide amounts), the weekly review, and all badges and XP. Premium can never buy XP or badges.
+- **Privacy mode** (hide every amount), plus shake-to-hide and auto-hide
+
+Also always free: the weekly review, and all badges and XP. Premium can never buy XP or badges.
 
 ## How we nudge (Free tier)
 - At most one proactive Premium nudge per screen, and one per 7 days. "Not now" snoozes it (30 days on the profile card).

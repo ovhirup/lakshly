@@ -7,6 +7,7 @@ import { Icon } from "./Icon";
 import { useData } from "./DataState";
 import { formatDate, formatINR, titleCase } from "@/lib/format";
 import { parseFile } from "@/lib/import/client";
+import { MASK, moneyMasked } from "@/lib/privacy";
 import "@/app/import/import.css";
 
 type Phase =
@@ -180,7 +181,7 @@ function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip
           <table className="review-table">
             <thead><tr><th>Scheme</th><th>Folio</th><th className="num">Units</th><th className="num">NAV</th><th className="num">Value</th></tr></thead>
             <tbody>{result.holdings.map((h) => (
-              <tr key={h.accountId}><td>{h.scheme}<div className="muted tiny">{h.amc} · {h.registrar}</div></td><td>•• {h.folioMask}</td><td className="num">{h.units.toFixed(3)}</td><td className="num">₹{h.nav.toFixed(2)}</td><td className="num">{formatINR(h.marketValue)}</td></tr>
+              <tr key={h.accountId}><td>{h.scheme}<div className="muted tiny">{h.amc} · {h.registrar}</div></td><td>•• {h.folioMask}</td><td className="num">{h.units.toFixed(3)}</td><td className="num">{moneyMasked() ? MASK : `₹${h.nav.toFixed(2)}`}</td><td className="num">{formatINR(h.marketValue)}</td></tr>
             ))}</tbody>
           </table>
         </div>

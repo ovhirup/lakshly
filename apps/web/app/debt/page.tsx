@@ -42,7 +42,7 @@ function DebtView() {
             <Progress pct={paidPct} />
             <label className="field">
               Extra prepayment per month: {formatINR(extra)}
-              <input type="range" min={0} max={1000000} step={50000} value={extra} onChange={(e) => setExtra(Number(e.target.value))} />
+              <input type="range" min={0} max={1000000} step={50000} value={extra} aria-valuetext={formatINR(extra).includes("•") ? "Amount hidden" : formatINR(extra)} onChange={(e) => setExtra(Number(e.target.value))} />
             </label>
             <p className="muted tiny">Avalanche tip: put extra money on the highest-rate debt first. Illustrative maths; check your lender&apos;s prepayment terms.</p>
           </Glass>

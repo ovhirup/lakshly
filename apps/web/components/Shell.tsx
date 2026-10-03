@@ -6,6 +6,7 @@ import { useAppState } from "./AppState";
 import { Icon } from "./Icon";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { IdentityChip } from "./Identity";
+import { PrivacyToggle } from "./Privacy";
 import { useTier } from "./useTier";
 import type { FeatureId } from "@/lib/entitlements";
 import { DataNote, DataPill } from "./DataState";
@@ -69,6 +70,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="sidebar-foot">
           <SetupNavLink />
+          <PrivacyToggle withLabel />
           <PlanSwitch plan={plan} setPlan={setPlan} />
           <DataNote />
         </div>
@@ -80,6 +82,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <DataPill />
           <div className="topbar-actions">
             <IdentityChip compact />
+            <PrivacyToggle />
             <ThemeSwitcher />
           </div>
         </div>

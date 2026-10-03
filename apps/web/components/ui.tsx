@@ -2,6 +2,7 @@
 import { useAppState } from "./AppState";
 import { Icon } from "./Icon";
 import { useTier } from "./useTier";
+import { Amount } from "./Privacy";
 import { PRICE_TEXT, type FeatureId } from "@/lib/entitlements";
 
 export function Glass({ children, className = "", as: Tag = "section", style }: {
@@ -26,7 +27,7 @@ export function Stat({ label, value, hint, tone }: { label: string; value: strin
   return (
     <div className="stat">
       <span className="stat-label">{label}</span>
-      <span className={`stat-value ${tone ?? ""}`}>{value}</span>
+      <span className={`stat-value ${tone ?? ""}`}><Amount>{value}</Amount></span>
       {hint && <span className={`stat-hint ${tone ?? ""}`}>{hint}</span>}
     </div>
   );
@@ -74,7 +75,7 @@ export function PremiumGate({ children, feature, id }: { children: React.ReactNo
           <div className="gate-icon"><Icon name="sparkle" size={22} /></div>
           <h3>{feature} is part of Premium</h3>
           <p className="muted">Unlock the full picture: debt planner, credit, investments, rewards, unlimited budgets and history.</p>
-          <p className="price"><strong>{PRICE_TEXT.yearly}</strong>/year <span className="muted">(≈{PRICE_TEXT.yearlyPerMonth}/month)</span> · or <strong>{PRICE_TEXT.monthly}</strong>/month</p>
+          <p className="price" data-lk-price><strong>{PRICE_TEXT.yearly}</strong>/year <span className="muted">(≈{PRICE_TEXT.yearlyPerMonth}/month)</span> · or <strong>{PRICE_TEXT.monthly}</strong>/month</p>
           <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
           <p className="tiny muted">Demo only. No payment is taken in this preview.</p>
         </Glass>

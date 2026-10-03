@@ -5,6 +5,7 @@ import { CashflowBars, Donut } from "@/components/charts";
 import { Glass, PageHeader, Progress, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { SetupCard } from "@/components/SetupParts";
+import { Amount, useDoubleTapToggle } from "@/components/Privacy";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -21,6 +22,7 @@ function OverviewView() {
   const mf = accounts.find((a) => a.type === "mutual_fund");
   const mfGain = mf && mf.invested ? mf.balance - mf.invested : 0;
   const cats = spendByCategory(transactions, month).slice(0, 6);
+  const doubleTap = useDoubleTapToggle();
   const maxAsset = Math.max(...accounts.map((a) => Math.abs(a.balance)));
 
   return (
@@ -31,7 +33,7 @@ function OverviewView() {
 
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>
-        <p className="big">{formatINR(nw.net)}</p>
+        <p className="big" {...doubleTap} title="Double-tap to hide or show amounts"><Amount>{formatINR(nw.net)}</Amount></p>
         <div className="pills">
           <span className="pill">{formatINR(nw.assets)} assets</span>
           <span className="pill">{formatINR(-nw.liabilities)} owed</span>

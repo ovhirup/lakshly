@@ -27,6 +27,10 @@ export const FEATURE_IDS = [
   "mailSync.imap",
   "mailSync.statementPasswordKeychain",
   "priorityFeedback",
+  "privacy.autoHide",
+  "privacy.mode",
+  "privacy.shake",
+  "privacy.widgetMask",
   "rewards.tracking",
   "security.encryption",
   "security.lock",
@@ -117,6 +121,22 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
     "minTier": "premium",
     "label": "Priority feature requests"
   },
+  "privacy.autoHide": {
+    "minTier": "free",
+    "label": "Hide when switching away"
+  },
+  "privacy.mode": {
+    "minTier": "free",
+    "label": "Privacy mode (hide amounts)"
+  },
+  "privacy.shake": {
+    "minTier": "free",
+    "label": "Shake to hide"
+  },
+  "privacy.widgetMask": {
+    "minTier": "free",
+    "label": "Widgets without amounts"
+  },
   "rewards.tracking": {
     "minTier": "premium",
     "label": "Rewards tracking"
@@ -162,4 +182,4 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
     "label": "3 extra themes"
   }
 };
-export const FREE_BILL_OF_RIGHTS: readonly FeatureId[] = ["security.lock","security.encryption","import.statements","core.tabs","data.delete","data.export","setup.wizard","setup.emailGuide","mailSync.connect"];
+export const FREE_BILL_OF_RIGHTS: readonly FeatureId[] = ["security.lock","security.encryption","import.statements","core.tabs","data.delete","data.export","setup.wizard","setup.emailGuide","mailSync.connect","privacy.mode"];

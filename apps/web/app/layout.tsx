@@ -4,6 +4,8 @@ import { Shell } from "@/components/Shell";
 import { DataProvider } from "@/components/DataState";
 import { SetupProvider } from "@/components/SetupState";
 import { themeBootScript } from "@/lib/themes";
+import { privacyBootScript } from "@/lib/privacy";
+import { PrivacyProvider } from "@/components/Privacy";
 import "./themes.gen.css";
 import "./globals.css";
 
@@ -27,14 +29,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en-IN" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: privacyBootScript }} />
       </head>
       <body>
         <AppStateProvider>
-          <DataProvider>
-            <SetupProvider>
-              <Shell>{children}</Shell>
-            </SetupProvider>
-          </DataProvider>
+          <PrivacyProvider>
+            <DataProvider>
+              <SetupProvider>
+                <Shell>{children}</Shell>
+              </SetupProvider>
+            </DataProvider>
+          </PrivacyProvider>
         </AppStateProvider>
       </body>
     </html>

@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { useTier } from "@/components/useTier";
 import { Glass, PageHeader } from "@/components/ui";
 import { SetupProfileRow } from "@/components/SetupParts";
+import { PrivacySettingsCard } from "@/components/PrivacySettings";
 import { FEATURES, FREE_BILL_OF_RIGHTS, PRICE_TEXT, premiumFeatures } from "@/lib/entitlements";
 import { formatDate } from "@/lib/format";
 import { renewsOn, saveProfile, useProfile } from "@/lib/profile";
@@ -108,8 +109,8 @@ export default function ProfilePage() {
               <div className="card-head"><h2>Lakshly Premium</h2><button className="btn ghost" onClick={() => setPaywall(false)}>Close</button></div>
               <ul>{premiumFeatures().map((id) => <li key={id}>{FEATURES[id].label}</li>)}</ul>
               <div>
-                <div className="price-main">{PRICE_TEXT.yearly}/year<small>≈{PRICE_TEXT.yearlyPerMonth}/month</small></div>
-                <div className="muted">or {PRICE_TEXT.monthly}/month. Renews automatically; cancel anytime in your store settings.</div>
+                <div className="price-main" data-lk-price>{PRICE_TEXT.yearly}/year<small>≈{PRICE_TEXT.yearlyPerMonth}/month</small></div>
+                <div className="muted" data-lk-price>or {PRICE_TEXT.monthly}/month. Renews automatically; cancel anytime in your store settings.</div>
               </div>
               <div className="row-actions">
                 <button className="btn primary" onClick={startPremium}>Preview Premium (demo)</button>
@@ -120,6 +121,8 @@ export default function ProfilePage() {
           )}
         </Glass>
       )}
+
+      <PrivacySettingsCard />
 
       <div className="grid g2">
         <Glass className="card">

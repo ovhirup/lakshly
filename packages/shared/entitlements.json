@@ -31,7 +31,11 @@
     "mailSync.connect": { "minTier": "free", "label": "Automatic read-only statement sync", "limits": { "free": 1, "premium": 5 } },
     "mailSync.imap": { "minTier": "free", "label": "IMAP mailbox sync (Apple)" },
     "mailSync.statementPasswordKeychain": { "minTier": "free", "label": "Remember statement passwords on this device (Apple)" },
-    "mailSync.background": { "minTier": "premium", "label": "Background mailbox sync" }
+    "mailSync.background": { "minTier": "premium", "label": "Background mailbox sync" },
+    "privacy.mode": { "minTier": "free", "label": "Privacy mode (hide amounts)" },
+    "privacy.shake": { "minTier": "free", "label": "Shake to hide" },
+    "privacy.autoHide": { "minTier": "free", "label": "Hide when switching away" },
+    "privacy.widgetMask": { "minTier": "free", "label": "Widgets without amounts" }
   },
-  "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect"]
+  "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect", "privacy.mode"]
 }

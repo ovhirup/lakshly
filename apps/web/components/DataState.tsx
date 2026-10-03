@@ -9,6 +9,7 @@ import type { SetupGoal } from "@/lib/setup";
 import { deleteVault, loadUserData, saveUserData, type UserData } from "@/lib/vault";
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
+import { usePrivacy } from "./Privacy";
 import "./data-state.css";
 
 export type Source = "demo" | "mine";
@@ -43,6 +44,8 @@ interface DataCtx {
   saveBudgets: (month: string, lines: { category: Budget["category"]; limit: number }[]) => Promise<void>;
   saveGoal: (goal: SetupGoal) => Promise<void>;
   deleteAll: () => Promise<void>;
+  /** Privacy mode is on: amounts render masked. Consumers re-render when it flips. */
+  masked: boolean;
 }
 const Ctx = createContext<DataCtx | null>(null);
 
@@ -50,6 +53,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const source = useSyncExternalStore(subscribe, readSource, () => "demo" as Source);
   const [user, setUser] = useState<UserData | null>(null);
   const [ready, setReady] = useState(false);
+  const { masked } = usePrivacy();
 
   useEffect(() => {
     let alive = true;
@@ -104,7 +108,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const active: LakshlyDataset = source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo;
   const value: DataCtx = {
-    source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll,
+    source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll, masked,
     dataset: active,
     accounts: active.accounts,
     transactions: active.transactions,
