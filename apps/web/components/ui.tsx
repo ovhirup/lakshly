@@ -1,6 +1,8 @@
 "use client";
 import { useAppState } from "./AppState";
 import { Icon } from "./Icon";
+import { useTier } from "./useTier";
+import { PRICE_TEXT, type FeatureId } from "@/lib/entitlements";
 
 export function Glass({ children, className = "", as: Tag = "section", style }: {
   children: React.ReactNode; className?: string; as?: "section" | "div" | "article"; style?: React.CSSProperties;
@@ -59,19 +61,20 @@ export function PremiumBadge({ small }: { small?: boolean }) {
   return <span className={`badge premium ${small ? "small" : ""}`}><Icon name="sparkle" size={small ? 11 : 13} /> Premium</span>;
 }
 
-/** Shows Premium content to Premium users; a blurred, inert preview plus a tasteful upsell to Free users. */
-export function PremiumGate({ children, feature }: { children: React.ReactNode; feature: string }) {
-  const { plan, setPlan } = useAppState();
-  if (plan === "premium") return <>{children}</>;
+/** Shows Premium content when can(id); otherwise a blurred, inert preview plus a tasteful upsell. */
+export function PremiumGate({ children, feature, id }: { children: React.ReactNode; feature: string; id: FeatureId }) {
+  const { setPlan } = useAppState();
+  const { can } = useTier();
+  if (can(id)) return <>{children}</>;
   return (
     <div className="gate">
       <div className="gate-preview" aria-hidden="true" inert>{children}</div>
       <div className="gate-overlay">
         <Glass className="gate-card">
-          <div className="gate-icon"><Icon name="lock" size={22} /></div>
-          <h3>{feature} is a Premium feature</h3>
-          <p className="muted">Unlock the full picture: debt planner, credit, investments, rewards, unlimited history and AI insights.</p>
-          <p className="price"><strong>₹119</strong>/month · or <strong>₹999</strong>/year</p>
+          <div className="gate-icon"><Icon name="sparkle" size={22} /></div>
+          <h3>{feature} is part of Premium</h3>
+          <p className="muted">Unlock the full picture: debt planner, credit, investments, rewards, unlimited budgets and history.</p>
+          <p className="price"><strong>{PRICE_TEXT.yearly}</strong>/year <span className="muted">(≈{PRICE_TEXT.yearlyPerMonth}/month)</span> · or <strong>{PRICE_TEXT.monthly}</strong>/month</p>
           <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
           <p className="tiny muted">Demo only. No payment is taken in this preview.</p>
         </Glass>

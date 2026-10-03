@@ -1,0 +1,26 @@
+{
+  "$comment": "Single source of truth for Lakshly tiers and feature gates. Data, not code. Web generates apps/web/lib/entitlements.gen.ts from this file (npm run gen:entitlements). Public builds resolve only to free or premium; superUser exists for the private edition, which sets it outside this repo.",
+  "version": 1,
+  "tiers": ["superUser", "premium", "free"],
+  "prices": {
+    "INR": { "monthly": 11900, "yearly": 99900 },
+    "USD": { "monthly": 499, "yearly": 3999 }
+  },
+  "features": {
+    "core.tabs": { "minTier": "free", "label": "Overview, Spend, Budget and History" },
+    "import.statements": { "minTier": "free", "label": "Statement import (PDF, CSV, CAS)" },
+    "security.encryption": { "minTier": "free", "label": "On-device encryption" },
+    "security.lock": { "minTier": "free", "label": "App lock" },
+    "data.delete": { "minTier": "free", "label": "Delete all your data" },
+    "data.export": { "minTier": "free", "label": "Export your own data" },
+    "themes.premium": { "minTier": "premium", "label": "3 extra themes" },
+    "budgets.unlimited": { "minTier": "premium", "label": "Unlimited budgets", "limits": { "free": 1, "premium": null } },
+    "history.full": { "minTier": "premium", "label": "Unlimited history", "limits": { "free": 12, "premium": null } },
+    "debt.planner": { "minTier": "premium", "label": "Debt planner and payoff what-ifs" },
+    "credit.insights": { "minTier": "premium", "label": "Credit insights" },
+    "investments.insights": { "minTier": "premium", "label": "Investment insights" },
+    "rewards.tracking": { "minTier": "premium", "label": "Rewards tracking" },
+    "priorityFeedback": { "minTier": "premium", "label": "Priority feature requests" }
+  },
+  "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export"]
+}

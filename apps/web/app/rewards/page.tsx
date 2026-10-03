@@ -9,7 +9,7 @@ function RewardsView() {
   return (
     <>
       <PageHeader title="Rewards" subtitle="Points, cashback and expiries, all in rupees"><PremiumBadge /></PageHeader>
-      <PremiumGate feature="Rewards tracking">
+      <PremiumGate feature="Rewards tracking" id="rewards.tracking">
         <div className="grid g3">
           <Glass className="card"><Stat label="Total value" value={formatINR(total)} hint="Estimated redemption value" tone="up" /></Glass>
           {rewards.map((r) => (

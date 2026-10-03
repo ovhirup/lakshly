@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { MonthPicker } from "@/components/MonthPicker";
 import { useAppState } from "@/components/AppState";
+import { useTier } from "@/components/useTier";
 import { Glass, PageHeader, PremiumBadge, Progress, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
@@ -9,15 +10,17 @@ import { budgetProgress, CATEGORY_COLORS, defaultMonth, months } from "@/lib/sel
 
 function BudgetView() {
   const { budgets, transactions } = useData();
-  const { plan, setPlan } = useAppState();
+  const { setPlan } = useAppState();
+  const { limit } = useTier();
+  const max = limit("budgets.unlimited");
   const all = months(transactions).filter((m) => m <= defaultMonth(transactions));
   const [month, setMonth] = useState(all[all.length - 1]);
   const rows = budgetProgress(budgets, transactions, month);
   const totalLimit = rows.reduce((s, r) => s + r.limit, 0);
   const totalSpent = rows.reduce((s, r) => s + r.spent, 0);
   const onTrack = rows.filter((r) => r.pct <= 100).length;
-  const visibleRows = plan === "free" ? rows.slice(0, 1) : rows;
-  const lockedRows = plan === "free" ? rows.slice(1) : [];
+  const visibleRows = max === null ? rows : rows.slice(0, max);
+  const lockedRows = max === null ? [] : rows.slice(max);
 
   return (
     <>

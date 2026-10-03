@@ -5,20 +5,23 @@ import { usePathname } from "next/navigation";
 import { useAppState } from "./AppState";
 import { Icon } from "./Icon";
 import { ThemeSwitcher } from "./ThemeSwitcher";
-import { PremiumBadge } from "./ui";
+import { IdentityChip } from "./Identity";
+import { useTier } from "./useTier";
+import type { FeatureId } from "@/lib/entitlements";
 import { DataNote, DataPill } from "./DataState";
 
-export const NAV = [
+export const NAV: { href: string; label: string; icon: string; feature?: FeatureId }[] = [
   { href: "/", label: "Overview", icon: "overview" },
   { href: "/spend/", label: "Spend", icon: "spend" },
   { href: "/budget/", label: "Budget", icon: "budget" },
-  { href: "/debt/", label: "Debt", icon: "debt", premium: true },
-  { href: "/credit/", label: "Credit", icon: "credit", premium: true },
-  { href: "/investments/", label: "Investments", icon: "invest", premium: true },
-  { href: "/rewards/", label: "Rewards", icon: "rewards", premium: true },
+  { href: "/debt/", label: "Debt", icon: "debt", feature: "debt.planner" },
+  { href: "/credit/", label: "Credit", icon: "credit", feature: "credit.insights" },
+  { href: "/investments/", label: "Investments", icon: "invest", feature: "investments.insights" },
+  { href: "/rewards/", label: "Rewards", icon: "rewards", feature: "rewards.tracking" },
   { href: "/history/", label: "History", icon: "history" },
   { href: "/import/", label: "Import", icon: "import" },
   { href: "/feedback/", label: "Feedback & Requests", icon: "feedback" },
+  { href: "/profile/", label: "Profile", icon: "user" },
 ];
 const MOBILE = ["/", "/spend/", "/budget/", "/history/"];
 
@@ -34,6 +37,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const closeMenu = () => { setMenuOpen(false); moreRef.current?.focus(); };
   const path = norm(usePathname() || "/");
   const { plan, setPlan } = useAppState();
+  const { can } = useTier();
+  const locked = (n: (typeof NAV)[number]) => !!n.feature && !can(n.feature);
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const mobileIndex = menuOpen ? 4 : MOBILE.findIndex(active);
 
@@ -49,13 +54,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <small>Every rupee on target.</small>
           </span>
         </Link>
+        <IdentityChip />
         <nav aria-label="Main">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} className={`nav-item ${active(n.href) ? "active" : ""}`}
               aria-current={active(n.href) ? "page" : undefined}>
               <Icon name={n.icon} size={18} />
               <span>{n.label}</span>
-              {n.premium && plan === "free" && <Icon name="lock" size={13} />}
+              {locked(n) && <PremiumDot />}
             </Link>
           ))}
         </nav>
@@ -70,7 +76,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <Link href="/" className="brand compact"><span className="logo"><Lotus /></span><strong>Lakshly</strong></Link>
           <DataPill />
           <div className="topbar-actions">
-            {plan === "premium" ? <PremiumBadge small /> : null}
+            <IdentityChip compact />
             <ThemeSwitcher />
           </div>
         </div>
@@ -80,7 +86,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {menuOpen && <div className="mobile-menu-scrim" aria-hidden="true" onClick={closeMenu} />}
       {menuOpen && <div ref={menuRef} className="mobile-menu glass" id="more-navigation" role="region" aria-label="More navigation" onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); closeMenu(); } }}>
         <div className="card-head"><h2>Explore Lakshly</h2><button className="icon-btn" onClick={closeMenu} aria-label="Close navigation">×</button></div>
-        <nav aria-label="All pages">{NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setMenuOpen(false)} className={`nav-item ${active(n.href) ? "active" : ""}`} aria-current={active(n.href) ? "page" : undefined}><Icon name={n.icon} size={18} /><span>{n.label}</span>{n.premium && plan === "free" && <Icon name="lock" size={13} />}</Link>)}</nav>
+        <nav aria-label="All pages">{NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setMenuOpen(false)} className={`nav-item ${active(n.href) ? "active" : ""}`} aria-current={active(n.href) ? "page" : undefined}><Icon name={n.icon} size={18} /><span>{n.label}</span>{locked(n) && <PremiumDot />}</Link>)}</nav>
         <PlanSwitch plan={plan} setPlan={setPlan} />
         <DataNote />
       </div>}
@@ -96,6 +102,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </nav>
     </div>
   );
+}
+
+function PremiumDot() {
+  return <span className="nav-premium" aria-label="Premium" title="Premium">✦</span>;
 }
 
 function PlanSwitch({ plan, setPlan }: { plan: string; setPlan: (p: "free" | "premium") => void }) {
