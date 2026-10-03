@@ -138,6 +138,9 @@ struct SetupPage: View {
     }
     .padding(20)
     .frame(maxWidth: 720, alignment: .leading)
+    // Every line wraps to its full height instead of truncating with an ellipsis
+    // (the shot renderer's clipped stack and short windows would otherwise compress text).
+    .fixedSize(horizontal: false, vertical: true)
   }
 
   @ViewBuilder private var stepBody: some View {
@@ -271,7 +274,7 @@ struct SetupWelcomeStep: View {
           } label: {
             VStack(spacing: 6) {
               Text("🪷").frame(width: 44, height: 44).background(palette.bg, in: Circle())
-              Text(id.definition.name).font(.caption).lineLimit(1)
+              Text(id.definition.name).font(.caption).lineLimit(2).multilineTextAlignment(.center).minimumScaleFactor(0.85)
             }
             .frame(minWidth: 88, minHeight: 44)
             .padding(6)
@@ -601,7 +604,7 @@ struct SetupImportStep: View {
         Button("Try again") { actions.setStatus(picked.catalogId, .todo, nil) }.buttonStyle(SetupGhostStyle())
       }
     }
-    .setupFileDrop(enabled: model.showsFolderWatch || model.platform == .macos) { data, name in
+    .setupFileDrop(enabled: (model.showsFolderWatch || model.platform == .macos) && !model.rendering) { data, name in
       actions.dropFile(picked.catalogId, data, name)
     }
   }
@@ -845,19 +848,25 @@ struct SetupPlanStep: View {
         Text("You usually spend \(shown(median))").font(.caption).foregroundStyle(theme.secondaryText)
       }
       HStack(spacing: 6) {
-        stepper("−₹100", delta: -10_000, line: line, words: "Reduce \(line.category) by ₹100")
-        stepper("−₹500", delta: -50_000, line: line, words: "Reduce \(line.category) by ₹500")
-        Text(model.hideAmounts ? "••••" : rupeeField(line.limit))
-          .frame(minWidth: 72, minHeight: 44)
+        stepper("−100", delta: -10_000, line: line, words: "Reduce \(line.category) by ₹100")
+        stepper("−500", delta: -50_000, line: line, words: "Reduce \(line.category) by ₹500")
+        Text(model.hideAmounts ? "••••" : "₹" + rupeeField(line.limit))
+          .lineLimit(1).minimumScaleFactor(0.8)
+          .frame(minWidth: 64, minHeight: 44)
           .accessibilityLabel("\(setupTitleCase(line.category)) budget limit")
-        stepper("+₹100", delta: 10_000, line: line, words: "Increase \(line.category) by ₹100")
-        stepper("+₹500", delta: 50_000, line: line, words: "Increase \(line.category) by ₹500")
+        stepper("+100", delta: 10_000, line: line, words: "Increase \(line.category) by ₹100")
+        stepper("+500", delta: 50_000, line: line, words: "Increase \(line.category) by ₹500")
       }
     }
   }
 
   private func stepper(_ title: String, delta: Int64, line: BudgetLine, words: String) -> some View {
-    Button(title) { edits[line.category] = max(0, line.limit + delta) }
+    Button { edits[line.category] = max(0, line.limit + delta) } label: {
+      // One line that shrinks to fit narrow iPhones rather than wrapping mid-number.
+      // The rupee sign lives on the limit; VoiceOver still hears "by ₹100".
+      Text(title).lineLimit(1).minimumScaleFactor(0.8).monospacedDigit()
+        .padding(.horizontal, -4)
+    }
       .buttonStyle(SetupGhostStyle())
       .accessibilityLabel(words)
   }
@@ -1053,6 +1062,7 @@ struct SetupConsentCard: View {
         Button("Not now", action: actions.declineConsent).buttonStyle(SetupGhostStyle())
       }
     }
+    .fixedSize(horizontal: false, vertical: true)
     .padding(20)
     .modifier(GlassCard())
     .padding(24)
