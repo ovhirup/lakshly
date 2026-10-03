@@ -6,7 +6,8 @@ import { DataGate } from "@/components/DataState";
 import { BackfillCard, useGame } from "@/components/Game";
 import { useTier } from "@/components/useTier";
 import { usePrivacy } from "@/components/Privacy";
-import { formatDate, formatINR } from "@/lib/format";
+import { formatDate, formatINR, formatPct } from "@/lib/format";
+import { maskPctText, pctMasked } from "@/lib/privacy";
 import { levelFor } from "@/lib/review";
 import { isSingleTier, renderEvidence, ruleText, RULES, TIER_META, type BadgeRule, type LedgerEntry, type Tier } from "@/lib/badges";
 
@@ -117,7 +118,7 @@ function BadgesView() {
                     <span className="badge-ring" style={{ "--p": `${pct}%` } as React.CSSProperties}><span className="badge-emoji" aria-hidden="true">{b.emoji}</span></span>
                     <span className="badge-name">{b.name}</span>
                     <span className="badge-tiers" aria-hidden="true">{isSingleTier(b) ? (earned.length ? "✓ Earned" : "Locked") : b.tiers.map((t) => <span key={t.tier} className={earned.some((e) => e.tier === t.tier) ? "on" : ""}>{TIER_META[t.tier].medal}</span>)}</span>
-                    <span className="badge-hint">{ev?.next ? ev.next.hint : earned.length ? "All tiers earned" : ev?.note ?? b.copy.hint}</span>
+                    <span className="badge-hint">{maskPctText(ev?.next ? ev.next.hint : earned.length ? "All tiers earned" : ev?.note ?? b.copy.hint)}</span>
                   </button>
                 );
               })}
@@ -153,8 +154,8 @@ function BadgesView() {
             </ul>
             {curEval?.next && (
               <div className="badge-next">
-                <div className="xp-bar" role="progressbar" aria-valuenow={Math.round(curEval.next.pct * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={`${Math.round(curEval.next.pct * 100)} percent to ${TIER_META[curEval.next.tier].label}`}><span style={{ width: `${Math.round(curEval.next.pct * 100)}%` }} /></div>
-                <p className="tiny">Next: {isSingleTier(current) ? current.name : TIER_META[curEval.next.tier].label} · {Math.round(curEval.next.pct * 100)}% · {curEval.next.hint}</p>
+                <div className="xp-bar" role="progressbar" {...(pctMasked() ? {} : { "aria-valuenow": Math.round(curEval.next.pct * 100), "aria-valuemin": 0, "aria-valuemax": 100 })} aria-label={pctMasked() ? `Progress to ${TIER_META[curEval.next.tier].label} (hidden)` : `${Math.round(curEval.next.pct * 100)} percent to ${TIER_META[curEval.next.tier].label}`}><span style={{ width: `${Math.round(curEval.next.pct * 100)}%` }} /></div>
+                <p className="tiny">Next: {isSingleTier(current) ? current.name : TIER_META[curEval.next.tier].label} · {formatPct(curEval.next.pct * 100, 0)} · {maskPctText(curEval.next.hint)}</p>
               </div>
             )}
             {curEval?.note && !curEarned.length && <p className="tiny muted">{curEval.note}</p>}

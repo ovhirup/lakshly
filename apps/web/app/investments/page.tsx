@@ -28,7 +28,7 @@ function InvestmentsView() {
           <Glass className="card"><Stat label="Holdings value" value={formatINR(value)} /></Glass>
           <Glass className="card"><Stat label="Monthly SIPs" value={formatINR(monthlySip)} hint={`${sips.length} active`} /></Glass>
           <Glass className="card"><Stat label="10-yr invested" value={formatINR(last.invested)} /></Glass>
-          <Glass className="card"><Stat label={`10-yr value @ ${ret}%`} value={formatINR(last.value)} tone="up" hint="Illustrative, not a promise" /></Glass>
+          <Glass className="card"><Stat label={`10-yr value @ ${formatPct(ret, 0)}`} value={formatINR(last.value)} tone="up" hint="Illustrative, not a promise" /></Glass>
         </div>
         <div className="grid g3" style={{ marginTop: 20 }}>
           <Glass className="card span2">
@@ -37,7 +37,7 @@ function InvestmentsView() {
               { key: "invested", name: "Invested", color: "var(--muted)", dashed: true },
               { key: "value", name: "Projected value", color: "var(--c-invest)" },
             ]} />
-            <label className="field">Assumed annual return: {ret}%
+            <label className="field">Assumed annual return: {formatPct(ret, 0)}
               <input type="range" min={4} max={15} step={0.5} value={ret} onChange={(e) => setRet(Number(e.target.value))} />
             </label>
           </Glass>
@@ -61,7 +61,7 @@ function InvestmentsView() {
             <div className="list">
               {sips.map((s) => (
                 <div className="row" key={s.id}>
-                  <div className="grow"><div className="title">{s.scheme}</div><div className="sub">{s.platform} · day {s.dayOfMonth}{s.stepUpPctYearly ? ` · +${s.stepUpPctYearly}%/yr` : ""}</div></div>
+                  <div className="grow"><div className="title">{s.scheme}</div><div className="sub">{s.platform} · day {s.dayOfMonth}{s.stepUpPctYearly ? ` · +${formatPct(s.stepUpPctYearly, 0)}/yr` : ""}</div></div>
                   <div className="amt">{formatINR(s.amount)}</div>
                 </div>
               ))}

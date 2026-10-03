@@ -333,7 +333,11 @@ export function freshness(p: SourceProgress | undefined, cadence: Source["cadenc
 
 export const FLAGS_KEY = "lk-setup-flags";
 /** Only what the shell needs before the vault unlocks. Never the email, names or institutions. */
-export interface SetupFlags { v: 1; seen: boolean; mode: "mine" | "demo" | null; dismissed: boolean; percent: number }
+export interface SetupFlags {
+  v: 1; seen: boolean; mode: "mine" | "demo" | null; dismissed: boolean; percent: number;
+  /** Every required step is done (optional ones may be skipped). Hides the sidebar Setup link. */
+  complete?: boolean;
+}
 export const EMPTY_FLAGS: SetupFlags = { v: 1, seen: false, mode: null, dismissed: false, percent: 0 };
 
 export function parseFlags(raw: string | null): SetupFlags {
@@ -346,6 +350,7 @@ export function parseFlags(raw: string | null): SetupFlags {
       mode: f.mode === "mine" || f.mode === "demo" ? f.mode : null,
       dismissed: f.dismissed === true,
       percent: typeof f.percent === "number" && f.percent >= 0 && f.percent <= 100 ? Math.floor(f.percent) : 0,
+      ...(f.complete === true ? { complete: true } : {}),
     };
   } catch {
     return EMPTY_FLAGS;
@@ -353,8 +358,8 @@ export function parseFlags(raw: string | null): SetupFlags {
 }
 
 export function serialiseFlags(f: SetupFlags): string {
-  const { v, seen, mode, dismissed, percent } = f;
-  return JSON.stringify({ v, seen, mode, dismissed, percent });
+  const { v, seen, mode, dismissed, percent, complete } = f;
+  return JSON.stringify({ v, seen, mode, dismissed, percent, ...(complete ? { complete: true } : {}) });
 }
 
 /** Auto-open only on a true first run: no flags, no chosen dataset, nothing in the vault. */

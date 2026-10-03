@@ -6,7 +6,7 @@ import { dataset as demo } from "@/lib/data";
 import type { Budget, LakshlyDataset } from "@/lib/schema.gen";
 import { budgetId } from "@/lib/setup-suggest";
 import type { SetupGoal } from "@/lib/setup";
-import { deleteVault, loadUserData, saveUserData, type UserData } from "@/lib/vault";
+import { deleteVault, loadUserData, saveUserData, VAULT_DELETED_EVENT, type UserData } from "@/lib/vault";
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
 import { usePrivacy } from "./Privacy";
@@ -117,9 +117,11 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     await deleteVault();
     localStorage.removeItem(SOURCE_KEY);
     localStorage.removeItem(SETUP_FLAGS_KEY);
+    localStorage.removeItem("lk-worth-snooze"); // legacy plaintext snoozes (now kept in the encrypted review record)
     setUser(null);
     forgetAll();
     emit();
+    window.dispatchEvent(new Event(VAULT_DELETED_EVENT));
   }, [forgetAll]);
   const value: DataCtx = {
     source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,

@@ -54,7 +54,7 @@ export function SetupCard() {
 export function SetupNavLink() {
   const flags = useSetupFlags();
   const path = usePathname() || "/";
-  if (flags.percent >= 100 || (!flags.seen && flags.percent === 0)) return null;
+  if (flags.complete || flags.percent >= 100 || (!flags.seen && flags.percent === 0)) return null;
   return (
     <Link href="/setup/?step=resume" className={`setup-link ${path.startsWith("/setup") ? "active" : ""}`}>
       <Icon name="check" size={14} /> Setup · {flags.percent}%

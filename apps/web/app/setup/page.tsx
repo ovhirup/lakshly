@@ -137,7 +137,7 @@ function Wizard() {
               );
             })}
           </ol>
-          <p className="tiny muted rail-note"><Icon name="shield" size={12} /> Everything stays on this device. Nothing is uploaded.</p>
+          <p className="tiny muted rail-note"><Icon name="shield" size={12} /> Everything stays on this device. Nothing is uploaded. <Link href="/import/#your-data">Delete all my data</Link></p>
         </nav>
 
         <section className="setup-step" aria-labelledby="step-title">

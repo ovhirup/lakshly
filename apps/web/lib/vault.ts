@@ -86,6 +86,9 @@ export async function vaultInfo(): Promise<{ encrypted: boolean; bytes: number }
   return rec ? { encrypted: rec.alg === "AES-GCM-256", bytes: rec.ct.byteLength } : null;
 }
 
+/** Window event fired after "Delete all my data" so providers can drop in-memory copies. */
+export const VAULT_DELETED_EVENT = "lk-vault-deleted";
+
 export function deleteVault(): Promise<void> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.deleteDatabase(DB);
