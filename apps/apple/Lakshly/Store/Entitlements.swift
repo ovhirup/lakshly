@@ -25,6 +25,8 @@ enum Feature: String, CaseIterable, Sendable {
   case basicWidgets
   /// Net worth and debt widgets.
   case extraWidgets
+  /// Mac notch glance. The menu-bar extra stays available without this.
+  case notchPanel = "glance.notchPanel"
   // Import and first-run setup are always free (setup-wizard spec §10).
   case importStatements = "import.statements"
   case setupWizard = "setup.wizard"
@@ -57,6 +59,7 @@ struct EntitlementsMap {
     .priorityFeedback: .premium,
     .basicWidgets: .free,
     .extraWidgets: .premium,
+    .notchPanel: .premium,
     .importStatements: .free,
     .setupWizard: .free,
     .setupEmailGuide: .free,
