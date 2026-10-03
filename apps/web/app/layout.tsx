@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   description: "Private-by-design personal finance. Local-first, synthetic demo data only.",
   applicationName: "Lakshly",
   manifest: "/manifest.webmanifest",
+  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }], apple: "/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {
