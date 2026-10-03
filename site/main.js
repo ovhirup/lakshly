@@ -73,6 +73,21 @@
     Object.keys(cfg.WAITLIST_EXTRA || {}).forEach(function (k) {
       var i = document.createElement("input"); i.type = "hidden"; i.name = k; i.value = cfg.WAITLIST_EXTRA[k]; form.appendChild(i);
     });
+    // Campaign attribution: copy utm_* tags from this page's URL into hidden fields, so they're sent
+    // only with the sign-up itself. Nothing is stored in the browser (no cookies, no localStorage).
+    Object.keys(cfg.WAITLIST_UTM_FIELDS || {}).forEach(function (param) {
+      var v = utmValue(param);
+      if (!v) return;
+      var i = document.createElement("input"); i.type = "hidden"; i.name = cfg.WAITLIST_UTM_FIELDS[param]; i.value = v;
+      i.setAttribute("data-utm", param); form.appendChild(i);
+    });
+  }
+
+  // Reads one utm_* parameter from location.search. Keeps only [A-Za-z0-9._-], max 100 chars.
+  function utmValue(param) {
+    var raw = null;
+    try { raw = new URLSearchParams(window.location.search).get(param); } catch (e) { return ""; }
+    return (raw || "").replace(/[^A-Za-z0-9._-]/g, "").slice(0, 100);
   }
 
   form.addEventListener("submit", function (e) {
