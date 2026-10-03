@@ -79,7 +79,8 @@ export function SetupWizard({ state }: { state: SetupState }) {
   }, [state.completedAt, state.profile.name, notify]);
   const dispatchSetup = d.dispatchSetup;
   useEffect(() => {
-    focus.current?.focus();
+    focus.current?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0 });
     void dispatchSetup({ type: "goTo", step }).catch(() => notify("Couldn't save the current setup step."));
   }, [step, dispatchSetup, notify]);
 

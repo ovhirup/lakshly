@@ -87,3 +87,9 @@
   .setup-bar .btn { padding-inline: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .setup-confetti { display: none; } }
+/* The wizard container takes programmatic focus for screen readers; it is not a control. */
+.setup-wizard:focus, .setup-wizard:focus-visible { outline: none; }
+.setup-content, .setup-content .card { min-width: 0; }
+@media (max-width: 480px) {
+  .setup-stepper .btn { flex: 1 1 0; min-width: 0; }
+}
