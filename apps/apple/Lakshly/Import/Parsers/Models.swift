@@ -170,6 +170,9 @@ struct StatementMeta: Encodable {
   var minDue: Int?
   var openingBalance: Int?
   var closingBalance: Int?
+  var issuer: String? = nil
+  var totalValue: Int? = nil
+  var quantityTransactionCount: Int? = nil
 
   func encode(to encoder: Encoder) throws {
     var c = encoder.container(keyedBy: CodingKeys.self)
@@ -185,11 +188,14 @@ struct StatementMeta: Encodable {
     try c.encodeIfPresent(minDue, forKey: .minDue)
     try c.encodeIfPresent(openingBalance, forKey: .openingBalance)
     try c.encodeIfPresent(closingBalance, forKey: .closingBalance)
+    try c.encodeIfPresent(issuer, forKey: .issuer)
+    try c.encodeIfPresent(totalValue, forKey: .totalValue)
+    try c.encodeIfPresent(quantityTransactionCount, forKey: .quantityTransactionCount)
   }
 
   private enum CodingKeys: String, CodingKey {
     case adapter, kind, institution, accountId, periodFrom, periodTo, statementDate, dueDate
-    case totalDue, minDue, openingBalance, closingBalance
+    case totalDue, minDue, openingBalance, closingBalance, issuer, totalValue, quantityTransactionCount
   }
 }
 

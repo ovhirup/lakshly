@@ -1,0 +1,150 @@
+{
+  "adapter": "cas.depository",
+  "adapterLabel": "Depository CAS (NSDL / CDSL)",
+  "kind": "cas",
+  "confidence": 0.95,
+  "accounts": [
+    {
+      "id": "acc_20d0mlxxdrr",
+      "name": "NSDL Demat ••1357",
+      "type": "stocks",
+      "institution": "NSDL / Demo Securities Ltd",
+      "mask": "1357",
+      "currency": "INR",
+      "balance": 652000,
+      "asOf": "2026-08-31",
+      "source": "cas"
+    },
+    {
+      "id": "acc_1hkxnhelsvt",
+      "name": "CDSL Demat ••2468",
+      "type": "stocks",
+      "institution": "CDSL / Demo Securities Ltd",
+      "mask": "2468",
+      "currency": "INR",
+      "balance": 486006,
+      "asOf": "2026-08-31",
+      "source": "cas"
+    },
+    {
+      "id": "acc_1px6mg52ue3",
+      "name": "Demo Balanced Fund - Growth",
+      "type": "mutual_fund",
+      "institution": "NSDL / Mutual Fund Folios",
+      "mask": "1234",
+      "currency": "INR",
+      "balance": 1003753,
+      "asOf": "2026-08-31",
+      "source": "cas",
+      "invested": 900000
+    },
+    {
+      "id": "acc_0tdsnne6hla",
+      "name": "Demo Short Term Fund - Growth",
+      "type": "mutual_fund",
+      "institution": "NSDL / Mutual Fund Folios",
+      "mask": "5678",
+      "currency": "INR",
+      "balance": 255000,
+      "asOf": "2026-08-31",
+      "source": "cas",
+      "invested": 240000
+    }
+  ],
+  "holdings": [
+    {
+      "accountId": "acc_20d0mlxxdrr",
+      "scheme": "Demo Industries Ltd",
+      "amc": "NSDL / Demo Securities Ltd",
+      "registrar": "Unknown",
+      "folioMask": "1357",
+      "isin": "INE000A01011",
+      "units": 12.5,
+      "nav": 120.4,
+      "navDate": "2026-08-31",
+      "costValue": 0,
+      "marketValue": 150500
+    },
+    {
+      "accountId": "acc_20d0mlxxdrr",
+      "scheme": "Demo Energy Ltd",
+      "amc": "NSDL / Demo Securities Ltd",
+      "registrar": "Unknown",
+      "folioMask": "1357",
+      "isin": "INE000A01013",
+      "units": 20,
+      "nav": 250.75,
+      "navDate": "2026-08-31",
+      "costValue": 0,
+      "marketValue": 501500
+    },
+    {
+      "accountId": "acc_1hkxnhelsvt",
+      "scheme": "Demo Tools Ltd",
+      "amc": "CDSL / Demo Securities Ltd",
+      "registrar": "Unknown",
+      "folioMask": "2468",
+      "isin": "INE000A01012",
+      "units": 8,
+      "nav": 99.5,
+      "navDate": "2026-08-31",
+      "costValue": 0,
+      "marketValue": 79600
+    },
+    {
+      "accountId": "acc_1hkxnhelsvt",
+      "scheme": "Demo Index Fund - Growth",
+      "amc": "CDSL / Demo Securities Ltd",
+      "registrar": "Unknown",
+      "folioMask": "2468",
+      "isin": "INF000K01AB1",
+      "units": 125.125,
+      "nav": 32.48,
+      "navDate": "2026-08-31",
+      "costValue": 0,
+      "marketValue": 406406
+    },
+    {
+      "accountId": "acc_1px6mg52ue3",
+      "scheme": "Demo Balanced Fund - Growth",
+      "amc": "Mutual Fund",
+      "registrar": "Unknown",
+      "folioMask": "1234",
+      "isin": "INF000K01AB2",
+      "units": 200.25,
+      "nav": 50.125,
+      "navDate": "2026-08-31",
+      "costValue": 900000,
+      "marketValue": 1003753
+    },
+    {
+      "accountId": "acc_0tdsnne6hla",
+      "scheme": "Demo Short Term Fund - Growth",
+      "amc": "Mutual Fund",
+      "registrar": "Unknown",
+      "folioMask": "5678",
+      "isin": "INF000K01AB3",
+      "units": 100,
+      "nav": 25.5,
+      "navDate": "2026-08-31",
+      "costValue": 240000,
+      "marketValue": 255000
+    }
+  ],
+  "transactions": [],
+  "sips": [],
+  "meta": [
+    {
+      "adapter": "cas.depository",
+      "kind": "cas",
+      "institution": "NSDL",
+      "accountId": "acc_20d0mlxxdrr",
+      "issuer": "nsdl",
+      "periodFrom": "2026-08-01",
+      "periodTo": "2026-08-31",
+      "totalValue": 2396759,
+      "quantityTransactionCount": 3
+    }
+  ],
+  "warnings": []
+}

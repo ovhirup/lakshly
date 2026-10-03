@@ -1,0 +1,102 @@
+[
+  {
+    "page": 1,
+    "text": "Consolidated Account Statement (CAS) - SYNTHETIC"
+  },
+  {
+    "page": 1,
+    "text": "Central Depository Services (India) Limited / CDSL"
+  },
+  {
+    "page": 1,
+    "text": "Statement for the period from 01-08-2026 to 31-08-2026"
+  },
+  {
+    "page": 1,
+    "text": "Asha Demo"
+  },
+  {
+    "page": 1,
+    "text": "Address: **** Demo Lane, Fictional City ****"
+  },
+  {
+    "page": 1,
+    "text": "Summary"
+  },
+  {
+    "page": 1,
+    "text": "Total Portfolio Value: Rs. 14,897.59"
+  },
+  {
+    "page": 1,
+    "text": "CDSL Demat: Rs. 4,860.06"
+  },
+  {
+    "page": 1,
+    "text": "Mutual Fund Folios: Rs. 10,037.53"
+  },
+  {
+    "page": 1,
+    "text": "CDSL Demat Account"
+  },
+  {
+    "page": 1,
+    "text": "DP Name: Demo Securities Ltd"
+  },
+  {
+    "page": 1,
+    "text": "BO ID: 1200000000002468"
+  },
+  {
+    "page": 1,
+    "text": "Equities (E)"
+  },
+  {
+    "page": 1,
+    "text": "ISIN   Security / Company name   Current Bal.   Free Bal   Lent/Pledged   Market Price (Rs.)   Value (Rs.)"
+  },
+  {
+    "page": 1,
+    "text": "INE000A01012   Demo Tools Ltd   8.000   6.000   2.000   99.50   796.00"
+  },
+  {
+    "page": 1,
+    "text": "Mutual Fund Units held in demat"
+  },
+  {
+    "page": 1,
+    "text": "ISIN   Security / Company name   Current Bal.   Free Bal   Lent/Pledged   Market Price (Rs.)   Value (Rs.)"
+  },
+  {
+    "page": 1,
+    "text": "INF000K01AB1   Demo Index Fund - Growth   125.125   125.125   0.000   32.4800   4,064.06"
+  },
+  {
+    "page": 1,
+    "text": "Transactions"
+  },
+  {
+    "page": 1,
+    "text": "Date   ISIN   Security   Description   Debit qty   Credit qty   Balance"
+  },
+  {
+    "page": 1,
+    "text": "10-08-2026   INE000A01012   Demo Tools Ltd   Sale   2.000   -   8.000"
+  },
+  {
+    "page": 1,
+    "text": "12-Aug-2026   INF000K01AB1   Demo Index Fund   Purchase   0.000   25.125   125.125"
+  },
+  {
+    "page": 1,
+    "text": "Mutual Fund Units held with RTAs (MF Folios)"
+  },
+  {
+    "page": 1,
+    "text": "Scheme name   ISIN   Folio No.   Closing Bal. Units   NAV (Rs.)   Cumulative Amount Invested (Rs.)   Valuation (Rs.)   Unrealised P/L"
+  },
+  {
+    "page": 1,
+    "text": "Demo Balanced Fund - Growth   INF000K01AB2   70001234   200.250   50.1250   9,000.00   10,037.53   1,037.53"
+  }
+]

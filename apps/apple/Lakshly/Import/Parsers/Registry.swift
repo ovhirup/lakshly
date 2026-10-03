@@ -3,7 +3,7 @@ import Foundation
 let specificThreshold = 0.6
 
 private enum RegistryStore {
-  static var specifics: [Adapter] = [cas, hdfcBank, sbiBank, iciciBank, hdfcCard, sbiCard]
+  static var specifics: [Adapter] = [depositoryCas, cas, hdfcBank, sbiBank, iciciBank, hdfcCard, sbiCard]
   static let fallbacks: [Adapter] = [genericCard, genericBank]
 }
 

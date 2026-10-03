@@ -54,6 +54,23 @@
       "password": "DEMO1234",
       "withoutPassword": "required",
       "wrongPassword": "incorrect"
+    },
+    {
+      "name": "nsdl-cas",
+      "file": "nsdl-cas.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "cdsl-cas",
+      "file": "cdsl-cas.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "cdsl-cas-locked",
+      "file": "cdsl-cas-locked.synthetic.pdf",
+      "password": "DEMO1234",
+      "withoutPassword": "required",
+      "wrongPassword": "incorrect"
     }
   ]
 }
