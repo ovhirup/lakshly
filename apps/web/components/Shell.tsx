@@ -6,6 +6,7 @@ import { useAppState } from "./AppState";
 import { Icon } from "./Icon";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { PremiumBadge } from "./ui";
+import { SetupLink } from "./SetupCard";
 import { DataNote, DataPill } from "./DataState";
 
 export const NAV = [
@@ -33,6 +34,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }, [menuOpen]);
   const closeMenu = () => { setMenuOpen(false); moreRef.current?.focus(); };
   const path = norm(usePathname() || "/");
+  const inSetup = path.startsWith("/setup");
   const { plan, setPlan } = useAppState();
   const active = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
   const mobileIndex = menuOpen ? 4 : MOBILE.findIndex(active);
@@ -61,6 +63,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="sidebar-foot">
           <PlanSwitch plan={plan} setPlan={setPlan} />
+          <div className="row-actions"><DataPill /><SetupLink /></div>
           <DataNote />
         </div>
       </aside>
@@ -82,9 +85,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <div className="card-head"><h2>Explore Lakshly</h2><button className="icon-btn" onClick={closeMenu} aria-label="Close navigation">×</button></div>
         <nav aria-label="All pages">{NAV.map((n) => <Link key={n.href} href={n.href} onClick={() => setMenuOpen(false)} className={`nav-item ${active(n.href) ? "active" : ""}`} aria-current={active(n.href) ? "page" : undefined}><Icon name={n.icon} size={18} /><span>{n.label}</span>{n.premium && plan === "free" && <Icon name="lock" size={13} />}</Link>)}</nav>
         <PlanSwitch plan={plan} setPlan={setPlan} />
+        <SetupLink />
         <DataNote />
       </div>}
-      <nav className="tabbar glass" aria-label="Quick" style={{ "--tab-index": mobileIndex < 0 ? 4 : mobileIndex } as CSSProperties}>
+      {/* The setup wizard is a focused flow with its own sticky bottom bar (spec §8 web). */}
+      {!inSetup && <nav className="tabbar glass" aria-label="Quick" style={{ "--tab-index": mobileIndex < 0 ? 4 : mobileIndex } as CSSProperties}>
         <span className="tab-indicator" aria-hidden="true" />
         {NAV.filter((n) => MOBILE.includes(n.href)).map((n) => (
           <Link key={n.href} href={n.href} className={`tab ${active(n.href) ? "active" : ""}`} aria-current={active(n.href) ? "page" : undefined} onClick={() => setMenuOpen(false)}>
@@ -93,7 +98,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </Link>
         ))}
         <button ref={moreRef} className={`tab ${menuOpen || !MOBILE.some(active) ? "active" : ""}`} aria-expanded={menuOpen} aria-controls="more-navigation" onClick={() => setMenuOpen(!menuOpen)}><Icon name="overview" size={20} /><span>More</span></button>
-      </nav>
+      </nav>}
     </div>
   );
 }

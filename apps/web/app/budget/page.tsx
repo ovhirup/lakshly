@@ -8,16 +8,18 @@ import { formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { budgetProgress, CATEGORY_COLORS, defaultMonth, months } from "@/lib/selectors";
 
 function BudgetView() {
-  const { budgets, transactions } = useData();
+  const { budgets, transactions, source } = useData();
   const { plan, setPlan } = useAppState();
-  const all = months(transactions).filter((m) => m <= defaultMonth(transactions));
+  const all = source === "mine"
+    ? [...new Set([...months(transactions), ...budgets.map(b => b.month)])].sort()
+    : months(transactions).filter((m) => m <= defaultMonth(transactions));
   const [month, setMonth] = useState(all[all.length - 1]);
   const rows = budgetProgress(budgets, transactions, month);
   const totalLimit = rows.reduce((s, r) => s + r.limit, 0);
   const totalSpent = rows.reduce((s, r) => s + r.spent, 0);
   const onTrack = rows.filter((r) => r.pct <= 100).length;
-  const visibleRows = plan === "free" ? rows.slice(0, 1) : rows;
-  const lockedRows = plan === "free" ? rows.slice(1) : [];
+  const visibleRows = plan === "free" && source === "demo" ? rows.slice(0, 1) : rows;
+  const lockedRows = plan === "free" && source === "demo" ? rows.slice(1) : [];
 
   return (
     <>

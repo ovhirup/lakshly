@@ -45,3 +45,12 @@ const ACRONYMS: Record<string, string> = { emi: "EMI", upi: "UPI", sip: "SIP", f
 export function titleCase(s: string): string {
   return s.replace(/_/g, " ").replace(/\b\w+/g, (w) => ACRONYMS[w.toLowerCase()] ?? w[0].toUpperCase() + w.slice(1));
 }
+
+/** Wizard/import money follows the app's hide-amounts preference. Values remain integer paise. */
+export function formatMoney(paise: number, opts: { privacy?: boolean; currency?: string; decimals?: boolean; signed?: boolean } = {}): string {
+  if (opts.privacy) return "••••";
+  if (!opts.currency || opts.currency === "INR") return formatINR(paise, opts);
+  const body = new Intl.NumberFormat("en-IN", { style: "currency", currency: opts.currency,
+    maximumFractionDigits: opts.decimals ? 2 : 0 }).format(Math.abs(paise) / 100);
+  return paise < 0 ? `−${body}` : opts.signed && paise > 0 ? `+${body}` : body;
+}

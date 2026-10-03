@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { SetupCard } from "@/components/SetupCard";
 import { Icon } from "@/components/Icon";
 import { CashflowBars, Donut } from "@/components/charts";
 import { Glass, PageHeader, Progress, Stat } from "@/components/ui";
@@ -82,5 +83,5 @@ function OverviewView() {
 }
 
 export default function OverviewPage() {
-  return <DataGate title="Overview" need={["accounts", "transactions"]}><OverviewView /></DataGate>;
+  return <><SetupCard /><DataGate title="Overview" need={["accounts", "transactions"]}><OverviewView /></DataGate></>;
 }

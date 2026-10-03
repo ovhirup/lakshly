@@ -5,8 +5,10 @@
 // planned follow-up.
 import type { Holding, LakshlyDataset, StatementMeta } from "@lakshly/parsers";
 
-export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number }
-export interface UserData { version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[] }
+import type { SetupState, SetupGoal } from "@lakshly/shared";
+
+export interface ImportLog { id: string; accountIds: string[]; confidence?: number; at: string; file: string; adapter: string; added: number; duplicates: number }
+export interface UserData { version: 2; setup?: SetupState; goals?: SetupGoal[]; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[] }
 
 const DB = "lakshly-vault";
 const STORE = "kv";
@@ -53,7 +55,7 @@ export async function loadUserData(): Promise<UserData | null> {
   const rec = await tx<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>("readonly", (s) => s.get("vault") as IDBRequest<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>);
   if (!rec) return null;
   const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: rec.iv as Uint8Array<ArrayBuffer> }, await key(), rec.ct);
-  return JSON.parse(new TextDecoder().decode(plain)) as UserData;
+  return migrateUserData(JSON.parse(new TextDecoder().decode(plain)) as LegacyUserData | UserData);
 }
 
 /** Peek at the stored record without decrypting (used to prove the data is encrypted at rest). */
@@ -69,4 +71,15 @@ export function deleteVault(): Promise<void> {
     req.onblocked = () => resolve();
     req.onerror = () => reject(req.error);
   });
+}
+
+/** Payload migration only: the encrypted envelope and dataset are unchanged. */
+export type LegacyUserData = Omit<UserData, "version" | "imports"> & {
+  version: 1; imports: Omit<ImportLog, "id" | "accountIds">[];
+};
+export function migrateUserData(data: LegacyUserData | UserData): UserData {
+  if (data.version === 2) return data;
+  return { ...data, version: 2, imports: data.imports.map((entry, index) => ({
+    ...entry, id: `imp_legacy${String(index + 1).padStart(6, "0")}`, accountIds: [],
+  })) };
 }
