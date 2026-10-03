@@ -8,6 +8,7 @@ import { useTier } from "@/components/useTier";
 import { Glass, PageHeader } from "@/components/ui";
 import { SetupProfileRow } from "@/components/SetupParts";
 import { PrivacySettingsCard } from "@/components/PrivacySettings";
+import { CoachSettings } from "@/components/CoachSettings";
 import { FEATURES, FREE_BILL_OF_RIGHTS, PRICE_TEXT, premiumFeatures } from "@/lib/entitlements";
 import { formatDate } from "@/lib/format";
 import { renewsOn, saveProfile, useProfile } from "@/lib/profile";
@@ -123,6 +124,7 @@ export default function ProfilePage() {
       )}
 
       <PrivacySettingsCard />
+      <CoachSettings />
 
       <div className="grid g2">
         <Glass className="card">

@@ -15,6 +15,7 @@ and a unit test fails if one of them is ever moved behind Premium.
 Free budgets: one monthly budget with up to 6 category lines (Premium removes both limits).
 
 - **Privacy mode** (hide every amount), plus shake-to-hide and auto-hide
+- **All badges and XP**, the weekly review, Worth-it tags and coach nudges with every safety control (Not now, Why?, snooze, off). Premium only adds cosmetics (badge frames) and the Roast-lite tone; it can never buy XP or badges
 
 Also always free: the weekly review, and all badges and XP. Premium can never buy XP or badges.
 

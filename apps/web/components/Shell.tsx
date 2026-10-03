@@ -18,6 +18,7 @@ export const NAV: { href: string; label: string; icon: string; feature?: Feature
   { href: "/", label: "Overview", icon: "overview" },
   { href: "/spend/", label: "Spend", icon: "spend" },
   { href: "/review/", label: "Weekly review", icon: "check" },
+  { href: "/badges/", label: "Badges", icon: "medal" },
   { href: "/budget/", label: "Budget", icon: "budget" },
   { href: "/debt/", label: "Debt", icon: "debt", feature: "debt.planner" },
   { href: "/credit/", label: "Credit", icon: "credit", feature: "credit.insights" },

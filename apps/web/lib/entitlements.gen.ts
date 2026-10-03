@@ -12,6 +12,11 @@ export const PRICES = {
   }
 } as const;
 export const FEATURE_IDS = [
+  "badges.animatedFrames",
+  "badges.cabinet",
+  "badges.core",
+  "badges.share",
+  "badges.themes",
   "budgets.lines",
   "budgets.unlimited",
   "core.tabs",
@@ -26,6 +31,10 @@ export const FEATURE_IDS = [
   "mailSync.connect",
   "mailSync.imap",
   "mailSync.statementPasswordKeychain",
+  "nudges.core",
+  "nudges.notifications",
+  "nudges.tone.hype",
+  "nudges.tone.roast",
   "priorityFeedback",
   "privacy.autoHide",
   "privacy.mode",
@@ -50,6 +59,26 @@ export const FEATURE_IDS = [
 export type FeatureId = (typeof FEATURE_IDS)[number];
 export type FeatureSpec = { minTier: "free" | "premium" | "superUser"; label: string; limits?: Partial<Record<"free" | "premium" | "superUser", number | null>> };
 export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
+  "badges.animatedFrames": {
+    "minTier": "premium",
+    "label": "Animated badge frames"
+  },
+  "badges.cabinet": {
+    "minTier": "free",
+    "label": "Badge cabinet"
+  },
+  "badges.core": {
+    "minTier": "free",
+    "label": "All badges and XP (never for sale)"
+  },
+  "badges.share": {
+    "minTier": "free",
+    "label": "Share a badge image (no amounts)"
+  },
+  "badges.themes": {
+    "minTier": "premium",
+    "label": "Badge themes"
+  },
   "budgets.lines": {
     "minTier": "free",
     "label": "Budget category lines per budget",
@@ -121,6 +150,22 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
   "mailSync.statementPasswordKeychain": {
     "minTier": "free",
     "label": "Remember statement passwords on this device (Apple)"
+  },
+  "nudges.core": {
+    "minTier": "free",
+    "label": "Coach nudges with Not now, Why? and snooze"
+  },
+  "nudges.notifications": {
+    "minTier": "free",
+    "label": "Nudge notifications (Apple apps)"
+  },
+  "nudges.tone.hype": {
+    "minTier": "free",
+    "label": "Hype and Straight coach tones"
+  },
+  "nudges.tone.roast": {
+    "minTier": "premium",
+    "label": "Roast-lite coach tone"
   },
   "priorityFeedback": {
     "minTier": "premium",
@@ -210,4 +255,4 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
     "label": "3 extra themes"
   }
 };
-export const FREE_BILL_OF_RIGHTS: readonly FeatureId[] = ["security.lock","security.encryption","import.statements","core.tabs","data.delete","data.export","setup.wizard","setup.emailGuide","mailSync.connect","privacy.mode"];
+export const FREE_BILL_OF_RIGHTS: readonly FeatureId[] = ["security.lock","security.encryption","import.statements","core.tabs","data.delete","data.export","setup.wizard","setup.emailGuide","mailSync.connect","privacy.mode","badges.core"];

@@ -7,6 +7,7 @@ import { DataGate, useData } from "@/components/DataState";
 import { SetupCard } from "@/components/SetupParts";
 import { Amount, useDoubleTapToggle } from "@/components/Privacy";
 import { ReviewEntryCard, SundayBanner, WorthItCard } from "@/components/ReviewParts";
+import { BackfillCard, NextUpStrip, NudgeCard } from "@/components/Game";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -43,6 +44,8 @@ function OverviewView() {
         <p className="tagline">Every rupee on target. <Icon name="sparkle" size={14} /></p>
       </Glass>
 
+      <BackfillCard />
+      <NudgeCard screen="overview" />
       <SundayBanner />
       <Glass className="card overview-review-card">
         <div className="overview-review">
@@ -50,6 +53,7 @@ function OverviewView() {
           <WorthItCard compact />
         </div>
       </Glass>
+      <NextUpStrip />
 
       <div className="grid g4">
         <Glass className="card"><Stat label={`Income · ${formatMonth(month, true)}`} value={formatINR(cur.income)} /></Glass>
