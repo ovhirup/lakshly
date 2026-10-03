@@ -31,6 +31,11 @@ export const FEATURE_IDS = [
   "privacy.mode",
   "privacy.shake",
   "privacy.widgetMask",
+  "review.inbox",
+  "review.merchantRules",
+  "review.reminder",
+  "review.widget",
+  "review.worthIt",
   "rewards.tracking",
   "security.encryption",
   "security.lock",
@@ -136,6 +141,29 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
   "privacy.widgetMask": {
     "minTier": "free",
     "label": "Widgets without amounts"
+  },
+  "review.inbox": {
+    "minTier": "free",
+    "label": "Weekly review inbox"
+  },
+  "review.merchantRules": {
+    "minTier": "free",
+    "label": "Remember a category for a merchant",
+    "limits": {
+      "free": null
+    }
+  },
+  "review.reminder": {
+    "minTier": "free",
+    "label": "Sunday review reminder"
+  },
+  "review.widget": {
+    "minTier": "free",
+    "label": "Review count widget"
+  },
+  "review.worthIt": {
+    "minTier": "free",
+    "label": "Worth-it tags"
   },
   "rewards.tracking": {
     "minTier": "premium",

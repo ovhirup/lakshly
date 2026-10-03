@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useState, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { emptyDataset, mergeResult, type MergeReport, type ParseResult } from "@lakshly/parsers";
 import { dataset as demo } from "@/lib/data";
@@ -10,6 +10,8 @@ import { deleteVault, loadUserData, saveUserData, type UserData } from "@/lib/va
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
 import { usePrivacy } from "./Privacy";
+import { useReviewStore, type ReviewApi } from "./useReview";
+import { overlayDecisions, type ReviewTxn } from "@/lib/review";
 import "./data-state.css";
 
 export type Source = "demo" | "mine";
@@ -46,6 +48,9 @@ interface DataCtx {
   deleteAll: () => Promise<void>;
   /** Privacy mode is on: amounts render masked. Consumers re-render when it flips. */
   masked: boolean;
+  /** Raw transactions before weekly-review decisions are applied (the review inbox reads these). */
+  rawTransactions: LakshlyDataset["transactions"];
+  review: ReviewApi;
 }
 const Ctx = createContext<DataCtx | null>(null);
 
@@ -69,8 +74,13 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
     const { dataset, report } = mergeResult(base.dataset, r);
     const ids = new Set(r.holdings.map((h) => h.accountId));
+    const known = new Set(base.dataset.transactions.map((t) => t.id));
+    const at = new Date().toISOString();
+    const importedAt = { ...(base.importedAt ?? {}) };
+    for (const t of dataset.transactions) if (!known.has(t.id) && !importedAt[t.id]) importedAt[t.id] = at;
     const next: UserData = {
       version: 1,
+      importedAt,
       dataset,
       holdings: [...base.holdings.filter((h) => !ids.has(h.accountId)), ...r.holdings],
       statements: [...base.statements, ...r.meta],
@@ -98,20 +108,25 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     setUser(next);
   }, [user]);
 
+
+  const active: LakshlyDataset = useMemo(() => (source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo), [source, user]);
+  const review = useReviewStore(source, active.transactions as ReviewTxn[], demo, user?.importedAt);
+  const transactions = useMemo(() => overlayDecisions(active.transactions, review.state), [active, review.state]);
+  const { forgetAll } = review;
   const deleteAll = useCallback(async () => {
     await deleteVault();
     localStorage.removeItem(SOURCE_KEY);
     localStorage.removeItem(SETUP_FLAGS_KEY);
     setUser(null);
+    forgetAll();
     emit();
-  }, []);
-
-  const active: LakshlyDataset = source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo;
+  }, [forgetAll]);
   const value: DataCtx = {
-    source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll, masked,
+    source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,
     dataset: active,
     accounts: active.accounts,
-    transactions: active.transactions,
+    rawTransactions: active.transactions,
+    transactions,
     budgets: active.budgets ?? [],
     debts: active.debts ?? [],
     sips: active.sips ?? [],

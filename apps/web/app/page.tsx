@@ -6,6 +6,7 @@ import { Glass, PageHeader, Progress, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { SetupCard } from "@/components/SetupParts";
 import { Amount, useDoubleTapToggle } from "@/components/Privacy";
+import { ReviewEntryCard, SundayBanner, WorthItCard } from "@/components/ReviewParts";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -40,6 +41,14 @@ function OverviewView() {
           {mf?.invested ? <span className="pill">{formatINR(mfGain, { signed: true })} fund gains · {formatPct((mfGain / mf.invested) * 100)}</span> : null}
         </div>
         <p className="tagline">Every rupee on target. <Icon name="sparkle" size={14} /></p>
+      </Glass>
+
+      <SundayBanner />
+      <Glass className="card overview-review-card">
+        <div className="overview-review">
+          <ReviewEntryCard />
+          <WorthItCard compact />
+        </div>
       </Glass>
 
       <div className="grid g4">
