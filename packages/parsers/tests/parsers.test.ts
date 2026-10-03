@@ -4,7 +4,7 @@ import addFormats from "ajv-formats";
 import { readFileSync } from "node:fs";
 import * as F from "./fixtures/synthetic.ts";
 import { extract } from "./helpers.ts";
-import { emptyDataset, mergeResult, parseCsv, parseDocument, PasswordRequiredError, type ParseResult } from "../src/index.ts";
+import { emptyDataset, mergeResult, parseCsv, parseDocument, PasswordRequiredError, mapPdfOpenError, pdfErrorMessage, type ParseResult } from "../src/index.ts";
 
 const schema = JSON.parse(readFileSync(new URL("../../schema/lakshly.schema.json", import.meta.url), "utf8"));
 type AjvCtor = new (o: object) => { compile: (s: object) => ((d: unknown) => boolean) & { errors?: unknown } };
@@ -171,5 +171,35 @@ describe("CSV export", () => {
       ["2026-09-01", 12500000, "income"], ["2026-09-03", -45000, "dining"], ["2026-09-05", -234550, "groceries"],
     ]);
     expectSchemaValid(r);
+  });
+});
+
+describe("password errors are mapped precisely (regression: Gmail CAS reported as wrong password)", () => {
+  it("pdf.js detaches the bytes it is given, so every attempt needs its own copy", async () => {
+    const bytes = await F.casPdf(F.PASSWORD);
+    const shared = bytes.slice();
+    await expect(extract(shared)).rejects.toMatchObject({ name: "PasswordRequiredError", incorrect: false });
+    expect(shared.byteLength).toBe(0); // detached: reusing it would fail even with the right password
+    const r = parseDocument(await extract(bytes.slice(), F.PASSWORD)); // a fresh copy works
+    expect(r.accounts).toHaveLength(3);
+  });
+  it("wrong then right password on fresh copies opens the CAS", async () => {
+    const bytes = await F.casPdf(F.PASSWORD);
+    await expect(extract(bytes.slice(), "nope")).rejects.toMatchObject({ incorrect: true });
+    await expect(extract(bytes.slice(), F.PASSWORD.toLowerCase())).rejects.toMatchObject({ incorrect: true }); // case-sensitive, never altered
+    expect(parseDocument(await extract(bytes.slice(), F.PASSWORD)).accounts).toHaveLength(3);
+  });
+  it("a damaged/truncated PDF is never reported as a wrong password", async () => {
+    const bytes = await F.casPdf(F.PASSWORD);
+    const err = await extract(bytes.slice(0, 40), F.PASSWORD).catch((e) => e);
+    expect(err).not.toBeInstanceOf(PasswordRequiredError);
+    expect(pdfErrorMessage(err)).toMatch(/valid PDF|Couldn't read/);
+  });
+  it("maps only code 2 to incorrect and code 1 to needs-password", () => {
+    expect(mapPdfOpenError({ name: "PasswordException", code: 2 })).toMatchObject({ name: "PasswordRequiredError", incorrect: true });
+    expect(mapPdfOpenError({ name: "PasswordException", code: 1 })).toMatchObject({ name: "PasswordRequiredError", incorrect: false });
+    const other = mapPdfOpenError(Object.assign(new Error("Invalid PDF structure."), { name: "InvalidPDFException" }));
+    expect(other).not.toBeInstanceOf(PasswordRequiredError);
+    expect(pdfErrorMessage(other)).toMatch(/isn't a valid PDF/);
   });
 });

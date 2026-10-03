@@ -190,3 +190,23 @@ describe("bulk import (sequential, passwords in memory for one run)", () => {
     expect([...importedGmailIds([{ ref: "gmail:abc" }, { ref: "manual" }, {}])]).toEqual(["abc"]);
   });
 });
+
+describe("bulk: remembered sender password vs a newly typed one", () => {
+  it("a remembered password that fails isn't shown as 'wrong'; the typed one is used and replaces it", async () => {
+    const mk = (id: string) => ({ id, sourceId: "cams-cas", searchId: "cas", from: "donotreply@camsonline.com", subject: "CAS (synthetic)", date: "2026-10-02" });
+    const need: Record<string, string> = { a: "PASS-A", b: "PASS-B", c: "PASS-B" };
+    const tried: string[] = [];
+    const asks: string[] = [];
+    const answers: Record<string, string> = { a: "PASS-A", b: "PASS-B" };
+    const sum = await runBulkImport<number>([mk("a"), mk("b"), mk("c")], {
+      fetchFile: async (m) => new File(["%PDF"], `${m.id}.pdf`),
+      parse: async (f, pw) => { const id = f.name[0]; tried.push(`${id}:${pw ?? ""}`); return pw === need[id] ? { kind: "result", result: 1 } : { kind: "password", incorrect: !!pw }; },
+      save: async () => ({ added: 1, duplicates: 0 }),
+      askPassword: async (m, incorrect) => { asks.push(`${m.id}:${incorrect}`); return { password: answers[m.id], remember: true }; },
+      onStatus: () => {},
+    });
+    expect(asks).toEqual(["a:false", "b:false"]); // b: remembered PASS-A failed, but that's not reported as the person's wrong password
+    expect(tried).toEqual(["a:", "a:PASS-A", "b:PASS-A", "b:PASS-B", "c:PASS-B"]); // typed value used, then remembered for c
+    expect(sum.imported).toBe(3);
+  });
+});

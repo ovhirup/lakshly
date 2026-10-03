@@ -18,12 +18,28 @@ export const FINANCE_KINDS: readonly SourceKind[] = ["bank", "card", "cas"];
 /* ───────────── identity (ID token, display only) ───────────── */
 export interface GoogleIdentity { email: string; name: string; givenName?: string; sub: string; emailVerified: boolean }
 
-function b64urlToBytes(s: string): Uint8Array {
-  const b64 = s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4);
+/** Decodes Gmail's base64url (- and _, padding optional, stray whitespace ignored) into exact bytes. */
+export function b64urlToBytes(s: string): Uint8Array {
+  const clean = s.replace(/\s+/g, "").replace(/=+$/, "");
+  if (/[^A-Za-z0-9\-_+/]/.test(clean) || clean.length % 4 === 1) throw new Error("Gmail sent an attachment that couldn't be decoded.");
+  const b64 = clean.replace(/-/g, "+").replace(/_/g, "/") + "==".slice(0, (4 - (clean.length % 4)) % 4);
   const bin = atob(b64);
   const out = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
+}
+
+/** "%PDF-" must appear in the first 1 KB (the spec allows a little junk before it). */
+export function looksLikePdf(bytes: Uint8Array): boolean {
+  const head = new TextDecoder("latin1").decode(bytes.subarray(0, 1024));
+  return head.includes("%PDF-");
+}
+
+/** Checks a downloaded attachment: exact size (when Gmail reports one) and a PDF header for .pdf files. */
+export function checkAttachment(name: string, bytes: Uint8Array, expectedSize?: number): void {
+  if (!bytes.length) throw new Error(`${name} downloaded empty from Gmail. Try again.`);
+  if (expectedSize && bytes.length !== expectedSize) throw new Error(`${name} didn't download completely from Gmail (${bytes.length} of ${expectedSize} bytes). Try again.`);
+  if (/\.pdf$/i.test(name) && !looksLikePdf(bytes)) throw new Error(`${name} from Gmail isn't a readable PDF (no PDF header). Try downloading it from Gmail and dropping it here.`);
 }
 
 /** Decodes (does not verify) a Google ID token for display. Only name/email/sub are kept. */
@@ -304,9 +320,12 @@ export class GmailClient {
     if (!senderAllowed(src, header(m, "From"))) throw new Error("Blocked: sender not in the finance list");
     const files: StatementFile[] = [];
     for (const p of statementParts(m.payload)) {
+      // Always the attachments endpoint (full file), never a truncated inline body.
       const a = await this.get<{ data: string; size?: number }>(`${GMAIL_API}/messages/${msg.id}/attachments/${p.body!.attachmentId!}`);
-      files.push({ name: p.filename!, mimeType: p.mimeType || (/\.csv$/i.test(p.filename!) ? "text/csv" : /\.xlsx?$/i.test(p.filename!) ? "application/vnd.ms-excel" : "application/pdf"), bytes: b64urlToBytes(a.data) });
-      this.note("attachment", `${p.filename} from ${msg.from} (${msg.date})`, msg.sourceId);
+      const bytes = b64urlToBytes(a.data ?? "");
+      checkAttachment(p.filename!, bytes, a.size ?? p.body?.size);
+      files.push({ name: p.filename!, mimeType: p.mimeType || (/\.csv$/i.test(p.filename!) ? "text/csv" : /\.xlsx?$/i.test(p.filename!) ? "application/vnd.ms-excel" : "application/pdf"), bytes });
+      this.note("attachment", `${p.filename} from ${msg.from} (${msg.date}) · ${bytes.length.toLocaleString("en-IN")} bytes, size matches Gmail${/\.pdf$/i.test(p.filename!) ? ", PDF header OK" : ""}`, msg.sourceId);
     }
     return files;
   }

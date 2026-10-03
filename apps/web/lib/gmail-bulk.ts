@@ -54,13 +54,15 @@ export async function runBulkImport<R>(rows: readonly FoundMessage[], deps: Bulk
         const saved = remembered.get(key);
         let out = await deps.parse(file, saved);
         let skipped = false;
+        let typed = false; // "Wrong password" only after the person typed one (a remembered one failing isn't their mistake)
         while (out.kind === "password") {
-          const incorrect = out.incorrect;
+          const incorrect = typed && out.incorrect;
           deps.onStatus(m.id, { s: "needs-password", incorrect });
           const ans = await deps.askPassword(m, incorrect);
           if (!ans) { skipped = true; break; }
           deps.onStatus(m.id, { s: "importing" });
-          out = await deps.parse(file, ans.password);
+          typed = true;
+          out = await deps.parse(file, ans.password); // exactly what was typed, never the remembered one
           if (out.kind !== "password" && ans.remember) remembered.set(key, ans.password);
         }
         if (skipped) { deps.onStatus(m.id, { s: "skipped", reason: "No password entered" }); sum.skipped++; continue; }

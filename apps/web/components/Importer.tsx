@@ -107,9 +107,9 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
               <form onSubmit={(e) => { e.preventDefault(); if (password) void run(phase.file, password); }}>
                 <div className="card-head"><h2><Icon name="lock" size={18} /> {phase.file.name} is password-protected</h2></div>
                 <p className="muted">Banks usually lock statements with something like your customer ID or date of birth; a CAS is usually locked with your PAN. Lakshly uses it once to open the file here and never stores it.</p>
-                {passwordHints && passwordHints.length > 0 && <ul className="pw-hints tiny muted">{passwordHints.map((h) => <li key={h}>{h}</li>)}</ul>}
+                {passwordHints && passwordHints.length > 0 && <><p className="pw-hints-label">Usually one of these:</p><ul className="pw-hints">{passwordHints.map((h) => <li key={h}>{h}</li>)}</ul></>}
                 <label className="field">Statement password
-                  <input type="password" autoComplete="off" autoFocus value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={phase.incorrect} />
+                  <input type="password" autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoFocus value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={phase.incorrect} />
                 </label>
                 {phase.incorrect && <p className="down tiny" role="alert">That password didn&apos;t work. Please try again.</p>}
                 <div className="row-actions">

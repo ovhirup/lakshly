@@ -133,10 +133,14 @@ export function GmailResults({ found, disabled, nameOf, passwordHintsFor, fetchF
                 {ask?.id === m.id && (
                   <form className="gm-pw" onSubmit={(e) => { e.preventDefault(); if (pw) answer({ password: pw, remember }); }} aria-label={`Password for ${m.subject}`}>
                     <label className="field">Statement password
-                      <input type="password" autoComplete="off" autoFocus value={pw} onChange={(e) => setPw(e.target.value)} aria-invalid={ask.incorrect} />
+                      <input type="password" autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoFocus value={pw}
+                        onChange={(e) => setPw(e.target.value)} aria-invalid={ask.incorrect} data-testid="gm-pw-input" />
                     </label>
-                    {(passwordHintsFor(m.sourceId) ?? []).length > 0 && <ul className="pw-hints tiny muted">{passwordHintsFor(m.sourceId)!.map((h) => <li key={h}>{h}</li>)}</ul>}
-                    {ask.incorrect && <p className="down tiny" role="alert">That password didn&apos;t work. Please try again.</p>}
+                    {(passwordHintsFor(m.sourceId) ?? []).length > 0 && <>
+                      <p className="pw-hints-label" id={`pwh-${m.id}`}>Usually one of these:</p>
+                      <ul className="pw-hints" aria-labelledby={`pwh-${m.id}`}>{passwordHintsFor(m.sourceId)!.map((h) => <li key={h}>{h}</li>)}</ul>
+                    </>}
+                    {ask.incorrect && <p className="down tiny" role="alert">That password didn&apos;t work. Passwords are case-sensitive; check Caps Lock and try again.</p>}
                     <label className="gm-check tiny">
                       <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                       <span>Use the same password for the rest from {m.from}{sameSender ? ` (${sameSender} more)` : ""}. Kept in memory for this import only, never stored.</span>
