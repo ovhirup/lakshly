@@ -1,5 +1,5 @@
-// What a reviewed statement will add, for the importer's confirm button.
-import type { ParseResult } from "@lakshly/parsers";
+// What a reviewed statement will add, and the line shown after it is saved.
+import type { MergeReport, ParseResult } from "@lakshly/parsers";
 
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
@@ -20,4 +20,20 @@ export function confirmImportLabel(counts: ReturnType<typeof importCounts>): str
     counts.sips ? plural(counts.sips, "SIP") : "",
   ].filter(Boolean);
   return parts.length ? `Confirm import (${parts.join(", ")})` : "Confirm import";
+}
+
+/** Saved-import toast. A CAS often has accounts and no transactions, so it must not say "0 new transactions". */
+export function importToast(report: MergeReport): string {
+  const saved = [
+    report.added ? plural(report.added, "new transaction") : "",
+    report.accountsAdded ? plural(report.accountsAdded, "account") : "",
+    report.sipsUpserted ? plural(report.sipsUpserted, "SIP") : "",
+  ].filter(Boolean);
+  const skipped = report.duplicates ? `skipped ${report.duplicates} already imported` : "";
+  const lead = saved.length
+    ? `Imported ${saved.join(", ")}`
+    : report.accountsUpdated
+      ? `Updated ${plural(report.accountsUpdated, "account")}`
+      : "Nothing new to import";
+  return `${lead}${skipped ? `, ${skipped}` : ""}. Thank you for trusting Lakshly 💛`;
 }

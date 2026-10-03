@@ -7,9 +7,11 @@ import { Icon } from "./Icon";
 import { useData } from "./DataState";
 import { formatDate, formatINR, titleCase } from "@/lib/format";
 import { parseFile } from "@/lib/import/client";
-import { confirmImportLabel, importCounts } from "@/lib/import/review";
+import { confirmImportLabel, importCounts, importToast } from "@/lib/import/review";
 import { MASK, moneyMasked } from "@/lib/privacy";
 import "@/app/import/import.css";
+
+export { importToast };
 
 type Phase =
   | { step: "idle" }
@@ -17,10 +19,6 @@ type Phase =
   | { step: "password"; file: File; incorrect: boolean }
   | { step: "review"; file: File; result: ParseResult }
   | { step: "error"; file?: File; message: string };
-
-export function importToast(report: MergeReport): string {
-  return `Imported ${report.added} new transaction${report.added === 1 ? "" : "s"}${report.duplicates ? `, skipped ${report.duplicates} already imported` : ""}. Thank you for trusting Lakshly 💛`;
-}
 
 export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints, incoming, importRef }: {
   onImported?: (r: ParseResult, report: MergeReport, fileName: string) => void;
