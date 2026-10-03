@@ -24,6 +24,8 @@ import {
 } from "@/lib/setup";
 import { goalFacts, PRESET_FACTOR, roundBudget, suggestBudget, suggestGoal, VARIABLE_CATEGORIES, type Preset } from "@/lib/setup-suggest";
 import "@/components/setup.css";
+import { GMAIL_CONNECT } from "@/lib/edition";
+import { GmailConnectCard, SignInWithGoogle, useGoogle } from "@/components/GoogleConnect";
 
 const today = () => new Date().toISOString().slice(0, 10);
 const PROVIDER_LABEL: Record<Provider, string> = { gmail: "Gmail", outlook: "Outlook", icloud: "iCloud Mail", yahoo: "Yahoo Mail", other: "Custom domain" };
@@ -204,6 +206,13 @@ function Welcome({ continueRef }: StepProps) {
       <h2 id="step-title">Welcome to Lakshly <span aria-hidden="true">🪷</span></h2>
       <p className="muted lead">A few minutes to make it yours: your banks, a first statement and a budget that fits. You can stop any time and pick up where you left off.</p>
 
+      {GMAIL_CONNECT && (
+        <Glass className="card gsi-card">
+          <div className="card-head"><h3>Sign in with Google <span className="muted tiny">(optional)</span></h3><span className="badge">Beta</span></div>
+          <SignInWithGoogle onIdentity={(id) => { const n = id.givenName || id.name.split(" ")[0] || ""; if (n && (!name || name === "Tester")) { setName(n); saveProfile({ name: n }); } }} />
+        </Glass>
+      )}
+
       <div className="setup-grid">
         <Glass className="card">
           <label className="field">What should we call you?
@@ -266,7 +275,8 @@ function EmailStep({ continueRef }: StepProps) {
   const { state, dispatch } = useSetup();
   const { limit } = useTier();
   const extra = limit("setup.extraEmails") ?? 10;
-  const [emails, setEmails] = useState<string[]>(state.emails.length ? state.emails : [""]);
+  const google = useGoogle();
+  const [emails, setEmails] = useState<string[]>(state.emails.length ? state.emails : [GMAIL_CONNECT && google.identity ? google.identity.email : ""]);
   const primary = emails[0] ?? "";
   const provider = detectProvider(primary);
   const valid = emails.filter((e) => e.trim()).every((e) => EMAIL_RE.test(normaliseEmail(e)));
@@ -303,7 +313,7 @@ function EmailStep({ continueRef }: StepProps) {
         <p className="tiny muted">Stored encrypted on this device and only used to open the right inbox. Never sent anywhere.</p>
       </Glass>
 
-      <Glass className="card connect-card">
+      {GMAIL_CONNECT ? <GmailConnectCard email={normaliseEmail(primary)} picked={state.picked} /> : <Glass className="card connect-card">
         <div className="card-head"><h3>Automatic sync</h3><span className="badge">Coming soon</span></div>
         <p className="muted tiny">Read-only sync that fetches new statements by itself is in a limited beta (one mailbox will stay free). It needs a review by Google and Microsoft first, so on the web we use the guided search for now. It finds the same statements in about a minute.</p>
         <div className="row-actions">
@@ -311,7 +321,7 @@ function EmailStep({ continueRef }: StepProps) {
           <button className="btn ghost" disabled aria-describedby="sync-note">Connect Outlook (read-only)</button>
         </div>
         <p className="tiny muted" id="sync-note">Limited beta. Use the guided search below.{provider && provider !== "gmail" && provider !== "outlook" ? ` ${PROVIDER_LABEL[provider]} and other IMAP mailboxes will connect from the Apple app. On the web, search your inbox using the subjects we show.` : ""}</p>
-      </Glass>
+      </Glass>}
 
       <Glass className="card">
         <h3>How the search guide works</h3>
@@ -466,6 +476,9 @@ function ImportStep({ continueRef, flash }: StepProps & { flash: (t: string) => 
         })}
         {!targets.length && <p className="muted">You haven&apos;t picked any accounts yet. <button className="link" onClick={() => dispatch({ type: "goTo", step: "accounts" })}>Pick accounts</button></p>}
       </div>
+
+      {GMAIL_CONNECT && <GmailConnectCard email={state.emails[0] ?? ""} picked={state.picked}
+        onImported={(id, r, report) => { flash(importToast(report)); dispatch({ type: "imported", id, at: new Date().toISOString(), periodTo: periodOf(r) }); }} />}
 
       <Glass className="card general-import" as="div">
         {general ? (

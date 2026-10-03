@@ -21,7 +21,7 @@ export function importToast(report: MergeReport): string {
   return `Imported ${report.added} new transaction${report.added === 1 ? "" : "s"}${report.duplicates ? `, skipped ${report.duplicates} already imported` : ""}. Thank you for trusting Lakshly 💛`;
 }
 
-export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints }: {
+export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints, incoming }: {
   onImported?: (r: ParseResult, report: MergeReport, fileName: string) => void;
   onPhase?: (step: Phase["step"]) => void;
   /** Setup source this import belongs to (recorded in the import log). */
@@ -29,6 +29,8 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
   prompt?: string;
   /** Format hints for this source's password (never values). */
   passwordHints?: string[];
+  /** A file handed in by another flow (e.g. a Gmail attachment fetched in this browser); read like a dropped file. */
+  incoming?: File | null;
 }) {
   const { setSource, saveImport } = useData();
   const [phase, setPhase] = useState<Phase>({ step: "idle" });
@@ -50,6 +52,10 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
     else if (out.kind === "error") setPhase({ step: "error", file, message: out.message });
     else setPhase({ step: "review", file, result: out.result });
   }
+
+  const runRef = useRef(run);
+  useEffect(() => { runRef.current = run; });
+  useEffect(() => { if (incoming) void runRef.current(incoming); }, [incoming]);
 
   function onFiles(files: FileList | null) {
     const f = files?.[0];
