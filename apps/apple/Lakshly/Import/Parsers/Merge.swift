@@ -12,12 +12,40 @@ func emptyDataset(now: Date = Date()) -> ParseDataset {
     sips: [])
 }
 
-func mergeResult(_ base: ParseDataset, _ result: ParseResult, now: Date = Date()) -> (dataset: ParseDataset, report: MergeReport) {
-  mergeParsed(base, accounts: result.accounts, transactions: result.transactions, sips: result.sips, now: now)
+func mergeResult(_ base: ParseDataset, _ result: ParseResult, now: Date = Date()) -> (dataset: ParseDataset, report: MergeReport, accountAliases: [String: String]) {
+  mergeParsed(base, accounts: result.accounts, transactions: result.transactions, sips: result.sips, accountAliases: result.accountAliases, now: now)
 }
 
-func mergeParsed(_ base: ParseDataset, accounts incomingAccounts: [ParseAccount], transactions incomingTransactions: [ParseTransaction], sips incomingSips: [ParseSip], now: Date = Date()) -> (dataset: ParseDataset, report: MergeReport) {
-  var accounts = base.accounts
+func mergeParsed(_ base: ParseDataset, accounts incomingAccounts: [ParseAccount], transactions incomingTransactions: [ParseTransaction], sips incomingSips: [ParseSip], accountAliases proposed: [String: String] = [:], now: Date = Date()) -> (dataset: ParseDataset, report: MergeReport, accountAliases: [String: String]) {
+  var aliases: [String: String] = [:]
+  for (source, target) in proposed {
+    guard source != target, proposed[target] == nil, !proposed.values.contains(source),
+          incomingAccounts.contains(where: { $0.id == target && $0.type == "mutual_fund" }),
+          !base.accounts.contains(where: { $0.id == source && $0.type != "mutual_fund" }) else { continue }
+    aliases[source] = target
+  }
+  func remapTransaction(_ value: ParseTransaction) -> ParseTransaction {
+    var result = value
+    result.accountId = aliases[value.accountId] ?? value.accountId
+    return result
+  }
+  func remapSip(_ value: ParseSip) -> ParseSip {
+    var result = value
+    if let id = value.accountId { result.accountId = aliases[id] ?? id }
+    return result
+  }
+  var accounts: [ParseAccount] = []
+  var originalCanonical = Set<String>()
+  for original in base.accounts {
+    var account = original
+    account.id = aliases[original.id] ?? original.id
+    if let index = accounts.firstIndex(where: { $0.id == account.id }) {
+      let old = accounts[index]
+      let incomingWins = account.asOf > old.asOf || (account.asOf == old.asOf && original.id == account.id && !originalCanonical.contains(account.id))
+      accounts[index] = incomingWins ? mergedAccount(old, account) : mergedAccount(account, old)
+    } else { accounts.append(account) }
+    if original.id == account.id { originalCanonical.insert(account.id) }
+  }
   var report = MergeReport(added: 0, duplicates: 0, accountsAdded: 0, accountsUpdated: 0, sipsUpserted: 0)
   for account in incomingAccounts {
     if let index = accounts.firstIndex(where: { $0.id == account.id }) {
@@ -31,23 +59,23 @@ func mergeParsed(_ base: ParseDataset, accounts incomingAccounts: [ParseAccount]
     }
   }
   var ids = Set(base.transactions.map(\.id))
-  var transactions = base.transactions
+  var transactions = base.transactions.map(remapTransaction)
   for transaction in incomingTransactions {
     if ids.contains(transaction.id) {
       report.duplicates += 1
       continue
     }
     ids.insert(transaction.id)
-    transactions.append(transaction)
+    transactions.append(remapTransaction(transaction))
     report.added += 1
   }
   transactions.sort { $0.date < $1.date }
-  var sips = base.sips
+  var sips = base.sips.map(remapSip)
   for sip in incomingSips {
     if let index = sips.firstIndex(where: { $0.id == sip.id }) {
-      sips[index] = sip
+      sips[index] = remapSip(sip)
     } else {
-      sips.append(sip)
+      sips.append(remapSip(sip))
     }
     report.sipsUpserted += 1
   }
@@ -57,7 +85,7 @@ func mergeParsed(_ base: ParseDataset, accounts incomingAccounts: [ParseAccount]
   dataset.accounts = accounts
   dataset.transactions = transactions
   dataset.sips = sips
-  return (dataset, report)
+  return (dataset, report, aliases)
 }
 
 private func mergedAccount(_ old: ParseAccount, _ new: ParseAccount) -> ParseAccount {

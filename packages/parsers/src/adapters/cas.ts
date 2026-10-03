@@ -39,6 +39,12 @@ const signedNum = (s: string) => {
   return neg ? -n : n;
 };
 
+function folioIdentity(folio: string, isin?: string) {
+  const normalized = folio.replace(/\s/g, "");
+  if (!/^\d+(?:\/\d+)?$/.test(normalized) || !isin || !/^[A-Z0-9]{12}$/.test(isin)) return undefined;
+  return { canonical: stableId("acc", "cas", normalized.replace(/\D/g, ""), isin), legacy: stableId("acc", "cas.depository", "folio", normalized, isin) };
+}
+
 export function parseCasText(doc: TextDoc) {
   const lines = doc.lines.map((l) => l.text.replace(/\s+/g, " ").trim());
   const schemes: SchemeAcc[] = [];
@@ -107,6 +113,7 @@ export const cas: Adapter = {
   parse: (doc) => {
     const { schemes, periodFrom, periodTo } = parseCasText(doc);
     const accounts: Account[] = [];
+    const accountAliases: Record<string, string> = {};
     const transactions: Transaction[] = [];
     const sips: Sip[] = [];
     const holdings: Holding[] = [];
@@ -115,6 +122,8 @@ export const cas: Adapter = {
     for (const s of schemes) {
       const folioMask = last4(s.folio.split("/")[0]) ?? last4(s.folio) ?? "XXXX";
       const accountId = stableId("acc", "cas", s.folio.replace(/\D/g, ""), s.isin ?? s.scheme);
+      const identity = folioIdentity(s.folio, s.isin);
+      if (identity) accountAliases[identity.legacy] = identity.canonical;
       const asOf = s.navDate ?? periodTo ?? s.txns.at(-1)?.date ?? new Date().toISOString().slice(0, 10);
       const mv = s.mv ?? Math.round((s.units ?? 0) * (s.nav ?? 0) * 100);
       const cost = s.cost ?? s.txns.reduce((x, t) => x + t.amount, 0);
@@ -153,7 +162,7 @@ export const cas: Adapter = {
       }
     }
     const meta: StatementMeta[] = [{ adapter: "cas.cams-kfintech", kind: "cas", institution: "CAMS / KFintech", accountId: accounts[0]?.id ?? "acc_none000", periodFrom, periodTo }];
-    return { accounts, transactions, sips, holdings, meta, warnings };
+    return { accounts, transactions, sips, holdings, meta, warnings, ...(Object.keys(accountAliases).length ? { accountAliases } : {}) };
   },
 };
 
@@ -239,6 +248,7 @@ export const depositoryCas: Adapter = {
       }
     }
     const accounts: Account[] = [];
+    const accountAliases: Record<string, string> = {};
     const holdings: Holding[] = [];
     const warnings: string[] = [];
     const asOf = periodTo ?? "1970-01-01";
@@ -255,7 +265,9 @@ export const depositoryCas: Adapter = {
     }
     for (const f of folios) {
       const mask = last4(f.folio.split("/")[0]) ?? "XXXX";
-      const accountId = stableId("acc", "cas.depository", "folio", f.folio, f.isin);
+      const identity = folioIdentity(f.folio, f.isin)!;
+      const accountId = identity.canonical;
+      accountAliases[identity.legacy] = identity.canonical;
       const institution = `${issuer.toUpperCase()} / Mutual Fund Folios`;
       const account: Account = { id: accountId, name: f.scheme.slice(0, 80), type: "mutual_fund", institution, mask, currency: "INR", balance: f.value, asOf, source: "cas" };
       if (f.cost !== undefined) account.invested = f.cost;
@@ -264,6 +276,6 @@ export const depositoryCas: Adapter = {
     }
     if (!holdings.length) warnings.push("No holdings found in the depository CAS.");
     const meta: StatementMeta = { adapter: "cas.depository", kind: "cas", institution: issuer.toUpperCase(), accountId: accounts[0]?.id ?? "acc_none000", issuer, periodFrom, periodTo, totalValue: totalValue ?? accounts.reduce((n, a) => n + a.balance, 0), quantityTransactionCount };
-    return { accounts, holdings, transactions: [], sips: [], meta: [meta], warnings };
+    return { accounts, holdings, transactions: [], sips: [], meta: [meta], warnings, ...(Object.keys(accountAliases).length ? { accountAliases } : {}) };
   },
 };

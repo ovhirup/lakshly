@@ -2,6 +2,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { emptyDataset, mergeResult, type MergeReport, type ParseResult } from "@lakshly/parsers";
+import { mergeImportDetails } from "@/lib/import/merge";
 import { dataset as demo } from "@/lib/data";
 import type { Budget, LakshlyDataset } from "@/lib/schema.gen";
 import { budgetId } from "@/lib/setup-suggest";
@@ -75,8 +76,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const saveImport = useCallback(async (r: ParseResult, fileName: string, sourceId?: string, ref?: string) => {
     const base: UserData = userRef.current ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
-    const { dataset, report } = mergeResult(base.dataset, r);
-    const ids = new Set(r.holdings.map((h) => h.accountId));
+    const { dataset, report, accountAliases } = mergeResult(base.dataset, r);
+    const details = mergeImportDetails(base, r, dataset, accountAliases);
     const known = new Set(base.dataset.transactions.map((t) => t.id));
     const at = new Date().toISOString();
     const importedAt = { ...(base.importedAt ?? {}) };
@@ -85,8 +86,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       version: 1,
       importedAt,
       dataset,
-      holdings: [...base.holdings.filter((h) => !ids.has(h.accountId)), ...r.holdings],
-      statements: [...base.statements, ...r.meta],
+      ...details,
       imports: [...base.imports, { at: new Date().toISOString(), file: fileName.slice(0, 120), adapter: r.adapter, added: report.added, duplicates: report.duplicates, ...(sourceId ? { sourceId } : {}), ...(ref ? { ref: ref.slice(0, 120) } : {}) }],
       ...(base.goals ? { goals: base.goals } : {}),
     };
