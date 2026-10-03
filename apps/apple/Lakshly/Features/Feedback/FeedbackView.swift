@@ -2,8 +2,8 @@ import SwiftUI
 
 struct FeedbackView: View {
   @Environment(\.theme) private var theme
+  @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
-  @AppStorage("settings.premium") private var premium = false
   @State private var title = ""
   @State private var details = ""
   @State private var type = "Feature"
@@ -39,7 +39,7 @@ struct FeedbackView: View {
         Button("Submit") {
           if store.submit(
             title: title.trimmingCharacters(in: .whitespacesAndNewlines), details: details,
-            type: type, premium: premium)
+            type: type, premium: entitlements.can(.priorityFeedback))
           {
             title = ""
             details = ""

@@ -2,9 +2,10 @@ import SwiftUI
 
 struct CreditView: View {
   @Environment(\.theme) private var theme
+  @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
   var body: some View {
-    Page(title: "Credit", subtitle: "Keep your headroom healthy.") {
+    Page(title: "Credit", subtitle: "Keep your headroom healthy.", showsPremiumLock: !entitlements.isPremium) {
       ForEach((store.dataset?.accounts ?? []).filter { $0.type == "credit_card" }) { account in
         let utilisation = Double(abs(account.balance)) / Double(max(1, account.creditLimit ?? 0))
         Card(title: account.name) {
@@ -17,6 +18,12 @@ struct CreditView: View {
           ).padding(12)
           MetricRow(title: "Balance", value: Money.format(abs(account.balance)))
           MetricRow(title: "Credit limit", value: Money.format(account.creditLimit ?? 0))
+        }
+        PremiumGate(
+          feature: .creditInsights,
+          title: "Statement & guidance",
+          message: "See the statement day, the next due date, and a calm note on utilisation."
+        ) {
           MetricRow(title: "Statement day", value: "\(account.statementDay ?? 1) of each month")
           MetricRow(title: "Next due", value: nextMonthlyDate(day: account.dueDay ?? 1))
           Text(

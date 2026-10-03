@@ -23,5 +23,7 @@ enum SettingsPreferences {
       }
       defaults.removeObject(forKey: key)
     }
+    // The retired demo toggle must not linger and grant nothing. Premium comes from StoreKit.
+    defaults.removeObject(forKey: "settings.premium")
   }
 }

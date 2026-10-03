@@ -1,17 +1,38 @@
 import SwiftUI
 
+enum FeatureAccess {
+  case locked, unlocked
+}
+
 struct Page<Content: View>: View {
   @Environment(\.theme) private var theme
   let title: String
   let subtitle: String
+  var showsPremiumLock: Bool
   @ViewBuilder var content: Content
+
+  init(title: String, subtitle: String, showsPremiumLock: Bool = false, @ViewBuilder content: () -> Content) {
+    self.title = title
+    self.subtitle = subtitle
+    self.showsPremiumLock = showsPremiumLock
+    self.content = content()
+  }
   var body: some View {
     ScrollView {
       GlassEffectContainer(spacing: theme.spacious ? 32 : 24) {
         VStack(alignment: .leading, spacing: theme.spacious ? 32 : 24) {
           VStack(alignment: .leading, spacing: 8) {
             Text(title).font(.system(.largeTitle, design: .rounded, weight: .bold))
-            Text(subtitle).foregroundStyle(theme.secondaryText)
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+              Text(subtitle).foregroundStyle(theme.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+              if showsPremiumLock {
+                Image(systemName: "lock.fill")
+                  .font(.caption)
+                  .foregroundStyle(theme.secondaryText)
+                  .accessibilityLabel("Premium")
+              }
+            }
           }
           content
         }.frame(maxWidth: 900).padding(theme.spacious ? 32 : 24).frame(maxWidth: .infinity)
@@ -24,10 +45,31 @@ struct Page<Content: View>: View {
 struct Card<Content: View>: View {
   @Environment(\.theme) private var theme
   let title: String
+  var access: FeatureAccess?
   @ViewBuilder var content: Content
+
+  init(title: String, access: FeatureAccess? = nil, @ViewBuilder content: () -> Content) {
+    self.title = title
+    self.access = access
+    self.content = content()
+  }
   var body: some View {
     VStack(alignment: .leading, spacing: theme.spacious ? 22 : 14) {
-      Text(title).font(.system(.title3, design: .rounded, weight: .bold))
+      if let access {
+        HStack(alignment: .center, spacing: 8) {
+          Image(systemName: access == .unlocked ? "sparkles" : "lock.fill")
+            .foregroundStyle(theme.gold)
+            .accessibilityHidden(true)
+          Text(title).font(.system(.title3, design: .rounded, weight: .bold))
+            .fixedSize(horizontal: false, vertical: true)
+          Spacer(minLength: 8)
+          Pill(text: "Premium", color: theme.gold)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), Premium")
+      } else {
+        Text(title).font(.system(.title3, design: .rounded, weight: .bold))
+      }
       content
     }.frame(maxWidth: .infinity, alignment: .leading).modifier(GlassCard())
   }
