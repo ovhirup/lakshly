@@ -842,10 +842,13 @@ export const CATALOG: SourcesCatalog = {
         }
       ],
       "importer": {
-        "formats": [],
-        "adapters": [],
-        "supported": false,
-        "note": "Depository CAS parsing is coming. Import a CAMS/KFintech detailed CAS for mutual funds meanwhile."
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "cas.depository"
+        ],
+        "supported": true
       },
       "passwordHints": [
         "pan_caps"
@@ -886,10 +889,13 @@ export const CATALOG: SourcesCatalog = {
         }
       ],
       "importer": {
-        "formats": [],
-        "adapters": [],
-        "supported": false,
-        "note": "Depository CAS parsing is coming. Import a CAMS/KFintech detailed CAS for mutual funds meanwhile."
+        "formats": [
+          "pdf"
+        ],
+        "adapters": [
+          "cas.depository"
+        ],
+        "supported": true
       },
       "passwordHints": [
         "pan_caps"
@@ -936,7 +942,7 @@ export const CATALOG: SourcesCatalog = {
         "formats": [],
         "adapters": [],
         "supported": false,
-        "note": "Import your CAS for Groww mutual funds; stock holdings need the depository CAS (coming)."
+        "note": "Import your CAS for Groww mutual funds; for stocks, import the CDSL or NSDL depository CAS."
       },
       "passwordHints": [],
       "cadence": {
@@ -982,7 +988,7 @@ export const CATALOG: SourcesCatalog = {
         "formats": [],
         "adapters": [],
         "supported": false,
-        "note": "Mutual funds via your CAS; stock import is coming."
+        "note": "Import your CDSL or NSDL depository CAS for stocks and funds held in demat."
       },
       "passwordHints": [
         "pan_caps"
