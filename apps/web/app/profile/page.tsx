@@ -6,6 +6,7 @@ import { Avatar, TierPill } from "@/components/Identity";
 import { Icon } from "@/components/Icon";
 import { useTier } from "@/components/useTier";
 import { Glass, PageHeader } from "@/components/ui";
+import { SetupProfileRow } from "@/components/SetupParts";
 import { FEATURES, FREE_BILL_OF_RIGHTS, PRICE_TEXT, premiumFeatures } from "@/lib/entitlements";
 import { formatDate } from "@/lib/format";
 import { renewsOn, saveProfile, useProfile } from "@/lib/profile";
@@ -77,6 +78,8 @@ export default function ProfilePage() {
           <p className="muted">Lakshly Free · security and import are always free</p>
         )}
       </Glass>
+
+      <SetupProfileRow />
 
       {tier === "premium" ? (
         <Glass className="card">

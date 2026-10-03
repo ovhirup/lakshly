@@ -9,6 +9,7 @@ import { IdentityChip } from "./Identity";
 import { useTier } from "./useTier";
 import type { FeatureId } from "@/lib/entitlements";
 import { DataNote, DataPill } from "./DataState";
+import { SetupAutoOpen, SetupNavLink } from "./SetupParts";
 
 export const NAV: { href: string; label: string; icon: string; feature?: FeatureId }[] = [
   { href: "/", label: "Overview", icon: "overview" },
@@ -43,7 +44,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const mobileIndex = menuOpen ? 4 : MOBILE.findIndex(active);
 
   return (
-    <div className="app">
+    <div className={`app ${path.startsWith("/setup/") ? "setup-mode" : ""}`}>
+      <SetupAutoOpen />
       <a className="skip-link" href="#main-content">Skip to content</a>
       <div className="bg" aria-hidden="true" />
       <aside className="sidebar glass">
@@ -66,6 +68,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="sidebar-foot">
+          <SetupNavLink />
           <PlanSwitch plan={plan} setPlan={setPlan} />
           <DataNote />
         </div>

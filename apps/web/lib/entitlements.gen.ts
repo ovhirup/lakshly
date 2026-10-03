@@ -12,6 +12,7 @@ export const PRICES = {
   }
 } as const;
 export const FEATURE_IDS = [
+  "budgets.lines",
   "budgets.unlimited",
   "core.tabs",
   "credit.insights",
@@ -21,15 +22,33 @@ export const FEATURE_IDS = [
   "history.full",
   "import.statements",
   "investments.insights",
+  "mailSync.background",
+  "mailSync.connect",
+  "mailSync.imap",
+  "mailSync.statementPasswordKeychain",
   "priorityFeedback",
   "rewards.tracking",
   "security.encryption",
   "security.lock",
+  "setup.emailGuide",
+  "setup.extraEmails",
+  "setup.freshnessReminders",
+  "setup.health",
+  "setup.suggestions",
+  "setup.wizard",
   "themes.premium"
 ] as const;
 export type FeatureId = (typeof FEATURE_IDS)[number];
 export type FeatureSpec = { minTier: "free" | "premium" | "superUser"; label: string; limits?: Partial<Record<"free" | "premium" | "superUser", number | null>> };
 export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
+  "budgets.lines": {
+    "minTier": "free",
+    "label": "Budget category lines per budget",
+    "limits": {
+      "free": 6,
+      "premium": null
+    }
+  },
   "budgets.unlimited": {
     "minTier": "premium",
     "label": "Unlimited budgets",
@@ -74,6 +93,26 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
     "minTier": "premium",
     "label": "Investment insights"
   },
+  "mailSync.background": {
+    "minTier": "premium",
+    "label": "Background mailbox sync"
+  },
+  "mailSync.connect": {
+    "minTier": "free",
+    "label": "Automatic read-only statement sync",
+    "limits": {
+      "free": 1,
+      "premium": 5
+    }
+  },
+  "mailSync.imap": {
+    "minTier": "free",
+    "label": "IMAP mailbox sync (Apple)"
+  },
+  "mailSync.statementPasswordKeychain": {
+    "minTier": "free",
+    "label": "Remember statement passwords on this device (Apple)"
+  },
   "priorityFeedback": {
     "minTier": "premium",
     "label": "Priority feature requests"
@@ -90,9 +129,37 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
     "minTier": "free",
     "label": "App lock"
   },
+  "setup.emailGuide": {
+    "minTier": "free",
+    "label": "Email search guide for statements"
+  },
+  "setup.extraEmails": {
+    "minTier": "free",
+    "label": "Extra email addresses in the search guide",
+    "limits": {
+      "free": 3,
+      "premium": 10
+    }
+  },
+  "setup.freshnessReminders": {
+    "minTier": "premium",
+    "label": "Statement freshness reminders"
+  },
+  "setup.health": {
+    "minTier": "free",
+    "label": "Setup health and freshness"
+  },
+  "setup.suggestions": {
+    "minTier": "free",
+    "label": "Suggested budget and first goal"
+  },
+  "setup.wizard": {
+    "minTier": "free",
+    "label": "Guided setup"
+  },
   "themes.premium": {
     "minTier": "premium",
     "label": "3 extra themes"
   }
 };
-export const FREE_BILL_OF_RIGHTS: readonly FeatureId[] = ["security.lock","security.encryption","import.statements","core.tabs","data.delete","data.export"];
+export const FREE_BILL_OF_RIGHTS: readonly FeatureId[] = ["security.lock","security.encryption","import.statements","core.tabs","data.delete","data.export","setup.wizard","setup.emailGuide","mailSync.connect"];

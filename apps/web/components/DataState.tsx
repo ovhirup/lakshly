@@ -3,7 +3,9 @@ import { createContext, useCallback, useContext, useEffect, useState, useSyncExt
 import Link from "next/link";
 import { emptyDataset, mergeResult, type MergeReport, type ParseResult } from "@lakshly/parsers";
 import { dataset as demo } from "@/lib/data";
-import type { LakshlyDataset } from "@/lib/schema.gen";
+import type { Budget, LakshlyDataset } from "@/lib/schema.gen";
+import { budgetId } from "@/lib/setup-suggest";
+import type { SetupGoal } from "@/lib/setup";
 import { deleteVault, loadUserData, saveUserData, type UserData } from "@/lib/vault";
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
@@ -11,6 +13,7 @@ import "./data-state.css";
 
 export type Source = "demo" | "mine";
 const SOURCE_KEY = "lakshly.source";
+const SETUP_FLAGS_KEY = "lk-setup-flags";
 
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
@@ -35,7 +38,10 @@ interface DataCtx {
   debts: NonNullable<LakshlyDataset["debts"]>;
   sips: NonNullable<LakshlyDataset["sips"]>;
   rewards: NonNullable<LakshlyDataset["rewards"]>;
-  saveImport: (r: ParseResult, fileName: string) => Promise<MergeReport>;
+  saveImport: (r: ParseResult, fileName: string, sourceId?: string) => Promise<MergeReport>;
+  /** Replace one month's budget lines in the user's own data (creates an empty dataset if needed). */
+  saveBudgets: (month: string, lines: { category: Budget["category"]; limit: number }[]) => Promise<void>;
+  saveGoal: (goal: SetupGoal) => Promise<void>;
   deleteAll: () => Promise<void>;
 }
 const Ctx = createContext<DataCtx | null>(null);
@@ -55,7 +61,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const setSource = useCallback((s: Source) => { localStorage.setItem(SOURCE_KEY, s); emit(); }, []);
 
-  const saveImport = useCallback(async (r: ParseResult, fileName: string) => {
+  const saveImport = useCallback(async (r: ParseResult, fileName: string, sourceId?: string) => {
     const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
     const { dataset, report } = mergeResult(base.dataset, r);
     const ids = new Set(r.holdings.map((h) => h.accountId));
@@ -64,23 +70,41 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       dataset,
       holdings: [...base.holdings.filter((h) => !ids.has(h.accountId)), ...r.holdings],
       statements: [...base.statements, ...r.meta],
-      imports: [...base.imports, { at: new Date().toISOString(), file: fileName.slice(0, 120), adapter: r.adapter, added: report.added, duplicates: report.duplicates }],
+      imports: [...base.imports, { at: new Date().toISOString(), file: fileName.slice(0, 120), adapter: r.adapter, added: report.added, duplicates: report.duplicates, ...(sourceId ? { sourceId } : {}) }],
+      ...(base.goals ? { goals: base.goals } : {}),
     };
     await saveUserData(next);
     setUser(next);
     return report;
   }, [user]);
 
+  const saveBudgets = useCallback(async (month: string, lines: { category: Budget["category"]; limit: number }[]) => {
+    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const others = (base.dataset.budgets ?? []).filter((b) => b.month !== month);
+    const fresh: Budget[] = lines.map((l) => ({ id: budgetId(month, l.category), month, category: l.category, limit: l.limit, rollover: false }));
+    const next: UserData = { ...base, dataset: { ...base.dataset, budgets: [...others, ...fresh] } };
+    await saveUserData(next);
+    setUser(next);
+  }, [user]);
+
+  const saveGoal = useCallback(async (goal: SetupGoal) => {
+    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const next: UserData = { ...base, goals: [...(base.goals ?? []).filter((g) => g.kind !== goal.kind), goal] };
+    await saveUserData(next);
+    setUser(next);
+  }, [user]);
+
   const deleteAll = useCallback(async () => {
     await deleteVault();
     localStorage.removeItem(SOURCE_KEY);
+    localStorage.removeItem(SETUP_FLAGS_KEY);
     setUser(null);
     emit();
   }, []);
 
   const active: LakshlyDataset = source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo;
   const value: DataCtx = {
-    source, setSource, ready, user, saveImport, deleteAll,
+    source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll,
     dataset: active,
     accounts: active.accounts,
     transactions: active.transactions,
@@ -120,7 +144,8 @@ export function DataGate({ title, need = ["transactions"], children }: { title: 
         <h2>Nothing here yet</h2>
         <p className="muted">Import a bank, credit-card or mutual fund (CAS) statement to fill this page. Parsing happens on this device; nothing is uploaded.</p>
         <div className="row-actions">
-          <Link className="btn primary" href="/import/">Import a statement</Link>
+          <Link className="btn primary" href="/setup/?step=resume">Guided setup</Link>
+          <Link className="btn ghost" href="/import/">Import a statement</Link>
           <button className="btn ghost" onClick={() => d.setSource("demo")}>View demo data</button>
         </div>
       </Glass>

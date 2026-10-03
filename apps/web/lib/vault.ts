@@ -5,8 +5,10 @@
 // planned follow-up.
 import type { Holding, LakshlyDataset, StatementMeta } from "@lakshly/parsers";
 
-export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number }
-export interface UserData { version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[] }
+import type { SetupGoal } from "./setup";
+
+export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number; /** Setup source this file was attributed to. */ sourceId?: string }
+export interface UserData { version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[]; goals?: SetupGoal[] }
 
 const DB = "lakshly-vault";
 const STORE = "kv";
@@ -54,6 +56,22 @@ export async function loadUserData(): Promise<UserData | null> {
   if (!rec) return null;
   const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: rec.iv as Uint8Array<ArrayBuffer> }, await key(), rec.ct);
   return JSON.parse(new TextDecoder().decode(plain)) as UserData;
+}
+
+/** Small named records (e.g. setup progress), encrypted with the same device key as the dataset. */
+export type RecordName = "setup.state";
+
+export async function saveRecord(name: RecordName, value: unknown): Promise<void> {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await key(), new TextEncoder().encode(JSON.stringify(value)));
+  await tx("readwrite", (s) => s.put({ v: 1, alg: "AES-GCM-256", iv, ct }, `rec:${name}`));
+}
+
+export async function loadRecord<T>(name: RecordName): Promise<T | null> {
+  const rec = await tx<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>("readonly", (s) => s.get(`rec:${name}`) as IDBRequest<{ iv: Uint8Array; ct: ArrayBuffer } | undefined>);
+  if (!rec) return null;
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: rec.iv as Uint8Array<ArrayBuffer> }, await key(), rec.ct);
+  return JSON.parse(new TextDecoder().decode(plain)) as T;
 }
 
 /** Peek at the stored record without decrypting (used to prove the data is encrypted at rest). */

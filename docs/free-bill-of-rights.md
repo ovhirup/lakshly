@@ -10,6 +10,9 @@ and a unit test fails if one of them is ever moved behind Premium.
 - **The core tabs**: Overview, Spend, Budget and History
 - **Deleting all your data**, instantly, from the device
 - **Exporting your own data**
+- **Setup, automatic sync of one mailbox, the email search guide and every import** (sync and IMAP ship on Apple first; web uses the guided import)
+
+Free budgets: one monthly budget with up to 6 category lines (Premium removes both limits).
 
 Also always free: privacy mode (hide amounts), the weekly review, and all badges and XP. Premium can never buy XP or badges.
 

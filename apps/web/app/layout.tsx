@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { AppStateProvider } from "@/components/AppState";
 import { Shell } from "@/components/Shell";
 import { DataProvider } from "@/components/DataState";
+import { SetupProvider } from "@/components/SetupState";
 import { themeBootScript } from "@/lib/themes";
 import "./themes.gen.css";
 import "./globals.css";
@@ -30,7 +31,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AppStateProvider>
           <DataProvider>
-            <Shell>{children}</Shell>
+            <SetupProvider>
+              <Shell>{children}</Shell>
+            </SetupProvider>
           </DataProvider>
         </AppStateProvider>
       </body>
