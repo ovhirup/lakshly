@@ -22,6 +22,8 @@ targets:
         excludes: [Resources/Info.plist, Resources/Lakshly.entitlements, Resources/Lakshly-iOS.entitlements]
       - path: ../../demo-data/sample.synthetic.json
         buildPhase: resources
+      - path: ../../packages/shared/setup/sources.catalog.json
+        buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/hdfc-bank.synthetic.pdf
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/hdfc-bank-locked.synthetic.pdf
@@ -74,6 +76,8 @@ targets:
         excludes: [Resources/Info.plist, Resources/Lakshly.entitlements, Resources/Lakshly-iOS.entitlements]
       - path: ../../demo-data/sample.synthetic.json
         buildPhase: resources
+      - path: ../../packages/shared/setup/sources.catalog.json
+        buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/hdfc-bank.synthetic.pdf
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/hdfc-bank-locked.synthetic.pdf
@@ -115,6 +119,9 @@ targets:
         excludes:
           - "Fixtures/**"
       - path: LakshlyTests/Fixtures/Parsers
+        type: folder
+        buildPhase: resources
+      - path: ../../packages/shared/setup/__fixtures__
         type: folder
         buildPhase: resources
       - path: ../../docs/themes.json
