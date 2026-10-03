@@ -390,6 +390,8 @@ struct MenuBarGlanceBody: View {
   var onReveal: () -> Void = {}
   var onOpen: () -> Void = {}
   var onQuit: () -> Void = {}
+  var setupLine: String? = nil
+  var onSetup: () -> Void = {}
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
@@ -414,6 +416,11 @@ struct MenuBarGlanceBody: View {
       }
       if revealed {
         Text("Amounts hide after a minute.").font(.caption2).foregroundStyle(theme.secondaryText)
+      }
+      if let setupLine {
+        Button(setupLine, action: onSetup)
+          .font(.caption.weight(.semibold))
+          .frame(minHeight: 44, alignment: .leading)
       }
       Divider().overlay(theme.secondaryText.opacity(0.2))
       HStack {

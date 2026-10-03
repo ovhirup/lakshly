@@ -8,11 +8,17 @@ import Observation
   var demoDataset: Dataset?
   var userDataset: Dataset?
   var requests: [CommunityRequest] = []
+  var setup: SetupState?
+  var goals: [Goal]?
+  var imports: [ImportLogEntry] = []
+  /// Bumps when setup, flags, and goals are cleared so an in-memory wizard drops its copy.
+  var setupEpoch = 0
   var error: String?
   var selectedMonth = "2026-09"
   private let backing: StoredDataBacking
   private let defaults: UserDefaults
   private var writable = true
+  private var importSerial: UInt8 = 0
 
   /// Active dataset: the bundled seed on Demo, the imported rows (or an empty dataset) on My data.
   var dataset: Dataset? {
@@ -42,6 +48,7 @@ import Observation
   }
 
   var hasUserData: Bool {
+    if !(goals ?? []).isEmpty || !imports.isEmpty { return true }
     guard let user = userDataset else { return false }
     return !user.accounts.isEmpty || !user.transactions.isEmpty || !(user.sips ?? []).isEmpty
       || !(user.debts ?? []).isEmpty || !(user.rewards ?? []).isEmpty || !(user.budgets ?? []).isEmpty
@@ -64,6 +71,9 @@ import Observation
         userDataset = migrated.userDataset
         source = migrated.source ?? .demo
         requests = migrated.requests
+        setup = migrated.setup
+        goals = migrated.goals
+        imports = migrated.imports ?? []
         persistSourceHint()
         if saved.source == nil { save() }
       } else {
@@ -84,7 +94,9 @@ import Observation
     guard writable, let demoDataset else { return }
     do {
       try backing.save(
-        StoredData(dataset: demoDataset, requests: requests, source: source, userDataset: userDataset))
+        StoredData(
+          dataset: demoDataset, requests: requests, source: source, userDataset: userDataset, setup: setup,
+          goals: goals, imports: imports))
       error = nil
     } catch { self.error = "Could not save locally: \(error.localizedDescription)" }
     GlancePublisher.publish(dataset: dataset)
@@ -123,18 +135,35 @@ import Observation
 
   func deleteMyData() {
     userDataset = nil
+    imports = []
     source = .demo
     persistSourceHint()
     selectLatestMonth()
+    clearSetup(save: false)
     save()
   }
 
-  /// Reloads the bundled synthetic seed. Imported user data is kept.
+  /// Reloads the bundled synthetic seed. Imported user data is kept. Setup, goals, and flags are cleared.
   func reset() {
     writable = true
+    clearSetup(save: false)
     do {
       try applySeed(try Self.loadSeed(), persist: true)
     } catch { self.error = error.localizedDescription }
+  }
+
+  func clearSetup(save shouldSave: Bool = true) {
+    setup = nil
+    goals = nil
+    SetupFlags.clear(defaults)
+    setupEpoch += 1
+    if shouldSave { save() }
+  }
+
+  func nextImportID(now: Date) -> String {
+    importSerial &+= 1
+    let millis = UInt64(max(0, now.timeIntervalSince1970 * 1000))
+    return String(format: "imp_%012llx%02x", millis & 0xffffffffffff, importSerial)
   }
 
   static func emptyUserDataset(now: Date = Date()) -> Dataset {

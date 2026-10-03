@@ -18,6 +18,8 @@ enum DataNeed {
 
 extension EnvironmentValues {
   @Entry var openImport: () -> Void = {}
+  @Entry var openSetup: (_ health: Bool, _ step: String?) -> Void = { _, _ in }
+  @Entry var selectTheme: (String) -> Void = { _ in }
 }
 
 /// Small label used in the shell: which dataset is on screen.
@@ -52,6 +54,7 @@ struct DataNote: View {
 struct DataGate<Content: View>: View {
   @Environment(\.theme) private var theme
   @Environment(\.openImport) private var openImport
+  @Environment(\.openSetup) private var openSetup
   let store: DataStore
   let title: String
   var need: [DataNeed] = [.transactions]
@@ -72,6 +75,8 @@ struct DataGate<Content: View>: View {
           )
           .foregroundStyle(theme.secondaryText)
           Button("Import a statement") { openImport() }
+            .buttonStyle(ThemedSubmitStyle())
+          Button("Guided setup") { openSetup(false, nil) }
             .buttonStyle(ThemedSubmitStyle())
           Button("View demo data") { store.setSource(.demo) }
         }

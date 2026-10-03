@@ -55,17 +55,30 @@ struct CustomSource: Codable, Equatable {
   var domain: String?
 }
 
+struct CatalogGuides: Codable, Equatable {
+  var gmail: [String: String]
+  var outlook: [String: String]
+  var appleMail: [String: String]
+  var other: [String: String]
+  var privacy: String
+}
+
 struct SourcesCatalog: Codable, Equatable {
   var version: Int
   var updated: String
   var kinds: [String: String]
   var kindOrder: [String]
   var passwordHintFormats: [String: String]
+  var guides: CatalogGuides
   var sources: [CatalogSource]
 
   static func load(bundle: Bundle = Bundle(for: SourcesCatalogBundleToken.self)) throws -> SourcesCatalog {
     guard let url = catalogURL(bundle: bundle) else { throw CatalogLoadError.missing }
     return try JSONDecoder().decode(SourcesCatalog.self, from: Data(contentsOf: url))
+  }
+
+  static func load(data: Data) throws -> SourcesCatalog {
+    try JSONDecoder().decode(SourcesCatalog.self, from: data)
   }
 
   static func rawJSON(bundle: Bundle = Bundle(for: SourcesCatalogBundleToken.self)) throws -> String {
@@ -81,7 +94,19 @@ struct SourcesCatalog: Codable, Equatable {
 }
 
 enum SetupSources {
-  static let catalog: SourcesCatalog = {
+  #if DEBUG
+  /// Screenshot and test override. Widgets never read the catalog, so a missing bundle file stays lazy.
+  static var testingCatalog: SourcesCatalog?
+  #endif
+
+  static var catalog: SourcesCatalog {
+    #if DEBUG
+    if let testingCatalog { return testingCatalog }
+    #endif
+    return bundled
+  }
+
+  private static let bundled: SourcesCatalog = {
     do { return try SourcesCatalog.load() }
     catch {
       preconditionFailure("sources.catalog.json is missing from the app bundle: \(error)")

@@ -19,6 +19,10 @@ struct LaunchOptions {
   var settingsScroll: String?
   /// Screenshot control: force Demo data or My data. Ignored in Release.
   var dataSource: String?
+  /// Screenshot control: open the setup wizard on a step. Ignored in Release.
+  var setupDemo: String?
+  /// Screenshot control: show the email consent sheet. Ignored in Release.
+  var setupConsent: Bool?
 
   static func parse(arguments: [String]) -> LaunchOptions {
     var options = LaunchOptions()
@@ -43,6 +47,8 @@ struct LaunchOptions {
       case "feedbackDemo": options.feedbackDemo = parseBool(value)
       case "dataSource":
         if value == "demo" || value == "mine" { options.dataSource = value }
+      case "setupDemo": options.setupDemo = value
+      case "setupConsent": options.setupConsent = parseBool(value)
       case "appearance": options.appearance = value
       case "theme": options.theme = value
       default: break

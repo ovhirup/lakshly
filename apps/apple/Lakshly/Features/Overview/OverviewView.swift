@@ -3,6 +3,7 @@ import SwiftUI
 
 struct OverviewView: View {
   @Environment(\.theme) private var theme
+  @Environment(SetupSession.self) private var session
   let store: DataStore
   let showFeedback: () -> Void
   private var accounts: [Account] { store.dataset?.accounts ?? [] }
@@ -12,6 +13,7 @@ struct OverviewView: View {
   }
   var body: some View {
     Page(title: "Every rupee on target.", subtitle: "Your money, in a little more focus.") {
+      setupCard
       Button(action: showFeedback) {
         HStack {
           Text("Have an idea? Tell us →").font(.subheadline.weight(.semibold))
@@ -70,6 +72,37 @@ struct OverviewView: View {
         }
       }
       DataNote(source: store.source)
+    }
+  }
+
+  @ViewBuilder private var setupCard: some View {
+    let score = session.score()
+    let refresh = store.setup.map { setupRefreshCount($0, today: session.today) } ?? 0
+    let show = score.percent < 100 && session.state.dismissedAt == nil
+      && (store.setup != nil || store.source == .mine)
+    if show {
+      Card(title: store.setup?.mode == .demo ? "Use your own data · continue setup" : "Finish setting up · \(score.done) of \(score.applicable)") {
+        HStack(alignment: .center, spacing: 12) {
+          SetupRing(percent: score.percent).frame(width: 44, height: 44)
+          Text("Your data stays on this device. Continue at your pace.")
+            .font(.subheadline).foregroundStyle(theme.secondaryText)
+        }
+        HStack(spacing: 8) {
+          Button("Continue setup") {
+            if store.setup?.mode == .demo { session.useOwnData() }
+            else { session.requestOpen(health: false, step: nil) }
+          }
+          .buttonStyle(ThemedSubmitStyle())
+          Button("Hide") { session.dismissCard() }.buttonStyle(.plain).frame(minHeight: 44)
+        }
+      }
+    }
+    if refresh > 0 {
+      Button(refresh == 1 ? "1 source needs a refresh" : "\(refresh) sources need a refresh") {
+        session.requestOpen(health: true, step: nil)
+      }
+      .buttonStyle(.plain)
+      .frame(minHeight: 44)
     }
   }
 }

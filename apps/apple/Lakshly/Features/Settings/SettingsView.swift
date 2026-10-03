@@ -8,6 +8,8 @@ struct SettingsView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(EntitlementStore.self) private var entitlements
   @Environment(AppIconController.self) private var appIcons
+  @Environment(SetupSession.self) private var session
+  @Environment(\.openSetup) private var openSetup
   @AppStorage("settings.appearance") private var appearance = "system"
   @AppStorage("settings.appLock") private var appLock = true
   @AppStorage(GlancePreferences.showAmountsKey, store: GlanceStore.preferences) private var showAmounts = true
@@ -32,6 +34,7 @@ struct SettingsView: View {
     NavigationStack {
       ScrollViewReader { scroll in
         Form {
+          setupSection
           Section("Theme") {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
               ForEach(ThemeID.allCases) { id in
@@ -197,6 +200,50 @@ struct SettingsView: View {
       } else {
         Text("Included").font(.caption).foregroundStyle(theme.secondaryText)
       }
+    }
+  }
+
+  private var setupSection: some View {
+    let score = session.score()
+    let email = session.state.email.primary
+    return Section("Setup & data sources") {
+      Button {
+        openSetup(score.percent >= 100, nil)
+      } label: {
+        HStack(spacing: 12) {
+          SetupRing(percent: score.percent).frame(width: 36, height: 36)
+          VStack(alignment: .leading, spacing: 2) {
+            Text(score.percent >= 100 ? "Data sources health" : "Setup \(score.percent)%")
+            Text(email.isEmpty ? "No mailbox saved" : "Mailbox saved on this device")
+              .font(.caption).foregroundStyle(theme.secondaryText)
+          }
+          Spacer(minLength: 0)
+        }
+        .frame(minHeight: 44)
+      }
+      if !email.isEmpty {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(email)
+          Text(mailboxDetail).font(.caption).foregroundStyle(theme.secondaryText)
+          Text("Automatic sync is not switched on in this build. This address is used for one-tap searches.")
+            .font(.caption).foregroundStyle(theme.secondaryText)
+        }
+      } else if session.state.email.skipped {
+        Text("Email step skipped. You can add an address from setup.")
+          .font(.caption).foregroundStyle(theme.secondaryText)
+      }
+    }
+    .listRowBackground(theme.surface)
+  }
+
+  private var mailboxDetail: String {
+    switch session.state.email.pickerProvider ?? detectMailProvider(session.state.email.primary) {
+    case .google: "Gmail"
+    case .microsoft: "Outlook"
+    case .icloud: "iCloud"
+    case .yahoo: "Yahoo"
+    case .zoho: "Zoho"
+    case .other: "Mail"
     }
   }
 

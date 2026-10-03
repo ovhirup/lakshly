@@ -20,8 +20,20 @@ func datasetByMerging(_ existing: Dataset?, _ result: ParseResult, now: Date = D
 
 extension DataStore {
   @discardableResult
-  func importParsed(_ result: ParseResult, now: Date = Date()) -> MergeReport {
+  func importParsed(_ result: ParseResult, fileName: String = "statement", now: Date = Date()) -> MergeReport {
     let merged = datasetByMerging(userDataset, result, now: now)
+    let trimmed = fileName.trimmingCharacters(in: .whitespacesAndNewlines)
+    let file = String((trimmed.isEmpty ? "statement" : trimmed).prefix(120))
+    imports.append(
+      ImportLogEntry(
+        id: nextImportID(now: now),
+        at: isoTimestamp(now),
+        file: file,
+        adapter: result.adapter,
+        accountIds: result.accounts.map(\.id),
+        added: merged.report.added,
+        duplicates: merged.report.duplicates,
+        confidence: result.confidence))
     adoptUserDataset(merged.dataset)
     return merged.report
   }

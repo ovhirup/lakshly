@@ -252,6 +252,8 @@ struct GoalSuggestion: Codable, Equatable {
   var monthsLeft: Int?
 }
 
+typealias Goal = SetupGoal
+
 struct SetupGoal: Codable, Equatable {
   var id: String
   var name: String
