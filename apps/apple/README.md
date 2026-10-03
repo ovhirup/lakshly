@@ -90,6 +90,25 @@ For DEBUG screenshots, use `-demoUnlocked YES -openSettings YES -settingsScroll 
 
 `ThemeAppIconTests` checks mappings, the built iOS alternate-icon list, bundled picker images, theme gating and fallback, and manifest recipe names. Dock appearance changes and iOS confirmation prompts still need device QA.
 
+## Widgets, Live Activity and menu bar
+
+Lakshly writes a privacy-safe `glance.json` after unlock, after import or reset, when the theme or tier changes, and when the app enters the background. Widgets and the Mac menu bar read that file. Optional amounts (net worth, safe-to-spend, the next bill, debt outstanding) are written only when **Show amounts in widgets** is on.
+
+The App Group identifier lives in one build setting, `LAKSHLY_APP_GROUP` (default `group.app.lakshly.shared`). The app and the widget extensions read it at runtime from the Info.plist key `LakshlyAppGroup`. Entitlements use `$(LAKSHLY_APP_GROUP)`. If you sign the apps yourself, change `LAKSHLY_APP_GROUP` to a group your team owns and enable that group on the app and both widget targets. Unsigned builds have no group container: the app stores `glance.json` in Application Support, and the widget extension shows its placeholder until a signed group is available.
+
+| Widget | Families | Tier |
+| --- | --- | --- |
+| Budget pace | Small, medium. iOS also circular, rectangular and inline. | Free (`basicWidgets`) |
+| Upcoming bill | Small, medium. iOS also rectangular and inline. | Free (`basicWidgets`) |
+| Net worth | Small, medium. | Premium (`extraWidgets`) |
+| Debt | Small, medium. iOS also a circular gauge. | Premium (`extraWidgets`) |
+
+A Free member who adds a Premium widget sees “Lakshly Premium widget — open Lakshly to upgrade”. Lock Screen families hide amounts unless **Show amounts on Lock Screen** is on (it defaults off). Shown amounts are marked privacy-sensitive. Home Screen and desktop widgets follow **Show amounts in widgets** (default on). Widgets use the theme saved in the snapshot and open `lakshly://budget`, `lakshly://overview` or `lakshly://debt`. A link received while the app is locked waits until unlock.
+
+Settings → **Widgets & glance** holds those toggles, plus **Live Activities** on iOS (default on) and **Show in menu bar** on macOS (default on). Live Activities cover a bill due today, or a month whose spending has reached 80% of the budget (once that month). The Mac menu-bar panel shows the glance without amounts. **Reveal amounts** asks for Touch ID or the Mac password, builds an in-memory snapshot, and hides it after 60 seconds, when the panel closes, or when the Mac locks or sleeps. If this Mac has no password, amounts stay hidden.
+
+iOS glance screenshots render from `LakshlyTests/GlanceRenderTests` when `TEST_RUNNER_LAKSHLY_RENDER_DIR` is set (the test sees `LAKSHLY_RENDER_DIR`). Mac widgets and the menu-bar panel render offscreen with `scripts/render_glance_shots.sh`, which does not open a window. Both write PNGs under `build/glance-shots/`.
+
 ## Lakshly Premium (StoreKit 2, local testing)
 
 One auto-renewable subscription group, **Lakshly Premium**. Both products are the same level and Family Sharing is enabled. There is no introductory offer.
@@ -101,7 +120,7 @@ One auto-renewable subscription group, **Lakshly Premium**. Both products are th
 
 `StoreKit/Lakshly.storekit` (storefront IND, locale en_IN) is attached to the **Debug run** action of Lakshly-iOS and Lakshly-macOS. `StoreKit/Lakshly-US.storekit` is the same catalogue with storefront USA and locale en_US, used by a unit test. Neither file is a member of an app target. Both are test-target resources so `SKTestSession(configurationFileNamed:)` can load them. They are never copied into an app bundle. There are no App Store Connect products yet.
 
-`EntitlementsMap.standard` is a plain `[Feature: Tier]` literal. Every feature (`premiumThemes`, `debtPlanner`, `creditInsights`, `investmentInsights`, `rewardsInsights`, `priorityFeedback`) requires `.premium`. `can(feature, tier:)` is true only when the tier is at least the mapped minimum. An unknown feature fails closed at Premium. A later board item will add a tier above Premium and generate this map from shared JSON. That is not built here.
+`EntitlementsMap.standard` is a plain `[Feature: Tier]` literal. `basicWidgets` (budget pace and upcoming bill) is Free. `extraWidgets` (net worth and debt) and every other feature (`premiumThemes`, `debtPlanner`, `creditInsights`, `investmentInsights`, `rewardsInsights`, `priorityFeedback`) require `.premium`. `can(feature, tier:)` is true only when the tier is at least the mapped minimum. An unknown feature fails closed at Premium. A later board item will add a tier above Premium and generate this map from shared JSON. That is not built here.
 
 `EntitlementStore` listens to `Transaction.updates` and rebuilds the tier from `Transaction.currentEntitlements`. Only verified transactions for these product IDs count. A revocation date, an expiration before now, or `isUpgraded` removes that snapshot. Refund, revoke, and expiry therefore drop the user to Free. If a stored theme is Ocean, Forest, or Rose Quartz and the tier is Free, the effective theme falls back to Lakshmi without rewriting the stored choice. Restore calls `AppStore.sync()` and then refresh, and reports "Premium restored" or "Nothing to restore". The paywall is custom (`Product` APIs, not `SubscriptionStoreView`) and opens only from an explicit tap, or from the DEBUG `-showPaywall` screenshot control.
 
