@@ -15,6 +15,9 @@ const files: [string, Promise<Uint8Array>][] = [
   ["generic-card.synthetic.pdf", F.genericCardPdf()],
   ["cas.synthetic.pdf", F.casPdf()],
   ["cas-locked.synthetic.pdf", F.casPdf(F.PASSWORD)],
+  ["nsdl-cas.synthetic.pdf", F.nsdlCasPdf()],
+  ["cdsl-cas.synthetic.pdf", F.cdslCasPdf()],
+  ["cdsl-cas-locked.synthetic.pdf", F.cdslCasPdf(F.PASSWORD)],
 ];
 for (const [name, p] of files) writeFileSync(new URL(name, out), await p);
 console.log(`wrote ${files.length} synthetic fixtures (password for *-locked: ${F.PASSWORD})`);
