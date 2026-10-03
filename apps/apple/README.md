@@ -107,7 +107,17 @@ A Free member who adds a Premium widget sees “Lakshly Premium widget — open 
 
 Settings → **Widgets & glance** holds those toggles, plus **Live Activities** on iOS (default on) and **Show in menu bar** on macOS (default on). Live Activities cover a bill due today, or a month whose spending has reached 80% of the budget (once that month). The Mac menu-bar panel shows the glance without amounts. **Reveal amounts** asks for Touch ID or the Mac password, builds an in-memory snapshot, and hides it after 60 seconds, when the panel closes, or when the Mac locks or sleeps. If this Mac has no password, amounts stay hidden.
 
-iOS glance screenshots render from `LakshlyTests/GlanceRenderTests` when `TEST_RUNNER_LAKSHLY_RENDER_DIR` is set (the test sees `LAKSHLY_RENDER_DIR`). Mac widgets and the menu-bar panel render offscreen with `scripts/render_glance_shots.sh`, which does not open a window. Both write PNGs under `build/glance-shots/`.
+### Mac notch glance
+
+On a Mac with a notch, **Notch glance** (Premium, `glance.notchPanel` / `can(.notchPanel)`) adds a second surface. It does not replace the menu-bar extra. The toggle defaults off. Hovering the notch for a quarter second, or clicking it, slides a panel down from the top of that screen. The panel shows budget pace, safe-to-spend when the snapshot has it, and the next bill or payout. Net worth is included only with `can(.extraWidgets)`.
+
+Amounts stay off the panel until **Reveal**, which uses the same device-owner check as the menu bar (`GlanceRevealSession`, “Reveal Lakshly amounts”). Revealed values stay in memory. They hide after 30 seconds, and immediately when the panel collapses, the Mac sleeps or locks, Lakshly locks, or you switch Spaces. The panels are borderless and non-activating: showing them does not activate Lakshly. A display with no notch never creates those panels. Settings then says Lakshly is using the menu-bar extra, and the toggle can stay on for when a notched display is attached.
+
+Free members still see **Notch glance**, disabled, with the quiet **✦ Premium** pill. Tapping that row opens the paywall. Losing Premium tears the panels down.
+
+There is no DEBUG launch flag for this. `scripts/check_release_launch_args.sh` does not gain a new name.
+
+iOS glance screenshots render from `LakshlyTests/GlanceRenderTests` when `TEST_RUNNER_LAKSHLY_RENDER_DIR` is set (the test sees `LAKSHLY_RENDER_DIR`). Mac widgets, the menu-bar panel, and the notch panel render offscreen with `scripts/render_glance_shots.sh`, which does not open a window. The output directory is the first argument, or `LAKSHLY_SHOTS_DIR`, or `build/glance-shots/`. Notch files are `notch-hidden-…`, `notch-revealed-…`, `notch-free-locked-…`, `notch-settings-…`, and `notch-settings-nonotch-…` at 2x, for Lakshmi dark and Monochrome Gold light. The seed is the synthetic demo dataset.
 
 ## Lakshly Premium (StoreKit 2, local testing)
 
@@ -120,7 +130,7 @@ One auto-renewable subscription group, **Lakshly Premium**. Both products are th
 
 `StoreKit/Lakshly.storekit` (storefront IND, locale en_IN) is attached to the **Debug run** action of Lakshly-iOS and Lakshly-macOS. `StoreKit/Lakshly-US.storekit` is the same catalogue with storefront USA and locale en_US, used by a unit test. Neither file is a member of an app target. Both are test-target resources so `SKTestSession(configurationFileNamed:)` can load them. They are never copied into an app bundle. There are no App Store Connect products yet.
 
-`EntitlementsMap.standard` is a plain `[Feature: Tier]` literal. `basicWidgets` (budget pace and upcoming bill) is Free. `extraWidgets` (net worth and debt) and every other feature (`premiumThemes`, `debtPlanner`, `creditInsights`, `investmentInsights`, `rewardsInsights`, `priorityFeedback`) require `.premium`. `can(feature, tier:)` is true only when the tier is at least the mapped minimum. An unknown feature fails closed at Premium. A later board item will add a tier above Premium and generate this map from shared JSON. That is not built here.
+`EntitlementsMap.standard` is a plain `[Feature: Tier]` literal. `basicWidgets` (budget pace and upcoming bill) is Free. `extraWidgets` (net worth and debt), `notchPanel` (`glance.notchPanel`, Mac notch glance), and every other feature (`premiumThemes`, `debtPlanner`, `creditInsights`, `investmentInsights`, `rewardsInsights`, `priorityFeedback`) require `.premium`. `can(feature, tier:)` is true only when the tier is at least the mapped minimum. An unknown feature fails closed at Premium. A later board item will add a tier above Premium and generate this map from shared JSON. That is not built here.
 
 `EntitlementStore` listens to `Transaction.updates` and rebuilds the tier from `Transaction.currentEntitlements`. Only verified transactions for these product IDs count. A revocation date, an expiration before now, or `isUpgraded` removes that snapshot. Refund, revoke, and expiry therefore drop the user to Free. If a stored theme is Ocean, Forest, or Rose Quartz and the tier is Free, the effective theme falls back to Lakshmi without rewriting the stored choice. Restore calls `AppStore.sync()` and then refresh, and reports "Premium restored" or "Nothing to restore". The paywall is custom (`Product` APIs, not `SubscriptionStoreView`) and opens only from an explicit tap, or from the DEBUG `-showPaywall` screenshot control.
 
