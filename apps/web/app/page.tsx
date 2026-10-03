@@ -21,11 +21,13 @@ function OverviewView() {
   const month = defaultMonth(transactions);
   const flow = monthlyCashflow(transactions).filter((m) => m.month <= month);
   const cur = flow[flow.length - 1];
-  const mf = accounts.find((a) => a.type === "mutual_fund");
-  const mfGain = mf && mf.invested ? mf.balance - mf.invested : 0;
-  const cats = spendByCategory(transactions, month).slice(0, 6);
+  const funds = accounts.filter((a) => a.type === "mutual_fund");
+  const knownFunds = funds.filter((a) => a.invested !== undefined);
+  const fundInvested = knownFunds.reduce((sum, a) => sum + (a.invested ?? 0), 0);
+  const fundGain = knownFunds.reduce((sum, a) => sum + a.balance - (a.invested ?? 0), 0);
+  const cats = cur ? spendByCategory(transactions, cur.month).slice(0, 6) : [];
   const doubleTap = useDoubleTapToggle();
-  const maxAsset = Math.max(...accounts.map((a) => Math.abs(a.balance)));
+  const maxAsset = Math.max(1, ...accounts.map((a) => Math.abs(a.balance)));
 
   return (
     <>
@@ -39,45 +41,52 @@ function OverviewView() {
         <div className="pills">
           <span className="pill">{formatINR(nw.assets)} assets</span>
           <span className="pill">{formatINR(-nw.liabilities)} owed</span>
-          {mf?.invested ? <span className="pill">{formatINR(mfGain, { signed: true })} fund gains · {formatPct((mfGain / mf.invested) * 100)}</span> : null}
+          {fundInvested > 0 ? <span className="pill">{formatINR(fundGain, { signed: true })} {knownFunds.length === funds.length ? "fund gains" : "fund gains (known cost)"} · {formatPct((fundGain / fundInvested) * 100)}</span> : null}
         </div>
         <p className="tagline">Every rupee on target. <Icon name="sparkle" size={14} /></p>
       </Glass>
 
-      <BackfillCard />
-      <NudgeCard screen="overview" />
-      <SundayBanner />
-      <Glass className="card overview-review-card">
-        <div className="overview-review">
-          <ReviewEntryCard />
-          <WorthItCard compact />
-        </div>
-      </Glass>
-      <NextUpStrip />
-
-      <div className="grid g4">
-        <Glass className="card"><Stat label={`Income · ${formatMonth(month, true)}`} value={formatINR(cur.income)} /></Glass>
-        <Glass className="card"><Stat label="Spent" value={formatINR(cur.spend)} hint={`${formatPct((cur.spend / cur.income) * 100, 0)} of income`} /></Glass>
-        <Glass className="card"><Stat label="Invested" value={formatINR(cur.invested)} hint="SIPs this month" /></Glass>
-        <Glass className="card"><Stat label="Saved" value={formatINR(cur.saved)} tone={cur.saved >= 0 ? "up" : "down"}
-          hint={`${formatPct((cur.saved / cur.income) * 100, 0)} savings rate`} /></Glass>
-      </div>
-
-      <div className="grid g3">
-        <Glass className="card span2">
-          <div className="card-head"><h2>Cash flow</h2><span className="muted tiny">Income · Spend · Invested</span></div>
-          <CashflowBars data={flow.map((f) => ({ ...f, label: formatMonth(f.month, true) }))} />
-        </Glass>
-        <Glass className="card">
-          <div className="card-head"><h2>Where it went</h2><Link href="/spend/" className="muted tiny">See all →</Link></div>
-          <Donut totalLabel="Shown spend" height={180} data={cats.map((c) => ({ name: titleCase(c.category), value: c.amount, color: CATEGORY_COLORS[c.category] ?? "var(--lk-text-muted)" }))} />
-          <div className="legend">
-            {cats.slice(0, 4).map((c) => (
-              <div key={c.category}><span className="dot" style={{ background: CATEGORY_COLORS[c.category] }} />{titleCase(c.category)}<b>{formatINR(c.amount)}</b></div>
-            ))}
+      {cur && <>
+        <BackfillCard />
+        <NudgeCard screen="overview" />
+        <SundayBanner />
+        <Glass className="card overview-review-card">
+          <div className="overview-review">
+            <ReviewEntryCard />
+            <WorthItCard compact />
           </div>
         </Glass>
-      </div>
+        <NextUpStrip />
+
+        <div className="grid g4">
+          <Glass className="card"><Stat label={`Income · ${formatMonth(cur.month, true)}`} value={formatINR(cur.income)} /></Glass>
+          <Glass className="card"><Stat label="Spent" value={formatINR(cur.spend)} hint={cur.income > 0 ? `${formatPct((cur.spend / cur.income) * 100, 0)} of income` : "No income recorded"} /></Glass>
+          <Glass className="card"><Stat label="Invested" value={formatINR(cur.invested)} hint="SIPs this month" /></Glass>
+          <Glass className="card"><Stat label="Saved" value={formatINR(cur.saved)} tone={cur.saved >= 0 ? "up" : "down"}
+            hint={cur.income > 0 ? `${formatPct((cur.saved / cur.income) * 100, 0)} savings rate` : "No income recorded"} /></Glass>
+        </div>
+        <div className="grid g3">
+          <Glass className="card span2">
+            <div className="card-head"><h2>Cash flow</h2><span className="muted tiny">Income · Spend · Invested</span></div>
+            <CashflowBars data={flow.map((f) => ({ ...f, label: formatMonth(f.month, true) }))} />
+          </Glass>
+          <Glass className="card">
+            <div className="card-head"><h2>Where it went</h2><Link href="/spend/" className="muted tiny">See all →</Link></div>
+            <Donut totalLabel="Shown spend" height={180} data={cats.map((c) => ({ name: titleCase(c.category), value: c.amount, color: CATEGORY_COLORS[c.category] ?? "var(--lk-text-muted)" }))} />
+            <div className="legend">
+              {cats.slice(0, 4).map((c) => (
+                <div key={c.category}><span className="dot" style={{ background: CATEGORY_COLORS[c.category] }} />{titleCase(c.category)}<b>{formatINR(c.amount)}</b></div>
+              ))}
+            </div>
+          </Glass>
+        </div>
+      </>}
+
+      {!cur && <Glass className="card">
+        <div className="card-head"><h2>Add your cash flow</h2></div>
+        <p className="muted">Your imported accounts are shown here. Import a bank or credit-card statement to see income, spending, and savings.</p>
+        <Link href="/import/" className="btn primary">Import a bank or card statement</Link>
+      </Glass>}
 
       <Glass className="card">
         <div className="card-head"><h2>Accounts</h2><span className="muted tiny">{dataset.notice ?? "Your imported accounts. Encrypted on this device."}</span></div>
@@ -100,5 +109,5 @@ function OverviewView() {
 }
 
 export default function OverviewPage() {
-  return <DataGate title="Overview" need={["accounts", "transactions"]}><OverviewView /></DataGate>;
+  return <DataGate title="Overview" need={["accounts"]}><OverviewView /></DataGate>;
 }
