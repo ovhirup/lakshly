@@ -23,6 +23,20 @@
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "27201AD56F70FCED48E3C1BE"
+               BuildableName = "LakshlyGlance.framework"
+               BlueprintName = "LakshlyGlance"
+               ReferencedContainer = "container:Lakshly.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
             buildForRunning = "NO"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
@@ -32,6 +46,20 @@
                BlueprintIdentifier = "2BF4F1542F07EBE7FCD85B5A"
                BuildableName = "LakshlyUITests.xctest"
                BlueprintName = "LakshlyUITests"
+               ReferencedContainer = "container:Lakshly.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5FA6629C31CF2BA223C002F8"
+               BuildableName = "LakshlyWidgets-iOS.appex"
+               BlueprintName = "LakshlyWidgets-iOS"
                ReferencedContainer = "container:Lakshly.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

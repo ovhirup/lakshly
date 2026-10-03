@@ -21,6 +21,20 @@
                ReferencedContainer = "container:Lakshly.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6C356AD14B5D2834A3298161"
+               BuildableName = "LakshlyWidgets-macOS.appex"
+               BlueprintName = "LakshlyWidgets-macOS"
+               ReferencedContainer = "container:Lakshly.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
