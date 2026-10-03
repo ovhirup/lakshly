@@ -27,7 +27,7 @@
       "source": "cas"
     },
     {
-      "id": "acc_1px6mg52ue3",
+      "id": "acc_16b2wu6zztv",
       "name": "Demo Balanced Fund - Growth",
       "type": "mutual_fund",
       "institution": "NSDL / Mutual Fund Folios",
@@ -39,7 +39,7 @@
       "invested": 900000
     },
     {
-      "id": "acc_0tdsnne6hla",
+      "id": "acc_087xielmlel",
       "name": "Demo Short Term Fund - Growth",
       "type": "mutual_fund",
       "institution": "NSDL / Mutual Fund Folios",
@@ -105,7 +105,7 @@
       "marketValue": 406406
     },
     {
-      "accountId": "acc_1px6mg52ue3",
+      "accountId": "acc_16b2wu6zztv",
       "scheme": "Demo Balanced Fund - Growth",
       "amc": "Mutual Fund",
       "registrar": "Unknown",
@@ -118,7 +118,7 @@
       "marketValue": 1003753
     },
     {
-      "accountId": "acc_0tdsnne6hla",
+      "accountId": "acc_087xielmlel",
       "scheme": "Demo Short Term Fund - Growth",
       "amc": "Mutual Fund",
       "registrar": "Unknown",
@@ -146,5 +146,9 @@
       "quantityTransactionCount": 3
     }
   ],
-  "warnings": []
+  "warnings": [],
+  "accountAliases": {
+    "acc_1px6mg52ue3": "acc_16b2wu6zztv",
+    "acc_0tdsnne6hla": "acc_087xielmlel"
+  }
 }

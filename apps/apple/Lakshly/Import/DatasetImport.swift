@@ -12,9 +12,17 @@ func datasetByMerging(_ existing: Dataset?, _ result: ParseResult, now: Date = D
     accounts: merged.dataset.accounts.map(appAccount),
     transactions: merged.dataset.transactions.map(appTransaction),
     budgets: existing?.budgets,
-    debts: existing?.debts,
+    debts: existing?.debts?.map { debt in
+      Debt(id: debt.id, name: debt.name, kind: debt.kind, lender: debt.lender, principal: debt.principal,
+           outstanding: debt.outstanding, annualRatePct: debt.annualRatePct, emi: debt.emi, startDate: debt.startDate,
+           tenureMonths: debt.tenureMonths, accountId: debt.accountId.map { merged.accountAliases[$0] ?? $0 })
+    },
     sips: merged.dataset.sips.map(appSip),
-    rewards: existing?.rewards)
+    rewards: existing?.rewards?.map { reward in
+      Reward(id: reward.id, program: reward.program, kind: reward.kind, balance: reward.balance,
+             valuePerUnitPaise: reward.valuePerUnitPaise, expiresOn: reward.expiresOn,
+             accountId: reward.accountId.map { merged.accountAliases[$0] ?? $0 }, asOf: reward.asOf)
+    })
   return (dataset, merged.report)
 }
 

@@ -16,7 +16,7 @@
       "source": "cas"
     },
     {
-      "id": "acc_1px6mg52ue3",
+      "id": "acc_16b2wu6zztv",
       "name": "Demo Balanced Fund - Growth",
       "type": "mutual_fund",
       "institution": "CDSL / Mutual Fund Folios",
@@ -56,7 +56,7 @@
       "marketValue": 406406
     },
     {
-      "accountId": "acc_1px6mg52ue3",
+      "accountId": "acc_16b2wu6zztv",
       "scheme": "Demo Balanced Fund - Growth",
       "amc": "Mutual Fund",
       "registrar": "Unknown",
@@ -84,5 +84,8 @@
       "quantityTransactionCount": 2
     }
   ],
-  "warnings": []
+  "warnings": [],
+  "accountAliases": {
+    "acc_1px6mg52ue3": "acc_16b2wu6zztv"
+  }
 }

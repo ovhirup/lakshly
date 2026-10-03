@@ -49,7 +49,8 @@ func parseDocument(_ doc: TextDoc, forceAdapter: String? = nil) -> ParseResult {
     sips: body.sips,
     holdings: body.holdings,
     meta: body.meta,
-    warnings: body.warnings)
+    warnings: body.warnings,
+    accountAliases: body.accountAliases)
 }
 
 func extractPdfText(data: Data, password: String? = nil, fileName: String? = nil) throws -> TextDoc {

@@ -1,5 +1,14 @@
 import Foundation
 
+// Numeric folios with a full ISIN share identity across both CAS layouts.
+func casFolioIdentity(_ folio: String, _ isin: String?) -> (canonical: String, legacy: String)? {
+  let normalized = folio.replacingOccurrences(of: "\\s", with: "", options: .regularExpression)
+  guard RE(#"^\d+(?:/\d+)?$"#).test(normalized), let isin, RE(#"^[A-Z0-9]{12}$"#).test(isin) else { return nil }
+  let digits = normalized.replacingOccurrences(of: "\\D", with: "", options: .regularExpression)
+  return (stableId("acc", "cas", digits, isin), stableId("acc", "cas.depository", "folio", normalized, isin))
+}
+
+
 func adapterScore(_ doc: TextDoc, _ brand: RE, _ signals: [RE]) -> Double {
   let text = docText(doc)
   guard brand.test(text), !signals.isEmpty else { return 0 }
@@ -360,6 +369,7 @@ let cas = Adapter(
   },
   parse: { doc in
     let parsed = parseCasText(doc)
+    var accountAliases: [String: String] = [:]
     var accounts: [ParseAccount] = []
     var transactions: [ParseTransaction] = []
     var sips: [ParseSip] = []
@@ -370,6 +380,7 @@ let cas = Adapter(
       let folioMask = last4(scheme.folio.split(separator: "/").first.map(String.init)) ?? last4(scheme.folio) ?? "XXXX"
       let digits = scheme.folio.replacingOccurrences(of: "\\D", with: "", options: .regularExpression)
       let accountId = stableId("acc", "cas", digits, scheme.isin ?? scheme.scheme)
+      if let identity = casFolioIdentity(scheme.folio, scheme.isin) { accountAliases[identity.legacy] = identity.canonical }
       let asOf = scheme.navDate ?? parsed.periodTo ?? scheme.txns.last?.date ?? isoDay()
       let market = scheme.market ?? jsRound((scheme.units ?? 0) * (scheme.nav ?? 0) * 100)
       let cost = scheme.cost ?? scheme.txns.reduce(0) { $0 + $1.amount }
@@ -454,7 +465,7 @@ let cas = Adapter(
       minDue: nil,
       openingBalance: nil,
       closingBalance: nil)
-    return ParseBody(accounts: accounts, transactions: transactions, sips: sips, holdings: holdings, meta: [meta], warnings: warnings)
+    return ParseBody(accounts: accounts, transactions: transactions, sips: sips, holdings: holdings, meta: [meta], warnings: warnings, accountAliases: accountAliases)
   })
 
 private func gapDays(_ end: String, _ last: String) -> Double {
