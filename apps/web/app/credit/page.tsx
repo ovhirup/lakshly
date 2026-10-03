@@ -17,7 +17,7 @@ function CreditView() {
   return (
     <>
       <PageHeader title="Credit" subtitle="Utilisation, due dates and statement cycles"><PremiumBadge /></PageHeader>
-      <PremiumGate feature="Credit insights">
+      <PremiumGate feature="Credit insights" id="credit.insights">
         {cards.map((c) => {
           const tone = c.utilisation < 30 ? "up" : "down";
           return (

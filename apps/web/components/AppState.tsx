@@ -11,14 +11,12 @@ export type { AppearancePref, ThemeId };
 
 type Snapshot = {
   plan: Plan;
-  privacy: boolean;
   theme: ThemeId;
   appearance: AppearancePref;
   resolved: ResolvedAppearance;
 };
 
 type Ctx = Snapshot & {
-  setPrivacy: (hidden: boolean) => void;
   setPlan: (plan: Plan) => void;
   setTheme: (theme: ThemeId) => void;
   setAppearance: (appearance: AppearancePref) => void;
@@ -31,7 +29,7 @@ const AppCtx = createContext<Ctx | null>(null);
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((listener) => listener());
 
-const SERVER: Snapshot = { plan: "free", privacy: false, theme: "lakshmi", appearance: "system", resolved: "light" };
+const SERVER: Snapshot = { plan: "free", theme: "lakshmi", appearance: "system", resolved: "light" };
 let current: Snapshot = SERVER;
 let migrated = false;
 
@@ -85,8 +83,6 @@ function readStoredTheme(): ThemeId {
 function readSnapshot(): Snapshot {
   migrateAppearance();
   const plan = readPlan();
-  let privacy = false;
-  try { privacy = localStorage.getItem("lakshly.privacy") === "hidden"; } catch { /* optional preference */ }
   const storedAppearance = readAppearancePref();
   const root = document.documentElement;
   const painted = root.dataset.theme;
@@ -99,13 +95,13 @@ function readSnapshot(): Snapshot {
   if (!ephemeralTheme && isPremiumTheme(theme) && plan !== "premium") theme = "lakshmi";
   const ephemeralAppearance = root.dataset.appearanceEphemeral;
   if (ephemeralAppearance === "light" || ephemeralAppearance === "dark") {
-    return { plan, privacy, theme, appearance: ephemeralAppearance, resolved: ephemeralAppearance };
+    return { plan, theme, appearance: ephemeralAppearance, resolved: ephemeralAppearance };
   }
   if (storedAppearance === "light" || storedAppearance === "dark") {
-    return { plan, privacy, theme, appearance: storedAppearance, resolved: storedAppearance };
+    return { plan, theme, appearance: storedAppearance, resolved: storedAppearance };
   }
   const resolved: ResolvedAppearance = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  return { plan, privacy, theme, appearance: "system", resolved };
+  return { plan, theme, appearance: "system", resolved };
 }
 
 function publish() {
@@ -137,7 +133,6 @@ function getSnapshot(): Snapshot {
   const next = readSnapshot();
   if (
     current.plan === next.plan &&
-    current.privacy === next.privacy &&
     current.theme === next.theme &&
     current.appearance === next.appearance &&
     current.resolved === next.resolved
@@ -153,11 +148,6 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     const live = getSnapshot();
     applyDocumentTheme(live.theme, live.resolved);
   }, [snap]);
-
-  const setPrivacy = useCallback((hidden: boolean) => {
-    try { localStorage.setItem("lakshly.privacy", hidden ? "hidden" : "visible"); } catch { /* optional preference */ }
-    publish();
-  }, []);
 
   const setPlan = useCallback((plan: Plan) => {
     try { localStorage.setItem(PLAN_KEY, plan); } catch { /* ignore */ }
@@ -186,7 +176,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AppCtx.Provider value={{ ...snap, setPrivacy, setPlan, setTheme, setAppearance, toggleTheme }}>
+    <AppCtx.Provider value={{ ...snap, setPlan, setTheme, setAppearance, toggleTheme }}>
       {children}
     </AppCtx.Provider>
   );

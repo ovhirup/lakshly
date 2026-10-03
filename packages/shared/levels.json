@@ -1,0 +1,16 @@
+{
+  "_doc": "Shared XP level table for Lakshly (public web + Apple). XP only ever comes from good habits (reviews, budgets, badges); it can never be bought.",
+  "v": 1,
+  "levels": [
+    { "level": 1, "minXP": 0, "name": "Seed" },
+    { "level": 2, "minXP": 50, "name": "Sprout" },
+    { "level": 3, "minXP": 150, "name": "Bud" },
+    { "level": 4, "minXP": 300, "name": "Bloom" },
+    { "level": 5, "minXP": 500, "name": "Lotus" },
+    { "level": 6, "minXP": 800, "name": "Golden Lotus" },
+    { "level": 7, "minXP": 1200, "name": "Steady Hand" },
+    { "level": 8, "minXP": 1700, "name": "Money Sage" },
+    { "level": 9, "minXP": 2400, "name": "Lakshmi's Keeper" },
+    { "level": 10, "minXP": 3300, "name": "Every Rupee on Target" }
+  ]
+}

@@ -23,7 +23,7 @@ function InvestmentsView() {
   return (
     <>
       <PageHeader title="Investments & SIPs" subtitle="Holdings, active SIPs and an illustrative projection"><PremiumBadge /></PageHeader>
-      <PremiumGate feature="Investments & SIPs">
+      <PremiumGate feature="Investments & SIPs" id="investments.insights">
         <div className="grid g4">
           <Glass className="card"><Stat label="Holdings value" value={formatINR(value)} /></Glass>
           <Glass className="card"><Stat label="Monthly SIPs" value={formatINR(monthlySip)} hint={`${sips.length} active`} /></Glass>

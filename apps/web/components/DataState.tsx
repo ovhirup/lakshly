@@ -1,22 +1,22 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useState, useRef, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { emptyDataset, type MergeReport, type ParseResult } from "@lakshly/parsers";
+import { emptyDataset, mergeResult, type MergeReport, type ParseResult } from "@lakshly/parsers";
 import { dataset as demo } from "@/lib/data";
-import type { LakshlyDataset } from "@/lib/schema.gen";
+import type { Budget, LakshlyDataset } from "@/lib/schema.gen";
+import { budgetId } from "@/lib/setup-suggest";
+import type { SetupGoal } from "@/lib/setup";
 import { deleteVault, loadUserData, saveUserData, type UserData } from "@/lib/vault";
-import { initialSetup, setupReducer, type SetupAction, type SetupState, type SetupGoal, type BudgetLine } from "@lakshly/shared";
-import { emptyUser, mergeImport, reconcileImports } from "@/lib/setup-import";
-import { localToday, SETUP_FLAGS_KEY, writeSetupFlags } from "@/lib/setup-storage";
-import { useAppState } from "./AppState";
-import { limit } from "@/lib/entitlements";
-import { loadSetupDemo } from "@/lib/setup-demo";
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
+import { usePrivacy } from "./Privacy";
+import { useReviewStore, type ReviewApi } from "./useReview";
+import { overlayDecisions, type ReviewTxn } from "@/lib/review";
 import "./data-state.css";
 
 export type Source = "demo" | "mine";
 const SOURCE_KEY = "lakshly.source";
+const SETUP_FLAGS_KEY = "lk-setup-flags";
 
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
@@ -41,138 +41,92 @@ interface DataCtx {
   debts: NonNullable<LakshlyDataset["debts"]>;
   sips: NonNullable<LakshlyDataset["sips"]>;
   rewards: NonNullable<LakshlyDataset["rewards"]>;
-  setup: SetupState | undefined;
-  goals: SetupGoal[];
-  ephemeral: boolean;
-  storageError: string | null;
-  dispatchSetup: (action: SetupAction) => Promise<SetupState>;
-  saveBudgets: (lines: BudgetLine[]) => Promise<void>;
+  saveImport: (r: ParseResult, fileName: string, sourceId?: string) => Promise<MergeReport>;
+  /** Replace one month's budget lines in the user's own data (creates an empty dataset if needed). */
+  saveBudgets: (month: string, lines: { category: Budget["category"]; limit: number }[]) => Promise<void>;
   saveGoal: (goal: SetupGoal) => Promise<void>;
-  saveImport: (r: ParseResult, fileName: string) => Promise<MergeReport & { importId: string }>;
   deleteAll: () => Promise<void>;
+  /** Privacy mode is on: amounts render masked. Consumers re-render when it flips. */
+  masked: boolean;
+  /** Raw transactions before weekly-review decisions are applied (the review inbox reads these). */
+  rawTransactions: LakshlyDataset["transactions"];
+  review: ReviewApi;
 }
 const Ctx = createContext<DataCtx | null>(null);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
-  const { plan } = useAppState();
-  const loadError = useRef(false);
-  const storedSource = useSyncExternalStore(subscribe, readSource, () => "demo" as Source);
+  const source = useSyncExternalStore(subscribe, readSource, () => "demo" as Source);
   const [user, setUser] = useState<UserData | null>(null);
-  const userRef = useRef<UserData | null>(null);
-  const queue = useRef<Promise<unknown>>(Promise.resolve());
-  const ephemeralRef = useRef(false);
-  const [ephemeral, setEphemeral] = useState(false);
   const [ready, setReady] = useState(false);
-  const [storageError, setStorageError] = useState<string | null>(null);
+  const { masked } = usePrivacy();
 
   useEffect(() => {
     let alive = true;
-    async function load() {
-      try {
-        const preview = await loadSetupDemo(window.location.search);
-        const data = preview ? { ...emptyUser(), dataset: preview.dataset, setup: preview.setup } : await loadUserData();
-        if (!alive) return;
-        ephemeralRef.current = !!preview;
-        setEphemeral(!!preview);
-        userRef.current = data; setUser(data); setReady(true);
-      } catch {
-        if (alive) { loadError.current = true; setStorageError("This browser couldn't unlock the vault. Your stored data has not been changed."); setReady(true); }
-      }
-    }
-    void load();
+    loadUserData()
+      .then((u) => { if (alive) { setUser(u); setReady(true); } })
+      .catch(() => { if (alive) setReady(true); });
     return () => { alive = false; };
   }, []);
 
-  const setSource = useCallback((s: Source) => {
-    if (!ephemeralRef.current) localStorage.setItem(SOURCE_KEY, s);
-    emit();
-  }, []);
+  const setSource = useCallback((s: Source) => { localStorage.setItem(SOURCE_KEY, s); emit(); }, []);
 
-  const persist = useCallback(async (next: UserData) => {
-    if (!ephemeralRef.current) {
-      await saveUserData(next);
-      if (next.setup) { try { writeSetupFlags(localStorage, next.setup, { ...next.dataset, goals: next.goals }, localToday()); } catch { /* Non-secret hints are optional; vault save succeeded. */ } }
-    }
-    userRef.current = next;
+  const saveImport = useCallback(async (r: ParseResult, fileName: string, sourceId?: string) => {
+    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const { dataset, report } = mergeResult(base.dataset, r);
+    const ids = new Set(r.holdings.map((h) => h.accountId));
+    const known = new Set(base.dataset.transactions.map((t) => t.id));
+    const at = new Date().toISOString();
+    const importedAt = { ...(base.importedAt ?? {}) };
+    for (const t of dataset.transactions) if (!known.has(t.id) && !importedAt[t.id]) importedAt[t.id] = at;
+    const next: UserData = {
+      version: 1,
+      importedAt,
+      dataset,
+      holdings: [...base.holdings.filter((h) => !ids.has(h.accountId)), ...r.holdings],
+      statements: [...base.statements, ...r.meta],
+      imports: [...base.imports, { at: new Date().toISOString(), file: fileName.slice(0, 120), adapter: r.adapter, added: report.added, duplicates: report.duplicates, ...(sourceId ? { sourceId } : {}) }],
+      ...(base.goals ? { goals: base.goals } : {}),
+    };
+    await saveUserData(next);
     setUser(next);
-  }, []);
+    return report;
+  }, [user]);
 
-  // All encrypted mutations use the latest committed data, in order. A failed save does not
-  // prevent the next attempt, and never replaces the in-memory dataset with an unsaved one.
-  const mutate = useCallback(<T,>(operation: (base: UserData) => Promise<T>): Promise<T> => {
-    if (loadError.current) return Promise.reject(new Error("Unlock the existing vault before changing it."));
-    const work = queue.current.catch(() => undefined).then(() => operation(userRef.current ?? emptyUser()));
-    queue.current = work;
-    return work;
-  }, []);
+  const saveBudgets = useCallback(async (month: string, lines: { category: Budget["category"]; limit: number }[]) => {
+    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const others = (base.dataset.budgets ?? []).filter((b) => b.month !== month);
+    const fresh: Budget[] = lines.map((l) => ({ id: budgetId(month, l.category), month, category: l.category, limit: l.limit, rollover: false }));
+    const next: UserData = { ...base, dataset: { ...base.dataset, budgets: [...others, ...fresh] } };
+    await saveUserData(next);
+    setUser(next);
+  }, [user]);
 
-  const dispatchSetup = useCallback((action: SetupAction) => mutate(async base => {
-    const now = new Date().toISOString();
-    const today = ephemeralRef.current ? "2026-10-03" : localToday();
-    if (action.type === "addEmail" || action.type === "setEmail") {
-      const address = action.email.trim().toLowerCase();
-      const primary = action.type === "setEmail" ? address : base.setup?.email.primary ?? "";
-      const extra = action.type === "addEmail" ? [...(base.setup?.email.extra ?? []), address] : base.setup?.email.extra ?? [];
-      if (new Set([primary, ...extra].filter(Boolean)).size > limit("setup.extraEmails", plan)) throw new Error("Too many saved addresses.");
-    }
-    let setup = setupReducer(base.setup ?? initialSetup(now), { ...action,
-      dataset: { ...base.dataset, goals: base.goals }, today, platform: "web" }, now);
-    setup = reconcileImports(base, setup, now, today);
-    await persist({ ...base, setup });
-    if (action.type === "chooseMode") setSource(action.mode);
-    return setup;
-  }), [mutate, persist, setSource, plan]);
+  const saveGoal = useCallback(async (goal: SetupGoal) => {
+    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const next: UserData = { ...base, goals: [...(base.goals ?? []).filter((g) => g.kind !== goal.kind), goal] };
+    await saveUserData(next);
+    setUser(next);
+  }, [user]);
 
-  const saveBudgets = useCallback((lines: BudgetLine[]) => mutate(async base => {
-    const valid = lines.filter(l => Number.isSafeInteger(l.limit) && l.limit >= 0);
-    const month = ephemeralRef.current ? "2026-10" : localToday().slice(0, 7);
-    if (!valid.length || valid.some(l => l.month !== month)) throw new Error("Choose a valid budget for this month.");
-    const dataset = { ...base.dataset, budgets: [...(base.dataset.budgets ?? []).filter(b => b.month !== month), ...valid] } as UserData["dataset"];
-    const now = new Date().toISOString();
-    const setup = setupReducer(base.setup ?? initialSetup(now), { type: "acceptBudget", lines: valid, currentStep: base.setup?.currentStep,
-      dataset: { ...dataset, goals: base.goals }, today: `${month}-01`, platform: "web" }, now);
-    await persist({ ...base, dataset, setup });
-  }), [mutate, persist]);
 
-  const saveGoal = useCallback((goal: SetupGoal) => mutate(async base => {
-    if (base.goals?.length) return; // Setup creates at most one goal, on every plan.
-    if (!goal.name.trim() || !Number.isSafeInteger(goal.target) || goal.target <= 0 ||
-        !Number.isSafeInteger(goal.saved) || !Number.isSafeInteger(goal.monthly) || goal.saved < 0 || goal.monthly < 0) throw new Error("Choose valid goal amounts.");
-    const goals = [{ ...goal, createdBy: "setup" as const }];
-    const now = new Date().toISOString();
-    const setup = setupReducer(base.setup ?? initialSetup(now), { type: "acceptGoal", goal, currentStep: base.setup?.currentStep,
-      dataset: { ...base.dataset, goals }, today: ephemeralRef.current ? "2026-10-03" : localToday(), platform: "web" }, now);
-    await persist({ ...base, goals, setup });
-  }), [mutate, persist]);
-
-  const saveImport = useCallback((r: ParseResult, fileName: string) => mutate(async base => {
-    const now = new Date().toISOString();
-    const importId = `imp_${crypto.randomUUID().replaceAll("-", "")}`;
-    const { user: next, report } = mergeImport(base, r, fileName, now, importId);
-    if (base.setup) next.setup = reconcileImports(next, base.setup, now, ephemeralRef.current ? "2026-10-03" : localToday());
-    await persist(next);
-    return { ...report, importId };
-  }), [mutate, persist]);
-
+  const active: LakshlyDataset = useMemo(() => (source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo), [source, user]);
+  const review = useReviewStore(source, active.transactions as ReviewTxn[], demo, user?.importedAt);
+  const transactions = useMemo(() => overlayDecisions(active.transactions, review.state), [active, review.state]);
+  const { forgetAll } = review;
   const deleteAll = useCallback(async () => {
-    await queue.current.catch(() => undefined);
-    if (!ephemeralRef.current) {
-      await deleteVault();
-      localStorage.removeItem(SOURCE_KEY);
-      localStorage.removeItem(SETUP_FLAGS_KEY);
-    }
-    loadError.current = false; setStorageError(null);
-    userRef.current = null; setUser(null); emit();
-  }, []);
-
-  const source: Source = ephemeral ? (user?.setup?.mode ?? "mine") : storedSource;
-  const active: LakshlyDataset = source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo;
+    await deleteVault();
+    localStorage.removeItem(SOURCE_KEY);
+    localStorage.removeItem(SETUP_FLAGS_KEY);
+    setUser(null);
+    forgetAll();
+    emit();
+  }, [forgetAll]);
   const value: DataCtx = {
-    source, setSource, ready, user, saveImport, deleteAll, ephemeral, storageError,
-    setup: user?.setup, goals: user?.goals ?? [], dispatchSetup, saveBudgets, saveGoal,
+    source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,
     dataset: active,
     accounts: active.accounts,
-    transactions: active.transactions,
+    rawTransactions: active.transactions,
+    transactions,
     budgets: active.budgets ?? [],
     debts: active.debts ?? [],
     sips: active.sips ?? [],
@@ -209,8 +163,8 @@ export function DataGate({ title, need = ["transactions"], children }: { title: 
         <h2>Nothing here yet</h2>
         <p className="muted">Import a bank, credit-card or mutual fund (CAS) statement to fill this page. Parsing happens on this device; nothing is uploaded.</p>
         <div className="row-actions">
-          <Link className="btn primary" href="/import/">Import a statement</Link>
-          <Link className="btn ghost" href="/setup/">Guided setup</Link>
+          <Link className="btn primary" href="/setup/?step=resume">Guided setup</Link>
+          <Link className="btn ghost" href="/import/">Import a statement</Link>
           <button className="btn ghost" onClick={() => d.setSource("demo")}>View demo data</button>
         </div>
       </Glass>

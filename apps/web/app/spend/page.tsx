@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { AreaTrend, Donut } from "@/components/charts";
 import { MonthPicker } from "@/components/MonthPicker";
+import { ReviewChip } from "@/components/ReviewParts";
+import { NudgeCard } from "@/components/Game";
 import { Glass, PageHeader, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { formatDate, formatINR, formatMonth, titleCase } from "@/lib/format";
@@ -31,8 +33,12 @@ function SpendView() {
   return (
     <>
       <PageHeader title="Spend" subtitle={`${formatMonth(month)} · ${formatINR(total)} across ${cats.length} categories`}>
-        <MonthPicker months={all} value={month} onChange={(value) => { setMonth(value); setShowAll(false); }} />
+        <div className="spend-head-actions">
+          <ReviewChip />
+          <MonthPicker months={all} value={month} onChange={(value) => { setMonth(value); setShowAll(false); }} />
+        </div>
       </PageHeader>
+      <NudgeCard screen="spend" />
 
       <div className="grid g3">
         <Glass className="card">

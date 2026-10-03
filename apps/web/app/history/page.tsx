@@ -1,6 +1,6 @@
 "use client";
 import { AreaTrend } from "@/components/charts";
-import { useAppState } from "@/components/AppState";
+import { useTier } from "@/components/useTier";
 import { Glass, PageHeader, PremiumBadge, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { formatDate, formatINR } from "@/lib/format";
@@ -8,7 +8,8 @@ import { balanceHistory, monthlyCashflow } from "@/lib/selectors";
 
 function HistoryView() {
   const { accounts, transactions } = useData();
-  const { plan } = useAppState();
+  const { limit } = useTier();
+  const months = limit("history.full");
   const savings = accounts.find((a) => a.type === "savings") ?? accounts.find((a) => a.type === "current")!;
   const hist = balanceHistory(savings, transactions).map((p) => ({ ...p, label: formatDate(p.date).replace(/ \d{4}$/, "") }));
   const flow = monthlyCashflow(transactions);
@@ -16,8 +17,8 @@ function HistoryView() {
 
   return (
     <>
-      <PageHeader title="History" subtitle={plan === "free" ? "Free keeps 12 months of history" : "Unlimited history"}>
-        {plan === "free" ? <span className="badge">12 months</span> : <PremiumBadge />}
+      <PageHeader title="History" subtitle={months !== null ? `Free keeps ${months} months of history` : "Unlimited history"}>
+        {months !== null ? <span className="badge">{months} months</span> : <PremiumBadge />}
       </PageHeader>
       <div className="grid g3">
         <Glass className="card"><Stat label="Months tracked" value={String(flow.length)} /></Glass>

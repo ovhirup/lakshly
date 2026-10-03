@@ -2,7 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { AppStateProvider } from "@/components/AppState";
 import { Shell } from "@/components/Shell";
 import { DataProvider } from "@/components/DataState";
+import { SetupProvider } from "@/components/SetupState";
 import { themeBootScript } from "@/lib/themes";
+import { privacyBootScript } from "@/lib/privacy";
+import { PrivacyProvider } from "@/components/Privacy";
+import { GameProvider } from "@/components/Game";
 import "./themes.gen.css";
 import "./globals.css";
 
@@ -26,12 +30,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en-IN" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: privacyBootScript }} />
       </head>
       <body>
         <AppStateProvider>
-          <DataProvider>
-            <Shell>{children}</Shell>
-          </DataProvider>
+          <PrivacyProvider>
+            <DataProvider>
+              <SetupProvider>
+                <GameProvider><Shell>{children}</Shell></GameProvider>
+              </SetupProvider>
+            </DataProvider>
+          </PrivacyProvider>
         </AppStateProvider>
       </body>
     </html>

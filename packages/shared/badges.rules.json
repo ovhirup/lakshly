@@ -1,0 +1,94 @@
+{
+  "$comment": "Lakshly badges for the public apps. Hand-written for this repo. Badges reward money moving the right way; they never reward spending, trading, redemptions, logins or app time, are never revoked, and can't be bought. Amounts are paise.",
+  "version": 1,
+  "xp": { "weeklyCap": 80, "historyBonusCap": 250, "premiumCanBuy": false },
+  "defaults": {
+    "variableExcludes": ["income", "transfers", "investments", "emi", "rent", "insurance"],
+    "excludeTags": ["refund", "big-ticket"],
+    "baseline": { "method": "median", "months": 3, "minMonths": 2 }
+  },
+  "merchantSets": {
+    "food_delivery": { "category": "dining", "pattern": "swiggy|zomato|eatsure|delivery|biryani house|tiffin" }
+  },
+  "families": [
+    { "id": "budget", "label": "Budget & spending" },
+    { "id": "debt", "label": "Debt" },
+    { "id": "consistency", "label": "Consistency" },
+    { "id": "savings", "label": "Savings" },
+    { "id": "review", "label": "Weekly review" }
+  ],
+  "badges": [
+    {
+      "id": "under_budget", "name": "Under Budget", "family": "budget", "emoji": "🎯",
+      "tiers": [{ "tier": "bronze", "xp": 30, "params": { "n": 1 } }, { "tier": "silver", "xp": 60, "params": { "n": 3 } }, { "tier": "gold", "xp": 120, "params": { "n": 6 } }],
+      "rule": { "type": "consecutive_months_under_budget", "freezes": 1 },
+      "copy": { "rule": "Finish complete months with budgeted spending at or under your budgets ({n} in a row; one slip is forgiven).", "hint": "Keep budgeted categories under budget for a full month." }
+    },
+    {
+      "id": "category_tamer", "name": "Category Tamer", "family": "budget", "emoji": "🐢",
+      "tiers": [{ "tier": "bronze", "xp": 25, "params": { "factor": 0.85, "minBaseline": 100000 } }],
+      "rule": { "type": "category_tamer" },
+      "copy": { "rule": "In a complete month, bring one category to 85% or less of your usual while total variable spend stays at or under your usual.", "hint": "Spend 15% less than usual in one category, without overspending elsewhere." }
+    },
+    {
+      "id": "wants_whisperer", "name": "Wants Whisperer", "family": "budget", "emoji": "🤫",
+      "tiers": [{ "tier": "bronze", "xp": 25, "params": { "maxShare": 0.3 } }, { "tier": "silver", "xp": 40, "params": { "maxShare": 0.25 } }, { "tier": "gold", "xp": 60, "params": { "maxShare": 0.2 } }],
+      "rule": { "type": "share_of_spend", "nwv": "want", "minCount": 10 },
+      "copy": { "rule": "Wants are {maxSharePct} or less of a complete month's variable spend (with at least 10 Wants that month).", "hint": "Keep Wants to a smaller slice of the month." }
+    },
+    {
+      "id": "vice_free_fortnight", "name": "Vice-free Streak", "family": "budget", "emoji": "🕊️",
+      "tiers": [{ "tier": "bronze", "xp": 30, "params": { "days": 14 } }, { "tier": "silver", "xp": 40, "params": { "days": 30 } }, { "tier": "gold", "xp": 60, "params": { "days": 60 } }],
+      "rule": { "type": "zero_run_days", "match": { "nwv": "vice" }, "needsPriorMatch": true },
+      "copy": { "rule": "{days} days in a row with no spend tagged Vice (counted after your first Vice).", "hint": "Tag Vices in the weekly review, then keep a run going." }
+    },
+    {
+      "id": "no_delivery_week", "name": "No-Delivery Week", "family": "budget", "emoji": "🍲",
+      "tiers": [{ "tier": "bronze", "xp": 20, "params": { "days": 7 } }, { "tier": "silver", "xp": 30, "params": { "days": 14 } }, { "tier": "gold", "xp": 50, "params": { "days": 30 } }],
+      "rule": { "type": "zero_run_days", "match": { "set": "food_delivery" }, "needsPriorMatch": false },
+      "copy": { "rule": "{days} days in a row with no food-delivery orders.", "hint": "Cook in or eat out, just skip delivery apps for a stretch." }
+    },
+    {
+      "id": "emi_on_time", "name": "EMI on Time", "family": "debt", "emoji": "⏱️",
+      "tiers": [{ "tier": "bronze", "xp": 20, "params": { "n": 3 } }, { "tier": "silver", "xp": 40, "params": { "n": 6 } }, { "tier": "gold", "xp": 80, "params": { "n": 12 } }],
+      "rule": { "type": "on_time_instalments", "tolerancePct": 2, "lookbackDays": 31 },
+      "copy": { "rule": "{n} instalments in a row paid on or before the due date (within 2% of the EMI).", "hint": "Pay each EMI on or before its due date." }
+    },
+    {
+      "id": "slice_cleared", "name": "Slice Cleared", "family": "debt", "emoji": "🧩", "perEntity": true,
+      "tiers": [{ "tier": "bronze", "xp": 25, "params": { "pct": 10 } }, { "tier": "silver", "xp": 25, "params": { "pct": 25 } }, { "tier": "gold", "xp": 25, "params": { "pct": 50 } }],
+      "rule": { "type": "debt_repaid_pct" },
+      "copy": { "rule": "Repay {pct}% of a loan's principal.", "hint": "Every EMI clears another slice of the principal." }
+    },
+    {
+      "id": "debt_free", "name": "Debt Free", "family": "debt", "emoji": "🎉", "perEntity": true,
+      "tiers": [{ "tier": "bronze", "xp": 100, "params": {} }],
+      "rule": { "type": "debt_closed" },
+      "copy": { "rule": "A loan's outstanding reaches zero.", "hint": "Close out a loan completely." }
+    },
+    {
+      "id": "sip_steady", "name": "SIP Steady", "family": "consistency", "emoji": "🌱",
+      "tiers": [{ "tier": "bronze", "xp": 20, "params": { "n": 3, "freezes": 0 } }, { "tier": "silver", "xp": 40, "params": { "n": 6, "freezes": 1 } }, { "tier": "gold", "xp": 80, "params": { "n": 12, "freezes": 1 } }],
+      "rule": { "type": "sip_months", "windowDays": 5 },
+      "copy": { "rule": "{n} months in a row where every active SIP went through within 5 days of its date. Amounts never matter.", "hint": "Let every active SIP run each month." }
+    },
+    {
+      "id": "emergency_ready", "name": "Emergency Ready", "family": "savings", "emoji": "🛟",
+      "tiers": [{ "tier": "bronze", "xp": 30, "params": { "months": 1 } }, { "tier": "silver", "xp": 60, "params": { "months": 3 } }, { "tier": "gold", "xp": 120, "params": { "months": 6 } }],
+      "rule": { "type": "emergency_months" },
+      "copy": { "rule": "Savings, current, cash and fixed deposits cover {months} months of your typical total spend.", "hint": "Build a cushion of easy-to-reach money." }
+    },
+    {
+      "id": "pay_yourself_first", "name": "Pay Yourself First", "family": "savings", "emoji": "🥇",
+      "tiers": [{ "tier": "bronze", "xp": 30, "params": { "n": 3, "withinDays": 3, "salaryMin": 1000000 } }],
+      "rule": { "type": "pay_yourself_first" },
+      "copy": { "rule": "3 months in a row where an investment goes out within 3 days of your salary landing.", "hint": "Move your SIP date to just after payday." }
+    },
+    {
+      "id": "inbox_zero", "name": "Inbox Zero", "family": "review", "emoji": "📥",
+      "tiers": [{ "tier": "bronze", "xp": 20, "params": { "n": 4 } }, { "tier": "silver", "xp": 40, "params": { "n": 12 } }, { "tier": "gold", "xp": 80, "params": { "n": 26 } }],
+      "rule": { "type": "cleared_weeks" },
+      "copy": { "rule": "Clear the weekly review {n} times.", "hint": "Finish a weekly review." }
+    }
+  ]
+}
