@@ -87,6 +87,7 @@ export function assertAllowedGmailUrl(url: string, allowedQueries: readonly stri
     if (!q || !allowedQueries.includes(q)) throw new Error("Blocked: search must be built from the finance catalog");
     return;
   }
+  if (path === "/profile") return; // access check on connect: mailbox address only, no mail content
   if (/^\/messages\/[A-Za-z0-9_-]+$/.test(path) || /^\/messages\/[A-Za-z0-9_-]+\/attachments\/[A-Za-z0-9_-]+$/.test(path)) return;
   throw new Error("Blocked: endpoint not allowed");
 }
@@ -95,7 +96,7 @@ export function assertAllowedGmailUrl(url: string, allowedQueries: readonly stri
 export interface GmailPart { partId?: string; mimeType?: string; filename?: string; headers?: { name: string; value: string }[]; body?: { attachmentId?: string; size?: number; data?: string }; parts?: GmailPart[] }
 export interface GmailMessage { id: string; threadId?: string; internalDate?: string; payload?: GmailPart; snippet?: string }
 export interface FoundMessage { id: string; sourceId: string; searchId: string; from: string; subject: string; date: string }
-export interface ReadLogEntry { at: string; action: "search" | "headers" | "attachment" | "skipped" | "revoked"; detail: string; sourceId?: string }
+export interface ReadLogEntry { at: string; action: "search" | "headers" | "attachment" | "skipped" | "revoked" | "error" | "check"; detail: string; sourceId?: string }
 export interface StatementFile { name: string; mimeType: string; bytes: Uint8Array }
 
 export type FetchLike = (url: string, init?: { method?: string; headers?: Record<string, string> }) => Promise<{ ok: boolean; status: number; json: () => Promise<unknown> }>;
@@ -110,6 +111,45 @@ export function statementParts(part: GmailPart | undefined): GmailPart[] {
   return [...here, ...(part.parts ?? []).flatMap(statementParts)];
 }
 
+/** Why a Gmail API call failed. kind drives the UI: "denied" = re-ask the user, "api-disabled" = fix in Google Cloud. */
+export type GmailErrorKind = "expired" | "denied" | "api-disabled" | "rate-limited" | "other";
+export class GmailApiError extends Error {
+  constructor(message: string, readonly status: number, readonly kind: GmailErrorKind, readonly reason?: string) { super(message); this.name = "GmailApiError"; }
+}
+
+/** Maps a Gmail API error (status + Google JSON error body) to a precise, user-facing error. */
+export function gmailApiError(status: number, body: unknown): GmailApiError {
+  const e = (body as { error?: { message?: string; status?: string; errors?: { reason?: string }[]; details?: { reason?: string }[] } } | null)?.error;
+  const reasons = [e?.status, ...(e?.errors ?? []).map((x) => x.reason), ...(e?.details ?? []).map((x) => x.reason)].filter(Boolean) as string[];
+  const has = (...r: string[]) => reasons.some((x) => r.includes(x));
+  const reason = reasons.find((x) => x !== "PERMISSION_DENIED") ?? reasons[0];
+  if (status === 401) return new GmailApiError("Gmail session expired. Connect again.", status, "expired", reason);
+  if (has("accessNotConfigured", "SERVICE_DISABLED") || /has not been used in project|is disabled/i.test(e?.message ?? ""))
+    return new GmailApiError("Google accepted the connection, but the Gmail API is switched off for Lakshly's Google Cloud project. This is on our side, not yours; we're fixing it.", status, "api-disabled", reason ?? "accessNotConfigured");
+  if (has("rateLimitExceeded", "userRateLimitExceeded", "RATE_LIMIT_EXCEEDED", "RESOURCE_EXHAUSTED") || status === 429)
+    return new GmailApiError("Google is rate-limiting Gmail requests. Wait a minute and try again.", status, "rate-limited", reason);
+  if (status === 403) return new GmailApiError("Gmail read access wasn't granted. Try again and tick the Gmail box on Google's screen.", status, "denied", reason ?? "insufficientPermissions");
+  return new GmailApiError(`Gmail error ${status}${e?.message ? `: ${e.message}` : ""}`, status, "other", reason);
+}
+
+export interface TokenResponseLike { access_token?: string; expires_in?: number; scope?: string; error?: string; error_description?: string }
+export type TokenOutcome = { ok: true; token: string; expiresIn: number } | { ok: false; kind: "denied" | "closed" | "error"; message: string };
+
+/** Decides whether a GIS token response really grants gmail.readonly. Only ok:true may mark Gmail as connected. */
+export function interpretTokenResponse(resp: TokenResponseLike, hasGrantedAllScopes: (r: TokenResponseLike, ...s: string[]) => boolean): TokenOutcome {
+  if (resp.error === "access_denied") return { ok: false, kind: "denied", message: "You didn't give Lakshly Gmail access. Nothing was read." };
+  if (resp.error || !resp.access_token) return { ok: false, kind: "error", message: resp.error_description || resp.error || "Google didn't return access." };
+  if (!hasGrantedAllScopes(resp, GMAIL_SCOPE)) return { ok: false, kind: "denied", message: "Gmail read access wasn't granted. On Google's screen, tick \u201cView your email messages and settings\u201d, then continue." };
+  return { ok: true, token: resp.access_token, expiresIn: resp.expires_in ?? 3600 };
+}
+
+/** GIS error_callback (popup closed/blocked) is not a denial: the user can simply try again. */
+export function interpretPopupError(e: { type?: string; message?: string }): TokenOutcome {
+  if (e.type === "popup_closed") return { ok: false, kind: "closed", message: "The Google window was closed before Gmail access was given." };
+  if (e.type === "popup_failed_to_open") return { ok: false, kind: "closed", message: "Your browser blocked Google's window. Allow pop-ups for this site and try again." };
+  return { ok: false, kind: "error", message: e.message || "Google didn't connect." };
+}
+
 export class GmailClient {
   readonly log: ReadLogEntry[] = [];
   private readonly allowed: string[];
@@ -120,8 +160,22 @@ export class GmailClient {
   private async get<T>(url: string): Promise<T> {
     assertAllowedGmailUrl(url, this.allowed);
     const r = await this.fetchImpl(url, { headers: { Authorization: `Bearer ${this.token}` } });
-    if (!r.ok) throw new Error(r.status === 401 ? "Gmail session expired. Connect again." : r.status === 403 ? "Gmail access was not granted." : `Gmail error ${r.status}`);
+    if (!r.ok) {
+      let body: unknown = null;
+      try { body = await r.json(); } catch { /* no JSON body */ }
+      const err = gmailApiError(r.status, body);
+      this.note("error", `Gmail API ${r.status}${err.reason ? ` (${err.reason})` : ""}: ${err.message}`);
+      throw err;
+    }
     return (await r.json()) as T;
+  }
+
+  /** Confirms the token really works for Gmail before the UI says "connected". Returns the mailbox address. */
+  async verifyAccess(): Promise<string> {
+    const p = await this.get<{ emailAddress?: string }>(`${GMAIL_API}/profile`);
+    const email = (p.emailAddress ?? "").toLowerCase();
+    this.note("check", `Gmail read-only access confirmed for ${email || "this mailbox"} (no mail read)`);
+    return email;
   }
 
   /** Searches each picked finance source (statements only), then reads headers to re-check the sender. */

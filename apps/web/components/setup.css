@@ -158,3 +158,6 @@ button.link { border: 0; background: none; padding: 0; color: var(--lk-gold-text
 .log-tag { display: inline-block; min-width: 76px; font-size: .68rem; font-weight: 750; text-transform: uppercase; letter-spacing: .05em; color: var(--lk-text-muted); }
 .log-tag.attachment { color: var(--lk-gold-text); } .log-tag.skipped { color: var(--lk-danger); } .log-tag.revoked { color: var(--lk-success); }
 .spinner.small { width: 12px; height: 12px; display: inline-block; vertical-align: -2px; }
+.log-tag.error { color: var(--lk-danger); } .log-tag.check { color: var(--lk-success); }
+.gmail-error { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.gmail-error p { margin: 0; flex: 1 1 220px; }

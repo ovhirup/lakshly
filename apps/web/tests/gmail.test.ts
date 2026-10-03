@@ -1,7 +1,7 @@
 // Gmail connect: allow-list, ID-token decoding and the client against a mocked (synthetic) Gmail API.
 import { describe, expect, it } from "vitest";
 import {
-  assertAllowedGmailUrl, decodeIdToken, financeSources, fromAddress, GMAIL_API, GmailClient, GOOGLE_CLIENT_ID_DEFAULT, revokeToken,
+  assertAllowedGmailUrl, decodeIdToken, financeSources, fromAddress, GMAIL_API, GMAIL_SCOPE, GmailApiError, gmailApiError, interpretPopupError, interpretTokenResponse, GmailClient, GOOGLE_CLIENT_ID_DEFAULT, revokeToken,
   senderAllowed, senderDomains, statementParts, statementQueries, type FetchLike,
 } from "../lib/gmail";
 import { findSource } from "../lib/setup";
@@ -46,6 +46,8 @@ describe("allow-list", () => {
     expect(() => assertAllowedGmailUrl(`${GMAIL_API}/messages/abc/modify`, [q])).toThrow();
     expect(() => assertAllowedGmailUrl(`${GMAIL_API}/threads`, [q])).toThrow();
     expect(() => assertAllowedGmailUrl(`${GMAIL_API}/history`, [q])).toThrow();
+    expect(() => assertAllowedGmailUrl(`${GMAIL_API}/profile`, [q])).not.toThrow();
+    expect(() => assertAllowedGmailUrl(`${GMAIL_API}/settings/filters`, [q])).toThrow();
     expect(() => assertAllowedGmailUrl("https://evil.example/gmail/v1/users/me/messages/abc", [q])).toThrow();
   });
 });
@@ -111,5 +113,49 @@ describe("GmailClient with a mocked API (synthetic mail)", () => {
     expect(await revokeToken("ya29.synthetic", async (url, init) => { seen.push({ url, method: init?.method }); return { ok: true, status: 200, json: async () => ({}) }; })).toBe(true);
     expect(seen[0].url.startsWith("https://oauth2.googleapis.com/revoke?token=")).toBe(true);
     expect(seen[0].method).toBe("POST");
+  });
+});
+
+describe("grant + error handling (connect bug: 'Gmail access was not granted.' while shown as connected)", () => {
+  const granted = (r: { scope?: string }, ...s: string[]) => s.every((x) => (r.scope ?? "").split(" ").includes(x));
+  it("connects only when gmail.readonly is actually granted", () => {
+    expect(GMAIL_SCOPE).toBe("https://www.googleapis.com/auth/gmail.readonly");
+    expect(interpretTokenResponse({ access_token: "ya29.x", expires_in: 3599, scope: `openid email ${GMAIL_SCOPE}` }, granted)).toEqual({ ok: true, token: "ya29.x", expiresIn: 3599 });
+    // Granular consent with the Gmail box unticked: a token comes back, but without the scope.
+    const unticked = interpretTokenResponse({ access_token: "ya29.x", scope: "openid email profile" }, granted);
+    expect(unticked).toMatchObject({ ok: false, kind: "denied" });
+    expect(interpretTokenResponse({ error: "access_denied" }, granted)).toMatchObject({ ok: false, kind: "denied" });
+    expect(interpretTokenResponse({}, granted)).toMatchObject({ ok: false, kind: "error" });
+  });
+  it("a closed or blocked popup is not a denial", () => {
+    expect(interpretPopupError({ type: "popup_closed" })).toMatchObject({ ok: false, kind: "closed" });
+    expect(interpretPopupError({ type: "popup_failed_to_open" }).ok).toBe(false);
+    expect(interpretPopupError({ type: "popup_failed_to_open" })).toMatchObject({ kind: "closed", message: expect.stringMatching(/pop-ups/) });
+  });
+  it("tells a disabled Gmail API apart from a missing grant", () => {
+    const disabled = gmailApiError(403, { error: { code: 403, status: "PERMISSION_DENIED", message: "Gmail API has not been used in project 285824172297 before or it is disabled.", errors: [{ reason: "accessNotConfigured" }], details: [{ reason: "SERVICE_DISABLED" }] } });
+    expect(disabled).toMatchObject({ kind: "api-disabled", status: 403 });
+    expect(disabled.message).not.toMatch(/wasn't granted|not granted/);
+    expect(gmailApiError(403, { error: { status: "PERMISSION_DENIED", message: "Request had insufficient authentication scopes.", errors: [{ reason: "insufficientPermissions" }], details: [{ reason: "ACCESS_TOKEN_SCOPE_INSUFFICIENT" }] } })).toMatchObject({ kind: "denied" });
+    expect(gmailApiError(401, {})).toMatchObject({ kind: "expired" });
+    expect(gmailApiError(429, { error: { errors: [{ reason: "rateLimitExceeded" }] } })).toMatchObject({ kind: "rate-limited" });
+    expect(gmailApiError(500, null)).toMatchObject({ kind: "other" });
+  });
+  it("verifyAccess confirms via /profile only and logs failures in the read log", async () => {
+    const calls: string[] = [];
+    const ok = new GmailClient("ya29.synthetic", [hdfc], async (u) => { calls.push(u); return { ok: true, status: 200, json: async () => ({ emailAddress: "Tester@Gmail.com", messagesTotal: 1 }) }; });
+    expect(await ok.verifyAccess()).toBe("tester@gmail.com");
+    expect(calls).toEqual([`${GMAIL_API}/profile`]);
+    expect(ok.log.map((e) => e.action)).toEqual(["check"]);
+    const bad = new GmailClient("ya29.synthetic", [hdfc], async () => ({ ok: false, status: 403, json: async () => ({ error: { errors: [{ reason: "accessNotConfigured" }], message: "Gmail API has not been used in project 1 before or it is disabled." } }) }));
+    await expect(bad.verifyAccess()).rejects.toBeInstanceOf(GmailApiError);
+    expect(bad.log).toHaveLength(1);
+    expect(bad.log[0]).toMatchObject({ action: "error" });
+    expect(bad.log[0].detail).toMatch(/403.*accessNotConfigured/);
+  });
+  it("a 403 during search is logged, not silent", async () => {
+    const c = new GmailClient("ya29.synthetic", [hdfc], async () => ({ ok: false, status: 403, json: async () => ({ error: { errors: [{ reason: "insufficientPermissions" }] } }) }));
+    await expect(c.findStatements()).rejects.toMatchObject({ kind: "denied" });
+    expect(c.log.map((e) => e.action)).toEqual(["error"]);
   });
 });

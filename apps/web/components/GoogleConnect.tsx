@@ -4,7 +4,7 @@
 // Gmail is called directly from the browser, and nothing goes to Lakshly's servers.
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { GOOGLE_CLIENT_ID } from "@/lib/edition";
-import { decodeIdToken, financeSources, GMAIL_SCOPE, GmailClient, revokeToken, senderDomains, type FoundMessage, type GoogleIdentity, type ReadLogEntry } from "@/lib/gmail";
+import { decodeIdToken, financeSources, GMAIL_SCOPE, GmailApiError, GmailClient, interpretPopupError, interpretTokenResponse, revokeToken, senderDomains, type FoundMessage, type GoogleIdentity, type ReadLogEntry } from "@/lib/gmail";
 import { CATALOG } from "@/lib/sources.gen";
 import { formatDate } from "@/lib/format";
 import { Glass } from "./ui";
@@ -42,8 +42,9 @@ export function loadGis(): Promise<Gis> {
 }
 
 /* ───────── in-memory store (never persisted) ───────── */
-interface GState { identity: GoogleIdentity | null; token: string | null; expiresAt: number; email: string | null; log: ReadLogEntry[]; found: FoundMessage[] | null; busy: string | null; error: string | null }
-let st: GState = { identity: null, token: null, expiresAt: 0, email: null, log: [], found: null, busy: null, error: null };
+/** retry: show "Try again" (re-prompts with prompt:'consent') after a denial, a closed popup or a Gmail 403. */
+interface GState { identity: GoogleIdentity | null; token: string | null; expiresAt: number; email: string | null; log: ReadLogEntry[]; found: FoundMessage[] | null; busy: string | null; error: string | null; retry: boolean }
+let st: GState = { identity: null, token: null, expiresAt: 0, email: null, log: [], found: null, busy: null, error: null, retry: false };
 let client: GmailClient | null = null;
 const subs = new Set<() => void>();
 const set = (patch: Partial<GState>) => { st = { ...st, ...patch }; subs.forEach((l) => l()); };
@@ -96,28 +97,48 @@ export function SignInWithGoogle({ onIdentity }: { onIdentity?: (id: GoogleIdent
 }
 
 /* ───────── Gmail connect ───────── */
-export async function connectGmail(loginHint: string | undefined, picked: readonly string[]): Promise<void> {
-  set({ busy: "Waiting for Google…", error: null });
+/** Requests gmail.readonly. "Connected" (token set) only after Google grants the scope AND Gmail answers a profile check. */
+export async function connectGmail(loginHint: string | undefined, picked: readonly string[], opts: { consent?: boolean } = {}): Promise<void> {
+  set({ busy: "Waiting for Google…", error: null, retry: false });
   try {
     const gis = await loadGis();
-    const resp = await new Promise<TokenResponse>((resolve, reject) => {
+    const outcome = await new Promise<ReturnType<typeof interpretTokenResponse>>((resolve) => {
       const tc = gis.accounts.oauth2.initTokenClient({
         client_id: GOOGLE_CLIENT_ID, scope: GMAIL_SCOPE, include_granted_scopes: true, ...(loginHint ? { login_hint: loginHint } : {}),
-        callback: (r: TokenResponse) => resolve(r),
-        error_callback: (e: { type?: string; message?: string }) => reject(new Error(e.type === "popup_closed" ? "The Google window was closed." : e.message || "Google didn't connect.")),
+        callback: (r: TokenResponse) => resolve(interpretTokenResponse(r, (x, ...s) => gis.accounts.oauth2.hasGrantedAllScopes(x, ...s))),
+        error_callback: (e: { type?: string; message?: string }) => resolve(interpretPopupError(e)),
       });
-      tc.requestAccessToken({ prompt: "" });
+      // Try again forces Google's consent screen so the Gmail checkbox is shown (and can be ticked) again.
+      tc.requestAccessToken({ prompt: opts.consent ? "consent" : "" });
     });
-    if (resp.error || !resp.access_token) throw new Error(resp.error_description || resp.error || "Google didn't return access.");
-    if (!gis.accounts.oauth2.hasGrantedAllScopes(resp, GMAIL_SCOPE)) throw new Error("Gmail read access wasn't granted. Tick the Gmail box on Google's screen to connect.");
-    client = new GmailClient(resp.access_token, financeSources(picked));
-    const ttl = (resp.expires_in ?? 3600) * 1000;
-    const tok = resp.access_token;
-    window.setTimeout(() => { if (st.token === tok) { client?.forgetToken(); client = null; set({ token: null, found: null, error: "Gmail access ended after an hour (Google's limit). Connect again to keep going." }); } }, ttl);
-    set({ token: resp.access_token, expiresAt: Date.now() + (resp.expires_in ?? 3600) * 1000, email: loginHint ?? null, busy: null, found: null, log: [] });
+    if (!outcome.ok) { set({ busy: null, error: outcome.message, retry: true }); return; }
+    const c = new GmailClient(outcome.token, financeSources(picked));
+    set({ busy: "Checking Gmail access…" });
+    let mailbox: string;
+    try { mailbox = await c.verifyAccess(); }
+    catch (e) {
+      c.forgetToken();
+      const err = e as GmailApiError;
+      set({ busy: null, error: err.message, retry: err.kind !== "api-disabled", log: [...c.log] });
+      return;
+    }
+    client = c;
+    const tok = outcome.token;
+    const ttl = outcome.expiresIn * 1000;
+    window.setTimeout(() => { if (st.token === tok) { client?.forgetToken(); client = null; set({ token: null, found: null, retry: true, error: "Gmail access ended after an hour (Google's limit). Connect again to keep going." }); } }, ttl);
+    set({ token: tok, expiresAt: Date.now() + ttl, email: mailbox || loginHint || null, busy: null, found: null, error: null, retry: false, log: [...c.log] });
   } catch (e) {
-    set({ busy: null, error: (e as Error).message });
+    set({ busy: null, error: (e as Error).message, retry: true });
   }
+}
+
+/** A Gmail 403/401 after connecting means the access is gone: drop it and offer Try again. */
+function onGmailFailure(e: unknown) {
+  const kind = e instanceof GmailApiError ? e.kind : "other";
+  if (kind === "denied" || kind === "expired") {
+    client?.forgetToken(); const log = logNow(); client = null;
+    set({ token: null, found: null, busy: null, error: (e as Error).message, retry: true, log });
+  } else set({ busy: null, error: (e as Error).message, log: logNow() });
 }
 
 export async function disconnectGmail(): Promise<void> {
@@ -125,7 +146,7 @@ export async function disconnectGmail(): Promise<void> {
   client?.forgetToken();
   const log = [...logNow(), { at: new Date().toISOString(), action: "revoked" as const, detail: "Access revoked at Google and removed from this browser" }];
   client = null;
-  set({ token: null, expiresAt: 0, found: null, busy: null, log });
+  set({ token: null, expiresAt: 0, found: null, busy: null, error: null, retry: false, log });
   if (!token) return;
   const gis = window.google?.accounts?.oauth2;
   if (gis) gis.revoke(token); else await revokeToken(token);
@@ -149,7 +170,7 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
     if (!client) return;
     set({ busy: "Searching finance senders…", error: null });
     try { const found = await client.findStatements(5); set({ found, busy: null, log: logNow() }); }
-    catch (e) { set({ busy: null, error: (e as Error).message, log: logNow() }); }
+    catch (e) { onGmailFailure(e); }
   }
   async function fetchOne(m: FoundMessage) {
     if (!client) return;
@@ -160,7 +181,7 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
       if (!files.length) { set({ error: "That email has no PDF or CSV statement attached." }); return; }
       const f = files[0];
       setIncoming({ file: new File([f.bytes.slice().buffer as ArrayBuffer], f.name, { type: f.mimeType }), sourceId: m.sourceId });
-    } catch (e) { set({ busy: null, error: (e as Error).message, log: logNow() }); }
+    } catch (e) { onGmailFailure(e); }
   }
 
   return (
@@ -231,8 +252,13 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
         </div>
       )}
       {g.busy && <p className="tiny muted" role="status"><span className="spinner small" aria-hidden="true" /> {g.busy}</p>}
-      {g.error && <p className="tiny down" role="alert">{g.error}</p>}
-      {!connected && g.log.length > 0 && <p className="tiny muted">Disconnected. Access was revoked at Google.</p>}
+      {g.error && (
+        <div className="gmail-error" role="alert" data-testid="gmail-error">
+          <p className="tiny down">{g.error}</p>
+          {g.retry && !connected && <button className="btn primary small" disabled={!!g.busy} onClick={() => void connectGmail(hint, picked, { consent: true })} data-testid="gmail-retry">Try again</button>}
+        </div>
+      )}
+      {!connected && g.log.some((e) => e.action === "revoked") && !g.error && <p className="tiny muted">Disconnected. Access was revoked at Google.</p>}
       {toast && <p className="tiny up" role="status">{toast}</p>}
     </Glass>
   );
