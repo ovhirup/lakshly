@@ -21,6 +21,10 @@ enum Feature: String, CaseIterable, Sendable {
   case investmentInsights
   case rewardsInsights
   case priorityFeedback
+  /// Home Screen, desktop and Lock Screen widgets that ship with Lakshly Free.
+  case basicWidgets
+  /// Net worth and debt widgets.
+  case extraWidgets
 }
 
 enum PremiumProduct {
@@ -37,6 +41,8 @@ struct EntitlementsMap {
     .investmentInsights: .premium,
     .rewardsInsights: .premium,
     .priorityFeedback: .premium,
+    .basicWidgets: .free,
+    .extraWidgets: .premium,
   ]
 }
 
