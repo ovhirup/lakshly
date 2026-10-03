@@ -303,7 +303,10 @@ html[data-edition="beta"][data-mood] .feedback-fab { background: linear-gradient
 .feedback-fab:hover { transform: translateY(-1px); }
 .feedback-fab:focus-visible { outline: 3px solid var(--lk-focus); outline-offset: 3px; }
 @media (max-width: 860px) {
-  .feedback-fab { right: 16px; bottom: calc(var(--lk-tab-height) + 28px + env(safe-area-inset-bottom)); min-height: 44px; padding: 0 14px 0 12px; font-size: .82rem; }
+  /* Compact round button clear of the tab bar + safe area; content gets matching bottom room so nothing ends under it. */
+  .feedback-fab { right: max(6px, env(safe-area-inset-right)); bottom: calc(12px + var(--lk-tab-height) + 12px + env(safe-area-inset-bottom)); width: 46px; height: 46px; min-height: 0; padding: 0; justify-content: center; }
+  .feedback-fab span { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  html[data-edition="beta"] .content { padding-bottom: calc(var(--lk-tab-height) + 44px + 66px + env(safe-area-inset-bottom)); }
   .beta-ribbon { width: 74px; height: 74px; }
   .beta-ribbon span { top: 12px; left: -34px; font-size: .6rem; }
 }

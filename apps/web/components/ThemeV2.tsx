@@ -106,7 +106,7 @@ function Waves() {
 export function MoodArt({ mood, dark }: { mood: Mood; dark: boolean }) {
   const art = moodById(mood).art;
   return (
-    <div className={`mood-canvas art-${art} ${dark ? "dark" : "light"}`} aria-hidden="true">
+    <div className={`mood-canvas mood-art-${art} ${dark ? "dark" : "light"}`} aria-hidden="true">
       {art === "lotus" && <LotusArt />}
       {art === "contour" && <ContourArt />}
       {art === "discs" && <DiscArt />}
