@@ -26,7 +26,21 @@ export function render(json) {
   ].join("\n");
 }
 
+/** Setup wizard sources catalog (hand-written, public sender domains + format hints only). */
+export function renderSources(json) {
+  const data = JSON.parse(json);
+  delete data.$comment;
+  return [
+    "/* Generated from packages/shared/setup/sources.json by scripts/gen-entitlements.mjs. Do not edit. */",
+    'import type { SourcesCatalog } from "./setup-types";',
+    "",
+    `export const CATALOG: SourcesCatalog = ${JSON.stringify(data, null, 2)};`,
+    "",
+  ].join("\n");
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   writeFileSync(dest, render(readFileSync(src, "utf8")));
-  console.log("generated lib/entitlements.gen.ts");
+  writeFileSync(resolve(here, "../lib/sources.gen.ts"), renderSources(readFileSync(resolve(here, "../../../packages/shared/setup/sources.json"), "utf8")));
+  console.log("generated lib/entitlements.gen.ts, lib/sources.gen.ts");
 }

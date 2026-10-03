@@ -15,12 +15,23 @@
     "data.export": { "minTier": "free", "label": "Export your own data" },
     "themes.premium": { "minTier": "premium", "label": "3 extra themes" },
     "budgets.unlimited": { "minTier": "premium", "label": "Unlimited budgets", "limits": { "free": 1, "premium": null } },
+    "budgets.lines": { "minTier": "free", "label": "Budget category lines per budget", "limits": { "free": 6, "premium": null } },
     "history.full": { "minTier": "premium", "label": "Unlimited history", "limits": { "free": 12, "premium": null } },
     "debt.planner": { "minTier": "premium", "label": "Debt planner and payoff what-ifs" },
     "credit.insights": { "minTier": "premium", "label": "Credit insights" },
     "investments.insights": { "minTier": "premium", "label": "Investment insights" },
     "rewards.tracking": { "minTier": "premium", "label": "Rewards tracking" },
-    "priorityFeedback": { "minTier": "premium", "label": "Priority feature requests" }
+    "priorityFeedback": { "minTier": "premium", "label": "Priority feature requests" },
+    "setup.wizard": { "minTier": "free", "label": "Guided setup" },
+    "setup.emailGuide": { "minTier": "free", "label": "Email search guide for statements" },
+    "setup.extraEmails": { "minTier": "free", "label": "Extra email addresses in the search guide", "limits": { "free": 3, "premium": 10 } },
+    "setup.suggestions": { "minTier": "free", "label": "Suggested budget and first goal" },
+    "setup.health": { "minTier": "free", "label": "Setup health and freshness" },
+    "setup.freshnessReminders": { "minTier": "premium", "label": "Statement freshness reminders" },
+    "mailSync.connect": { "minTier": "free", "label": "Automatic read-only statement sync", "limits": { "free": 1, "premium": 5 } },
+    "mailSync.imap": { "minTier": "free", "label": "IMAP mailbox sync (Apple)" },
+    "mailSync.statementPasswordKeychain": { "minTier": "free", "label": "Remember statement passwords on this device (Apple)" },
+    "mailSync.background": { "minTier": "premium", "label": "Background mailbox sync" }
   },
-  "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export"]
+  "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect"]
 }

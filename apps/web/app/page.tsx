@@ -4,6 +4,7 @@ import { Icon } from "@/components/Icon";
 import { CashflowBars, Donut } from "@/components/charts";
 import { Glass, PageHeader, Progress, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
+import { SetupCard } from "@/components/SetupParts";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -25,6 +26,8 @@ function OverviewView() {
   return (
     <>
       <PageHeader title="Overview" subtitle={`${source === "mine" ? "Your data" : "Synthetic demo data"} · as of ${formatDate(accounts.reduce((m, a) => (a.asOf > m ? a.asOf : m), accounts[0].asOf))}`} />
+
+      <SetupCard />
 
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>
