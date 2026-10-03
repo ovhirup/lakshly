@@ -41,7 +41,8 @@ export function demoSeed(ds: LakshlyDataset): ReviewState {
   const reviewed = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 10, 21, 0, 0);
   const reviewedDay = localDate(reviewed);
   const week = isoWeek(reviewedDay);
-  const s = normaliseState({ lastReviewedAt: reviewed.toISOString(), lastClearedWeek: week, streak: 2, bestStreak: 4, freezesLeft: 1, clearsTowardFreeze: 2, xp: 86, weekXP: { [week]: 22 } });
+  const back = (d: number) => isoWeek(localDate(new Date(reviewed.getFullYear(), reviewed.getMonth(), reviewed.getDate() - d)));
+  const s = normaliseState({ clearedWeeks: [back(21), back(7), week], lastReviewedAt: reviewed.toISOString(), lastClearedWeek: week, streak: 2, bestStreak: 4, freezesLeft: 1, clearsTowardFreeze: 2, xp: 86, weekXP: { [week]: 22 } });
   const txns = ds.transactions as ReviewTxn[];
   for (const t of txns) {
     if (t.date > reviewedDay || t.amount >= 0 || t.category === "transfers" || t.category === "income") continue;

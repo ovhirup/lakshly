@@ -54,11 +54,13 @@ export interface ReviewState {
   worth: Record<string, Worth>;
   /** Skipped rows, oldest skip first; they sort to the bottom of the inbox. */
   skipped: string[];
+  /** Every ISO week cleared, oldest first (feeds the Inbox Zero badge). */
+  clearedWeeks: string[];
 }
 
 export const emptyState = (): ReviewState => ({
   v: 2, lastReviewedAt: null, lastClearedWeek: null, streak: 0, bestStreak: 0, freezesLeft: 1, clearsTowardFreeze: 0,
-  xp: 0, weekXP: {}, decisions: {}, merchantRules: {}, worth: {}, skipped: [],
+  xp: 0, weekXP: {}, decisions: {}, merchantRules: {}, worth: {}, skipped: [], clearedWeeks: [],
 });
 
 /** Accepts v1 (spec) or v2 state, fills gaps defensively. */
@@ -79,6 +81,8 @@ export function normaliseState(raw: unknown): ReviewState {
     clearsTowardFreeze: num(r.clearsTowardFreeze, 0), xp: num(r.xp, 0),
     weekXP: obj<Record<string, number>>(r.weekXP), decisions, merchantRules: obj<Record<string, MerchantRule>>(r.merchantRules),
     worth, skipped: Array.isArray(r.skipped) ? r.skipped.filter((s) => typeof s === "string") : [],
+    clearedWeeks: Array.isArray(r.clearedWeeks) ? r.clearedWeeks.filter((s) => typeof s === "string")
+      : typeof r.lastClearedWeek === "string" ? [r.lastClearedWeek] : [],
   };
 }
 
@@ -196,7 +200,7 @@ function award(state: ReviewState, week: string, amount: number): number {
 
 /** One entry point for every input path. Pure: returns a new state. */
 export function applyAction(prev: ReviewState, action: ReviewAction, ctx: ReviewCtx): ApplyResult {
-  const state: ReviewState = { ...prev, decisions: { ...prev.decisions }, merchantRules: { ...prev.merchantRules }, worth: { ...prev.worth }, skipped: [...prev.skipped], weekXP: { ...prev.weekXP } };
+  const state: ReviewState = { ...prev, decisions: { ...prev.decisions }, merchantRules: { ...prev.merchantRules }, worth: { ...prev.worth }, skipped: [...prev.skipped], weekXP: { ...prev.weekXP }, clearedWeeks: [...prev.clearedWeeks] };
   const inbox = buildInbox(ctx.txns, prev, ctx.now, ctx.opts);
   const week = inbox.week;
   const at = isoLocal(ctx.now);
@@ -278,6 +282,7 @@ export function applyAction(prev: ReviewState, action: ReviewAction, ctx: Review
       state.clearsTowardFreeze += 1;
       if (state.clearsTowardFreeze >= RULES.refillEveryClears) { state.clearsTowardFreeze = 0; state.freezesLeft = Math.min(1, state.freezesLeft + 1); }
       state.lastClearedWeek = week;
+      state.clearedWeeks = [...state.clearedWeeks.filter((w) => w !== week), week];
       state.lastReviewedAt = at;
       const bonusTarget = RULES.xp.streakBonusPer * Math.min(state.streak, RULES.xp.streakBonusMaxWeeks);
       const base = award(state, week, RULES.xp.weekCleared);

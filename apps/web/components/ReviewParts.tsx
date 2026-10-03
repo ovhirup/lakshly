@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useMemo, useSyncExternalStore } from "react";
 import { useData } from "./DataState";
+import { LevelLine } from "./Game";
 import { useTier } from "./useTier";
-import { countLabel, levelFor, localDate, monthlyRatio, questFor, regretMerchants, streakText, weekNumber, type ReviewTxn } from "@/lib/review";
+import { countLabel, localDate, monthlyRatio, questFor, regretMerchants, streakText, weekNumber, type ReviewTxn } from "@/lib/review";
 import { formatMonth, formatPct } from "@/lib/format";
 
 export function ReviewCountBadge({ className = "" }: { className?: string }) {
@@ -27,13 +28,12 @@ export function ReviewChip() {
 export function ReviewEntryCard() {
   const { review } = useData();
   const { inbox, state, now } = review;
-  const lvl = levelFor(state.xp);
   return (
     <div className="review-entry">
       <div>
         <p className="eyebrow">This week · Week {weekNumber(inbox.week)}</p>
         <h2>{inbox.count ? `${countLabel(inbox.count)} to review` : "Inbox zero ✨"}</h2>
-        <p className="muted tiny">{streakText(state, now)} · Level {lvl.current.level} {lvl.current.name} · {state.xp} XP</p>
+        <p className="muted tiny">{streakText(state, now)} · <LevelLine /></p>
       </div>
       <Link className="btn primary" href="/review/">{inbox.count ? "Review" : "Open review"}</Link>
     </div>

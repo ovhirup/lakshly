@@ -51,9 +51,22 @@ export function renderLevels(json) {
   ].join("\n");
 }
 
+export function renderGame(badgesJson, nudgesJson) {
+  return [
+    "/* Generated from packages/shared/badges.rules.json and nudges.catalog.json by scripts/gen-entitlements.mjs. Do not edit. */",
+    "",
+    `export const BADGE_RULES_JSON = ${JSON.stringify(JSON.parse(badgesJson), null, 2)};`,
+    "",
+    `export const NUDGE_CATALOG_JSON = ${JSON.stringify(JSON.parse(nudgesJson), null, 2)};`,
+    "",
+  ].join("\n");
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   writeFileSync(dest, render(readFileSync(src, "utf8")));
   writeFileSync(resolve(here, "../lib/sources.gen.ts"), renderSources(readFileSync(resolve(here, "../../../packages/shared/setup/sources.json"), "utf8")));
   writeFileSync(resolve(here, "../lib/levels.gen.ts"), renderLevels(readFileSync(resolve(here, "../../../packages/shared/levels.json"), "utf8")));
-  console.log("generated lib/entitlements.gen.ts, lib/sources.gen.ts, lib/levels.gen.ts");
+  const shared = (f) => readFileSync(resolve(here, "../../../packages/shared", f), "utf8");
+  writeFileSync(resolve(here, "../lib/game.gen.ts"), renderGame(shared("badges.rules.json"), shared("nudges.catalog.json")));
+  console.log("generated lib/entitlements.gen.ts, lib/sources.gen.ts, lib/levels.gen.ts, lib/game.gen.ts");
 }

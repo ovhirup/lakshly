@@ -6,6 +6,7 @@ import { SetupProvider } from "@/components/SetupState";
 import { themeBootScript } from "@/lib/themes";
 import { privacyBootScript } from "@/lib/privacy";
 import { PrivacyProvider } from "@/components/Privacy";
+import { GameProvider } from "@/components/Game";
 import "./themes.gen.css";
 import "./globals.css";
 
@@ -36,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PrivacyProvider>
             <DataProvider>
               <SetupProvider>
-                <Shell>{children}</Shell>
+                <GameProvider><Shell>{children}</Shell></GameProvider>
               </SetupProvider>
             </DataProvider>
           </PrivacyProvider>

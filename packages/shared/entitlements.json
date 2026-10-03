@@ -40,7 +40,16 @@
     "review.merchantRules": { "minTier": "free", "label": "Remember a category for a merchant", "limits": { "free": null } },
     "review.reminder": { "minTier": "free", "label": "Sunday review reminder" },
     "review.widget": { "minTier": "free", "label": "Review count widget" },
-    "review.worthIt": { "minTier": "free", "label": "Worth-it tags" }
+    "review.worthIt": { "minTier": "free", "label": "Worth-it tags" },
+    "badges.core": { "minTier": "free", "label": "All badges and XP (never for sale)" },
+    "badges.cabinet": { "minTier": "free", "label": "Badge cabinet" },
+    "badges.share": { "minTier": "free", "label": "Share a badge image (no amounts)" },
+    "badges.themes": { "minTier": "premium", "label": "Badge themes" },
+    "badges.animatedFrames": { "minTier": "premium", "label": "Animated badge frames" },
+    "nudges.core": { "minTier": "free", "label": "Coach nudges with Not now, Why? and snooze" },
+    "nudges.tone.hype": { "minTier": "free", "label": "Hype and Straight coach tones" },
+    "nudges.tone.roast": { "minTier": "premium", "label": "Roast-lite coach tone" },
+    "nudges.notifications": { "minTier": "free", "label": "Nudge notifications (Apple apps)" }
   },
-  "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect", "privacy.mode"]
+  "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect", "privacy.mode", "badges.core"]
 }

@@ -5,6 +5,7 @@ import { Glass, PageHeader } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { usePrivacy } from "@/components/Privacy";
 import { WorthItCard } from "@/components/ReviewParts";
+import { useGame } from "@/components/Game";
 import { Icon } from "@/components/Icon";
 import { Switch } from "@/components/PrivacySettings";
 import { formatDate, formatINR, titleCase } from "@/lib/format";
@@ -160,7 +161,7 @@ function ReviewView() {
   const [expired, setExpired] = useState<number | null>(null);
   const rows = inbox.rows;
   const current = rows[Math.min(sel, rows.length - 1)];
-  const totalXP = state.xp; // review XP (badges-nudges extends this with badge XP)
+  const { totalXP } = useGame();
   const lvl = levelFor(totalXP);
   const weekXP = state.weekXP[inbox.week] ?? 0;
   const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
