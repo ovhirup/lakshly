@@ -20,7 +20,7 @@ function DebtView() {
   return (
     <>
       <PageHeader title="Debt" subtitle="Payoff planner: see how small prepayments save real money"><PremiumBadge /></PageHeader>
-      <PremiumGate feature="Debt planner">
+      <PremiumGate feature="Debt planner" id="debt.planner">
         <div className="grid g4">
           <Glass className="card"><Stat label="Outstanding" value={formatINR(d.outstanding)} hint={`${formatPct(paidPct, 0)} repaid`} /></Glass>
           <Glass className="card"><Stat label="EMI" value={formatINR(d.emi)} hint={`${d.annualRatePct}% p.a.`} /></Glass>

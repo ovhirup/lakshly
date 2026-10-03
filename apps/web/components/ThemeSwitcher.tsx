@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { useAppState, type AppearancePref, type ThemeId } from "./AppState";
 import { Icon } from "./Icon";
 import { isPremiumTheme, themes } from "@/lib/themes";
+import { useTier } from "./useTier";
 
 const APPEARANCES: { value: AppearancePref; label: string }[] = [
   { value: "system", label: "System" },
@@ -43,7 +44,8 @@ function PaletteIcon() {
 }
 
 export function ThemeSwitcher() {
-  const { plan, setPlan, theme, setTheme, appearance, setAppearance, resolved } = useAppState();
+  const { setPlan, theme, setTheme, appearance, setAppearance, resolved } = useAppState();
+  const premiumThemes = useTier().can("themes.premium");
   const fromQuery = useSyncExternalStore(subscribeSwitcherQuery, readSwitcherQuery, () => false);
   const [manual, setManual] = useState<boolean | null>(null);
   const open = manual ?? fromQuery;
@@ -122,7 +124,7 @@ export function ThemeSwitcher() {
   }, [open, upsell, theme]);
 
   function chooseTheme(id: ThemeId) {
-    if (isPremiumTheme(id) && plan !== "premium") {
+    if (isPremiumTheme(id) && !premiumThemes) {
       setUpsell(id);
       return;
     }
@@ -157,7 +159,7 @@ export function ThemeSwitcher() {
         </div>
         <div className="theme-grid">
           {themes.map((item) => {
-            const locked = item.premium && plan !== "premium";
+            const locked = item.premium && !premiumThemes;
             const sw = item.swatches[resolved];
             const selected = theme === item.id;
             return (
