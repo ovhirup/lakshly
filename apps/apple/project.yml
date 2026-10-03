@@ -30,6 +30,12 @@ targets:
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/cas-locked.synthetic.pdf
         buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/nsdl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas-locked.synthetic.pdf
+        buildPhase: resources
     dependencies:
       - target: LakshlyGlance
         embed: false
@@ -59,7 +65,7 @@ targets:
         ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS: NO
       configs:
         Release:
-          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf
+          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf nsdl-cas.synthetic.pdf cdsl-cas.synthetic.pdf cdsl-cas-locked.synthetic.pdf
   Lakshly-macOS:
     type: application
     platform: macOS
@@ -75,6 +81,12 @@ targets:
       - path: LakshlyTests/Fixtures/Parsers/cas.synthetic.pdf
         buildPhase: resources
       - path: LakshlyTests/Fixtures/Parsers/cas-locked.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/nsdl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas.synthetic.pdf
+        buildPhase: resources
+      - path: LakshlyTests/Fixtures/Parsers/cdsl-cas-locked.synthetic.pdf
         buildPhase: resources
     postBuildScripts:
       - name: Strip synthetic statement PDFs from Release
@@ -94,7 +106,7 @@ targets:
         ENABLE_APP_SANDBOX: YES
       configs:
         Release:
-          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf
+          EXCLUDED_SOURCE_FILE_NAMES: hdfc-bank.synthetic.pdf hdfc-bank-locked.synthetic.pdf cas.synthetic.pdf cas-locked.synthetic.pdf nsdl-cas.synthetic.pdf cdsl-cas.synthetic.pdf cdsl-cas-locked.synthetic.pdf
   LakshlyTests:
     type: bundle.unit-test
     platform: iOS

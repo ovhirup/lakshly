@@ -24,6 +24,9 @@ const fixtures: { name: string; bytes: Promise<Uint8Array>; password?: string }[
   { name: "generic-card", bytes: F.genericCardPdf() },
   { name: "cas", bytes: F.casPdf() },
   { name: "cas-locked", bytes: F.casPdf(F.PASSWORD), password: F.PASSWORD },
+  { name: "nsdl-cas", bytes: F.nsdlCasPdf() },
+  { name: "cdsl-cas", bytes: F.cdslCasPdf() },
+  { name: "cdsl-cas-locked", bytes: F.cdslCasPdf(F.PASSWORD), password: F.PASSWORD },
 ];
 
 const manifest: unknown[] = [];

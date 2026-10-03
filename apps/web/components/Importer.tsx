@@ -7,6 +7,7 @@ import { Icon } from "./Icon";
 import { useData } from "./DataState";
 import { formatDate, formatINR, titleCase } from "@/lib/format";
 import { parseFile } from "@/lib/import/client";
+import { confirmImportLabel, importCounts } from "@/lib/import/review";
 import { MASK, moneyMasked } from "@/lib/privacy";
 import "@/app/import/import.css";
 
@@ -188,14 +189,14 @@ function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip
         <div className="table-wrap">
           <table className="review-table">
             <thead><tr><th>Scheme</th><th>Folio</th><th className="num">Units</th><th className="num">NAV</th><th className="num">Value</th></tr></thead>
-            <tbody>{result.holdings.map((h) => (
-              <tr key={h.accountId}><td>{h.scheme}<div className="muted tiny">{h.amc} · {h.registrar}</div></td><td>•• {h.folioMask}</td><td className="num">{h.units.toFixed(3)}</td><td className="num">{moneyMasked() ? MASK : `₹${h.nav.toFixed(2)}`}</td><td className="num">{formatINR(h.marketValue)}</td></tr>
+            <tbody>{result.holdings.map((h, index) => (
+              <tr key={`${h.accountId}:${index}`}><td>{h.scheme}<div className="muted tiny">{h.amc} · {h.registrar}</div></td><td>•• {h.folioMask}</td><td className="num">{h.units.toFixed(3)}</td><td className="num">{moneyMasked() ? MASK : `₹${h.nav.toFixed(2)}`}</td><td className="num">{formatINR(h.marketValue)}</td></tr>
             ))}</tbody>
           </table>
         </div>
       )}
 
-      <div className="table-wrap">
+      {result.transactions.length > 0 && <div className="table-wrap">
         <table className="review-table">
           <thead><tr><th aria-label="Include" /><th className="col-date">Date</th><th>Description</th><th>Category</th><th className="num">Amount</th></tr></thead>
           <tbody>
@@ -214,7 +215,7 @@ function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip
             ))}
           </tbody>
         </table>
-      </div>
+      </div>}
       {!showAll && result.transactions.length > rows.length && <button className="btn ghost" onClick={onShowAll}>Show all {result.transactions.length} rows</button>}
 
       <div className="review-actions">
@@ -222,7 +223,7 @@ function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip
         <div className="row-actions">
           <button className="btn ghost" onClick={onCancel}>Cancel</button>
           <button className="btn primary" disabled={saving || (!included.length && !result.accounts.length)} onClick={onConfirm}>
-            {saving ? "Encrypting…" : `Confirm import (${included.length})`}
+            {saving ? "Encrypting…" : confirmImportLabel(importCounts(result, skip))}
           </button>
         </div>
       </div>

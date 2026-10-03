@@ -4,7 +4,7 @@ import addFormats from "ajv-formats";
 import { readFileSync } from "node:fs";
 import * as F from "./fixtures/synthetic.ts";
 import { extract } from "./helpers.ts";
-import { emptyDataset, mergeResult, parseCsv, parseDocument, PasswordRequiredError, mapPdfOpenError, pdfErrorMessage, type ParseResult } from "../src/index.ts";
+import { emptyDataset, mergeResult, parseCsv, parseDocument, PasswordRequiredError, mapPdfOpenError, pdfErrorMessage, rankAdapters, textDocFromLines, type ParseResult } from "../src/index.ts";
 
 const schema = JSON.parse(readFileSync(new URL("../../schema/lakshly.schema.json", import.meta.url), "utf8"));
 type AjvCtor = new (o: object) => { compile: (s: object) => ((d: unknown) => boolean) & { errors?: unknown } };
@@ -125,6 +125,117 @@ describe("mutual fund CAS (CAMS / KFintech)", () => {
       expect.objectContaining({ amount: 300000, dayOfMonth: 10, startDate: "2026-04-10", status: "active" }),
     ]);
     expectSchemaValid(r);
+  });
+});
+
+describe.each([
+  ["NSDL", F.nsdlCasPdf, "nsdl", [652000, 486006, 1003753, 255000], ["1357", "2468", "1234", "5678"], 2396759, 3],
+  ["CDSL", F.cdslCasPdf, "cdsl", [486006, 1003753], ["2468", "1234"], 1489759, 2],
+] as const)("depository CAS: %s", (_name, make, issuer, balances, masks, totalValue, movements) => {
+  it("detects and parses exact demat and folio valuations", async () => {
+    const doc = await extract(await make());
+    expect(rankAdapters(doc)[0]).toMatchObject({ adapter: { id: "cas.depository" } });
+    expect(rankAdapters(doc)[0].score).toBeGreaterThanOrEqual(0.8);
+    const r = parseDocument(doc);
+    expect(r.adapter).toBe("cas.depository");
+    expect(r.accounts.map((a) => a.balance)).toEqual(balances);
+    expect(r.accounts.map((a) => a.mask)).toEqual(masks);
+    expect(r.accounts.filter((a) => a.type === "stocks")).toHaveLength(issuer === "nsdl" ? 2 : 1);
+    for (const a of r.accounts) expect(a).toMatchObject({ asOf: "2026-08-31", source: "cas", currency: "INR" });
+    expect(r.accounts.find((a) => a.mask === "2468")).toMatchObject({ institution: "CDSL / Demo Securities Ltd", type: "stocks" });
+    expect(r.accounts.find((a) => a.mask === "1234")).toMatchObject({ type: "mutual_fund", invested: 900000 });
+    expect(r.accounts.filter((a) => a.type === "stocks").every((a) => a.invested === undefined)).toBe(true);
+    expect(r.holdings.find((h) => h.isin === "INF000K01AB1")).toMatchObject({ units: 125.125, nav: 32.48, marketValue: 406406, costValue: 0, accountId: r.accounts.find((a) => a.mask === "2468")!.id });
+    expect(r.holdings.find((h) => h.isin === "INF000K01AB2")).toMatchObject({ units: 200.25, nav: 50.125, marketValue: 1003753, costValue: 900000 });
+    if (issuer === "nsdl") {
+      expect(r.accounts[0].institution).toBe("NSDL / Demo Securities Ltd");
+      expect(r.holdings[0]).toMatchObject({ isin: "INE000A01011", units: 12.5, nav: 120.4, marketValue: 150500 });
+      expect(r.holdings[1]).toMatchObject({ isin: "INE000A01013", units: 20, nav: 250.75, marketValue: 501500 });
+      expect(r.accounts.at(-1)?.invested).toBe(240000);
+      expect(r.holdings.at(-1)).toMatchObject({ units: 100, nav: 25.5, marketValue: 255000 });
+    }
+    expect(r.holdings.find((h) => h.isin === "INE000A01012")).toMatchObject({ units: 8, nav: 99.5, marketValue: 79600 });
+    expect(r.meta[0]).toMatchObject({ adapter: "cas.depository", issuer, periodFrom: "2026-08-01", periodTo: "2026-08-31", totalValue, quantityTransactionCount: movements });
+    expect(r.accounts.reduce((sum, a) => sum + a.balance, 0)).toBe(totalValue);
+    expect(r.transactions).toEqual([]);
+    expect(r.sips).toEqual([]);
+    expect(r.warnings).toEqual([]);
+    expectSchemaValid(r);
+    const json = JSON.stringify(r);
+    for (const identifier of ["IN30000001", "00001357", "1200000000002468", "70001234", "70005678"]) expect(json).not.toContain(identifier);
+    const text = doc.lines.map((l) => l.text).join("\n");
+    expect(text).toContain("SYNTHETIC");
+    expect(text).toContain("Asha Demo");
+    expect(text).not.toMatch(/\b[A-Z]{5}\d{4}[A-Z]\b/);
+  });
+
+  it("adds no accounts or transactions when re-imported", async () => {
+    const firstResult = await parse(make());
+    const secondResult = await parse(make());
+    expect(secondResult.accounts.map((a) => a.id)).toEqual(firstResult.accounts.map((a) => a.id));
+    const now = new Date("2026-10-01T00:00:00Z");
+    const first = mergeResult(emptyDataset(now), firstResult, now);
+    const again = mergeResult(first.dataset, secondResult, now);
+    expect(first.report.accountsAdded).toBe(balances.length);
+    expect(again.report).toEqual({ added: 0, duplicates: 0, accountsAdded: 0, accountsUpdated: balances.length, sipsUpserted: 0 });
+    expect(again.dataset).toEqual(first.dataset);
+  });
+});
+
+describe("depository CAS detection and passwords", () => {
+  it("supports separate ID labels, scheme/folio grouping, unknown cost and optional transactions", () => {
+    const r = parseDocument(textDocFromLines([
+      "Consolidated Account Statement - SYNTHETIC", "NSDL", "Statement for the period from 01-Aug-2026 to 31-Aug-2026",
+      "NSDL Demat Account", "DP Name: Demo Securities Ltd", "DP ID: IN300001", "Client ID: 00001357",
+      "Equities (E)", "INE000A01011 Demo Industries Ltd 12.5 10.5 2 120.40 1,505.00",
+      "CDSL Demat Account", "DP Name: Demo Securities Ltd", "DP ID: 12000000", "Client ID: 00002468",
+      "INE000A01012 Demo Tools Ltd 8 6 2 99.50 796.00",
+      "Mutual Fund Units held with RTAs (MF Folios)",
+      "Demo Balanced Fund INF000K01AB2 70001234 / 12 200.25 50.125 - 10,037.53 -",
+      "Demo Short Term Fund INF000K01AB3 70001234 / 12 100 25.5 2,400.00 2,550.00 150.00",
+    ]));
+    expect(r.accounts.map((a) => [a.type, a.mask, a.balance])).toEqual([
+      ["stocks", "1357", 150500], ["stocks", "2468", 79600], ["mutual_fund", "1234", 1003753], ["mutual_fund", "1234", 255000],
+    ]);
+    expect(new Set(r.accounts.map((a) => a.id)).size).toBe(4);
+    expect(r.accounts[2].invested).toBeUndefined();
+    expect(r.holdings[2].costValue).toBe(0);
+    expect(r.accounts[3].invested).toBe(240000);
+    expect(r.meta[0]).toMatchObject({ totalValue: 1488853, quantityTransactionCount: 0 });
+    expect(r.warnings).toEqual([]);
+    expectSchemaValid(r);
+    for (const identifier of ["IN300001", "00001357", "12000000", "00002468", "70001234"]) expect(JSON.stringify(r)).not.toContain(identifier);
+  });
+
+  it("requires title, issuer and demat markers and leaves CAMS/KFintech routing intact", async () => {
+    const score = (lines: string[]) => rankAdapters(textDocFromLines(lines)).find((a) => a.adapter.id === "cas.depository")!.score;
+    expect(score(["Consolidated Account Statement", "NSDL", "DP ID: IN30000001"])).toBeGreaterThanOrEqual(0.8);
+    expect(score(["Consolidated Account Statement", "Central Depository Services (India) Limited", "BO ID: 1200000000002468"])).toBeGreaterThanOrEqual(0.8);
+    expect(score(["Consolidated Account Statement", "CDSL", "Demat Account"])).toBeGreaterThanOrEqual(0.8);
+    expect(score(["CAS - SYNTHETIC", "CDSL", "BO ID: 1200000000002468"])).toBeGreaterThanOrEqual(0.8);
+    expect(score(["Account Statement", "NSDL", "DP ID"])).toBe(0);
+    expect(score(["Consolidated Account Statement", "NSDL"])).toBe(0);
+    expect(score(["Consolidated Account Statement", "DP ID"])).toBe(0);
+    for (const password of [undefined, F.PASSWORD]) {
+      const doc = await extract(await F.casPdf(password), password);
+      expect(parseDocument(doc).adapter).toBe("cas.cams-kfintech");
+      expect(rankAdapters(doc).find((a) => a.adapter.id === "cas.depository")!.score).toBe(0);
+      // Incidental depository text in a detailed RTA CAS must not change its route.
+      const augmented = textDocFromLines([...doc.lines.map((l) => l.text), "NSDL Demat Account"]);
+      expect(parseDocument(augmented).adapter).toBe("cas.cams-kfintech");
+      expect(rankAdapters(augmented).find((a) => a.adapter.id === "cas.depository")!.score).toBe(0);
+    }
+  });
+
+  it("uses the existing password errors and matches the unlocked CDSL result", async () => {
+    const bytes = await F.cdslCasPdf(F.PASSWORD);
+    await expect(extract(bytes.slice())).rejects.toBeInstanceOf(PasswordRequiredError);
+    await expect(extract(bytes.slice())).rejects.toMatchObject({ incorrect: false });
+    await expect(extract(bytes.slice(), "wrong")).rejects.toMatchObject({ name: "PasswordRequiredError", incorrect: true });
+    const locked = parseDocument(await extract(bytes.slice(), F.PASSWORD));
+    expect(locked).toEqual(await parse(F.cdslCasPdf()));
+    expect(JSON.stringify(locked)).not.toContain(F.PASSWORD);
+    expectSchemaValid(locked);
   });
 });
 

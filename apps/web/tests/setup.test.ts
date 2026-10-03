@@ -202,8 +202,15 @@ describe("freshness", () => {
 });
 
 describe("sources catalog guard", () => {
+  it("imports depository CAS (CDSL/NSDL) with the cas.depository adapter", () => {
+    for (const id of ["cdsl-cas", "nsdl-cas"]) {
+      const s = CATALOG.sources.find((x) => x.id === id)!;
+      expect(s.importer).toMatchObject({ supported: true, adapters: ["cas.depository"], formats: ["pdf"] });
+      expect(s.kinds[0]).toBe("cas");
+    }
+  });
   const raw = readFileSync(new URL("../../../packages/shared/setup/sources.json", import.meta.url), "utf8");
-  const ADAPTERS = ["cas.cams-kfintech", "bank.hdfc", "bank.sbi", "bank.icici", "card.hdfc", "card.sbi", "card.generic", "bank.generic", "csv.generic"];
+  const ADAPTERS = ["cas.cams-kfintech", "cas.depository", "bank.hdfc", "bank.sbi", "bank.icici", "card.hdfc", "card.sbi", "card.generic", "bank.generic", "csv.generic"];
   it("holds password formats only: no values, no PAN-shaped strings, no long digit runs", () => {
     expect(raw).not.toMatch(/password\s*[:=]|\b[A-Z]{5}\d{4}[A-Z]\b/);
     expect(raw).not.toMatch(/\d{6,}/);

@@ -13,7 +13,7 @@ export interface TextDoc { pages: number; lines: Line[]; fileName?: string }
 
 export type StatementKind = "bank" | "card" | "cas";
 
-/** Fund-level detail from a CAS that the v0.1 dataset schema has no field for. */
+/** Security-level detail from a CAS that the v0.1 dataset schema has no field for. */
 export interface Holding {
   accountId: string;
   scheme: string;
@@ -22,7 +22,7 @@ export interface Holding {
   folioMask: string;
   isin?: string;
   units: number;
-  nav: number;
+  nav: number; // rupees: NAV for funds, market price for demat securities
   navDate: string;
   costValue: number;  // paise
   marketValue: number; // paise
@@ -41,6 +41,9 @@ export interface StatementMeta {
   minDue?: number;   // paise
   openingBalance?: number;
   closingBalance?: number;
+  issuer?: "nsdl" | "cdsl";
+  totalValue?: number; // paise
+  quantityTransactionCount?: number; // demat movements, excluded from cash transactions
 }
 
 export interface ParseResult {
