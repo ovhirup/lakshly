@@ -5,6 +5,7 @@ import type { MergeReport, ParseResult } from "@lakshly/parsers";
 import { useData } from "./DataState";
 import { formatDate } from "@/lib/format";
 import { parseFile } from "@/lib/import/client";
+import { wrongPasswordMessage } from "@/lib/import/review";
 import { runBulkImport, senderKey, summaryText, type PasswordAnswer, type RowStatus } from "@/lib/gmail-bulk";
 import type { FoundMessage } from "@/lib/gmail";
 
@@ -140,7 +141,7 @@ export function GmailResults({ found, disabled, nameOf, passwordHintsFor, fetchF
                       <p className="pw-hints-label" id={`pwh-${m.id}`}>Usually one of these:</p>
                       <ul className="pw-hints" aria-labelledby={`pwh-${m.id}`}>{passwordHintsFor(m.sourceId)!.map((h) => <li key={h}>{h}</li>)}</ul>
                     </>}
-                    {ask.incorrect && <p className="down tiny" role="alert">That password didn&apos;t work. Passwords are case-sensitive; check Caps Lock and try again.</p>}
+                    {ask.incorrect && <p className="down tiny" role="alert">{wrongPasswordMessage((passwordHintsFor(m.sourceId) ?? []).length > 0)}</p>}
                     <label className="gm-check tiny">
                       <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
                       <span>Use the same password for the rest from {m.from}{sameSender ? ` (${sameSender} more)` : ""}. Kept in memory for this import only, never stored.</span>
