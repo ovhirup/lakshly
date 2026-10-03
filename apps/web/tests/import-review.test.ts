@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { confirmImportLabel, importCounts, importToast } from "@/lib/import/review";
+import { confirmImportLabel, importCounts, importToast, wrongPasswordMessage } from "@/lib/import/review";
 
 const tx = (id: string) => ({ id }) as never;
 const holding = (accountId: string) => ({ accountId }) as never;
@@ -36,5 +36,15 @@ describe("import toast", () => {
   });
   it("keeps the already-imported note on a repeat bank statement", () => {
     expect(importToast({ ...report, duplicates: 9, accountsUpdated: 1 })).toBe("Updated 1 account, skipped 9 already imported. Thank you for trusting Lakshly 💛");
+  });
+});
+
+describe("wrong statement password", () => {
+  it("points at the listed bank pattern", () => {
+    expect(wrongPasswordMessage(true)).toBe("That password didn't work. Use one of the patterns listed above.");
+    expect(wrongPasswordMessage(true)).not.toMatch(/Caps Lock/);
+  });
+  it("stays short when no pattern is listed", () => {
+    expect(wrongPasswordMessage(false)).toBe("That password didn't work. Try again.");
   });
 });

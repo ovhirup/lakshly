@@ -7,7 +7,7 @@ import { Icon } from "./Icon";
 import { useData } from "./DataState";
 import { formatDate, formatINR, titleCase } from "@/lib/format";
 import { parseFile } from "@/lib/import/client";
-import { confirmImportLabel, importCounts, importToast } from "@/lib/import/review";
+import { confirmImportLabel, importCounts, importToast, wrongPasswordMessage } from "@/lib/import/review";
 import { MASK, moneyMasked } from "@/lib/privacy";
 import "@/app/import/import.css";
 
@@ -110,7 +110,7 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
                 <label className="field">Statement password
                   <input type="password" autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoFocus value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={phase.incorrect} />
                 </label>
-                {phase.incorrect && <p className="down tiny" role="alert">That password didn&apos;t work. Please try again.</p>}
+                {phase.incorrect && <p className="down tiny" role="alert">{wrongPasswordMessage(!!passwordHints?.length)}</p>}
                 <div className="row-actions">
                   <button className="btn primary" type="submit" disabled={!password}>Unlock on this device</button>
                   <button className="btn ghost" type="button" onClick={() => { setPassword(""); setPhase({ step: "idle" }); }}>Cancel</button>

@@ -37,3 +37,10 @@ export function importToast(report: MergeReport): string {
       : "Nothing new to import";
   return `${lead}${skipped ? `, ${skipped}` : ""}. Thank you for trusting Lakshly 💛`;
 }
+
+/** Shown after a statement password is rejected. Points at the bank pattern when one is listed. */
+export function wrongPasswordMessage(hasPattern: boolean): string {
+  return hasPattern
+    ? "That password didn't work. Use one of the patterns listed above."
+    : "That password didn't work. Try again.";
+}
