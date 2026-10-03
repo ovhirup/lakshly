@@ -1,0 +1,104 @@
+{
+  "adapter": "card.sbi",
+  "adapterLabel": "SBI Card statement",
+  "kind": "card",
+  "confidence": 1,
+  "accounts": [
+    {
+      "id": "acc_1doa6q8q2cr",
+      "name": "SBI Card Credit Card ••9012",
+      "type": "credit_card",
+      "institution": "SBI Card",
+      "currency": "INR",
+      "balance": -1234567,
+      "asOf": "2026-09-20",
+      "source": "statement",
+      "mask": "9012",
+      "statementDay": 20,
+      "dueDay": 10
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_0gsqmht3px8",
+      "accountId": "acc_1doa6q8q2cr",
+      "date": "2026-08-21",
+      "amount": -123400,
+      "description": "DEMO ELECTRICITY BILLDESK",
+      "category": "utilities",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Demo Electricity Billdesk"
+    },
+    {
+      "id": "txn_1o2iyz45qp5",
+      "accountId": "acc_1doa6q8q2cr",
+      "date": "2026-08-25",
+      "amount": 1000000,
+      "description": "PAYMENT RECEIVED BBPS",
+      "category": "transfers",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Payment Received Bbps"
+    },
+    {
+      "id": "txn_1xuwcgcd537",
+      "accountId": "acc_1doa6q8q2cr",
+      "date": "2026-08-29",
+      "amount": -38000,
+      "description": "ZOMATO DEMO",
+      "category": "dining",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Zomato Demo"
+    },
+    {
+      "id": "txn_23owrwfsaoi",
+      "accountId": "acc_1doa6q8q2cr",
+      "date": "2026-09-03",
+      "amount": -215500,
+      "description": "IRCTC DEMO TICKET",
+      "category": "transport",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Irctc Demo Ticket"
+    },
+    {
+      "id": "txn_0vkb00tv7ry",
+      "accountId": "acc_1doa6q8q2cr",
+      "date": "2026-09-10",
+      "amount": -89900,
+      "description": "DEMO GROCER BLINKIT",
+      "category": "groceries",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Demo Grocer Blinkit"
+    },
+    {
+      "id": "txn_2bc6xqk541x",
+      "accountId": "acc_1doa6q8q2cr",
+      "date": "2026-09-12",
+      "amount": -50000,
+      "description": "LATE PAYMENT FEE",
+      "category": "fees",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Late Payment Fee"
+    }
+  ],
+  "sips": [],
+  "holdings": [],
+  "meta": [
+    {
+      "adapter": "card.sbi",
+      "kind": "card",
+      "institution": "SBI Card",
+      "accountId": "acc_1doa6q8q2cr",
+      "statementDate": "2026-09-20",
+      "dueDate": "2026-10-10",
+      "totalDue": 1234567,
+      "minDue": 62000
+    }
+  ],
+  "warnings": []
+}

@@ -108,6 +108,9 @@ struct RootView: View {
           Tab("History", systemImage: "clock", value: "history") {
             navigation { HistoryView(store: store) }
           }
+          Tab("Import", systemImage: "square.and.arrow.down", value: "import") {
+            navigation { ImportView(store: store) }
+          }
         }.tabViewStyle(.sidebarAdaptable)
       }
     }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock, themeSelection: $themeSelection) }

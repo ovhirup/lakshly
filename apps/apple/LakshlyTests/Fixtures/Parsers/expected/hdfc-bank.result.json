@@ -1,0 +1,167 @@
+{
+  "adapter": "bank.hdfc",
+  "adapterLabel": "HDFC Bank account statement",
+  "kind": "bank",
+  "confidence": 1,
+  "accounts": [
+    {
+      "id": "acc_1zhm16dt7cv",
+      "name": "HDFC Bank Savings ••4321",
+      "type": "savings",
+      "institution": "HDFC Bank",
+      "currency": "INR",
+      "balance": 12788750,
+      "asOf": "2026-09-30",
+      "source": "statement",
+      "mask": "4321"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_28uymn10gkm",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-01",
+      "amount": 12500000,
+      "description": "NEFT CR-DEMO EMPLOYER PVT LTD-SALARY SEP 2026",
+      "category": "income",
+      "method": "neft",
+      "categorisedBy": "rule",
+      "merchant": "Demo Employer Pvt Ltd"
+    },
+    {
+      "id": "txn_29v5ias2hfj",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-02",
+      "amount": -2500000,
+      "description": "ACH D- DEMO HOUSING RENT-0000123",
+      "category": "rent",
+      "method": "autodebit",
+      "categorisedBy": "rule",
+      "merchant": "Demo Housing Rent"
+    },
+    {
+      "id": "txn_1eihjm25l54",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-03",
+      "amount": -45000,
+      "description": "UPI-SWIGGY-swiggy@demo-XXXX9012-Food order",
+      "category": "dining",
+      "method": "upi",
+      "categorisedBy": "rule",
+      "merchant": "Swiggy"
+    },
+    {
+      "id": "txn_1gc3jzzvax5",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-05",
+      "amount": -234550,
+      "description": "POS 416021XXXXXX1234 BIGBASKET DEMO",
+      "category": "groceries",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Bigbasket Demo"
+    },
+    {
+      "id": "txn_0pjtwo0avt1",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-07",
+      "amount": -67800,
+      "description": "UPI-ZEPTO-zepto@demo-XXXX9012 DEMO GROCERIES ORDER",
+      "category": "groceries",
+      "method": "upi",
+      "categorisedBy": "rule",
+      "merchant": "Zepto"
+    },
+    {
+      "id": "txn_027y65fxqvu",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-10",
+      "amount": -500000,
+      "description": "ATM WDL-DEMO ATM BLR",
+      "category": "cash",
+      "method": "cash",
+      "categorisedBy": "rule",
+      "merchant": "Demo Atm Blr"
+    },
+    {
+      "id": "txn_21deaqfeab8",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-12",
+      "amount": 15000,
+      "description": "IMPS-CASHBACK-DEMO WALLET",
+      "category": "income",
+      "method": "imps",
+      "categorisedBy": "rule",
+      "merchant": "Cashback"
+    },
+    {
+      "id": "txn_1tiveb5zeuj",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-15",
+      "amount": -1824000,
+      "description": "CC 000XXXXXXXX1234 AUTOPAY SI-TAD CREDIT CARD",
+      "category": "transfers",
+      "method": "autodebit",
+      "categorisedBy": "rule"
+    },
+    {
+      "id": "txn_22035wf5myl",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-20",
+      "amount": -500000,
+      "description": "NACH-DEMO AMC SIP MUTUAL FUND",
+      "category": "investments",
+      "method": "autodebit",
+      "categorisedBy": "rule",
+      "merchant": "Demo Amc Sip Mutual Fund"
+    },
+    {
+      "id": "txn_0h1qd1u2chu",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-25",
+      "amount": -31200,
+      "description": "UPI-UBER INDIA-uber@demo-XXXX9012-Ride",
+      "category": "transport",
+      "method": "upi",
+      "categorisedBy": "rule",
+      "merchant": "Uber India"
+    },
+    {
+      "id": "txn_07bs89eo6cd",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-28",
+      "amount": 41200,
+      "description": "INT.PD:DEMO SAVINGS INTEREST",
+      "category": "income",
+      "method": "other",
+      "categorisedBy": "rule",
+      "merchant": "Int.Pd:Demo Savings Interest"
+    },
+    {
+      "id": "txn_1osqp6xp707",
+      "accountId": "acc_1zhm16dt7cv",
+      "date": "2026-09-30",
+      "amount": -64900,
+      "description": "UPI-NETFLIX-netflix@demo-XXXX9012-Subscription",
+      "category": "subscriptions",
+      "method": "upi",
+      "categorisedBy": "rule",
+      "merchant": "Netflix"
+    }
+  ],
+  "sips": [],
+  "holdings": [],
+  "meta": [
+    {
+      "adapter": "bank.hdfc",
+      "kind": "bank",
+      "institution": "HDFC Bank",
+      "accountId": "acc_1zhm16dt7cv",
+      "periodFrom": "2026-09-01",
+      "periodTo": "2026-09-30",
+      "openingBalance": 6000000,
+      "closingBalance": 12788750
+    }
+  ],
+  "warnings": []
+}

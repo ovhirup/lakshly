@@ -17,17 +17,25 @@ xcodebuild -project Lakshly.xcodeproj -scheme Lakshly-iOS -destination 'platform
 xcodebuild -project Lakshly.xcodeproj -scheme Lakshly-macOS -destination 'platform=macOS' -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO build
 ```
 
-On iPhone, the tab bar shows **Overview, Spend, Budget, Feedback, More**. More contains Debt, Credit, Investments, Rewards and History. The adaptive iPad/macOS sidebar exposes all nine pages. Overview also links directly to Feedback & Requests.
+On iPhone, the tab bar shows **Overview, Spend, Budget, Feedback, More**. More contains Debt, Credit, Investments, Rewards, History and Import. The adaptive iPad/macOS sidebar exposes all ten pages. Overview also links directly to Feedback & Requests. Import reads a statement PDF or CSV with the system file picker, parses it on device, and merges the rows into the encrypted store.
 
 ## Launch arguments
 
-Screenshot launch arguments (Xcode scheme → Run → Arguments) are **DEBUG-only**, parsed by `LaunchOptions` directly from process arguments, and compiled out of Release. `-demoUnlocked YES` skips authentication in DEBUG; `-startTab overview|spend|budget|debt|credit|investments|rewards|history|feedback` chooses the tab; `-showLock YES` takes precedence and keeps the lock visible. `-appearance system|light|dark` overrides the root and Settings color schemes; `-theme <id>` overrides the initial theme; `-openSettings YES` opens Settings at launch. These overrides do not persist. Settings provides theme and appearance selection, app lock, demo reset and **Preview Premium (demo — no purchases)**. Free/Premium is UI-only; there is no StoreKit or payment flow.
+Screenshot launch arguments (Xcode scheme → Run → Arguments) are **DEBUG-only**, parsed by `LaunchOptions` directly from process arguments, and compiled out of Release. `-demoUnlocked YES` skips authentication in DEBUG; `-startTab overview|spend|budget|debt|credit|investments|rewards|history|feedback|import` chooses the tab; `-showLock YES` takes precedence and keeps the lock visible. `-appearance system|light|dark` overrides the root and Settings color schemes; `-theme <id>` overrides the initial theme; `-openSettings YES` opens Settings at launch. `-importDemo picker|chooser|password|preview|done` opens Import on that stage (`chooser` also presents the system file picker) using the bundled synthetic HDFC bank statement, or the synthetic CAS when `-importDemoFile cas` is also set. `password` uses the locked fixture and waits without a password. `done` runs the import merge and writes it through the encrypted store. These overrides do not persist. Settings provides theme and appearance selection, app lock, demo reset and **Preview Premium (demo — no purchases)**. Free/Premium is UI-only; there is no StoreKit or payment flow.
 
-After `xcodegen generate`, run `scripts/check_release_launch_args.sh`. It builds unsigned Release apps for macOS and iOS Simulator into `build/ReleaseCheck`, scans both executables and any `.debug.dylib` for the four DEBUG control names, and prints `PASS` only when none are present. Extra build flags can be supplied through `XCODEBUILD_EXTRA`, using shell-style quotes for flags containing spaces. If the restricted macro sandbox blocks a build, the temporary command-line workaround is:
+After `xcodegen generate`, run `scripts/check_release_launch_args.sh`. It builds unsigned Release apps for macOS and iOS Simulator into `build/ReleaseCheck`, scans both executables and any `.debug.dylib` for the DEBUG control names (`demoUnlocked`, `showLock`, `startTab`, `openSettings`, `importDemo`, `importDemoFile`), checks that no `*.synthetic.pdf` was copied into the Release bundles, and prints `PASS` only when both checks are clean. Extra build flags can be supplied through `XCODEBUILD_EXTRA`, using shell-style quotes for flags containing spaces. If the restricted macro sandbox blocks a build, the temporary command-line workaround is:
 
 ```sh
 XCODEBUILD_EXTRA="OTHER_SWIFT_FLAGS='\$(inherited) -disable-sandbox'" scripts/check_release_launch_args.sh
 ```
+
+## Import
+
+Import is an on-device port of `packages/parsers`. PDFKit rebuilds positioned text runs, then the same line grouping, table engine, and adapters produce the web parser's JSON. Specific adapters are CAMS/KFintech CAS, HDFC Bank, SBI, ICICI Bank, HDFC Bank credit card, and SBI Card. A score below 0.6 falls through to the generic bank or card layout. CSV uses the generic bank columns.
+
+A picked file is read through a security-scoped URL into memory and is not copied. The password lives only in the password field while you type it. It is cleared after Unlock or Cancel and is never written to disk, UserDefaults, the Keychain, or logs. Parsing does not use the network.
+
+`LakshlyTests/Fixtures/Parsers` holds the synthetic PDFs, `generic.synthetic.csv`, and golden `expected/*.lines.json`, `expected/*.result.json`, and `expected/merge.json`. `ParserFixtureTests` compares every fixture. Regenerate those goldens with `scripts/generate_parser_fixtures.sh` only when the shared parser behaviour changes; the script runs the web parsers on a temporary copy and does not need a committed change under `packages/`. Debug builds of the app also bundle the HDFC and CAS PDFs (including the locked copies, password `DEMO1234`) for `-importDemo`. Release builds exclude them.
 
 ## Security
 
@@ -39,7 +47,7 @@ Before any app state or `@AppStorage` is constructed, startup clears the UserDef
 
 **No app networking:** no URLSession, analytics, bank connections or network entitlement. Feedback is local; the optional GitHub Issues link is opened by the OS browser only. Nothing is submitted automatically.
 
-`LakshlyTests` covers Indian money grouping and authenticated encryption including tamper/wrong-key rejection, plus DEBUG launch parsing, the no-passcode demo policy and preference migration/argument-domain isolation. Run through the iOS scheme's Test action. In the restricted agent sandbox, both generic iOS Simulator and macOS builds pass with the temporary CLI override `OTHER_SWIFT_FLAGS='$(inherited) -disable-sandbox'`; Swift macro plugin sandbox nesting otherwise fails. The specific simulator destination and XCTest execution require CoreSimulator access outside that sandbox. The override is not part of project settings.
+`LakshlyTests` covers Indian money grouping, authenticated encryption including tamper/wrong-key rejection, DEBUG launch parsing (including `-importDemo`), the no-passcode demo policy, preference migration/argument-domain isolation, and `ParserFixtureTests` / `ParserUtilTests` for the on-device statement parsers. Run through the iOS scheme's Test action. In the restricted agent sandbox, both generic iOS Simulator and macOS builds pass with the temporary CLI override `OTHER_SWIFT_FLAGS='$(inherited) -disable-sandbox'`; Swift macro plugin sandbox nesting otherwise fails. The specific simulator destination and XCTest execution require CoreSimulator access outside that sandbox. The override is not part of project settings.
 
 MVP limitations: AppIcon is a placeholder; budget rollover is annotated, not carried forward; projections are illustrative with fixed rates and no taxes/fees; Premium planner is an explanatory preview. Device authentication, Keychain/Enclave persistence and responsive visual layout still need hands-on simulator/device QA.
 

@@ -1,0 +1,66 @@
+[
+  {
+    "page": 1,
+    "text": "Demo Cooperative Bank"
+  },
+  {
+    "page": 1,
+    "text": "Acct No: 0000111122223333"
+  },
+  {
+    "page": 1,
+    "text": "Opening Balance: 60,000.00"
+  },
+  {
+    "page": 1,
+    "text": "Tran Date   Particulars   Amount   Balance"
+  },
+  {
+    "page": 1,
+    "text": "01-09-2026   NEFT CR-DEMO EMPLOYER PVT LTD-SALARY SEP 2026   1,25,000.00   1,85,000.00"
+  },
+  {
+    "page": 1,
+    "text": "02-09-2026   ACH D- DEMO HOUSING RENT-0000123   25,000.00   1,60,000.00"
+  },
+  {
+    "page": 1,
+    "text": "03-09-2026   UPI-SWIGGY-swiggy@demo-123456789012-Food order   450.00   1,59,550.00"
+  },
+  {
+    "page": 1,
+    "text": "05-09-2026   POS 416021XXXXXX1234 BIGBASKET DEMO   2,345.50   1,57,204.50"
+  },
+  {
+    "page": 1,
+    "text": "07-09-2026   UPI-ZEPTO-zepto@demo-223456789012 DEMO GROCERIES ORDER   678.00   1,56,526.50"
+  },
+  {
+    "page": 1,
+    "text": "10-09-2026   ATM WDL-DEMO ATM BLR   5,000.00   1,51,526.50"
+  },
+  {
+    "page": 1,
+    "text": "12-09-2026   IMPS-CASHBACK-DEMO WALLET   150.00   1,51,676.50"
+  },
+  {
+    "page": 1,
+    "text": "15-09-2026   CC 000XXXXXXXX1234 AUTOPAY SI-TAD CREDIT CARD   18,240.00   1,33,436.50"
+  },
+  {
+    "page": 1,
+    "text": "20-09-2026   NACH-DEMO AMC SIP MUTUAL FUND   5,000.00   1,28,436.50"
+  },
+  {
+    "page": 1,
+    "text": "25-09-2026   UPI-UBER INDIA-uber@demo-323456789012-Ride   312.00   1,28,124.50"
+  },
+  {
+    "page": 1,
+    "text": "28-09-2026   INT.PD:DEMO SAVINGS INTEREST   412.00   1,28,536.50"
+  },
+  {
+    "page": 1,
+    "text": "30-09-2026   UPI-NETFLIX-netflix@demo-423456789012-Subscription   649.00   1,27,887.50"
+  }
+]

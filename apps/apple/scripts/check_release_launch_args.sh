@@ -36,11 +36,16 @@ for binary in \
   while IFS= read -r -d '' dylib; do binaries+=("$dylib"); done < <(find "$app_path" -type f -name '*.debug.dylib' -print0)
   for executable in "${binaries[@]}"; do
     /usr/bin/strings -a "$executable" > "$strings_file"
-    if grep -nE 'demoUnlocked|showLock|startTab|openSettings' "$strings_file"; then
+    if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile' "$strings_file"; then
       echo "FAIL: DEBUG launch controls found in $executable" >&2
       exit 1
     fi
   done
+  if find "$app_path" -name '*.synthetic.pdf' -print | grep -q .; then
+    echo "FAIL: synthetic statement PDF bundled in Release: $app_path" >&2
+    find "$app_path" -name '*.synthetic.pdf' -print >&2
+    exit 1
+  fi
 done
 
-echo 'PASS: macOS and iOS Simulator Release binaries contain no DEBUG launch controls.'
+echo 'PASS: macOS and iOS Simulator Release binaries contain no DEBUG launch controls or synthetic statement PDFs.'

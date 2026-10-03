@@ -1,0 +1,344 @@
+{
+  "adapter": "cas.cams-kfintech",
+  "adapterLabel": "Mutual fund CAS (CAMS / KFintech)",
+  "kind": "cas",
+  "confidence": 1,
+  "accounts": [
+    {
+      "id": "acc_0nrvndcwmxh",
+      "name": "Example Demo Flexi Cap Fund - Direct Plan - Growth",
+      "type": "mutual_fund",
+      "institution": "Example Demo Mutual Fund",
+      "mask": "4567",
+      "currency": "INR",
+      "balance": 4359382,
+      "invested": 4100000,
+      "asOf": "2026-09-30",
+      "source": "cas"
+    },
+    {
+      "id": "acc_1b2nte55fh8",
+      "name": "Example Demo Nifty Index Fund - Direct Plan - Growth",
+      "type": "mutual_fund",
+      "institution": "Example Demo Mutual Fund",
+      "mask": "4567",
+      "currency": "INR",
+      "balance": 1862874,
+      "invested": 1800000,
+      "asOf": "2026-09-30",
+      "source": "cas"
+    },
+    {
+      "id": "acc_1g03gp3zqke",
+      "name": "Sample Demo Short Duration Fund - Direct Plan - Growth",
+      "type": "mutual_fund",
+      "institution": "Sample Demo Mutual Fund",
+      "mask": "0011",
+      "currency": "INR",
+      "balance": 1619562,
+      "invested": 1500000,
+      "asOf": "2026-09-30",
+      "source": "cas"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_1uhm9al88di",
+      "accountId": "acc_0nrvndcwmxh",
+      "date": "2026-04-05",
+      "amount": 500000,
+      "description": "Systematic Investment Purchase - Instalment 13",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:45.122",
+        "nav:110.81"
+      ]
+    },
+    {
+      "id": "txn_0pr1zw0audd",
+      "accountId": "acc_0nrvndcwmxh",
+      "date": "2026-05-05",
+      "amount": 500000,
+      "description": "Systematic Investment Purchase - Instalment 14",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:44.322",
+        "nav:112.81"
+      ]
+    },
+    {
+      "id": "txn_0rja68uxykb",
+      "accountId": "acc_0nrvndcwmxh",
+      "date": "2026-06-05",
+      "amount": 500000,
+      "description": "Systematic Investment Purchase - Instalment 15",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:43.55",
+        "nav:114.81"
+      ]
+    },
+    {
+      "id": "txn_1nq58drqe0s",
+      "accountId": "acc_0nrvndcwmxh",
+      "date": "2026-07-05",
+      "amount": 500000,
+      "description": "Systematic Investment Purchase - Instalment 16",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:42.805",
+        "nav:116.81"
+      ]
+    },
+    {
+      "id": "txn_0izb5qkzngu",
+      "accountId": "acc_0nrvndcwmxh",
+      "date": "2026-08-05",
+      "amount": 500000,
+      "description": "Systematic Investment Purchase - Instalment 17",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:42.084",
+        "nav:118.81"
+      ]
+    },
+    {
+      "id": "txn_2cjez886h6f",
+      "accountId": "acc_0nrvndcwmxh",
+      "date": "2026-09-05",
+      "amount": 500000,
+      "description": "Systematic Investment Purchase - Instalment 18",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:41.387",
+        "nav:120.81"
+      ]
+    },
+    {
+      "id": "txn_1gilvmu5vxl",
+      "accountId": "acc_1b2nte55fh8",
+      "date": "2026-04-10",
+      "amount": 300000,
+      "description": "SIP Purchase - via Demo Invest App",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:125.523",
+        "nav:23.9"
+      ]
+    },
+    {
+      "id": "txn_0myglpxttsu",
+      "accountId": "acc_1b2nte55fh8",
+      "date": "2026-05-10",
+      "amount": 300000,
+      "description": "SIP Purchase - via Demo Invest App",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:123.967",
+        "nav:24.2"
+      ]
+    },
+    {
+      "id": "txn_0w565k9h2v2",
+      "accountId": "acc_1b2nte55fh8",
+      "date": "2026-06-10",
+      "amount": 300000,
+      "description": "SIP Purchase - via Demo Invest App",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:122.449",
+        "nav:24.5"
+      ]
+    },
+    {
+      "id": "txn_04m1ohx2d0m",
+      "accountId": "acc_1b2nte55fh8",
+      "date": "2026-07-10",
+      "amount": 300000,
+      "description": "SIP Purchase - via Demo Invest App",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:120.968",
+        "nav:24.8"
+      ]
+    },
+    {
+      "id": "txn_2g8n870ywkc",
+      "accountId": "acc_1b2nte55fh8",
+      "date": "2026-08-10",
+      "amount": 300000,
+      "description": "SIP Purchase - via Demo Invest App",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:119.522",
+        "nav:25.1"
+      ]
+    },
+    {
+      "id": "txn_0pn01zx75v8",
+      "accountId": "acc_1b2nte55fh8",
+      "date": "2026-09-10",
+      "amount": 300000,
+      "description": "SIP Purchase - via Demo Invest App",
+      "merchant": "Example Demo",
+      "category": "investments",
+      "method": "autodebit",
+      "recurring": true,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:118.11",
+        "nav:25.4"
+      ]
+    },
+    {
+      "id": "txn_1hnn9610gax",
+      "accountId": "acc_1g03gp3zqke",
+      "date": "2026-04-15",
+      "amount": 2500000,
+      "description": "Purchase",
+      "merchant": "Sample Demo",
+      "category": "investments",
+      "method": "other",
+      "recurring": false,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:208.333",
+        "nav:120"
+      ]
+    },
+    {
+      "id": "txn_1zxm1dbs4vh",
+      "accountId": "acc_1g03gp3zqke",
+      "date": "2026-08-18",
+      "amount": -1000000,
+      "description": "Redemption",
+      "merchant": "Sample Demo",
+      "category": "investments",
+      "method": "other",
+      "recurring": false,
+      "categorisedBy": "rule",
+      "tags": [
+        "units:-80",
+        "nav:125"
+      ]
+    }
+  ],
+  "sips": [
+    {
+      "id": "sip_210xbhg4n7y",
+      "scheme": "Example Demo Flexi Cap Fund - Direct Plan - Growth",
+      "platform": "CAMS",
+      "amount": 500000,
+      "dayOfMonth": 5,
+      "startDate": "2026-04-05",
+      "status": "active",
+      "accountId": "acc_0nrvndcwmxh"
+    },
+    {
+      "id": "sip_0nqpjd6w3dc",
+      "scheme": "Example Demo Nifty Index Fund - Direct Plan - Growth",
+      "platform": "CAMS",
+      "amount": 300000,
+      "dayOfMonth": 10,
+      "startDate": "2026-04-10",
+      "status": "active",
+      "accountId": "acc_1b2nte55fh8"
+    }
+  ],
+  "holdings": [
+    {
+      "accountId": "acc_0nrvndcwmxh",
+      "scheme": "Example Demo Flexi Cap Fund - Direct Plan - Growth",
+      "amc": "Example Demo",
+      "registrar": "CAMS",
+      "folioMask": "4567",
+      "isin": "INF0DEMO0001",
+      "units": 359.27,
+      "nav": 121.34,
+      "navDate": "2026-09-30",
+      "costValue": 4100000,
+      "marketValue": 4359382
+    },
+    {
+      "accountId": "acc_1b2nte55fh8",
+      "scheme": "Example Demo Nifty Index Fund - Direct Plan - Growth",
+      "amc": "Example Demo",
+      "registrar": "CAMS",
+      "folioMask": "4567",
+      "isin": "INF0DEMO0002",
+      "units": 730.539,
+      "nav": 25.5,
+      "navDate": "2026-09-30",
+      "costValue": 1800000,
+      "marketValue": 1862874
+    },
+    {
+      "accountId": "acc_1g03gp3zqke",
+      "scheme": "Sample Demo Short Duration Fund - Direct Plan - Growth",
+      "amc": "Sample Demo",
+      "registrar": "KFintech",
+      "folioMask": "0011",
+      "isin": "INF0DEMO0003",
+      "units": 128.333,
+      "nav": 126.2,
+      "navDate": "2026-09-30",
+      "costValue": 1500000,
+      "marketValue": 1619562
+    }
+  ],
+  "meta": [
+    {
+      "adapter": "cas.cams-kfintech",
+      "kind": "cas",
+      "institution": "CAMS / KFintech",
+      "accountId": "acc_0nrvndcwmxh",
+      "periodFrom": "2026-04-01",
+      "periodTo": "2026-09-30"
+    }
+  ],
+  "warnings": []
+}

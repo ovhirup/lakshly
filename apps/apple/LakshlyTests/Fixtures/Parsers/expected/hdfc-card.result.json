@@ -1,0 +1,116 @@
+{
+  "adapter": "card.hdfc",
+  "adapterLabel": "HDFC Bank credit card statement",
+  "kind": "card",
+  "confidence": 1,
+  "accounts": [
+    {
+      "id": "acc_1qq9s11ynbv",
+      "name": "HDFC Bank Credit Card ••4417",
+      "type": "credit_card",
+      "institution": "HDFC Bank",
+      "currency": "INR",
+      "balance": -2431000,
+      "asOf": "2026-09-25",
+      "source": "statement",
+      "mask": "4417",
+      "creditLimit": 20000000,
+      "statementDay": 25,
+      "dueDay": 15
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_1qbg8mbvuk9",
+      "accountId": "acc_1qq9s11ynbv",
+      "date": "2026-08-28",
+      "amount": -45600,
+      "description": "SWIGGY BANGALORE",
+      "category": "dining",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Swiggy Bangalore"
+    },
+    {
+      "id": "txn_1ggqvtrzd8t",
+      "accountId": "acc_1qq9s11ynbv",
+      "date": "2026-09-02",
+      "amount": 1824000,
+      "description": "PAYMENT RECEIVED - THANK YOU",
+      "category": "transfers",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Payment Received - Thank You"
+    },
+    {
+      "id": "txn_20h833wh4eg",
+      "accountId": "acc_1qq9s11ynbv",
+      "date": "2026-09-04",
+      "amount": -349900,
+      "description": "AMAZON PAY INDIA DEMO",
+      "category": "shopping",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Amazon Pay India Demo"
+    },
+    {
+      "id": "txn_1lak7lld5cf",
+      "accountId": "acc_1qq9s11ynbv",
+      "date": "2026-09-09",
+      "amount": -210000,
+      "description": "DEMO FUEL STATION HPCL",
+      "category": "fuel",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Demo Fuel Station Hpcl"
+    },
+    {
+      "id": "txn_0ddvbyhx6tj",
+      "accountId": "acc_1qq9s11ynbv",
+      "date": "2026-09-14",
+      "amount": -76000,
+      "description": "BOOKMYSHOW DEMO",
+      "category": "entertainment",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Bookmyshow Demo"
+    },
+    {
+      "id": "txn_0a1krk3o5w8",
+      "accountId": "acc_1qq9s11ynbv",
+      "date": "2026-09-18",
+      "amount": 49900,
+      "description": "REFUND AMAZON PAY INDIA DEMO",
+      "category": "shopping",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Refund Amazon Pay India Demo"
+    },
+    {
+      "id": "txn_23fhfjqyol3",
+      "accountId": "acc_1qq9s11ynbv",
+      "date": "2026-09-21",
+      "amount": -128000,
+      "description": "DEMO PHARMACY APOLLO",
+      "category": "health",
+      "method": "card",
+      "categorisedBy": "rule",
+      "merchant": "Demo Pharmacy Apollo"
+    }
+  ],
+  "sips": [],
+  "holdings": [],
+  "meta": [
+    {
+      "adapter": "card.hdfc",
+      "kind": "card",
+      "institution": "HDFC Bank",
+      "accountId": "acc_1qq9s11ynbv",
+      "statementDate": "2026-09-25",
+      "dueDate": "2026-10-15",
+      "totalDue": 2431000,
+      "minDue": 122000
+    }
+  ],
+  "warnings": []
+}

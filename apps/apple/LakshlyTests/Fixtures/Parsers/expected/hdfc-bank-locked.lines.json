@@ -1,0 +1,114 @@
+[
+  {
+    "page": 1,
+    "text": "HDFC BANK"
+  },
+  {
+    "page": 1,
+    "text": "Statement of account (SYNTHETIC DEMO)"
+  },
+  {
+    "page": 1,
+    "text": "DEMO CUSTOMER A   Account No :   50100000004321"
+  },
+  {
+    "page": 1,
+    "text": "Statement From : 01/09/2026 To : 30/09/2026"
+  },
+  {
+    "page": 1,
+    "text": "Date   Narration   Chq./Ref.No.   Value Dt   Withdrawal Amt.   Deposit Amt.   Closing Balance"
+  },
+  {
+    "page": 1,
+    "text": "01/09/26   NEFT CR-DEMO EMPLOYER PVT LTD-SALARY SEP 2026   0000004000   01/09/26   1,25,000.00   1,85,000.00"
+  },
+  {
+    "page": 1,
+    "text": "02/09/26   ACH D- DEMO HOUSING RENT-0000123   0000004001   02/09/26   25,000.00   1,60,000.00"
+  },
+  {
+    "page": 1,
+    "text": "03/09/26   UPI-SWIGGY-swiggy@demo-123456789012-Food order   0000004002   03/09/26   450.00   1,59,550.00"
+  },
+  {
+    "page": 1,
+    "text": "05/09/26   POS 416021XXXXXX1234 BIGBASKET DEMO   0000004003   05/09/26   2,345.50   1,57,204.50"
+  },
+  {
+    "page": 1,
+    "text": "07/09/26   UPI-ZEPTO-zepto@demo-223456789012   0000004004   07/09/26   678.00   1,56,526.50"
+  },
+  {
+    "page": 1,
+    "text": "DEMO GROCERIES ORDER"
+  },
+  {
+    "page": 1,
+    "text": "10/09/26   ATM WDL-DEMO ATM BLR   0000004005   10/09/26   5,000.00   1,51,526.50"
+  },
+  {
+    "page": 1,
+    "text": "12/09/26   IMPS-CASHBACK-DEMO WALLET   0000004006   12/09/26   150.00   1,51,676.50"
+  },
+  {
+    "page": 1,
+    "text": "15/09/26   CC 000XXXXXXXX1234 AUTOPAY SI-TAD CREDIT CARD   0000004007   15/09/26   18,240.00   1,33,436.50"
+  },
+  {
+    "page": 1,
+    "text": "20/09/26   NACH-DEMO AMC SIP MUTUAL FUND   0000004008   20/09/26   5,000.00   1,28,436.50"
+  },
+  {
+    "page": 1,
+    "text": "Page 1 of 2"
+  },
+  {
+    "page": 2,
+    "text": "HDFC BANK"
+  },
+  {
+    "page": 2,
+    "text": "Statement of account (SYNTHETIC DEMO)"
+  },
+  {
+    "page": 2,
+    "text": "DEMO CUSTOMER A   Account No :   50100000004321"
+  },
+  {
+    "page": 2,
+    "text": "Statement From : 01/09/2026 To : 30/09/2026"
+  },
+  {
+    "page": 2,
+    "text": "Date   Narration   Chq./Ref.No.   Value Dt   Withdrawal Amt.   Deposit Amt.   Closing Balance"
+  },
+  {
+    "page": 2,
+    "text": "25/09/26   UPI-UBER INDIA-uber@demo-323456789012-Ride   0000004009   25/09/26   312.00   1,28,124.50"
+  },
+  {
+    "page": 2,
+    "text": "28/09/26   INT.PD:DEMO SAVINGS INTEREST   0000004010   28/09/26   412.00   1,28,536.50"
+  },
+  {
+    "page": 2,
+    "text": "30/09/26   UPI-NETFLIX-netflix@demo-423456789012-Subscription   0000004011   30/09/26   649.00   1,27,887.50"
+  },
+  {
+    "page": 2,
+    "text": "STATEMENT SUMMARY :-"
+  },
+  {
+    "page": 2,
+    "text": "Opening Balance   Dr Count   Cr Count   Debits   Credits   Closing Bal"
+  },
+  {
+    "page": 2,
+    "text": "60,000.00   9   3   57,674.50   1,25,562.00   1,27,887.50"
+  },
+  {
+    "page": 2,
+    "text": "Page 2 of 2"
+  }
+]

@@ -1,0 +1,178 @@
+[
+  {
+    "page": 1,
+    "text": "Consolidated Account Statement"
+  },
+  {
+    "page": 1,
+    "text": "01-Apr-2026 To 30-Sep-2026"
+  },
+  {
+    "page": 1,
+    "text": "DEMO INVESTOR (SYNTHETIC)"
+  },
+  {
+    "page": 1,
+    "text": "Example Demo Mutual Fund"
+  },
+  {
+    "page": 1,
+    "text": "Folio No: 91234567 / 12   PAN: OK   KYC: OK"
+  },
+  {
+    "page": 1,
+    "text": "D123-Example Demo Flexi Cap Fund - Direct Plan - Growth (Advisor: DIRECT)   ISIN: INF0DEMO0001   Registrar : CAMS"
+  },
+  {
+    "page": 1,
+    "text": "Opening Unit Balance: 100.000"
+  },
+  {
+    "page": 1,
+    "text": "05-Apr-2026   Systematic Investment Purchase - Instalment 13   5,000.00   45.122   110.8100   145.122"
+  },
+  {
+    "page": 1,
+    "text": "05-Apr-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "05-May-2026   Systematic Investment Purchase - Instalment 14   5,000.00   44.322   112.8100   189.444"
+  },
+  {
+    "page": 1,
+    "text": "05-May-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "05-Jun-2026   Systematic Investment Purchase - Instalment 15   5,000.00   43.550   114.8100   232.994"
+  },
+  {
+    "page": 1,
+    "text": "05-Jun-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "05-Jul-2026   Systematic Investment Purchase - Instalment 16   5,000.00   42.805   116.8100   275.799"
+  },
+  {
+    "page": 1,
+    "text": "05-Jul-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "05-Aug-2026   Systematic Investment Purchase - Instalment 17   5,000.00   42.084   118.8100   317.883"
+  },
+  {
+    "page": 1,
+    "text": "05-Aug-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "05-Sep-2026   Systematic Investment Purchase - Instalment 18   5,000.00   41.387   120.8100   359.270"
+  },
+  {
+    "page": 1,
+    "text": "05-Sep-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "Closing Unit Balance: 359.270   NAV on 30-Sep-2026: INR 121.3400   Total Cost Value: 41,000.00   Market Value on 30-Sep-2026: INR 43,593.82"
+  },
+  {
+    "page": 1,
+    "text": "Folio No: 91234567 / 12   PAN: OK   KYC: OK"
+  },
+  {
+    "page": 1,
+    "text": "D456-Example Demo Nifty Index Fund - Direct Plan - Growth (Advisor: DIRECT)   ISIN: INF0DEMO0002   Registrar : CAMS"
+  },
+  {
+    "page": 1,
+    "text": "Opening Unit Balance: 0.000"
+  },
+  {
+    "page": 1,
+    "text": "10-Apr-2026   SIP Purchase - via Demo Invest App   3,000.00   125.523   23.9000   125.523"
+  },
+  {
+    "page": 1,
+    "text": "10-Apr-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "10-May-2026   SIP Purchase - via Demo Invest App   3,000.00   123.967   24.2000   249.490"
+  },
+  {
+    "page": 1,
+    "text": "10-May-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "10-Jun-2026   SIP Purchase - via Demo Invest App   3,000.00   122.449   24.5000   371.939"
+  },
+  {
+    "page": 1,
+    "text": "10-Jun-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "10-Jul-2026   SIP Purchase - via Demo Invest App   3,000.00   120.968   24.8000   492.907"
+  },
+  {
+    "page": 1,
+    "text": "10-Jul-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "10-Aug-2026   SIP Purchase - via Demo Invest App   3,000.00   119.522   25.1000   612.429"
+  },
+  {
+    "page": 1,
+    "text": "10-Aug-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "10-Sep-2026   SIP Purchase - via Demo Invest App   3,000.00   118.110   25.4000   730.539"
+  },
+  {
+    "page": 1,
+    "text": "10-Sep-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "Closing Unit Balance: 730.539   NAV on 30-Sep-2026: INR 25.5000   Total Cost Value: 18,000.00   Market Value on 30-Sep-2026: INR 18,628.74"
+  },
+  {
+    "page": 1,
+    "text": "Sample Demo Mutual Fund"
+  },
+  {
+    "page": 1,
+    "text": "Folio No: 55500011 / 0   PAN: OK   KYC: OK"
+  },
+  {
+    "page": 1,
+    "text": "S789-Sample Demo Short Duration Fund - Direct Plan - Growth (Advisor: DIRECT)   ISIN: INF0DEMO0003   Registrar : KFINTECH"
+  },
+  {
+    "page": 1,
+    "text": "Opening Unit Balance: 0.000"
+  },
+  {
+    "page": 1,
+    "text": "15-Apr-2026   Purchase   25,000.00   208.333   120.0000   208.333"
+  },
+  {
+    "page": 1,
+    "text": "15-Apr-2026   *** Stamp Duty ***   0.25"
+  },
+  {
+    "page": 1,
+    "text": "18-Aug-2026   Redemption   (10,000.00)   (80.000)   125.0000   128.333"
+  },
+  {
+    "page": 1,
+    "text": "Closing Unit Balance: 128.333   NAV on 30-Sep-2026: INR 126.2000   Total Cost Value: 15,000.00   Market Value on 30-Sep-2026: INR 16,195.62"
+  }
+]

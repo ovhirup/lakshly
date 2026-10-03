@@ -1,0 +1,59 @@
+{
+  "password": "DEMO1234",
+  "fixtures": [
+    {
+      "name": "hdfc-bank",
+      "file": "hdfc-bank.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "hdfc-bank-locked",
+      "file": "hdfc-bank-locked.synthetic.pdf",
+      "password": "DEMO1234",
+      "withoutPassword": "required",
+      "wrongPassword": "incorrect"
+    },
+    {
+      "name": "sbi-bank",
+      "file": "sbi-bank.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "icici-bank",
+      "file": "icici-bank.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "generic-bank",
+      "file": "generic-bank.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "hdfc-card",
+      "file": "hdfc-card.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "sbi-card",
+      "file": "sbi-card.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "generic-card",
+      "file": "generic-card.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "cas",
+      "file": "cas.synthetic.pdf",
+      "password": null
+    },
+    {
+      "name": "cas-locked",
+      "file": "cas-locked.synthetic.pdf",
+      "password": "DEMO1234",
+      "withoutPassword": "required",
+      "wrongPassword": "incorrect"
+    }
+  ]
+}
