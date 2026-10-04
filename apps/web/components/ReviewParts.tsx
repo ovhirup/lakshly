@@ -6,8 +6,8 @@ import { useData } from "./DataState";
 import { LevelLine } from "./Game";
 import { Glass } from "./ui";
 import { useTier } from "./useTier";
-import { countLabel, localDate, monthlyRatio, questFor, regretMerchants, showSundayReminder, streakText, sundayReminderOn, sundaySnoozed, weekNumber, type ReviewTxn } from "@/lib/review";
-import { formatMonth, formatPct } from "@/lib/format";
+import { countLabel, localDate, monthlyRatio, questFor, questWaiting, regretMerchants, showSundayReminder, streakText, sundayReminderOn, sundaySnoozed, weekNumber, wishlistUntil, type ReviewTxn } from "@/lib/review";
+import { formatDate, formatMonth, formatPct } from "@/lib/format";
 
 export function ReviewCountBadge({ className = "" }: { className?: string }) {
   const { review } = useData();
@@ -87,6 +87,15 @@ export function SundayBanner() {
 
 // --- Worth-it month card -------------------------------------------------------------------------------------------
 
+let questDayCache = "1970-01-01";
+function readQuestDay() {
+  const n = new Date();
+  const today = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+  if (questDayCache === today) return questDayCache;
+  questDayCache = today;
+  return questDayCache;
+}
+
 export function latestRatedMonth(txns: readonly ReviewTxn[], worth: Record<string, string>): string | null {
   let m: string | null = null;
   for (const t of txns) if (worth[t.id] && (!m || t.date.slice(0, 7) > m)) m = t.date.slice(0, 7);
@@ -108,6 +117,10 @@ export function WorthItCard({ compact = false }: { compact?: boolean }) {
   // Snoozes live in the encrypted review record (merchant names are derived from imported data).
   const notNow = (m: string) => { review.dispatch({ type: "snooze", merchant: m, until: new Date(now.getTime() + 30 * 86400000).toISOString() }); };
   const noCount = regret ? txns.filter((t) => (t.merchant ?? t.description) === regret && state.worth[t.id] === "no").length : 0;
+  const today = useSyncExternalStore(() => () => {}, readQuestDay, () => questDayCache);
+  const waiting = questWaiting(state.quest, today);
+  const finished = !!state.quest && !waiting;
+  const canStart = !!regret && !!quest && (quest.id === "wishlist_three" || quest.id === "custom");
   return (
     <div className={`worth-card ${compact ? "compact" : ""}`}>
       <div className="worth-head">
@@ -120,13 +133,28 @@ export function WorthItCard({ compact = false }: { compact?: boolean }) {
         </div>
       </div>
       {!compact && <p className="muted tiny">Tap 👍 or 👎 on Wants and Vices while you review. No XP, no judgement: it&apos;s just for you.</p>}
-      {regret && quest && (
+      {waiting && state.quest && (
+        <div className="worth-suggest">
+          <p>Wait until <b>{formatDate(state.quest.until)}</b> before buying from <b>{state.quest.merchant}</b>.</p>
+          <p className="muted tiny">On this device. Nothing is sent.</p>
+        </div>
+      )}
+      {finished && state.quest && (
+        <div className="worth-suggest">
+          <p>The 3-day wait for <b>{state.quest.merchant}</b> is over.</p>
+          <div className="row-actions">
+            <button className="btn primary" type="button" onClick={() => review.dispatch({ type: "clearQuest" })}>Got it</button>
+          </div>
+        </div>
+      )}
+      {!state.quest && regret && quest && (
         <div className="worth-suggest">
           <p>You&apos;ve said &lsquo;not really&rsquo; to <b>{regret}</b> {noCount} times. Try {quest.title}?{quest.premium ? <span className="badge premium small" style={{ marginLeft: 6 }}>✦ Premium</span> : null}</p>
           <div className="row-actions">
-            <button className="btn ghost" onClick={() => notNow(regret)}>Not now</button>
+            {canStart && <button className="btn primary" type="button" onClick={() => review.dispatch({ type: "startQuest", merchant: regret, until: wishlistUntil(readQuestDay()) })}>Start the 3-day wait</button>}
+            <button className="btn ghost" type="button" onClick={() => notNow(regret)}>Not now</button>
           </div>
-          <p className="muted tiny">Quests are coming soon. We only ever suggest one for merchants you said you regret.</p>
+          <p className="muted tiny">{canStart ? "On this device. Nothing is sent." : "Quests are coming soon. We only ever suggest one for merchants you said you regret."}</p>
         </div>
       )}
     </div>
