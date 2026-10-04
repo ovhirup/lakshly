@@ -187,6 +187,22 @@ export function buildInbox(txns: readonly ReviewTxn[], state: ReviewState, now: 
 
 export const countLabel = (n: number) => (n > 50 ? "50+" : String(n));
 
+/** Unset stays on. Only an explicit false turns the Sunday card off. */
+export function sundayReminderOn(stored: unknown): boolean {
+  return stored !== false;
+}
+
+export function sundaySnoozed(until: string | null, nowMs: number): boolean {
+  if (!until) return false;
+  const at = Date.parse(until);
+  return Number.isFinite(at) && at > nowMs;
+}
+
+/** Real local Sunday, something waiting, reminder still on, and Not now has not covered today. */
+export function showSundayReminder(day: number, count: number, enabled: boolean, snoozed: boolean): boolean {
+  return day === 0 && count > 0 && enabled && !snoozed;
+}
+
 // ---------- reducer ----------
 export type ReviewAction =
   | { type: "confirm"; tx: string; nwv?: Nwv }
