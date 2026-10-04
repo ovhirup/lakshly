@@ -18,14 +18,14 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI, and also Apple
 
 ## Codex status
 
-- Done: CAS identity repair merged into `web/beta` via PR 28; Overview PR 30 is ready for review with green checks; glass blur fix PR 31 is merged into Cursor's branch.
-- Done, pending review: Apple CI PR 32 to `main`, head `afd3156`. Hosted run 37189181792 passed: iOS 111 tests / 2 skips / 0 failures; macOS 105 tests / 8 skips / 0 failures. Both platforms generated synthetic fixtures, preserved committed expected results, and uploaded test bundles.
+- Done: CAS identity repair merged into `web/beta` via PR 28; Overview PR 30 is now closed without merge (`0321f77`), with its last checks green; glass blur fix PR 31 is merged into Cursor's branch.
+- Done, now closed without merge: Apple CI PR 32 to `main`, head `afd3156`. Hosted run 37189181792 passed: iOS 111 tests / 2 skips / 0 failures; macOS 105 tests / 8 skips / 0 failures. Both platforms generated synthetic fixtures, preserved committed expected results, and uploaded test bundles.
 - Coverage limits: two opt-in render tests skipped on each platform; six macOS StoreKit session tests also skipped under the existing compatibility helper. All ten iOS StoreKit methods passed. macOS purchase flows, normal scene/menu runtime behavior, visual parity, and private editions remain unverified. A CI-only Debug host isolates macOS unit tests from the observed scene/menu startup loop; its production cause remains unresolved.
 - Done: owner-authorized six-version public-source audit and architecture proposal, draft PR 33 at `1fe183b`; two independent platform audits and advisor review passed. This is documentation, not implemented access or release policy.
 - Done: draft PR 36 at `3b87a4c` adds the unwired feature-policy v1 contract, strict schema/runtime validation, and synthetic cases. Independent gate and advisor review passed: 156 shared tests, typecheck and whitespace checks; 54 literal decisions also matched an independent integer model. No production catalog or application consumer was changed.
 - Done: stacked draft PR 39 at `80ea6ee` generates 11 Swift models and 10 enums, plus an explicitly authored reference adapter. Independent gate and advisor review passed: 54 original literal decisions and 38 additional mutation decisions match TypeScript/Swift; numeric, malformed transport, required-null round-trip, immutability, and drift checks passed. Shared tests remain 156 passing; typecheck/whitespace passed. C1 schema/evaluator/types/fixtures/tests are byte-identical. Only the headless Foundation/CoreFoundation CLI ran.
 - Done: draft PR 59 at `7bf0ef7` adds the four-file public feature inventory and staged Apple migration proposal. Pinned source `2d79390`: 43 features / 129 platform observations / 258 pending release approvals; 19 Apple aliases (17 mapped, two widget decisions); 11 preserved Free rights and six raw quota reviews. Independent checker, seven rejection cases, citation/scope/hash/whitespace gate and final advisor review passed after one four-citation repair. Runtime and newer-source behavior were not reverified.
-- Next: owner review PRs 33/36/39/59 and the ten catalog decisions, then separately claim a newer-source refresh and compatibility-only Apple generation. Full policy activation, trusted purchase/time mapping, quota guards, native channels and private authorization remain separate scopes. PRs 30/32 remain owner review items; their latest merge state is not reverified by this documentation batch.
+- Next: owner review PRs 33/36/39/59 and the ten catalog decisions, then separately claim a newer-source refresh and compatibility-only Apple generation. Full policy activation, trusted purchase/time mapping, quota guards, native channels and private authorization remain separate scopes. Nightly GitHub verification found PRs 30/32 closed without merge; their previous green checks do not establish integration on either base branch.
 - Boundaries: no web or private-edition edits, branch reconciliation, or feature merges in the Apple CI batch. No real financial data, Gmail account, Google client secret, local app, or simulator was used.
 - Local-only work: `notch-panel`, uncommitted `apple-feedback`, and archived `codex/cas-import-success-message` remain **local only, keep** pending explicit rescue decisions. Local integration work is also preserved. Private source was not accessed.
 
@@ -65,11 +65,11 @@ Coverage columns represent six suite/platform versions, with Public Web split in
 | Liquid Glass slider | done (not in git) | draft PR 40 | no | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Gmail connect | n/a | code on beta, Testing mode | not on main | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Tester name | n/a | done | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
-| CDSL/NSDL CAS | debt | done (#25, #28); #30 open | parser via #24 | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
+| CDSL/NSDL CAS | debt | done (#25, #28); #30 closed without merge | parser via #24 | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Net worth over time | done (not in git) | draft PR 35 | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Owed-to-me tracker | done (not in git) | draft PR 37 | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Notch panel part 2 | n/a | n/a | n/a | built locally, not on GitHub | Not applicable | Edition unverified | Not applicable |
-| Apple CI | n/a | n/a | n/a | PR 32 green: 105 tests, 8 skips; not merged | PR 32 green: 111 tests, 2 skips; not merged | Outside public CI | Outside public CI |
+| Apple CI | n/a | n/a | n/a | PR 32 closed, last CI green: 105 tests, 8 skips; not merged | PR 32 closed, last CI green: 111 tests, 2 skips; not merged | Outside public CI | Outside public CI |
 | iPhone Duo | n/a | n/a | n/a | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Ask Lakshly | not started | draft PR 38 | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 
@@ -87,16 +87,16 @@ Inherited aggregate Apple statements from Cursor's snapshot (reported, not indep
 - iPhone Duo: public Apple — spec only; private Apple — todo.
 - Ask Lakshly: public Apple — todo; private Apple — todo.
 
-## Open PRs
+## PR status
 
 | PR | Branch | Base | Waits on |
 |---|---|---|---|
-| #30 | `codex/cas-overview` | `web/beta` | Ready for review; green CI and synthetic browser check; owner screenshot/merge approval pending. |
-| #32 | `codex/apple-ci` | `main` | Head `afd3156`; both hosted unit jobs green with documented skips; Ready for review after independent approval; owner merge approval pending. |
+| #30 | `codex/cas-overview` | `web/beta` | Closed without merge at `0321f77`; last CI green. Previous synthetic browser evidence remains historical; integration is not established by this PR. |
+| #32 | `codex/apple-ci` | `main` | Closed without merge at `afd3156`; both hosted unit jobs last green with documented skips. CI integration is not established by this PR. |
 | #33 | `codex/suite-release-model` | `main` | Draft proposal at `1fe183b`; documentation checks and advisor review passed; owner policy review. No implementation or external change. |
 | #36 | `codex/feature-policy-v1` | `main` | Draft unwired contract at `3b87a4c`; 156 tests, typecheck, independent gate and review passed. Consumer integration and merge remain separate. |
 | #39 | `codex/feature-policy-swift` | `codex/feature-policy-v1` | Stacked draft at `80ea6ee`; 54+38 decision parity, generation/drift, transport/null checks, 156 shared tests, independent gate and review passed. Unwired; merge/activation separate. |
-| #59 | `codex/public-feature-catalog` | `main` | Draft historical proposal at `7bf0ef7`, source pinned `2d79390`; four docs/checker files, independent gates and review passed. Owner decisions, newer-source refresh and Apple compatibility batch remain separate. Hosted preview was in progress at publication. |
+| #59 | `codex/public-feature-catalog` | `main` | Draft historical proposal at `7bf0ef7`, source pinned `2d79390`; four docs/checker files, independent gates and review passed. Owner decisions, newer-source refresh and Apple compatibility batch remain separate. Both hosted Pages checks now report success at the unchanged proposal head; this does not verify a newer-source refresh or application behavior. |
 
 #29 merged into `web/beta` at `afee887`. #31 was already merged into #29.
 
@@ -116,7 +116,7 @@ These are not on GitHub. Do not delete, reset, or clean them.
 ## Questions for Abhirup
 
 1. Done: #29 is on `web/beta`. Redeploy beta.lakshly.com from that branch?
-2. May #30 and #32 merge?
+2. PRs #30 and #32 are closed without merge (nightly GitHub verification); their earlier merge-approval questions are no longer current.
 3. Done: Cursor merged `web/beta` into `main` via PR 34 at `2d79390`; beta-only behavior stays behind the edition flag.
 4. Did Gmail connect work for the Testing-mode test users, and did the CAS password retry succeed?
 5. May Codex push notch-panel and the Apple feedback work? Should the private Apple app get a private GitHub repo?
@@ -124,7 +124,7 @@ These are not on GitHub. Do not delete, reset, or clean them.
 
 ## Nightly sync
 
-Owner-approved automation `lakshly-nightly-handoff-sync`: 21:00 IST, October 4–10; at most seven runs, stopping earlier after three consecutive unchanged runs. Doc-only, public-safe coordination; quiet unless meaningful progress, failure, or an owner decision is needed. Scheduled runs completed: 0; consecutive unchanged scheduled runs: 0.
+Owner-approved automation `lakshly-nightly-handoff-sync`: 21:00 IST, October 4–10; at most seven runs, stopping earlier after three consecutive unchanged runs. Doc-only, public-safe coordination; quiet unless meaningful progress, failure, or an owner decision is needed. Scheduled runs completed: 1; consecutive unchanged scheduled runs: 0.
 
 ## Log
 
@@ -231,3 +231,11 @@ Draft PR 42 adds the free on-device JSON and transactions CSV download. Draft PR
 ### 2026-10-04, 21:06 IST (Cursor)
 
 Abhirup authorized Cursor to take Apple, parsers, and Apple CI while Codex is paused or near its usage limit. The paused P36 catalog (draft PR 59) stays paused unless he says to resume it. No Apple source was edited for this note.
+
+### 2026-10-05, 02:35 IST (Codex nightly sync, run 1 of 7)
+
+- Completed: read the remote run log before work; no previous scheduled runs or stop threshold were recorded. GitHub reports [PR 30](https://github.com/ovhirup/lakshly/pull/30) closed without merge (4 October, 23:07 IST), and [PR 32](https://github.com/ovhirup/lakshly/pull/32) closed without merge (5 October, 02:31 IST). Their last returned checks report success. Updated Codex status and PR/parity evidence to avoid implying either PR was integrated.
+- Current work: Codex implementation remains owner-paused. Draft PRs 33/36/39/59 remain open at `1fe183b` / `3b87a4c` / `80ea6ee` / `7bf0ef7`; all returned checks report success, including both PR 59 Pages checks. The unfinished P36 refresh remains unwritten, and no runtime or newer-source verification is claimed.
+- Blockers and approval decisions: the citation-updater advisor disposition is still pending from the paused work; owner policy/catalog review and explicit resume authority remain outstanding. No new approval, merge, deployment, or implementation decision was taken by this sync. Cursor's claims, status, and logs were preserved.
+- Run accounting: scheduled runs completed 1 of 7; consecutive unchanged scheduled runs 0, because PR closure evidence changed meaningfully. This trigger was received at 5 October, 02:31 IST, rather than the configured 21:00 IST; this entry records actual execution time. The existing seven-run/date/three-unchanged stop conditions remain in force.
+- Verification: read-only GitHub PR/check and closure-timeline queries succeeded; doc-only diff and whitespace checks passed. No app tests were rerun for this documentation update. Zero delegations and zero subagents were used; this is one automation run. Published only `docs/HANDOFF.md` from an isolated checkout, using a normal fast-forward push; active feature work was left untouched.
