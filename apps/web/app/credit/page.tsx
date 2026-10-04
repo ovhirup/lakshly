@@ -1,18 +1,30 @@
 "use client";
+import { useSyncExternalStore } from "react";
 import { Donut } from "@/components/charts";
 import { Glass, PageHeader, PremiumBadge, PremiumGate, Progress, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
-import { formatINR, formatPct } from "@/lib/format";
+import { formatDate, formatINR, formatPct } from "@/lib/format";
+import { cardDueWhen, daysUntil, nextDueDate } from "@/lib/card-due";
 import { creditCards } from "@/lib/selectors";
 
-function nextDate(day: number, from: string) {
-  const [y, m, d] = from.split("-").map(Number);
-  const dt = new Date(Date.UTC(y, m - 1 + (d > day ? 1 : 0), day));
-  return dt.toISOString().slice(0, 10);
+let dayCache = "1970-01-01";
+function readDay() {
+  const n = new Date();
+  const today = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+  if (dayCache === today) return dayCache;
+  dayCache = today;
+  return dayCache;
+}
+
+function cycleLabel(day: number | undefined, today: string) {
+  if (typeof day !== "number") return "—";
+  const date = nextDueDate(day, today);
+  return `${formatDate(date)} · ${cardDueWhen(daysUntil(today, date))}`;
 }
 
 function CreditView() {
   const { accounts } = useData();
+  const today = useSyncExternalStore(() => () => {}, readDay, () => dayCache);
   const cards = creditCards(accounts);
   return (
     <>
@@ -39,8 +51,8 @@ function CreditView() {
                 </div>
                 <Progress pct={c.utilisation} color={c.utilisation < 30 ? "var(--lk-income)" : undefined} />
                 <div className="list">
-                  <div className="row"><div className="grow"><div className="title">Next statement</div><div className="sub">Day {c.statementDay} of each month</div></div><div className="amt">{nextDate(c.statementDay ?? 1, c.asOf)}</div></div>
-                  <div className="row"><div className="grow"><div className="title">Payment due</div><div className="sub">Pay in full to avoid interest</div></div><div className="amt">{nextDate(c.dueDay ?? 1, c.asOf)}</div></div>
+                  <div className="row"><div className="grow"><div className="title">Next statement</div><div className="sub">Day {c.statementDay} of each month</div></div><div className="amt">{cycleLabel(c.statementDay, today)}</div></div>
+                  <div className="row"><div className="grow"><div className="title">Payment due</div><div className="sub">Pay in full to avoid interest</div></div><div className="amt">{cycleLabel(c.dueDay, today)}</div></div>
                 </div>
                 <p className="muted tiny">💡 Keeping utilisation under 30% is generally kinder to your credit score.</p>
               </Glass>
