@@ -8,6 +8,7 @@ import { useTier } from "@/components/useTier";
 import { Glass, PageHeader } from "@/components/ui";
 import { SetupProfileRow } from "@/components/SetupParts";
 import { PrivacySettingsCard } from "@/components/PrivacySettings";
+import { VaultLockCard } from "@/components/VaultLock";
 import { CoachSettings } from "@/components/CoachSettings";
 import { useData } from "@/components/DataState";
 import { datasetJson, exportFilename, transactionsCsv } from "@/lib/export";
@@ -141,6 +142,7 @@ export default function ProfilePage() {
       )}
 
       <PrivacySettingsCard />
+      <VaultLockCard />
       {can("data.export") && (
         <Glass className="card">
           <div className="card-head"><h2>Your data</h2><span className="muted tiny">Free · stays on this device</span></div>
