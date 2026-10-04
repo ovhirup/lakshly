@@ -152,6 +152,14 @@ export async function disconnectGmail(): Promise<void> {
   if (gis) gis.revoke(token); else await revokeToken(token);
 }
 
+/** Look for statement mail only when this tab already has a Gmail token. Does not connect or open a window. */
+export async function checkConnectedMailbox(): Promise<{ connected: false } | { connected: true; found: number }> {
+  if (!st.token || !client) return { connected: false };
+  const found = await client.findStatements(5);
+  set({ found, busy: null, error: null, log: logNow() });
+  return { connected: true, found: found.length };
+}
+
 export function GmailConnectCard({ email, picked, onImported }: { email: string; picked: readonly string[]; onImported?: (sourceId: string, r: ParseResult, report: MergeReport) => void }) {
   const g = useGoogle();
   const [consent, setConsent] = useState(false);
