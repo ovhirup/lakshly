@@ -110,5 +110,11 @@ kbd { display: inline-block; min-width: 20px; padding: 0 5px; border-radius: 6px
 .card-due .row-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .sunday-banner p { margin: 0 0 12px; }
 .sunday-banner .row-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.today-card { margin-top: 20px; }
+.today-row { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--lk-border); }
+.today-card .today-row:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+.today-row h3 { margin: 0 0 6px; font-size: 1rem; }
+.today-row p { margin: 0 0 10px; }
+.today-row .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .overview-review-card { margin-top: 20px; }
 .nav-item span.review-count { flex: 0 0 auto; }
