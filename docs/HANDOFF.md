@@ -6,7 +6,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. Merged `web/beta` into `main` as PR 34 (`2d79390`). No other files claimed.
+- **Cursor:** History net-worth work on `cursor/net-worth-history` (draft PR 35, base `web/beta`). Files: `apps/web/app/history/page.tsx`, `apps/web/app/globals.css`, `apps/web/components/charts.tsx`, `apps/web/lib/selectors.ts`, `apps/web/tests/net-worth-history.test.ts`. Not touching Codex's feature-policy claim.
 - **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts` on `codex/feature-policy-v1`, based on `main`. Owner authorized the versioned contract, synthetic fixtures, and subsequent generated Swift parity work. Initial batch stays inside this new policy namespace; existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
@@ -163,3 +163,7 @@ Merged `web/beta` into `main` as PR 34, merge commit `2d79390`. Beta behaviour s
 ### 2026-10-04 (Codex policy claim)
 
 Owner authorized shared policy implementation. Claimed the new feature-policy namespace and its dedicated test file before any contract edits. Baseline shared checks passed: 31 tests, typecheck exit 0. Advisor is defining the bounded contract batch; private authorization and production billing/distribution are not implemented or inferred. No shared ledger schema or existing entitlement-map changes are claimed.
+
+### 2026-10-04, 16:05 IST (Cursor)
+
+Draft PR 35 adds month-end net worth and an allocation table on History, synthetic data only. Privacy mode keeps shares and hides rupees. Apple parity for this view is still owed.
