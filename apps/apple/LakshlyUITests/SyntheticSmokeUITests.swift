@@ -27,12 +27,12 @@ final class SyntheticSmokeUITests: XCTestCase {
     settings.tap()
     XCTAssertTrue(app.descendants(matching: .any)["screen.settings"].waitForExistence(timeout: 8))
 
-    let graphite = app.buttons["theme.graphite"]
-    XCTAssertTrue(graphite.waitForExistence(timeout: 8))
+    let graphite = themeControl(app, identifier: "theme.graphite", name: "Graphite")
+    XCTAssertTrue(graphite.waitForExistence(timeout: 4), "Graphite theme control was not in Settings")
     graphite.tap()
     let keepIcon = app.buttons["appIcon.offer.keep"].firstMatch
     if keepIcon.waitForExistence(timeout: 4) { keepIcon.tap() }
-    let selected = app.buttons["theme.graphite"]
+    let selected = themeControl(app, identifier: "theme.graphite", name: "Graphite")
     XCTAssertTrue(selected.waitForExistence(timeout: 6))
     if let value = selected.value as? String, !value.isEmpty {
       XCTAssertEqual(value, "Selected")
@@ -42,6 +42,18 @@ final class SyntheticSmokeUITests: XCTestCase {
     XCTAssertTrue(done.waitForExistence(timeout: 6))
     done.tap()
     XCTAssertTrue(overview.waitForExistence(timeout: 8))
+  }
+
+  /// Mac Settings lays the theme grid out lazily, so the control may be an
+  /// identifier, a button titled Graphite, or just below the fold.
+  private func themeControl(_ app: XCUIApplication, identifier: String, name: String) -> XCUIElement {
+    let byID = app.descendants(matching: .any)[identifier]
+    if byID.waitForExistence(timeout: 2) { return byID }
+    let byName = app.buttons[name].firstMatch
+    if byName.waitForExistence(timeout: 2) { return byName }
+    if app.scrollViews.firstMatch.exists { app.scrollViews.firstMatch.swipeUp() }
+    if byID.waitForExistence(timeout: 3) { return byID }
+    return byName
   }
 
   private func assertNoBrokenOrPrivateText(_ app: XCUIApplication) {
