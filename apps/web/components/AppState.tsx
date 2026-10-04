@@ -1,5 +1,5 @@
 "use client";
-import { IS_BETA } from "@/lib/edition";
+import { IS_BETA, resolveStoredPlan } from "@/lib/edition";
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import {
   APPEARANCE_KEY, applyDocumentTheme, isPremiumTheme, isThemeId, LEGACY_THEME_KEY, PLAN_KEY,
@@ -35,12 +35,9 @@ let current: Snapshot = SERVER;
 let migrated = false;
 
 function readPlan(): Plan {
-  if (IS_BETA) return "premium"; // beta testers get every Premium feature
-  try {
-    return localStorage.getItem(PLAN_KEY) === "premium" ? "premium" : "free";
-  } catch {
-    return "free";
-  }
+  let stored: string | null = null;
+  try { stored = localStorage.getItem(PLAN_KEY); } catch { /* ignore */ }
+  return resolveStoredPlan(IS_BETA, stored);
 }
 
 function migrateAppearance() {
