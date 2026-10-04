@@ -73,6 +73,9 @@ import SwiftUI
   }
   var body: some Scene {
     #if os(macOS)
+    #if DEBUG && LAKSHLY_MAC_UNIT_TEST_HOST
+    WindowGroup("Lakshly unit tests") { Text("Lakshly unit tests") }
+    #else
     mainScene
       .commands {
         CommandGroup(after: .appSettings) {
@@ -102,6 +105,7 @@ import SwiftUI
         .preferredColorScheme(appearance)
     }
     .menuBarExtraStyle(.window)
+    #endif
     #endif
     #else
     mainScene
