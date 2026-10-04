@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useMemo, useSyncExternalStore } from "react";
 import { useData } from "./DataState";
 import { LevelLine } from "./Game";
+import { Glass } from "./ui";
 import { useTier } from "./useTier";
-import { countLabel, localDate, monthlyRatio, questFor, regretMerchants, streakText, weekNumber, type ReviewTxn } from "@/lib/review";
+import { countLabel, localDate, monthlyRatio, questFor, regretMerchants, showSundayReminder, streakText, sundayReminderOn, sundaySnoozed, weekNumber, type ReviewTxn } from "@/lib/review";
 import { formatMonth, formatPct } from "@/lib/format";
 
 export function ReviewCountBadge({ className = "" }: { className?: string }) {
@@ -40,16 +41,48 @@ export function ReviewEntryCard() {
   );
 }
 
-/** Opt-in Sunday-evening banner (web has no push; reminders are in-app only). */
+/** In-app Sunday card. No push, and nothing leaves this device. */
 const PREFS_KEY = "lk-review-prefs";
-const subscribe = (l: () => void) => { const ev = ["storage", PREFS_KEY]; ev.forEach((e) => window.addEventListener(e, l)); return () => ev.forEach((e) => window.removeEventListener(e, l)); };
-const readReminder = () => { try { return JSON.parse(localStorage.getItem(PREFS_KEY) ?? "{}").reminder === true; } catch { return false; } };
+const PREFS_EVENT = "lk-review-prefs";
+const SNOOZE_KEY = "lakshly.review.sunday.until";
+function subscribe(l: () => void) {
+  window.addEventListener("storage", l);
+  window.addEventListener(PREFS_EVENT, l);
+  return () => { window.removeEventListener("storage", l); window.removeEventListener(PREFS_EVENT, l); };
+}
+type SundaySnap = { day: number; enabled: boolean; snoozed: boolean };
+const SERVER_SNAP: SundaySnap = { day: 1, enabled: true, snoozed: false };
+let snapCache = SERVER_SNAP;
+function readSnap(): SundaySnap {
+  let enabled = true;
+  let until: string | null = null;
+  try { enabled = sundayReminderOn(JSON.parse(localStorage.getItem(PREFS_KEY) ?? "{}").reminder); } catch { enabled = true; }
+  try { until = localStorage.getItem(SNOOZE_KEY); } catch { until = null; }
+  const now = new Date();
+  const next = { day: now.getDay(), enabled, snoozed: sundaySnoozed(until, now.getTime()) };
+  if (snapCache.day === next.day && snapCache.enabled === next.enabled && snapCache.snoozed === next.snoozed) return snapCache;
+  snapCache = next;
+  return snapCache;
+}
+function snoozeSunday() {
+  try { localStorage.setItem(SNOOZE_KEY, new Date(Date.now() + 7 * 86400000).toISOString()); } catch { /* ignore */ }
+  window.dispatchEvent(new Event(PREFS_EVENT));
+}
 export function SundayBanner() {
+  const { can } = useTier();
   const { review } = useData();
-  const on = useSyncExternalStore(subscribe, readReminder, () => false);
-  const n = review.now;
-  if (!on || n.getDay() !== 0 || n.getHours() < 17 || !review.inbox.count) return null;
-  return <div className="sunday-banner glass"><span>🌙 Sunday review: {countLabel(review.inbox.count)} waiting · {streakText(review.state, n)}</span><Link className="btn primary" href="/review/">Review now</Link></div>;
+  const snap = useSyncExternalStore(subscribe, readSnap, () => SERVER_SNAP);
+  if (!can("review.reminder") || !showSundayReminder(snap.day, review.inbox.count, snap.enabled, snap.snoozed)) return null;
+  return (
+    <Glass className="card sunday-banner">
+      <div className="card-head"><h2>Sunday review</h2></div>
+      <p>{countLabel(review.inbox.count)} to review. A weekly check on this device. Nothing is sent.</p>
+      <div className="row-actions">
+        <Link className="btn primary" href="/review/">Review</Link>
+        <button className="btn ghost" type="button" onClick={snoozeSunday}>Not now</button>
+      </div>
+    </Glass>
+  );
 }
 
 // --- Worth-it month card -------------------------------------------------------------------------------------------

@@ -32,6 +32,7 @@ function OverviewView() {
       <PageHeader title="Overview" subtitle={`${source === "mine" ? "Your data" : "Synthetic demo data"} · as of ${formatDate(accounts.reduce((m, a) => (a.asOf > m ? a.asOf : m), accounts[0].asOf))}`} />
 
       <SetupCard />
+      <SundayBanner />
 
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>
@@ -46,7 +47,6 @@ function OverviewView() {
 
       <BackfillCard />
       <NudgeCard screen="overview" />
-      <SundayBanner />
       <Glass className="card overview-review-card">
         <div className="overview-review">
           <ReviewEntryCard />

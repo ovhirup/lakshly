@@ -104,6 +104,8 @@ kbd { display: inline-block; min-width: 20px; padding: 0 5px; border-radius: 6px
   .review-actions .act { flex: 1; }
 }
 .spend-head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
-.sunday-banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 16px; margin-top: 20px; border-radius: var(--lk-radius-sm); border: 1px solid var(--lk-border); font-weight: 650; }
+.sunday-banner { margin-top: 20px; }
+.sunday-banner p { margin: 0 0 12px; }
+.sunday-banner .row-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .overview-review-card { margin-top: 20px; }
 .nav-item span.review-count { flex: 0 0 auto; }
