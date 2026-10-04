@@ -7,7 +7,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 ## Now (claims)
 
 - **Cursor:** Beta Free/Premium tester switch on `cursor/beta-plan-switch` (draft PR 43, base `web/beta`). Also drafted: PR 42 data export, PR 41 Gmail disconnect. Still open and green or in CI: PRs 35, 37, 38, 40. Not touching Codex's feature-policy files. No merges until Abhirup says so. Codex resumes after 19:37 IST.
-- **Codex CLAIM:** Public feature inventory and Apple migration proposal on `codex/public-feature-catalog`, based on public `main` at `2d79390`. Exactly four new documentation/checker paths: `docs/public-feature-catalog.proposal.json`, `docs/PUBLIC-FEATURE-CATALOG.md`, `docs/APPLE-POLICY-MIGRATION.md`, `docs/scripts/check-public-feature-catalog.mjs`. No shared catalog/schema, app, helper, or Cursor changes. PRs 36/39 remain complete unwired draft foundations; consumer activation follows catalog approval in a separate scope. PRs 30/32/33 remain separate review items.
+- **Codex:** Completed public feature inventory and staged Apple migration proposal in draft PR 59 (`codex/public-feature-catalog`, head `7bf0ef7`, base `main`), pinned to audited public source `2d79390`. No active writer; proposal claim released. PRs 36/39 remain unwired foundations. Newer-source refresh and compatibility-only Apple generation follow owner review in separate scopes; no shared catalog/helper/app activation. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
 
@@ -24,7 +24,8 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 - Done: owner-authorized six-version public-source audit and architecture proposal, draft PR 33 at `1fe183b`; two independent platform audits and advisor review passed. This is documentation, not implemented access or release policy.
 - Done: draft PR 36 at `3b87a4c` adds the unwired feature-policy v1 contract, strict schema/runtime validation, and synthetic cases. Independent gate and advisor review passed: 156 shared tests, typecheck and whitespace checks; 54 literal decisions also matched an independent integer model. No production catalog or application consumer was changed.
 - Done: stacked draft PR 39 at `80ea6ee` generates 11 Swift models and 10 enums, plus an explicitly authored reference adapter. Independent gate and advisor review passed: 54 original literal decisions and 38 additional mutation decisions match TypeScript/Swift; numeric, malformed transport, required-null round-trip, immutability, and drift checks passed. Shared tests remain 156 passing; typecheck/whitespace passed. C1 schema/evaluator/types/fixtures/tests are byte-identical. Only the headless Foundation/CoreFoundation CLI ran.
-- Next: review PRs 36/39, then separately claim an approved public release catalog and consumer migration. Cursor-owned Beta Free/Premium testability remains separate. PRs 30/32 still await owner merge approval. Private authorization, verified billing, native beta isolation, and visual/release gates remain unverified or future work.
+- Done: draft PR 59 at `7bf0ef7` adds the four-file public feature inventory and staged Apple migration proposal. Pinned source `2d79390`: 43 features / 129 platform observations / 258 pending release approvals; 19 Apple aliases (17 mapped, two widget decisions); 11 preserved Free rights and six raw quota reviews. Independent checker, seven rejection cases, citation/scope/hash/whitespace gate and final advisor review passed after one four-citation repair. Runtime and newer-source behavior were not reverified.
+- Next: owner review PRs 33/36/39/59 and the ten catalog decisions, then separately claim a newer-source refresh and compatibility-only Apple generation. Full policy activation, trusted purchase/time mapping, quota guards, native channels and private authorization remain separate scopes. PRs 30/32 remain owner review items; their latest merge state is not reverified by this documentation batch.
 - Boundaries: no web or private-edition edits, branch reconciliation, or feature merges in the Apple CI batch. No real financial data, Gmail account, Google client secret, local app, or simulator was used.
 - Local-only work: `notch-panel`, uncommitted `apple-feedback`, and archived `codex/cas-import-success-message` remain **local only, keep** pending explicit rescue decisions. Local integration work is also preserved. Private source was not accessed.
 
@@ -95,10 +96,13 @@ Inherited aggregate Apple statements from Cursor's snapshot (reported, not indep
 | #33 | `codex/suite-release-model` | `main` | Draft proposal at `1fe183b`; documentation checks and advisor review passed; owner policy review. No implementation or external change. |
 | #36 | `codex/feature-policy-v1` | `main` | Draft unwired contract at `3b87a4c`; 156 tests, typecheck, independent gate and review passed. Consumer integration and merge remain separate. |
 | #39 | `codex/feature-policy-swift` | `codex/feature-policy-v1` | Stacked draft at `80ea6ee`; 54+38 decision parity, generation/drift, transport/null checks, 156 shared tests, independent gate and review passed. Unwired; merge/activation separate. |
+| #59 | `codex/public-feature-catalog` | `main` | Draft historical proposal at `7bf0ef7`, source pinned `2d79390`; four docs/checker files, independent gates and review passed. Owner decisions, newer-source refresh and Apple compatibility batch remain separate. Hosted preview was in progress at publication. |
 
 #29 merged into `web/beta` at `afee887`. #31 was already merged into #29.
 
 `main` is `2d79390`, including the Cursor/owner merge of `web/beta` via PR 34. `web/beta` remains `afee887`. Published branches must not be rebased. The inherited parity table above predates that merge; code present on `main` still needs edition/channel-specific verification before it counts as public behavior.
+
+Codex public-ref observation at 20:22 IST: `main` advanced to `6cb2da3` and `web/beta` to `ca9833c` through separately merged Cursor work. The paragraph and parity table above record an older baseline. PR 59 deliberately remains the source-only audit snapshot at `2d79390`; it does not describe newer implementations or deployment. Cursor claim/status/log wording is preserved for its owner to update.
 
 ## Local only, keep
 
@@ -208,3 +212,11 @@ PR 40's web build failed on a lint error in the slider, then passed after `9c650
 ### 2026-10-04, 17:25 IST (Cursor)
 
 Draft PR 42 adds the free on-device JSON and transactions CSV download. Draft PR 43 lets beta testers switch to Free and keep that choice; beta still opens on Premium. Order of these drafts is not important. Nothing merged.
+
+### 2026-10-04, 20:22 IST (Codex public catalog proposal complete)
+
+- Published draft PR 59 at `7bf0ef7`, a four-file public feature inventory and staged Apple migration proposal, pinned to public main `2d79390`. All 43 legacy feature objects, 11 Free rights, six raw quota reviews, and 19 Apple aliases are preserved; two widget IDs remain pending. All 129 platform observations are source-only and all 258 release approvals remain pending.
+- Executor and independent verifier passed syntax/checker/whitespace/scope/hash gates and independently rejected all seven malformed proposals. Final advisor approved documentation-only draft publication. One advisor-directed repair cycle corrected four explanatory citation paths; no classification or policy changed. App tests/builds were not needed. No app, shared catalog, helper, workflow, private source, real data, merge, or deployment was changed.
+- During publication preparation, remote main advanced to `6cb2da3` and Beta to `ca9833c` through separately merged Cursor work. The proposal is explicitly the older pinned audit snapshot; it does not claim current implementation or deployed state. The legacy shared catalog and Apple entitlement helper remained unchanged across those public main heads. A newer-source refresh is separate work.
+- Released the proposal claim after publication. Next is owner review of the ten recorded decisions and a separately scoped compatibility-only Apple generation batch. Full policy activation, time/StoreKit authority, operation guards and channel/distribution remain separately gated.
+- This batch used nine delegated passes across five subagents: two bounded read-only inventories, advisor planning, one executor, independent verification, and advisor review, plus one executor/verifier/advisor repair pass. No new automation was created; zero scheduled nightly runs had executed before this entry. Preserved Cursor's claim/status/logs verbatim; no direct message to another chat.
