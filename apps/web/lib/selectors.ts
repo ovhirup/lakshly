@@ -28,12 +28,22 @@ export const CATEGORY_COLORS: Record<string, string> = {
 
 const LIABILITY = new Set(["credit_card", "loan"]);
 
-export function netWorth(accounts: Account[]) {
+/** Family loans with no linked loan/card account. A linked account is already in the liability total. */
+export function unlinkedFamilyLoans(debts: Debt[] = []): Debt[] {
+  return debts.filter((d) => d.kind === "family" && d.outstanding > 0);
+}
+
+export function netWorth(accounts: Account[], debts: Debt[] = []) {
   let assets = 0;
   let liabilities = 0;
   for (const a of accounts) {
     if (LIABILITY.has(a.type)) liabilities += Math.abs(Math.min(a.balance, 0));
     else assets += a.balance;
+  }
+  const linked = new Set(accounts.filter((a) => LIABILITY.has(a.type)).map((a) => a.id));
+  for (const d of unlinkedFamilyLoans(debts)) {
+    if (d.accountId && linked.has(d.accountId)) continue;
+    liabilities += d.outstanding;
   }
   return { assets, liabilities, net: assets - liabilities };
 }
