@@ -32,4 +32,9 @@ describe("card payment reminder", () => {
     expect(nextDueDate(5, "2026-10-06")).toBe("2026-11-05");
     expect(cardDueSoon(daysUntil("2026-10-06", nextDueDate(5, "2026-10-06")))).toBe(false);
   });
+
+  it("counts the demo payment as 21 days from 4 Oct", () => {
+    expect(daysUntil("2026-10-04", nextDueDate(25, "2026-10-04"))).toBe(21);
+    expect(cardDueWhen(21)).toBe("in 21 days");
+  });
 });
