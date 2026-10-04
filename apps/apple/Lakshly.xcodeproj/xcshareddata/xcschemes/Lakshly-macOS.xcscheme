@@ -29,6 +29,20 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C4FD76511D02E3B05FA7B329"
+               BuildableName = "LakshlyMacTests.xctest"
+               BlueprintName = "LakshlyMacTests"
+               ReferencedContainer = "container:Lakshly.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "9DE3ABD0EB6B2C77E2F1C3C1"
                BuildableName = "LakshlyMacUITests.xctest"
                BlueprintName = "LakshlyMacUITests"
@@ -67,6 +81,17 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C4FD76511D02E3B05FA7B329"
+               BuildableName = "LakshlyMacTests.xctest"
+               BlueprintName = "LakshlyMacTests"
+               ReferencedContainer = "container:Lakshly.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
          <TestableReference
             skipped = "NO"
             parallelizable = "NO">
