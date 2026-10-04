@@ -6,15 +6,14 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. #31 is now in `cursor/beta-liquid-glass-polish` at `9cc9024` (`apps/web/app/beta-glass.css` only). Not merging #29 into `web/beta` until Abhirup says so.
+- **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. #29 is merged into `web/beta`. No other web files claimed.
 - **Codex:** Apple CI PR 32 is ready for review on `codex/apple-ci`, based on `main`; PR 30 is also ready. Next is the suite/access/channel setup audit and plan. No shared package/schema edits are claimed. Merge approval and local-only rescue decisions remain pending.
 
 ## Cursor status
 
-- **Done:** Draft #29, Beta glass polish for cards, navigation, and dialogs. CI was green on `44cf675`.
-- **Done:** #31's blur-order commit `9cc9024` is fast-forwarded onto #29. CI on that commit is the next check. Do not merge #29 into `web/beta` until Abhirup says so.
-- **Next:** Re-check blur in Chromium, attach screenshots, then ask to merge #29. After that, Gmail connect end-to-end on beta, then record which commit beta.lakshly.com serves.
-- **Blockers:** Abhirup's OK before any merge to `web/beta` or `main`. Gmail CAS-password retry is his.
+- **Done:** #29 merged into `web/beta` as `afee887` (4 Oct 2026, 15:01 IST), including #31. Chromium shows `blur(24px)` on quiet cards and `blur(20px)` on the sidebar. Hero blur stays none. Safari was not launched.
+- **Next:** Gmail connect end-to-end on beta, then record which commit beta.lakshly.com serves. Redeploy only after Abhirup says so.
+- **Blockers:** Redeploy and any merge of `web/beta` into `main` wait on Abhirup. Gmail CAS-password retry is his.
 
 ## Codex status
 
@@ -55,7 +54,7 @@ Coverage columns represent six suite/platform versions, with Public Web split in
 | Feature | Private web | Web beta | Web main | Public Mac | Public iPhone | Private Mac | Private iPhone |
 |---|---|---|---|---|---|---|---|
 | Setup wizard | debt | done, with Gmail step | done | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
-| Theme v2 + Lotus Glass | done (not in git) | first pass; polish in #29/#31 | not on main | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
+| Theme v2 + Lotus Glass | done (not in git) | polish merged (#29) | not on main | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Liquid Glass slider | done (not in git) | not in #29 | no | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Gmail connect | n/a | code on beta, Testing mode | not on main | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Tester name | n/a | done | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
@@ -85,12 +84,12 @@ Inherited aggregate Apple statements from Cursor's snapshot (reported, not indep
 
 | PR | Branch | Base | Waits on |
 |---|---|---|---|
-| #29 | `cursor/beta-liquid-glass-polish` | `web/beta` | Head is `9cc9024` (includes #31). Screenshots and Abhirup's OK. Do not merge yet. |
-| #31 | `codex/beta-glass-blur-fix` | #29's branch | Merged 4 Oct 2026, 12:53 IST. |
 | #30 | `codex/cas-overview` | `web/beta` | Ready for review; green CI and synthetic browser check; owner screenshot/merge approval pending. |
 | #32 | `codex/apple-ci` | `main` | Head `afd3156`; both hosted unit jobs green with documented skips; Ready for review after independent approval; owner merge approval pending. |
 
-`main` is `cb58f9f`. `web/beta` is `f25573f`. They have diverged (commits only on each side). Do not rebase either branch.
+#29 merged into `web/beta` at `afee887`. #31 was already merged into #29.
+
+`main` is `cb58f9f`. `web/beta` now includes #29 at `afee887`. The branches have still diverged. Do not rebase either branch.
 
 ## Local only, keep
 
@@ -103,8 +102,8 @@ These are not on GitHub. Do not delete, reset, or clean them.
 
 ## Questions for Abhirup
 
-1. After #31 is in #29 and screenshots are attached, may #29 merge into `web/beta`?
-2. May #30 merge into `web/beta` when its CI is green?
+1. Done: #29 is on `web/beta`. Redeploy beta.lakshly.com from that branch?
+2. May #30 and #32 merge?
 3. Merge `web/beta` into `main` this week (beta-only behaviour stays behind the edition flag), or keep them separate?
 4. Did Gmail connect work for the Testing-mode test users, and did the CAS password retry succeed?
 5. May Codex push notch-panel and the Apple feedback work? Should the private Apple app get a private GitHub repo?
@@ -118,7 +117,7 @@ Owner-approved automation `lakshly-nightly-handoff-sync`: 21:00 IST, October 4â€
 
 ### 2026-10-04 (Cursor)
 
-Opened `sync/handoff` from `main` at `cb58f9f`. Fast-forwarded #29 from `44cf675` to `9cc9024` (Codex's blur-order fix). No merge to `web/beta`. Blocker: Abhirup's OK, plus a fresh blur check, before #29 merges.
+Opened `sync/handoff` from `main` at `cb58f9f`. Fast-forwarded #29 from `44cf675` to `9cc9024` (Codex's blur-order fix).
 
 ### 2026-10-04 (Codex)
 
@@ -136,3 +135,7 @@ Opened `sync/handoff` from `main` at `cb58f9f`. Fast-forwarded #29 from `44cf675
 - PR 30 is ready for review; existing Cursor status and log were preserved.
 - Owner clarified six platform versions: Private/SuperUser and Public, each on Web, macOS, and iPhone. SuperUser has unlocked feature access for authorized private users and receives experiments first. Public Beta is a testing channel. Recorded setup gaps and the future AI orchestration / deterministic decision-engine intent; no private source or shared contract was edited.
 - Nightly handoff schedule remains seven runs, October 4â€“10 at 21:00 IST, stopping earlier after three unchanged runs. Zero scheduled runs have completed as of this entry.
+
+### 2026-10-04, 15:01 IST (Cursor)
+
+Merged #29 into `web/beta` as `afee887` after Abhirup's OK. Chromium blur is on for quiet cards and the sidebar. Safari was not launched. Next is the Gmail check, not a deploy.
