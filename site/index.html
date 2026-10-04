@@ -15,9 +15,11 @@
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/lotus.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="island.css">
 <script src="theme-init.js"></script>
 <script src="config.js" defer></script>
 <script src="main.js" defer></script>
+<script src="island.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -27,6 +29,7 @@
   <a class="brand" href="#top" aria-label="Lakshly home"><img src="assets/lotus.svg" alt="" width="34" height="34"><span>Lakshly</span></a>
   <nav aria-label="Sections">
     <a href="#features">Features</a>
+    <a href="#island">Island</a>
     <a href="#privacy">Privacy</a>
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
@@ -64,6 +67,25 @@
         <img src="assets/shots/ios-overview-light.webp" width="540" height="1174" alt="" decoding="async">
       </picture>
     </div>
+  </section>
+
+  <section class="island-block" id="island" aria-labelledby="island-title">
+    <div class="island-copy">
+      <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Storyboard</p>
+      <h2 id="island-title">A glance, not a balance</h2>
+      <p class="lede">Six motions for the black pill on iPhone. This is a synthetic demo. Amounts stay off the pill. The real island is not in the App Store yet.</p>
+      <a class="btn primary" href="#waitlist">Join the waitlist</a>
+    </div>
+    <div class="site-island motion-pace" data-island data-phase="compact">
+      <div class="site-island-stage" data-stage>
+        <div class="island-pill" data-pill>
+          <span class="ring-pulse"><svg class="pace-ring" viewBox="0 0 44 44" aria-hidden="true"><circle class="track" cx="22" cy="22" r="16"/><circle class="arc" cx="22" cy="22" r="16" pathLength="100"/></svg></span>
+        </div>
+      </div>
+      <p class="island-slate" data-slate>Pace ring</p>
+      <button type="button" class="btn ghost" data-island-replay>Play again</button>
+    </div>
+    <p class="muted center">The refund motion is a demo, not legal advice. The last motion is a design preview of two pills. iPhone Duo is not a device you can buy.</p>
   </section>
 
   <section class="story glass panel" aria-labelledby="story-title">
