@@ -6,7 +6,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. #29 is merged into `web/beta`. No other web files claimed.
+- **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. Merged `web/beta` into `main` as PR 34 (`2d79390`). No other files claimed.
 - **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts` on `codex/feature-policy-v1`, based on `main`. Owner authorized the versioned contract, synthetic fixtures, and subsequent generated Swift parity work. Initial batch stays inside this new policy namespace; existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
@@ -155,6 +155,10 @@ Merged #29 into `web/beta` as `afee887` after Abhirup's OK. Chromium blur is on 
 ### 2026-10-04, 15:19 IST (Cursor)
 
 beta.lakshly.com already has the #29 glass CSS, but the pages were built without the beta edition flag, so testers still see the public shell. Gmail connect code and the privacy page match; 14 synthetic Gmail tests passed. No redeploy and no live Google sign-in.
+
+### 2026-10-04, 15:43 IST (Cursor)
+
+Merged `web/beta` into `main` as PR 34, merge commit `2d79390`. Beta behaviour stays behind `NEXT_PUBLIC_LAKSHLY_EDITION`. Local web tests: 258 passed. Typecheck and a production build passed; the production HTML is still the public edition. GitHub checks were still running when the merge was accepted. The setup catalog stayed at main's 53 sources. The duplicated depository CAS adapter was removed.
 
 ### 2026-10-04 (Codex policy claim)
 
