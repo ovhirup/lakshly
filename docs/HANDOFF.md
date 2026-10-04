@@ -6,7 +6,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** Ask Lakshly on `cursor/ask-lakshly` (draft PR 38, base `web/beta`). Files: `apps/web/app/ask/page.tsx`, `apps/web/lib/ask.ts`, `apps/web/tests/ask.test.ts`, `apps/web/components/Shell.tsx`, `apps/web/app/globals.css`. Still open: draft PR 35 (History net worth) and draft PR 37 (Owed to you). PR 37 and this one both edit `Shell.tsx` and `globals.css`. Not touching Codex's feature-policy claim.
+- **Cursor:** Liquid glass slider on `cursor/glass-slider` (draft PR 40, base `web/beta`). Files: `apps/web/app/beta-glass.css`, `apps/web/app/themes-v2.css`, `apps/web/components/ThemeV2.tsx`, `apps/web/lib/themes-v2.ts`, `apps/web/lib/glass.ts`, `apps/web/tests/glass.test.ts`. Still open: draft PRs 35, 37, and 38. Not touching Codex's feature-policy files.
 - **Codex:** Shared policy batches are complete in draft PR 36 (`codex/feature-policy-v1`, base `main`) and stacked draft PR 39 (`codex/feature-policy-swift`, base PR 36's branch). No active source writer; further shared edits need a new claim. Existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
@@ -61,7 +61,7 @@ Coverage columns represent six suite/platform versions, with Public Web split in
 |---|---|---|---|---|---|---|---|
 | Setup wizard | debt | done, with Gmail step | done | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Theme v2 + Lotus Glass | done (not in git) | polish merged (#29) | not on main | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
-| Liquid Glass slider | done (not in git) | not in #29 | no | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
+| Liquid Glass slider | done (not in git) | draft PR 40 | no | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Gmail connect | n/a | code on beta, Testing mode | not on main | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Tester name | n/a | done | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | CDSL/NSDL CAS | debt | done (#25, #28); #30 open | parser via #24 | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
@@ -196,3 +196,7 @@ Draft PR 38 adds Ask Lakshly. Answers come from the numbers already on the devic
 - Two advisor-directed generator repair cycles resolved implementation errors; an unrelated default module-cache denial was infrastructure and resolved using the authorized temporary cache. Independent verifier repeated the full final gate; advisor approved unwired draft publication. No third repair cycle.
 - This policy work used 14 delegated passes across three reused subagents (advisor, executor, verifier). No new automation was created and zero scheduled runs have executed. No product app/simulator, private source, real statement/account, merge, or deployment was used.
 - Released the active shared-file claim after publication. Approved real catalogs, application integration, upstream authority/payment verification, native channels, and visual/release gates remain separate work. Preserved all concurrent Cursor claims/status/logs.
+
+### 2026-10-04, 16:50 IST (Cursor)
+
+Draft PR 40 adds a beta Glass slider for card and navigation blur. The default matches the current 24px / 20px polish. Lotus Glass and the hero are unchanged. Web tests: 261 passed. Apple does not have this control yet. PRs 35, 37, and 38 stay separate drafts.
