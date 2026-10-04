@@ -6,7 +6,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** Gmail disconnect fix on `cursor/gmail-disconnect` (draft PR 41, base `web/beta`). Files: `apps/web/components/GoogleConnect.tsx`, `apps/web/lib/gmail.ts`, `apps/web/tests/gmail.test.ts`. Draft PR 40 (glass slider) is green after a lint fix. Still open: draft PRs 35, 37, and 38. Not touching Codex's feature-policy files. No merges until Abhirup says so. Codex resumes after 19:37 IST.
+- **Cursor:** Beta Free/Premium tester switch on `cursor/beta-plan-switch` (draft PR 43, base `web/beta`). Also drafted: PR 42 data export, PR 41 Gmail disconnect. Still open and green or in CI: PRs 35, 37, 38, 40. Not touching Codex's feature-policy files. No merges until Abhirup says so. Codex resumes after 19:37 IST.
 - **Codex:** Shared policy batches are complete in draft PR 36 (`codex/feature-policy-v1`, base `main`) and stacked draft PR 39 (`codex/feature-policy-swift`, base PR 36's branch). No active source writer; further shared edits need a new claim. Existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
@@ -204,3 +204,7 @@ Draft PR 40 adds a beta Glass slider for card and navigation blur. The default m
 ### 2026-10-04, 17:12 IST (Cursor)
 
 PR 40's web build failed on a lint error in the slider, then passed after `9c6507e`. Classic and Lotus both follow the slider; Abhirup confirmed the look. Draft PR 41 returns Disconnect to the Gmail start screen instead of leaving the consent sheet open. Gmail tests: 15 passed. No shared policy files edited and nothing merged. Codex is paused until 19:37 IST.
+
+### 2026-10-04, 17:25 IST (Cursor)
+
+Draft PR 42 adds the free on-device JSON and transactions CSV download. Draft PR 43 lets beta testers switch to Free and keep that choice; beta still opens on Premium. Order of these drafts is not important. Nothing merged.
