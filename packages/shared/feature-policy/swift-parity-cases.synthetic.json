@@ -1,0 +1,1084 @@
+{
+  "policyVersion": 1,
+  "marker": "SYNTHETIC",
+  "cases": [
+    {
+      "id": "synthetic.mutation01",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [],
+      "operation": "replace",
+      "value": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "features": [
+          {
+            "id": "synthetic.sharedFree",
+            "audience": "public",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "iphone"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": null
+          },
+          {
+            "id": "synthetic.sharedPremium",
+            "audience": "public",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "iphone"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "premium",
+            "quota": null
+          },
+          {
+            "id": "synthetic.privateExperiment",
+            "audience": "private",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": null
+          },
+          {
+            "id": "synthetic.disabled",
+            "audience": "public",
+            "implemented": true,
+            "enabled": false,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "iphone"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": null
+          },
+          {
+            "id": "synthetic.unimplemented",
+            "audience": "public",
+            "implemented": false,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "iphone"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": null
+          },
+          {
+            "id": "synthetic.webOnly",
+            "audience": "public",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": null
+          },
+          {
+            "id": "synthetic.betaOnly",
+            "audience": "public",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": null
+          },
+          {
+            "id": "synthetic.quotaTwo",
+            "audience": "public",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "iphone"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": {
+              "free": 2,
+              "premium": null
+            }
+          },
+          {
+            "id": "synthetic.zeroQuota",
+            "audience": "public",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "iphone"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "free",
+            "quota": {
+              "free": 0,
+              "premium": 0
+            }
+          },
+          {
+            "id": "synthetic.finitePremium",
+            "audience": "public",
+            "implemented": true,
+            "enabled": true,
+            "supportedPlatforms": [
+              "web",
+              "macos",
+              "iphone"
+            ],
+            "availableIn": [
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "stable",
+                "platform": "iphone"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "web"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "macos"
+              },
+              {
+                "suite": "public",
+                "channel": "beta",
+                "platform": "iphone"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "web"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "macos"
+              },
+              {
+                "suite": "private",
+                "channel": "experimental",
+                "platform": "iphone"
+              }
+            ],
+            "minimumPublicTier": "premium",
+            "quota": {
+              "free": 0,
+              "premium": 3
+            }
+          }
+        ],
+        "unexpected": true
+      },
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation02",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "policyVersion"
+      ],
+      "operation": "replace",
+      "value": 2,
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation03",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "policyVersion"
+      ],
+      "operation": "replace",
+      "value": true,
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation04",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        1,
+        "id"
+      ],
+      "operation": "replace",
+      "value": "synthetic.sharedFree",
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation05",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        0,
+        "supportedPlatforms"
+      ],
+      "operation": "replace",
+      "value": [
+        "web",
+        "macos",
+        "iphone",
+        "web"
+      ],
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation06",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        0,
+        "availableIn"
+      ],
+      "operation": "replace",
+      "value": [
+        {
+          "suite": "public",
+          "channel": "stable",
+          "platform": "web"
+        },
+        {
+          "suite": "public",
+          "channel": "stable",
+          "platform": "macos"
+        },
+        {
+          "suite": "public",
+          "channel": "stable",
+          "platform": "iphone"
+        },
+        {
+          "suite": "public",
+          "channel": "beta",
+          "platform": "web"
+        },
+        {
+          "suite": "public",
+          "channel": "beta",
+          "platform": "macos"
+        },
+        {
+          "suite": "public",
+          "channel": "beta",
+          "platform": "iphone"
+        },
+        {
+          "suite": "private",
+          "channel": "experimental",
+          "platform": "web"
+        },
+        {
+          "suite": "private",
+          "channel": "experimental",
+          "platform": "macos"
+        },
+        {
+          "suite": "private",
+          "channel": "experimental",
+          "platform": "iphone"
+        },
+        {
+          "suite": "public",
+          "channel": "stable",
+          "platform": "web"
+        }
+      ],
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation07",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        0,
+        "supportedPlatforms"
+      ],
+      "operation": "replace",
+      "value": [
+        "web"
+      ],
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation08",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        2,
+        "availableIn"
+      ],
+      "operation": "replace",
+      "value": [
+        {
+          "suite": "private",
+          "channel": "experimental",
+          "platform": "web"
+        },
+        {
+          "suite": "private",
+          "channel": "experimental",
+          "platform": "macos"
+        },
+        {
+          "suite": "private",
+          "channel": "experimental",
+          "platform": "iphone"
+        },
+        {
+          "suite": "public",
+          "channel": "beta",
+          "platform": "web"
+        }
+      ],
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation09",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        0,
+        "availableIn",
+        0,
+        "channel"
+      ],
+      "operation": "replace",
+      "value": "experimental",
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation10",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        7,
+        "quota",
+        "free"
+      ],
+      "operation": "replace",
+      "value": true,
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation11",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        7,
+        "quota",
+        "free"
+      ],
+      "operation": "replace",
+      "value": 1.5,
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation12",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features",
+        7,
+        "quota",
+        "free"
+      ],
+      "operation": "replace",
+      "value": 9007199254740992,
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation13",
+      "baseCaseId": "stableFree.web",
+      "target": "catalog",
+      "path": [
+        "features"
+      ],
+      "operation": "replace",
+      "value": {},
+      "expectedReason": "invalid_catalog"
+    },
+    {
+      "id": "synthetic.mutation14",
+      "baseCaseId": "stableFree.web",
+      "target": "context",
+      "path": [],
+      "operation": "replace",
+      "value": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        },
+        "unexpected": true
+      },
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation15",
+      "baseCaseId": "stableFree.web",
+      "target": "context",
+      "path": [
+        "policyVersion"
+      ],
+      "operation": "replace",
+      "value": 2,
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation16",
+      "baseCaseId": "stableFree.web",
+      "target": "context",
+      "path": [
+        "policyVersion"
+      ],
+      "operation": "replace",
+      "value": true,
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation17",
+      "baseCaseId": "stableVerifiedPremium.web",
+      "target": "context",
+      "path": [
+        "entitlement"
+      ],
+      "operation": "replace",
+      "value": {
+        "kind": "superUser",
+        "provenance": "verifiedPrivateAuthorization",
+        "state": "active",
+        "startsAtEpochSeconds": 100,
+        "endsAtEpochSeconds": null
+      },
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation18",
+      "baseCaseId": "privateSuperUser.web",
+      "target": "context",
+      "path": [
+        "entitlement"
+      ],
+      "operation": "replace",
+      "value": {
+        "kind": "premium",
+        "provenance": "verifiedEntitlement",
+        "state": "active",
+        "startsAtEpochSeconds": 100,
+        "endsAtEpochSeconds": null
+      },
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation19",
+      "baseCaseId": "stableVerifiedPremium.web",
+      "target": "context",
+      "path": [
+        "entitlement",
+        "provenance"
+      ],
+      "operation": "replace",
+      "value": "betaSimulation",
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation20",
+      "baseCaseId": "stableVerifiedPremium.web",
+      "target": "context",
+      "path": [
+        "entitlement",
+        "provenance"
+      ],
+      "operation": "replace",
+      "value": "none",
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation21",
+      "baseCaseId": "stableVerifiedPremium.web",
+      "target": "context",
+      "path": [
+        "entitlement",
+        "startsAtEpochSeconds"
+      ],
+      "operation": "remove",
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation22",
+      "baseCaseId": "stableVerifiedPremium.web",
+      "target": "context",
+      "path": [
+        "entitlement",
+        "endsAtEpochSeconds"
+      ],
+      "operation": "replace",
+      "value": 100,
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation23",
+      "baseCaseId": "stableVerifiedPremium.web",
+      "target": "context",
+      "path": [
+        "entitlement",
+        "endsAtEpochSeconds"
+      ],
+      "operation": "replace",
+      "value": 99,
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation24",
+      "baseCaseId": "stableFree.web",
+      "target": "context",
+      "path": [
+        "asOfEpochSeconds"
+      ],
+      "operation": "replace",
+      "value": 200.5,
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation25",
+      "baseCaseId": "stableFree.web",
+      "target": "context",
+      "path": [
+        "asOfEpochSeconds"
+      ],
+      "operation": "replace",
+      "value": true,
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation26",
+      "baseCaseId": "stableVerifiedPremium.web",
+      "target": "context",
+      "path": [
+        "entitlement",
+        "endsAtEpochSeconds"
+      ],
+      "operation": "replace",
+      "value": 253402300800,
+      "expectedReason": "invalid_context"
+    },
+    {
+      "id": "synthetic.mutation27",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [],
+      "operation": "replace",
+      "value": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        },
+        "unexpected": true
+      },
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation28",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "usage"
+      ],
+      "operation": "remove",
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation29",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "featureId"
+      ],
+      "operation": "replace",
+      "value": "synthetic.sharedFree\n",
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation30",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "featureId"
+      ],
+      "operation": "replace",
+      "value": "synthetic.\u00e9",
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation31",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "usage",
+        "used"
+      ],
+      "operation": "replace",
+      "value": true,
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation32",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "usage",
+        "requested"
+      ],
+      "operation": "replace",
+      "value": true,
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation33",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "usage",
+        "requested"
+      ],
+      "operation": "replace",
+      "value": 0,
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation34",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "usage",
+        "requested"
+      ],
+      "operation": "replace",
+      "value": 9007199254740992,
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation35",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "featureId"
+      ],
+      "operation": "replace",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expectedReason": "unknown_feature"
+    },
+    {
+      "id": "synthetic.mutation36",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "featureId"
+      ],
+      "operation": "replace",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation37",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "featureId"
+      ],
+      "operation": "replace",
+      "value": "synthetic.sharedFree\r",
+      "expectedReason": "invalid_request"
+    },
+    {
+      "id": "synthetic.mutation38",
+      "baseCaseId": "stableFree.web",
+      "target": "request",
+      "path": [
+        "featureId"
+      ],
+      "operation": "replace",
+      "value": "synthetic.sharedFree\u2028",
+      "expectedReason": "invalid_request"
+    }
+  ]
+}
