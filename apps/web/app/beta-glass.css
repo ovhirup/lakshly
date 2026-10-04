@@ -7,8 +7,8 @@
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .content:not(:has(.fb-subnav)) .card.glass:not(.hero) {
   background: color-mix(in srgb, var(--lk-glass) 80%, var(--lk-glass-strong));
   border: .5px solid color-mix(in srgb, var(--mood-edge) 40%, var(--mood-hairline));
-  -webkit-backdrop-filter: blur(24px) saturate(130%);
-  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(130%);
+  backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(130%);
   box-shadow: var(--lk-elevation-1), inset 0 1px 0 color-mix(in srgb, var(--mood-rim-hi) 28%, transparent);
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .content:not(:has(.fb-subnav)) .card.glass:not(.hero)::before,
@@ -21,8 +21,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .sidebar.glas
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .tabbar.glass {
   background: color-mix(in srgb, var(--mood-tint) 75%, var(--lk-glass-strong));
   border: 0;
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+  backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
   box-shadow: var(--lk-elevation-3, var(--lk-shadow)), 0 0 0 .5px var(--mood-edge), inset 0 1px 0 var(--mood-rim-hi), inset 0 -1px 0 var(--mood-rim-lo);
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .sidebar.glass::after,
@@ -58,8 +58,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .tabbar.glass
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .topbar.glass {
     background: color-mix(in srgb, var(--mood-tint) 75%, var(--lk-glass-strong));
     border: 0;
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+    backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
     box-shadow: var(--lk-elevation-3, var(--lk-shadow)), 0 0 0 .5px var(--mood-edge), inset 0 1px 0 var(--mood-rim-hi), inset 0 -1px 0 var(--mood-rim-lo);
   }
 }
@@ -70,8 +70,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .theme-upsell
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .name-sheet {
   background: color-mix(in srgb, var(--lk-surface) 88%, var(--mood-tint));
   border: 1px solid color-mix(in srgb, var(--mood-rim-lo) 50%, var(--mood-edge));
-  -webkit-backdrop-filter: blur(20px) saturate(130%);
-  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(130%);
+  backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(130%);
   box-shadow: var(--lk-elevation-3, var(--lk-shadow)), inset 0 1px 0 var(--mood-rim-hi);
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .mobile-menu.glass,
