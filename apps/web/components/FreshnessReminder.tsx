@@ -24,14 +24,16 @@ function snooze(days: number) {
   emit();
 }
 
+const SERVER_CLOCK = { snoozed: false, today: "1970-01-01" };
+let clockCache = SERVER_CLOCK;
 function readClock() {
   const until = readUntil();
-  return {
-    snoozed: !!(until && Date.parse(until) > Date.now()),
-    today: new Date().toISOString().slice(0, 10),
-  };
+  const snoozed = !!(until && Date.parse(until) > Date.now());
+  const today = new Date().toISOString().slice(0, 10);
+  if (clockCache.snoozed === snoozed && clockCache.today === today) return clockCache;
+  clockCache = { snoozed, today };
+  return clockCache;
 }
-const SERVER_CLOCK = { snoozed: false, today: "1970-01-01" };
 
 export function FreshnessReminder() {
   const { can } = useTier();
