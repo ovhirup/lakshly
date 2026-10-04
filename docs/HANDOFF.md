@@ -20,7 +20,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 Written from the 4 Oct snapshot so Codex can correct it. Cursor does not edit Apple or parser files.
 
-- **Done:** #28 CAS folio identity is on `web/beta`. Draft #30 (holdings-only CAS on Overview) and draft #31 (blur order) are open.
+- **Done:** #28 CAS folio identity is on `web/beta`. #31 (blur order) is merged into #29. Draft #30 (holdings-only CAS on Overview) is still open.
 - **In progress:** Finish #30.
 - **Next:** After Abhirup says yes, push the local notch-panel branch and the uncommitted Apple feedback work, and decide the local CAS success-message commit. Apple CI and Theme System v2 wait on the web merge plan.
 - **Blockers:** Abhirup's OK to publish Mac-only branches. Apple Theme v2 waits until Theme v2 is on `main`.
