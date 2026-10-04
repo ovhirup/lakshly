@@ -1,12 +1,13 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { emptyDataset, mergeResult, type MergeReport, type ParseResult } from "@lakshly/parsers";
+import { mergeImportDetails } from "@/lib/import/merge";
 import { dataset as demo } from "@/lib/data";
 import type { Budget, LakshlyDataset } from "@/lib/schema.gen";
 import { budgetId } from "@/lib/setup-suggest";
 import type { SetupGoal } from "@/lib/setup";
-import { deleteVault, loadUserData, saveUserData, type UserData } from "@/lib/vault";
+import { deleteVault, loadUserData, saveUserData, VAULT_DELETED_EVENT, type UserData } from "@/lib/vault";
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
 import { usePrivacy } from "./Privacy";
@@ -41,7 +42,7 @@ interface DataCtx {
   debts: NonNullable<LakshlyDataset["debts"]>;
   sips: NonNullable<LakshlyDataset["sips"]>;
   rewards: NonNullable<LakshlyDataset["rewards"]>;
-  saveImport: (r: ParseResult, fileName: string, sourceId?: string) => Promise<MergeReport>;
+  saveImport: (r: ParseResult, fileName: string, sourceId?: string, ref?: string) => Promise<MergeReport>;
   /** Replace one month's budget lines in the user's own data (creates an empty dataset if needed). */
   saveBudgets: (month: string, lines: { category: Budget["category"]; limit: number }[]) => Promise<void>;
   saveGoal: (goal: SetupGoal) => Promise<void>;
@@ -56,7 +57,10 @@ const Ctx = createContext<DataCtx | null>(null);
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const source = useSyncExternalStore(subscribe, readSource, () => "demo" as Source);
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUserState] = useState<UserData | null>(null);
+  // Latest saved data, updated synchronously so back-to-back saves (bulk Gmail import) never overwrite each other.
+  const userRef = useRef<UserData | null>(null);
+  const setUser = useCallback((u: UserData | null) => { userRef.current = u; setUserState(u); }, []);
   const [ready, setReady] = useState(false);
   const { masked } = usePrivacy();
 
@@ -66,14 +70,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       .then((u) => { if (alive) { setUser(u); setReady(true); } })
       .catch(() => { if (alive) setReady(true); });
     return () => { alive = false; };
-  }, []);
+  }, [setUser]);
 
   const setSource = useCallback((s: Source) => { localStorage.setItem(SOURCE_KEY, s); emit(); }, []);
 
-  const saveImport = useCallback(async (r: ParseResult, fileName: string, sourceId?: string) => {
-    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
-    const { dataset, report } = mergeResult(base.dataset, r);
-    const ids = new Set(r.holdings.map((h) => h.accountId));
+  const saveImport = useCallback(async (r: ParseResult, fileName: string, sourceId?: string, ref?: string) => {
+    const base: UserData = userRef.current ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const { dataset, report, accountAliases } = mergeResult(base.dataset, r);
+    const details = mergeImportDetails(base, r, dataset, accountAliases);
     const known = new Set(base.dataset.transactions.map((t) => t.id));
     const at = new Date().toISOString();
     const importedAt = { ...(base.importedAt ?? {}) };
@@ -82,31 +86,30 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       version: 1,
       importedAt,
       dataset,
-      holdings: [...base.holdings.filter((h) => !ids.has(h.accountId)), ...r.holdings],
-      statements: [...base.statements, ...r.meta],
-      imports: [...base.imports, { at: new Date().toISOString(), file: fileName.slice(0, 120), adapter: r.adapter, added: report.added, duplicates: report.duplicates, ...(sourceId ? { sourceId } : {}) }],
+      ...details,
+      imports: [...base.imports, { at: new Date().toISOString(), file: fileName.slice(0, 120), adapter: r.adapter, added: report.added, duplicates: report.duplicates, ...(sourceId ? { sourceId } : {}), ...(ref ? { ref: ref.slice(0, 120) } : {}) }],
       ...(base.goals ? { goals: base.goals } : {}),
     };
     await saveUserData(next);
     setUser(next);
     return report;
-  }, [user]);
+  }, [setUser]);
 
   const saveBudgets = useCallback(async (month: string, lines: { category: Budget["category"]; limit: number }[]) => {
-    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const base: UserData = userRef.current ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
     const others = (base.dataset.budgets ?? []).filter((b) => b.month !== month);
     const fresh: Budget[] = lines.map((l) => ({ id: budgetId(month, l.category), month, category: l.category, limit: l.limit, rollover: false }));
     const next: UserData = { ...base, dataset: { ...base.dataset, budgets: [...others, ...fresh] } };
     await saveUserData(next);
     setUser(next);
-  }, [user]);
+  }, [setUser]);
 
   const saveGoal = useCallback(async (goal: SetupGoal) => {
-    const base: UserData = user ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
+    const base: UserData = userRef.current ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
     const next: UserData = { ...base, goals: [...(base.goals ?? []).filter((g) => g.kind !== goal.kind), goal] };
     await saveUserData(next);
     setUser(next);
-  }, [user]);
+  }, [setUser]);
 
 
   const active: LakshlyDataset = useMemo(() => (source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo), [source, user]);
@@ -117,10 +120,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     await deleteVault();
     localStorage.removeItem(SOURCE_KEY);
     localStorage.removeItem(SETUP_FLAGS_KEY);
+    localStorage.removeItem("lk-worth-snooze"); // legacy plaintext snoozes (now kept in the encrypted review record)
     setUser(null);
     forgetAll();
     emit();
-  }, [forgetAll]);
+    window.dispatchEvent(new Event(VAULT_DELETED_EVENT));
+  }, [forgetAll, setUser]);
   const value: DataCtx = {
     source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,
     dataset: active,

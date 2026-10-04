@@ -31,6 +31,8 @@ const flags = { money: false, pct: false };
 export function setFormatMask(money: boolean, pct: boolean) { flags.money = money; flags.pct = money && pct; }
 export function moneyMasked() { return flags.money; }
 export function pctMasked() { return flags.pct; }
+/** Honors "Also hide percentages": masks any "NN%" inside generated text (badge hints, progress labels). */
+export function maskPctText(t: string): string { return flags.pct ? t.replace(/\d+(?:\.\d+)?\s?%/g, PCT_MASK) : t; }
 
 /** Shake detector: acceleration magnitude > 15 m/s² twice within 600 ms, then a 1.5 s cooldown. */
 export function createShakeDetector(onShake: () => void, threshold = 15) {

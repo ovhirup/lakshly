@@ -180,6 +180,7 @@ let depositoryCas = Adapter(
       }
     }
     var accounts: [ParseAccount] = []
+    var accountAliases: [String: String] = [:]
     var holdings: [Holding] = []
     var warnings: [String] = []
     let asOf = period.to ?? "1970-01-01"
@@ -230,7 +231,9 @@ let depositoryCas = Adapter(
     for folio in folios {
       let head = folio.folio.components(separatedBy: "/").first ?? ""
       let mask = last4(head) ?? "XXXX"
-      let accountId = stableId("acc", "cas.depository", "folio", folio.folio, folio.isin)
+      guard let identity = casFolioIdentity(folio.folio, folio.isin) else { continue }
+      let accountId = identity.canonical
+      accountAliases[identity.legacy] = identity.canonical
       let institution = "\(issuer.uppercased()) / Mutual Fund Folios"
       accounts.append(ParseAccount(
         id: accountId,
@@ -278,5 +281,5 @@ let depositoryCas = Adapter(
       issuer: issuer,
       totalValue: totalValue ?? accounts.reduce(0) { $0 + $1.balance },
       quantityTransactionCount: quantityTransactionCount)
-    return ParseBody(accounts: accounts, transactions: [], sips: [], holdings: holdings, meta: [meta], warnings: warnings)
+    return ParseBody(accounts: accounts, transactions: [], sips: [], holdings: holdings, meta: [meta], warnings: warnings, accountAliases: accountAliases)
   })

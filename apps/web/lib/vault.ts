@@ -7,7 +7,7 @@ import type { Holding, LakshlyDataset, StatementMeta } from "@lakshly/parsers";
 
 import type { SetupGoal } from "./setup";
 
-export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number; /** Setup source this file was attributed to. */ sourceId?: string }
+export interface ImportLog { at: string; file: string; adapter: string; added: number; duplicates: number; /** Setup source this file was attributed to. */ sourceId?: string; /** Where it came from, e.g. "gmail:<message id>" (marks Gmail rows as already imported). */ ref?: string }
 export interface UserData {
   version: 1; dataset: LakshlyDataset; holdings: Holding[]; statements: StatementMeta[]; imports: ImportLog[];
   /** When each transaction first arrived on this device (used by the weekly review for late imports). */
@@ -64,7 +64,7 @@ export async function loadUserData(): Promise<UserData | null> {
 }
 
 /** Named records (setup progress, review state, …) encrypted with the same device key as the dataset. */
-export type RecordName = "setup.state" | "review.state" | "review.demo" | "game.ledger" | "game.demo" | "game.nudges";
+export type RecordName = "profile" | "setup.state" | "review.state" | "review.demo" | "game.ledger" | "game.demo" | "game.nudges";
 
 export async function saveRecord(name: RecordName, value: unknown): Promise<void> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -85,6 +85,9 @@ export async function vaultInfo(): Promise<{ encrypted: boolean; bytes: number }
   const rec = await tx<{ alg: string; ct: ArrayBuffer } | undefined>("readonly", (s) => s.get("vault") as IDBRequest<{ alg: string; ct: ArrayBuffer } | undefined>);
   return rec ? { encrypted: rec.alg === "AES-GCM-256", bytes: rec.ct.byteLength } : null;
 }
+
+/** Window event fired after "Delete all my data" so providers can drop in-memory copies. */
+export const VAULT_DELETED_EVENT = "lk-vault-deleted";
 
 export function deleteVault(): Promise<void> {
   return new Promise((resolve, reject) => {

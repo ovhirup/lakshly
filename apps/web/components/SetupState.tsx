@@ -2,7 +2,7 @@
 // Setup wizard state: encrypted vault record "setup.state" (email, picked sources, progress) plus a tiny
 // localStorage flag record for the shell (never the email or institutions). No network.
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { loadRecord, saveRecord } from "@/lib/vault";
+import { loadRecord, saveRecord, VAULT_DELETED_EVENT } from "@/lib/vault";
 import { useProfile } from "@/lib/profile";
 import {
   checklist, currentStep, EMPTY_FLAGS, FLAGS_KEY, initialSetup, markCompletion, parseFlags, progressOf, serialiseFlags, setupReducer,
@@ -69,6 +69,13 @@ export function SetupProvider({ children }: { children: React.ReactNode }) {
     else if (hadUser.current && data.ready) { hadUser.current = false; setState(initialSetup(new Date().toISOString())); }
   }, [data.user, data.ready]);
 
+  // Deleting from Import before any statement was imported: still start over.
+  useEffect(() => {
+    const onDeleted = () => { dirty.current = false; hadUser.current = false; setState(initialSetup(new Date().toISOString())); };
+    window.addEventListener(VAULT_DELETED_EVENT, onDeleted);
+    return () => window.removeEventListener(VAULT_DELETED_EVENT, onDeleted);
+  }, []);
+
   // Persist after user actions (never the initial empty state before the vault is read).
   useEffect(() => {
     if (!ready || !dirty.current) return;
@@ -105,8 +112,9 @@ export function SetupProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!ready) return;
     const f = readFlags();
-    if (f.mode !== state.mode || f.percent !== progress.percent) writeFlags({ mode: state.mode, percent: progress.percent });
-  }, [ready, state.mode, progress.percent]);
+    const complete = !!state.completedAt || (state.mode === "mine" && progress.requiredDone);
+    if (f.mode !== state.mode || f.percent !== progress.percent || f.complete !== complete) writeFlags({ mode: state.mode, percent: progress.percent, complete });
+  }, [ready, state.mode, state.completedAt, progress.percent, progress.requiredDone]);
 
   const value: SetupCtx = {
     ready, state, dispatch, items, progress, resume: currentStep(state), justCompleted, ackCompleted: () => setJustCompleted(false),
