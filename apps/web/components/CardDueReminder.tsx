@@ -40,7 +40,7 @@ function snooze() {
   window.dispatchEvent(new Event(EVENT));
 }
 
-export function CardDueReminder() {
+export function useCardDueToday(): { name: string; when: string; date: string; extra: string } | null {
   const { can } = useTier();
   const { accounts } = useData();
   const snap = useSyncExternalStore(subscribe, readSnap, () => SERVER);
@@ -56,14 +56,27 @@ export function CardDueReminder() {
   const first = due[0];
   if (!first) return null;
   const extra = due.length > 1 ? ` ${due.length - 1} more ${due.length === 2 ? "is" : "are"} due too.` : "";
-  return (
-    <Glass className="card card-due">
-      <div className="card-head"><h2>Card payment</h2><span className="badge">Premium</span></div>
-      <p>{first.name} payment is due {cardDueWhen(first.days)}, on {formatDate(first.date)}. Pay in full to avoid interest. Nothing is sent.{extra}</p>
+  return { name: first.name, when: cardDueWhen(first.days), date: first.date, extra };
+}
+
+export function CardDueReminder({ row = false }: { row?: boolean }) {
+  const item = useCardDueToday();
+  if (!item) return null;
+  const body = (
+    <>
+      {row ? <h3>Card payment <span className="badge">Premium</span></h3> : null}
+      <p>{item.name} payment is due {item.when}, on {formatDate(item.date)}. Pay in full to avoid interest. Nothing is sent.{item.extra}</p>
       <div className="row-actions">
         <Link className="btn primary" href="/credit/">Credit</Link>
         <button className="btn ghost" type="button" onClick={snooze}>Not now</button>
       </div>
+    </>
+  );
+  if (row) return <div className="today-row">{body}</div>;
+  return (
+    <Glass className="card card-due">
+      <div className="card-head"><h2>Card payment</h2><span className="badge">Premium</span></div>
+      {body}
     </Glass>
   );
 }
