@@ -28,14 +28,60 @@ export const CATEGORY_COLORS: Record<string, string> = {
 
 const LIABILITY = new Set(["credit_card", "loan"]);
 
-export function netWorth(accounts: Account[]) {
+/** Family loans with no linked loan/card account. A linked account is already in the liability total. */
+export function unlinkedFamilyLoans(debts: Debt[] = []): Debt[] {
+  return debts.filter((d) => d.kind === "family" && d.outstanding > 0);
+}
+
+export function netWorth(accounts: Account[], debts: Debt[] = []) {
   let assets = 0;
   let liabilities = 0;
   for (const a of accounts) {
     if (LIABILITY.has(a.type)) liabilities += Math.abs(Math.min(a.balance, 0));
     else assets += a.balance;
   }
+  const linked = new Set(accounts.filter((a) => LIABILITY.has(a.type)).map((a) => a.id));
+  for (const d of unlinkedFamilyLoans(debts)) {
+    if (d.accountId && linked.has(d.accountId)) continue;
+    liabilities += d.outstanding;
+  }
   return { assets, liabilities, net: assets - liabilities };
+}
+
+/**
+ * Month-end net worth, newest last. Today's balances are the latest month;
+ * earlier months walk each account's transactions backwards.
+ */
+export function netWorthHistory(accounts: Account[], txns: Transaction[]) {
+  const balance = new Map(accounts.map((a) => [a.id, a.balance]));
+  const byMonth = new Map<string, Map<string, number>>();
+  for (const t of txns) {
+    if (!balance.has(t.accountId)) continue;
+    const month = t.date.slice(0, 7);
+    const bucket = byMonth.get(month) ?? new Map<string, number>();
+    bucket.set(t.accountId, (bucket.get(t.accountId) ?? 0) + t.amount);
+    byMonth.set(month, bucket);
+  }
+  const points: { month: string; assets: number; liabilities: number; net: number }[] = [];
+  for (const month of [...byMonth.keys()].sort().reverse()) {
+    points.push({ month, ...netWorth(accounts.map((a) => ({ ...a, balance: balance.get(a.id) ?? 0 }))) });
+    for (const [id, amount] of byMonth.get(month)!) balance.set(id, (balance.get(id) ?? 0) - amount);
+  }
+  return points.reverse();
+}
+
+/** What you own today, by account type. Loans and cards are left out. Shares sum to 100. */
+export function assetAllocation(accounts: Account[]) {
+  const groups = new Map<string, number>();
+  let assets = 0;
+  for (const a of accounts) {
+    if (LIABILITY.has(a.type) || a.balance <= 0) continue;
+    assets += a.balance;
+    groups.set(a.type, (groups.get(a.type) ?? 0) + a.balance);
+  }
+  return [...groups.entries()]
+    .map(([type, amount]) => ({ type, amount, pct: assets ? (amount / assets) * 100 : 0 }))
+    .sort((a, b) => b.amount - a.amount);
 }
 
 export function months(txns: Transaction[]): string[] {

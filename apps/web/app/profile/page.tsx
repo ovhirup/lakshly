@@ -9,6 +9,8 @@ import { Glass, PageHeader } from "@/components/ui";
 import { SetupProfileRow } from "@/components/SetupParts";
 import { PrivacySettingsCard } from "@/components/PrivacySettings";
 import { CoachSettings } from "@/components/CoachSettings";
+import { useData } from "@/components/DataState";
+import { datasetJson, exportFilename, transactionsCsv } from "@/lib/export";
 import { FEATURES, FREE_BILL_OF_RIGHTS, PRICE_TEXT, premiumFeatures } from "@/lib/entitlements";
 import { formatDate } from "@/lib/format";
 import { renewsOn, saveProfile, useProfile } from "@/lib/profile";
@@ -18,7 +20,8 @@ const UPSELL_ID = "profile.card";
 
 export default function ProfilePage() {
   const profile = useProfile();
-  const { tier } = useTier();
+  const { tier, can } = useTier();
+  const { dataset } = useData();
   const { setPlan } = useAppState();
   const [draft, setDraft] = useState<string | null>(null);
   const [showUpsell, setShowUpsell] = useState(false);
@@ -46,6 +49,20 @@ export default function ProfilePage() {
     setPaywall(false);
   }
   function flash(text: string) { setNote(text); setTimeout(() => setNote(null), 4000); }
+  function todayIso() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+  function saveFile(filename: string, text: string, type: string) {
+    const blob = new Blob([text], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+    flash("Saved on this device. Nothing was sent.");
+  }
 
   return (
     <>
@@ -124,6 +141,16 @@ export default function ProfilePage() {
       )}
 
       <PrivacySettingsCard />
+      {can("data.export") && (
+        <Glass className="card">
+          <div className="card-head"><h2>Your data</h2><span className="muted tiny">Free · stays on this device</span></div>
+          <p className="muted">Download a copy of the books open right now. Lakshly does not upload it.</p>
+          <div className="row-actions">
+            <button className="btn primary" type="button" onClick={() => saveFile(exportFilename("json", todayIso()), datasetJson(dataset), "application/json")}>Download JSON</button>
+            <button className="btn ghost" type="button" onClick={() => saveFile(exportFilename("csv", todayIso()), transactionsCsv(dataset.transactions), "text/csv")}>Download transactions CSV</button>
+          </div>
+        </Glass>
+      )}
       <CoachSettings />
 
       <div className="grid g2">

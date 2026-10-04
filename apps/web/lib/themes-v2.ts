@@ -84,11 +84,13 @@ export function legacyIdFor(t: ThemeV2): ThemeId {
 
 /** Pre-paint (beta only): mark the edition, unlock Premium, and paint the mood before React hydrates. */
 export const themeV2BootScript = `(function(){try{var d=document.documentElement;d.dataset.edition="beta";
-try{localStorage.setItem("lakshly.plan","premium")}catch(e){}
+try{var storedPlan=localStorage.getItem("lakshly.plan");if(storedPlan!=="free"&&storedPlan!=="premium")localStorage.setItem("lakshly.plan","premium")}catch(e){}
 var M={calm:["graphite","sage","quartz"],vivid:["lakshmi","tide"],classic:["gold"],lotusGlass:[]};
 var L={lakshmi:["vivid","lakshmi"],monochromeGold:["classic","gold"],graphite:["calm","graphite"],ocean:["vivid","tide"],forest:["calm","sage"],roseQuartz:["calm","quartz"]};
 var t="lotusGlass",a=null,raw=null,leg=null;try{raw=localStorage.getItem("${THEME_V2_KEY}");leg=localStorage.getItem("lakshly.themeId")}catch(e){}
 var p=null;try{p=raw?JSON.parse(raw):null}catch(e){}
 if(p&&M[p.theme]){t=p.theme;a=p.accent}else if(leg&&L[leg]){t=L[leg][0];a=L[leg][1]}
 if(M[t].length){if(M[t].indexOf(a)<0)a=M[t][0]}else a=null;
-d.dataset.mood=t;if(a)d.dataset.accent=a;else delete d.dataset.accent}catch(e){}})();`;
+d.dataset.mood=t;if(a)d.dataset.accent=a;else delete d.dataset.accent;
+var g=70;try{var gs=localStorage.getItem("lakshly.glassLevel");if(gs!=null&&gs!==""){var n=Number(gs);if(isFinite(n))g=Math.max(0,Math.min(100,Math.round(n)))}}catch(e){}
+d.style.setProperty("--lk-glass-card",Math.round(g*24/70)+"px");d.style.setProperty("--lk-glass-nav",Math.round(g*20/70)+"px")}catch(e){}})();`;
