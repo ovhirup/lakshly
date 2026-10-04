@@ -24,4 +24,12 @@ describe("card payment reminder", () => {
     expect(cardDueWhen(1)).toBe("tomorrow");
     expect(cardDueWhen(3)).toBe("in 3 days");
   });
+
+  it("flags a statement that closes tomorrow", () => {
+    expect(nextDueDate(5, "2026-10-04")).toBe("2026-10-05");
+    expect(cardDueSoon(daysUntil("2026-10-04", "2026-10-05"))).toBe(true);
+    expect(cardDueWhen(1)).toBe("tomorrow");
+    expect(nextDueDate(5, "2026-10-06")).toBe("2026-11-05");
+    expect(cardDueSoon(daysUntil("2026-10-06", nextDueDate(5, "2026-10-06")))).toBe(false);
+  });
 });
