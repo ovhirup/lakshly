@@ -223,6 +223,8 @@
 		E7D62D3EA2434FB3AC9C0D13 /* nsdl-cas.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 3C51C3236E764B0BBDB6ADF5 /* nsdl-cas.synthetic.pdf */; };
 		E8BD0AEC6E01D997838FBC96 /* SetupLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66369CBFECAE58D334F5086 /* SetupLinks.swift */; };
 		E9C086483CE05C6ADA0762FB /* GlanceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4627BEF8AC1B21D856D7BF9 /* GlanceViews.swift */; };
+		EAD1D0B776F246A89FA36222 /* SyntheticSmokeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3BBD23FBF277D902586A2 /* SyntheticSmokeUITests.swift */; };
+		EB87FB86F6BBCF67F2188D67 /* SyntheticSmokeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3BBD23FBF277D902586A2 /* SyntheticSmokeUITests.swift */; };
 		EBAE14E003D25F63DEEA3928 /* Dataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418C5B9471DC924BC9FA776A /* Dataset.swift */; };
 		EE8A2A76A4DC667983AF98AC /* GlancePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4498503F9C90BA58BF0AD38 /* GlancePublisher.swift */; };
 		EEB0333EB164E76657C13B82 /* LiveActivityPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C0DE6681509A9790D2B63 /* LiveActivityPlanner.swift */; };
@@ -254,6 +256,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6C356AD14B5D2834A3298161;
 			remoteInfo = "LakshlyWidgets-macOS";
+		};
+		8F78C53F5C7B76E3BF3CA646 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 58BAC9B4D9C286503CC447A4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ECAD97ED95EC9D0274B5AA35;
+			remoteInfo = "Lakshly-macOS";
 		};
 		9441D37A3731D56E0D8F0A44 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -327,6 +336,7 @@
 		19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityTests.swift; sourceTree = "<group>"; };
 		1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakshlyApp.swift; sourceTree = "<group>"; };
 		1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
+		2102936D55116F24E626F2CD /* LakshlyMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LakshlyMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		25D08A1BDCEE10A0A0943AE4 /* LakshlyGlance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LakshlyGlance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		27F8B8CDFC7203FA83677173 /* Regex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
 		297476ADFC60ECE772E38A16 /* LiveActivityViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityViews.swift; sourceTree = "<group>"; };
@@ -351,6 +361,7 @@
 		47E19DB10EF51035AFED0AB2 /* Entitlements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entitlements.swift; sourceTree = "<group>"; };
 		4F17FA443322997C13606406 /* Lakshly.storekit */ = {isa = PBXFileReference; path = Lakshly.storekit; sourceTree = "<group>"; };
 		51E9BAF895BA80DCE3D5015E /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
+		53C3BBD23FBF277D902586A2 /* SyntheticSmokeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntheticSmokeUITests.swift; sourceTree = "<group>"; };
 		547BE2C4156E14E07A534A83 /* Registry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Registry.swift; sourceTree = "<group>"; };
 		54C52E317367CF2550EA4FA6 /* cas-locked.synthetic.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "cas-locked.synthetic.pdf"; sourceTree = "<group>"; };
 		56B9F77425187C4185625AFF /* Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Table.swift; sourceTree = "<group>"; };
@@ -660,6 +671,7 @@
 				A164C7C93D6C3C4096FA9C5D /* Lakshly-iOS.app */,
 				11AF7D13642E6E1C77A58B33 /* Lakshly-macOS.app */,
 				25D08A1BDCEE10A0A0943AE4 /* LakshlyGlance.framework */,
+				2102936D55116F24E626F2CD /* LakshlyMacUITests.xctest */,
 				A8211BF33EBEFFDAD6C14160 /* LakshlyTests.xctest */,
 				B98525A8284CAF7C518983B0 /* LakshlyUITests.xctest */,
 				9E1798943DAE0F301A9CB2D8 /* LakshlyWidgets-iOS.appex */,
@@ -777,6 +789,7 @@
 			isa = PBXGroup;
 			children = (
 				9A5372977627F456E0B68D8E /* StoreKitPurchaseUITests.swift */,
+				53C3BBD23FBF277D902586A2 /* SyntheticSmokeUITests.swift */,
 			);
 			path = LakshlyUITests;
 			sourceTree = "<group>";
@@ -992,6 +1005,24 @@
 			productReference = 8B34595B30F2E1F765833567 /* LakshlyWidgets-macOS.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		9DE3ABD0EB6B2C77E2F1C3C1 /* LakshlyMacUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B0027EE59C4AE1F42637A68 /* Build configuration list for PBXNativeTarget "LakshlyMacUITests" */;
+			buildPhases = (
+				04B12AEE6FCE986F7E97EE97 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3993ACA60736CDC8EB5A5EB2 /* PBXTargetDependency */,
+			);
+			name = LakshlyMacUITests;
+			packageProductDependencies = (
+			);
+			productName = LakshlyMacUITests;
+			productReference = 2102936D55116F24E626F2CD /* LakshlyMacUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		BAF103B12D5A5B7C7645654B /* LakshlyTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5ADF7813EDD982ACBBDF94B3 /* Build configuration list for PBXNativeTarget "LakshlyTests" */;
@@ -1063,6 +1094,11 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					9DE3ABD0EB6B2C77E2F1C3C1 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = ECAD97ED95EC9D0274B5AA35;
+					};
 					BAF103B12D5A5B7C7645654B = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -1091,6 +1127,7 @@
 				ECAD97ED95EC9D0274B5AA35 /* Lakshly-macOS */,
 				BAF103B12D5A5B7C7645654B /* LakshlyTests */,
 				2BF4F1542F07EBE7FCD85B5A /* LakshlyUITests */,
+				9DE3ABD0EB6B2C77E2F1C3C1 /* LakshlyMacUITests */,
 				27201AD56F70FCED48E3C1BE /* LakshlyGlance */,
 				5FA6629C31CF2BA223C002F8 /* LakshlyWidgets-iOS */,
 				6C356AD14B5D2834A3298161 /* LakshlyWidgets-macOS */,
@@ -1221,6 +1258,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		04B12AEE6FCE986F7E97EE97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EAD1D0B776F246A89FA36222 /* SyntheticSmokeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		37EA8FAF0D48E25042EFD9C0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1259,6 +1304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBC4233FB564B58ED569329A /* StoreKitPurchaseUITests.swift in Sources */,
+				EB87FB86F6BBCF67F2188D67 /* SyntheticSmokeUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1476,6 +1522,11 @@
 			isa = PBXTargetDependency;
 			target = 6C356AD14B5D2834A3298161 /* LakshlyWidgets-macOS */;
 			targetProxy = 583A24D3D6F6BAD336898AEC /* PBXContainerItemProxy */;
+		};
+		3993ACA60736CDC8EB5A5EB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ECAD97ED95EC9D0274B5AA35 /* Lakshly-macOS */;
+			targetProxy = 8F78C53F5C7B76E3BF3CA646 /* PBXContainerItemProxy */;
 		};
 		61E0C05E149964393A6BD65A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1785,6 +1836,25 @@
 			};
 			name = Debug;
 		};
+		9FFFA226823E752DB637AE63 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.lakshly.Lakshly.macuitests;
+				PRODUCT_NAME = LakshlyMacUITests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = "Lakshly-macOS";
+			};
+			name = Debug;
+		};
 		A55F770EB2707813FCBDDD6B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1853,6 +1923,25 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
+		};
+		AD70BDD264B6BF86B0E4415B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = app.lakshly.Lakshly.macuitests;
+				PRODUCT_NAME = LakshlyMacUITests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = "Lakshly-macOS";
+			};
+			name = Release;
 		};
 		F54F64B514FBBAA5BC132782 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1952,6 +2041,15 @@
 			buildConfigurations = (
 				1D2B81C378A76F737A5D39E7 /* Debug */,
 				05928F40578F3B269174E878 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8B0027EE59C4AE1F42637A68 /* Build configuration list for PBXNativeTarget "LakshlyMacUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FFFA226823E752DB637AE63 /* Debug */,
+				AD70BDD264B6BF86B0E4415B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
