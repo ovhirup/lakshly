@@ -7,7 +7,7 @@ import { dataset as demo } from "@/lib/data";
 import type { Budget, LakshlyDataset } from "@/lib/schema.gen";
 import { budgetId } from "@/lib/setup-suggest";
 import type { SetupGoal } from "@/lib/setup";
-import { deleteVault, loadUserData, saveUserData, VAULT_DELETED_EVENT, type UserData } from "@/lib/vault";
+import { deleteVault, loadUserData, saveUserData, vaultLockState, VAULT_DELETED_EVENT, VAULT_LOCKED_EVENT, VAULT_UNLOCKED_EVENT, type UserData } from "@/lib/vault";
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
 import { usePrivacy } from "./Privacy";
@@ -33,6 +33,8 @@ interface DataCtx {
   setSource: (s: Source) => void;
   /** True once the encrypted vault has been read (or there is none). */
   ready: boolean;
+  /** True when a passphrase is set and this tab has not unlocked it. */
+  vaultLocked: boolean;
   user: UserData | null;
   /** The dataset every page renders: demo data, or the user's own imported data. */
   dataset: LakshlyDataset;
@@ -62,14 +64,30 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const userRef = useRef<UserData | null>(null);
   const setUser = useCallback((u: UserData | null) => { userRef.current = u; setUserState(u); }, []);
   const [ready, setReady] = useState(false);
+  const [vaultLocked, setVaultLocked] = useState(false);
   const { masked } = usePrivacy();
 
   useEffect(() => {
     let alive = true;
-    loadUserData()
-      .then((u) => { if (alive) { setUser(u); setReady(true); } })
+    vaultLockState()
+      .then((state) => {
+        if (!alive) return;
+        if (state === "locked") { setVaultLocked(true); setReady(true); return; }
+        return loadUserData().then((u) => { if (alive) { setUser(u); setReady(true); } });
+      })
       .catch(() => { if (alive) setReady(true); });
-    return () => { alive = false; };
+    const onLock = () => { setUser(null); setVaultLocked(true); };
+    const onUnlock = () => {
+      setVaultLocked(false);
+      loadUserData().then((u) => { if (alive) setUser(u); }).catch(() => {});
+    };
+    window.addEventListener(VAULT_LOCKED_EVENT, onLock);
+    window.addEventListener(VAULT_UNLOCKED_EVENT, onUnlock);
+    return () => {
+      alive = false;
+      window.removeEventListener(VAULT_LOCKED_EVENT, onLock);
+      window.removeEventListener(VAULT_UNLOCKED_EVENT, onUnlock);
+    };
   }, [setUser]);
 
   const setSource = useCallback((s: Source) => { localStorage.setItem(SOURCE_KEY, s); emit(); }, []);
@@ -127,7 +145,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     window.dispatchEvent(new Event(VAULT_DELETED_EVENT));
   }, [forgetAll, setUser]);
   const value: DataCtx = {
-    source, setSource, ready, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,
+    source, setSource, ready, vaultLocked, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,
     dataset: active,
     accounts: active.accounts,
     rawTransactions: active.transactions,
@@ -150,6 +168,19 @@ export function useData(): DataCtx {
 export function DataGate({ title, need = ["transactions"], children }: { title: string; need?: ("transactions" | "accounts" | "savings" | "cards" | "debts" | "sips" | "rewards")[]; children: React.ReactNode }) {
   const d = useData();
   if (d.source === "demo") return <>{children}</>;
+  if (d.vaultLocked) return (
+    <>
+      <PageHeader title={title} subtitle="Your data is locked" />
+      <Glass className="card empty-state">
+        <h2>Vault locked</h2>
+        <p className="muted">Enter the passphrase in Profile to open the imported data on this device. The demo stays available. Nothing is sent.</p>
+        <div className="row-actions">
+          <Link className="btn primary" href="/profile/">Unlock in Profile</Link>
+          <button className="btn ghost" onClick={() => d.setSource("demo")}>View demo data</button>
+        </div>
+      </Glass>
+    </>
+  );
   if (!d.ready) return <PageHeader title={title} subtitle="Unlocking your on-device vault…" />;
   const missing = need.some((n) =>
     n === "transactions" ? !d.transactions.length
