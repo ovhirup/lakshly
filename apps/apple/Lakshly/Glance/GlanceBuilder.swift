@@ -85,7 +85,7 @@ enum GlanceBuilder {
         kind: .card,
         amount: includeAmounts ? magnitude(account.balance) : nil))
     }
-    for debt in dataset.debts ?? [] {
+    for debt in dataset.debts ?? [] where debt.emi > 0 {
       guard let day = dayNumber(debt.startDate), let due = nextDue(day: day, now: now, calendar: calendar) else { continue }
       candidates.append(GlanceBill(
         name: named(debt.name, fallback: "EMI"),

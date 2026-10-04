@@ -64,7 +64,7 @@ struct OverviewView: View {
             title: "\(account.name) · \(nextMonthlyDate(day: account.dueDay ?? 1))",
             value: Money.format(abs(account.balance)))
         }
-        ForEach(store.dataset?.debts ?? []) { debt in
+        ForEach((store.dataset?.debts ?? []).filter { $0.emi > 0 }) { debt in
           MetricRow(
             title: "\(debt.name) EMI · \(nextMonthlyDate(day: Int(debt.startDate.suffix(2)) ?? 1))",
             value: Money.format(debt.emi), semantic: .spend)
