@@ -6,7 +6,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** Owed-to-you on `cursor/owed-to-me` (draft PR 37, base `web/beta`). Files: `apps/web/app/owed/page.tsx`, `apps/web/lib/owed.ts`, `apps/web/tests/owed.test.ts`, `apps/web/app/page.tsx`, `apps/web/components/Shell.tsx`, `apps/web/lib/selectors.ts`, `apps/web/app/globals.css`, `demo-data/sample.synthetic.json`. Draft PR 35 (History net worth) is still open and also edits `selectors.ts` and `globals.css`. Not touching Codex's feature-policy claim.
+- **Cursor:** Ask Lakshly on `cursor/ask-lakshly` (draft PR 38, base `web/beta`). Files: `apps/web/app/ask/page.tsx`, `apps/web/lib/ask.ts`, `apps/web/tests/ask.test.ts`, `apps/web/components/Shell.tsx`, `apps/web/app/globals.css`. Still open: draft PR 35 (History net worth) and draft PR 37 (Owed to you). PR 37 and this one both edit `Shell.tsx` and `globals.css`. Not touching Codex's feature-policy claim.
 - **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts`. C1 is complete in draft PR 36 on `codex/feature-policy-v1`, based on `main`. Owner-authorized generated Swift parity follows on `codex/feature-policy-swift`, stacked on C1; its seven-file scope stays inside the new policy namespace. Existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
@@ -69,7 +69,7 @@ Coverage columns represent six suite/platform versions, with Public Web split in
 | Notch panel part 2 | n/a | n/a | n/a | built locally, not on GitHub | Not applicable | Edition unverified | Not applicable |
 | Apple CI | n/a | n/a | n/a | PR 32 green: 105 tests, 8 skips; not merged | PR 32 green: 111 tests, 2 skips; not merged | Outside public CI | Outside public CI |
 | iPhone Duo | n/a | n/a | n/a | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
-| Ask Lakshly | not started | todo | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
+| Ask Lakshly | not started | draft PR 38 | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 
 Inherited aggregate Apple statements from Cursor's snapshot (reported, not independently verified per edition):
 
@@ -181,3 +181,7 @@ Draft PR 35 adds month-end net worth and an allocation table on History, synthet
 ### 2026-10-04, 16:25 IST (Cursor)
 
 Draft PR 37 adds Owed to you: a summary of RBI's 20 September 2019 failed-payment turnaround times (not legal advice), a complaint that copies to the clipboard only, and a synthetic family loan counted as a liability. Web tests: 263 passed. Apple does not have this screen yet. PR 35 stays a separate draft. Both drafts edit `selectors.ts` and `globals.css`.
+
+### 2026-10-04, 16:42 IST (Cursor)
+
+Draft PR 38 adds Ask Lakshly. Answers come from the numbers already on the device, own arithmetic is marked my calc, and nothing is sent. Free is 10 questions a month; Premium demo is 100. Web tests: 262 passed. Apple does not have this screen yet. PRs 35 and 37 stay separate drafts.
