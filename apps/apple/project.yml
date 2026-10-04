@@ -154,6 +154,38 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: app.lakshly.Lakshly.tests
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: ""
+  LakshlyMacTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: LakshlyTests
+        excludes:
+          - "Fixtures/**"
+          - "ThemeAppIconTests.swift"
+      - path: LakshlyTests/Fixtures/Parsers
+        type: folder
+        buildPhase: resources
+      - path: ../../packages/shared/setup/__fixtures__
+        type: folder
+        buildPhase: resources
+      - path: ../../docs/themes.json
+        buildPhase: resources
+      - path: StoreKit/Lakshly.storekit
+        buildPhase: resources
+      - path: StoreKit/Lakshly-US.storekit
+        buildPhase: resources
+    dependencies:
+      - target: Lakshly-macOS
+      - sdk: StoreKitTest.framework
+    settings:
+      base:
+        PRODUCT_NAME: LakshlyMacTests
+        PRODUCT_MODULE_NAME: LakshlyMacTests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Lakshly.app/Contents/MacOS/Lakshly"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        PRODUCT_BUNDLE_IDENTIFIER: app.lakshly.Lakshly.macostests
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: ""
   LakshlyUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -290,6 +322,13 @@ schemes:
       targets:
         Lakshly-macOS: all
         LakshlyWidgets-macOS: all
+        LakshlyMacTests: [test]
     run:
       config: Debug
       storeKitConfiguration: StoreKit/Lakshly.storekit
+    test:
+      config: Debug
+      storeKitConfiguration: StoreKit/Lakshly.storekit
+      targets:
+        - name: LakshlyMacTests
+          parallelizable: false
