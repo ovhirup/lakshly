@@ -105,6 +105,9 @@ kbd { display: inline-block; min-width: 20px; padding: 0 5px; border-radius: 6px
 }
 .spend-head-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 .sunday-banner { margin-top: 20px; }
+.card-due { margin-top: 20px; }
+.card-due p { margin: 0 0 12px; }
+.card-due .row-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .sunday-banner p { margin: 0 0 12px; }
 .sunday-banner .row-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .overview-review-card { margin-top: 20px; }
