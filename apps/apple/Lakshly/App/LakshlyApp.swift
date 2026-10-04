@@ -83,7 +83,7 @@ import SwiftUI
     }
     .defaultSize(width: 760, height: 600)
     .windowResizability(.contentMinSize)
-    MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: $menuBarExtra) {
+    MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: menuBarInserted) {
       MenuBarPanel()
         .environment(\.theme, ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance))
         .environment(store)
@@ -96,6 +96,26 @@ import SwiftUI
     mainScene
     #endif
   }
+
+  #if os(macOS)
+  /// A Debug UI-test launch leaves the menu-bar extra out. The window-style
+  /// extra keeps the app from finishing launch on a test runner. Release never sets this.
+  private var menuBarInserted: Binding<Bool> {
+    Binding(
+      get: { menuBarExtra && !Self.uiTestingOmitsMenuBar },
+      set: { menuBarExtra = $0 }
+    )
+  }
+
+  private static var uiTestingOmitsMenuBar: Bool {
+    #if DEBUG
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: true)
+    #else
+    false
+    #endif
+  }
+  #endif
 
   private var mainScene: some Scene {
     WindowGroup(id: "main") {

@@ -310,6 +310,7 @@ schemes:
       storeKitConfiguration: StoreKit/Lakshly.storekit
     test:
       config: Debug
+      storeKitConfiguration: StoreKit/Lakshly.storekit
       targets:
         - name: LakshlyMacUITests
           parallelizable: false
