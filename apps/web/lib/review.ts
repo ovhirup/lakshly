@@ -58,11 +58,15 @@ export interface ReviewState {
   clearedWeeks: string[];
   /** Worth-it "Not now" snoozes: merchant -> ISO time. Kept in this encrypted record, never in localStorage. */
   snoozed: Record<string, string>;
+  /** One 3-day wait. Merchant name stays in this encrypted record, never in localStorage. */
+  quest: ActiveQuest | null;
 }
+
+export interface ActiveQuest { merchant: string; until: string }
 
 export const emptyState = (): ReviewState => ({
   v: 2, lastReviewedAt: null, lastClearedWeek: null, streak: 0, bestStreak: 0, freezesLeft: 1, clearsTowardFreeze: 0,
-  xp: 0, weekXP: {}, decisions: {}, merchantRules: {}, worth: {}, skipped: [], clearedWeeks: [], snoozed: {},
+  xp: 0, weekXP: {}, decisions: {}, merchantRules: {}, worth: {}, skipped: [], clearedWeeks: [], snoozed: {}, quest: null,
 });
 
 /** Accepts v1 (spec) or v2 state, fills gaps defensively. */
@@ -86,7 +90,15 @@ export function normaliseState(raw: unknown): ReviewState {
     clearedWeeks: Array.isArray(r.clearedWeeks) ? r.clearedWeeks.filter((s) => typeof s === "string")
       : typeof r.lastClearedWeek === "string" ? [r.lastClearedWeek] : [],
     snoozed: obj<Record<string, string>>(r.snoozed),
+    quest: readQuest(r.quest),
   };
+}
+
+function readQuest(v: unknown): ActiveQuest | null {
+  if (!v || typeof v !== "object") return null;
+  const q = v as Partial<ActiveQuest>;
+  if (typeof q.merchant !== "string" || !q.merchant.trim() || typeof q.until !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(q.until)) return null;
+  return { merchant: q.merchant, until: q.until };
 }
 
 // ---------- dates & ISO weeks (device-local) ----------
@@ -210,7 +222,9 @@ export type ReviewAction =
   | { type: "skip"; tx: string }
   | { type: "confirmAll" }
   | { type: "rate"; tx: string; worth: Worth | null }
-  | { type: "snooze"; merchant: string; until: string };
+  | { type: "snooze"; merchant: string; until: string }
+  | { type: "startQuest"; merchant: string; until: string }
+  | { type: "clearQuest" };
 
 export interface ReviewCtx { txns: readonly ReviewTxn[]; now: Date; opts?: InboxOptions }
 export interface ApplyResult { state: ReviewState; xpGained: number; cleared: boolean; streakBonus: number; message: string }
@@ -293,6 +307,16 @@ export function applyAction(prev: ReviewState, action: ReviewAction, ctx: Review
     case "snooze": {
       state.snoozed[action.merchant] = action.until;
       message = "Okay, not now.";
+      break;
+    }
+    case "startQuest": {
+      state.quest = { merchant: action.merchant, until: action.until };
+      message = "3-day wait started.";
+      break;
+    }
+    case "clearQuest": {
+      state.quest = null;
+      message = "Wait cleared.";
       break;
     }
   }
@@ -402,6 +426,15 @@ export function questFor(merchant: string, category: Category | undefined, premi
   if (category === "dining" && DELIVERY.test(merchant)) return { id: "no_delivery_week", title: "a No-Delivery Week", premium: false };
   if (QUICK_COMMERCE.test(merchant)) return { id: "qc_two_runs", title: "Two quick-commerce runs this week", premium: false };
   return premium ? { id: "custom", title: `a custom “skip ${merchant}” quest`, premium: true } : { id: "wishlist_three", title: "the Wishlist-three habit (wait 3 days before buying)", premium: false };
+}
+
+/** The day the 3-day wait ends. today itself counts as day zero. */
+export function wishlistUntil(today: string): string {
+  return addDays(today, 3);
+}
+
+export function questWaiting(quest: ActiveQuest | null, today: string): boolean {
+  return !!quest && today < quest.until;
 }
 
 // ---------- undo ----------
