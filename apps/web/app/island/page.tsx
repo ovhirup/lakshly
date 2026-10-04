@@ -147,8 +147,14 @@ export function IslandBoard({ filmOnLoad = false }: { filmOnLoad?: boolean }) {
   const [active, setActive] = useState<MotionId>(MOTIONS[0].id);
   const [playId, setPlayId] = useState(0);
   const [phase, setPhase] = useState("compact");
+  const [seenMotion, setSeenMotion] = useState<MotionId>(MOTIONS[0].id);
   const [film, setFilm] = useState<"off" | "count" | "play" | "done">(filmOnLoad ? "count" : "off");
   const [count, setCount] = useState(3);
+  if (seenMotion !== active) {
+    setSeenMotion(active);
+    setPhase(reduced ? endPhase(active) : frameFor(active, 0, false));
+  }
+  const shownPhase = reduced ? endPhase(active) : phase;
   const motion = MOTIONS.find((m) => m.id === active) ?? MOTIONS[0];
   const index = MOTIONS.findIndex((m) => m.id === active);
   const filming = film !== "off";
@@ -171,22 +177,27 @@ export function IslandBoard({ filmOnLoad = false }: { filmOnLoad?: boolean }) {
 
   useEffect(() => {
     if (film !== "count") return;
-    if (reduced || count <= 0) {
-      setFilm("play");
-      return;
-    }
-    const timer = window.setTimeout(() => setCount((n) => n - 1), 700);
+    const timer = window.setTimeout(() => {
+      if (reduced) {
+        setFilm("play");
+        return;
+      }
+      setCount((n) => {
+        if (n <= 1) {
+          setFilm("play");
+          return 0;
+        }
+        return n - 1;
+      });
+    }, reduced ? 0 : 700);
     return () => window.clearTimeout(timer);
   }, [film, count, reduced]);
 
   useEffect(() => {
-    if (film === "count" || film === "done") return;
-    if (reduced) {
-      auto.current = false;
-      setPhase(endPhase(active));
+    if (film === "count" || film === "done" || reduced) {
+      if (reduced) auto.current = false;
       return;
     }
-    setPhase(frameFor(active, 0, false));
     const total = motionDuration(active);
     const start = performance.now();
     let raf = 0;
@@ -237,7 +248,7 @@ export function IslandBoard({ filmOnLoad = false }: { filmOnLoad?: boolean }) {
   };
 
   return (
-    <div className={`island-board motion-${active} ${filming ? "is-filming" : ""} ${film === "count" ? "is-counting" : ""} ${film === "done" ? "is-done" : ""}`} data-phase={phase} style={islandTimingStyle() as CSSProperties}>
+    <div className={`island-board motion-${active} ${filming ? "is-filming" : ""} ${film === "count" ? "is-counting" : ""} ${film === "done" ? "is-done" : ""}`} data-phase={shownPhase} style={islandTimingStyle() as CSSProperties}>
       <div className="island-chrome">
         <PageHeader
           title="Island motions"
@@ -247,7 +258,7 @@ export function IslandBoard({ filmOnLoad = false }: { filmOnLoad?: boolean }) {
       </div>
 
       <div className={`island-stage ${active === "duo" ? "is-duo" : ""}`} key={`${active}-${playId}`}>
-        {film === "count" && count > 0 ? <p className="island-count" aria-live="assertive">{count}</p> : <MotionFace id={active} phase={phase} />}
+        {film === "count" && count > 0 ? <p className="island-count" aria-live="assertive">{count}</p> : <MotionFace id={active} phase={shownPhase} />}
         <p className="island-slate">{motion.title}</p>
       </div>
 
@@ -271,7 +282,7 @@ export function IslandBoard({ filmOnLoad = false }: { filmOnLoad?: boolean }) {
       </div>
       {film === "done" && <button type="button" className="island-again" onClick={armFilm}>Take again</button>}
       {filming && film !== "done" && <button type="button" className="island-exit" onClick={() => setFilm("off")}>Leave film</button>}
-      <p className="sr-only" aria-live="polite">{film === "count" && count > 0 ? count : `${index + 1}. ${motion.title}. ${pillText(active, phase)}`}</p>
+      <p className="sr-only" aria-live="polite">{film === "count" && count > 0 ? count : `${index + 1}. ${motion.title}. ${pillText(active, shownPhase)}`}</p>
     </div>
   );
 }
