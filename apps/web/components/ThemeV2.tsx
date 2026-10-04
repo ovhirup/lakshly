@@ -44,7 +44,7 @@ export function ThemeV2Root() {
     if (theme !== legacy) setTheme(legacy);
     let storedLevel: string | null = null;
     try { storedLevel = localStorage.getItem(GLASS_LEVEL_KEY); } catch { /* blocked */ }
-    applyGlass(readGlassLevel(storedLevel), mood, d.style);
+    applyGlass(readGlassLevel(storedLevel), d.style);
   }, [mood, accent, theme, setTheme]);
   return <MoodArt mood={t.theme} dark={resolved === "dark"} />;
 }
@@ -120,7 +120,7 @@ export function MoodArt({ mood, dark }: { mood: Mood; dark: boolean }) {
 }
 
 /* ───────── picker grid (inside the existing theme popover) ───────── */
-function GlassSlider({ mood }: { mood: Mood }) {
+function GlassSlider() {
   const [level, setLevel] = useState(GLASS_DEFAULT);
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
@@ -147,7 +147,7 @@ function GlassSlider({ mood }: { mood: Mood }) {
           const next = readGlassLevel(e.target.value);
           setLevel(next);
           try { localStorage.setItem(GLASS_LEVEL_KEY, String(next)); } catch { /* blocked */ }
-          applyGlass(next, mood, document.documentElement.style);
+          applyGlass(next, document.documentElement.style);
         }}
       />
       <span className="tiny muted">{reduced ? "Off" : level}</span>
@@ -209,7 +209,7 @@ export function MoodGrid() {
           })}
         </div>
       )}
-      {stored.theme === "lotusGlass" ? null : <GlassSlider mood={stored.theme} />}
+      <GlassSlider />
       <p className="tiny muted">{current.blurb}. Beta: every look is unlocked for testers.</p>
     </div>
   );

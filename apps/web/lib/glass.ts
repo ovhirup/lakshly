@@ -1,5 +1,4 @@
-// Beta liquid-glass amount. Default 70 keeps today's card blur (24px) and nav blur (20px).
-// Lotus Glass does not use these variables.
+// Beta liquid-glass amount. Default 70 is 24px on cards and 20px on navigation, for every mood.
 
 export const GLASS_LEVEL_KEY = "lakshly.glassLevel";
 export const GLASS_DEFAULT = 70;
@@ -21,8 +20,7 @@ export function glassBlur(level: number): { card: number; nav: number } {
   return { card: Math.round(n * 24 / GLASS_DEFAULT), nav: Math.round(n * 20 / GLASS_DEFAULT) };
 }
 
-export function glassDeclarations(level: number, mood: string): { card: string; nav: string } | null {
-  if (mood === "lotusGlass") return null;
+export function glassDeclarations(level: number): { card: string; nav: string } {
   const blur = glassBlur(level);
   return { card: `${blur.card}px`, nav: `${blur.nav}px` };
 }
@@ -32,13 +30,8 @@ export interface GlassStyle {
   removeProperty(name: string): void;
 }
 
-export function applyGlass(level: number, mood: string, root: GlassStyle) {
-  const decl = glassDeclarations(level, mood);
-  if (!decl) {
-    root.removeProperty("--lk-glass-card");
-    root.removeProperty("--lk-glass-nav");
-    return;
-  }
+export function applyGlass(level: number, root: GlassStyle) {
+  const decl = glassDeclarations(level);
   root.setProperty("--lk-glass-card", decl.card);
   root.setProperty("--lk-glass-nav", decl.nav);
 }

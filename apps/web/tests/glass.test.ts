@@ -13,20 +13,15 @@ describe("liquid glass slider", () => {
     expect(readGlassLevel(" 40 ")).toBe(40);
   });
 
-  it("leaves Lotus Glass alone", () => {
-    expect(glassDeclarations(100, "lotusGlass")).toBeNull();
-    expect(glassDeclarations(70, "calm")).toEqual({ card: "24px", nav: "20px" });
-    const removed: string[] = [];
+  it("applies the same blur on Lotus and Classic", () => {
+    expect(glassDeclarations(70)).toEqual({ card: "24px", nav: "20px" });
+    expect(glassDeclarations(100)).toEqual({ card: "34px", nav: "29px" });
     const set: [string, string][] = [];
-    const root = {
+    applyGlass(100, {
       setProperty: (name: string, value: string) => { set.push([name, value]); },
-      removeProperty: (name: string) => { removed.push(name); },
-    };
-    applyGlass(100, "lotusGlass", root);
-    expect(removed).toEqual(["--lk-glass-card", "--lk-glass-nav"]);
-    expect(set).toEqual([]);
-    applyGlass(0, "vivid", root);
-    expect(set).toEqual([["--lk-glass-card", "0px"], ["--lk-glass-nav", "0px"]]);
+      removeProperty: () => {},
+    });
+    expect(set).toEqual([["--lk-glass-card", "34px"], ["--lk-glass-nav", "29px"]]);
   });
 
   it("feeds blur through variables, with the webkit property first", () => {
@@ -37,6 +32,7 @@ describe("liquid glass slider", () => {
     expect(standard).toBeGreaterThan(webkit);
     expect(css).toContain("blur(var(--lk-glass-nav, 20px))");
     expect(css).not.toMatch(/backdrop-filter:\s*blur\(24px\)/);
-    expect(css).not.toMatch(/backdrop-filter:\s*blur\(20px\)/);
+    expect(css).toContain('html[data-edition="beta"][data-mood="lotusGlass"] .sidebar.glass');
+    expect(css).not.toMatch(/\[data-clear-glass="true"\][^{]*\{[^}]*backdrop-filter:\s*none/);
   });
 });

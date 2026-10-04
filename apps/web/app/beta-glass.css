@@ -95,6 +95,30 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .badge-detail
   display: none;
 }
 
+/* ── 3b. Lotus uses the same slider. Hero stays unblurred. Webkit property first. ── */
+html[data-edition="beta"][data-mood="lotusGlass"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero) {
+  -webkit-backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(150%);
+  backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(150%);
+}
+html[data-edition="beta"][data-mood="lotusGlass"] .sidebar.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .tabbar.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .theme-popover.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .theme-upsell.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .name-sheet {
+  -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+  backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+}
+html[data-edition="beta"][data-mood] .hero {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+@media (max-width: 860px) {
+  html[data-edition="beta"][data-mood="lotusGlass"] .topbar.glass {
+    -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+    backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+  }
+}
+
 /* ── 4. Fallbacks (same targets; mobile topbar stays inside the mobile query) ── */
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero),
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .sidebar.glass,
@@ -104,11 +128,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-gl
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .name-sheet,
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .mobile-menu.glass,
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .badge-detail.glass {
-  background: var(--mood-solid);
   border: 1px solid var(--mood-edge);
   box-shadow: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero)::before,
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero)::after,
@@ -130,11 +151,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-gl
 }
 @media (max-width: 860px) {
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .topbar.glass {
-    background: var(--mood-solid);
     border: 1px solid var(--mood-edge);
     box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
   }
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .topbar.glass::before,
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .topbar.glass::after {
