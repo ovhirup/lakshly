@@ -210,6 +210,12 @@ final class StoreKitTests: XCTestCase {
   }
 
   func testDefaultsAndLaunchArgumentsCannotGrantPremium() async throws {
+    session.clearTransactions()
+    let baseline = EntitlementStore(syncPurchases: {})
+    await waitForPremium(baseline, expected: false)
+    XCTAssertFalse(baseline.isPremium, "StoreKit fixture did not settle to Free after clearing transactions.")
+    XCTAssertEqual(baseline.tier, .free)
+    guard !baseline.isPremium else { return }
     let domain = "app.lakshly.entitlement-test.\(UUID().uuidString)"
     let defaults = try XCTUnwrap(UserDefaults(suiteName: domain))
     defer { defaults.removePersistentDomain(forName: domain) }

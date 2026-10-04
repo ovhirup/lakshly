@@ -80,6 +80,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          build_settings=(CODE_SIGNING_ALLOWED=NO)
+          if [ '${{ matrix.platform }}' = 'macos' ]; then
+            build_settings+=('SWIFT_ACTIVE_COMPILATION_CONDITIONS=DEBUG LAKSHLY_MAC_UNIT_TEST_HOST')
+          fi
           xcodebuild \
             -project apps/apple/Lakshly.xcodeproj \
             -scheme '${{ matrix.scheme }}' \
@@ -89,7 +93,7 @@ jobs:
             -resultBundlePath "$RUNNER_TEMP/lakshly-${{ matrix.platform }}.xcresult" \
             -only-testing:'${{ matrix.target }}' \
             -parallel-testing-enabled NO \
-            CODE_SIGNING_ALLOWED=NO test
+            "${build_settings[@]}" test
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
