@@ -72,7 +72,7 @@ export function IdentityChip({ compact = false }: { compact?: boolean }) {
   const { tier } = useTier();
   const [open, setOpen] = useState(false);
   const unset = profile.loaded && !name;
-  const label = `${name || "Add your name"}, ${IS_BETA ? "Beta tester, Premium unlocked" : tier === "premium" ? "Premium" : "Free Version"}. Edit name`;
+  const label = `${name || "Add your name"}, ${IS_BETA ? (tier === "free" ? "Beta tester, Free preview" : "Beta tester, Premium unlocked") : tier === "premium" ? "Premium" : "Free Version"}. Edit name`;
   return (
     <div className={`id-chip-wrap ${compact ? "compact" : ""}`}>
       <button type="button" className={`id-chip ${compact ? "compact" : ""}`} aria-label={label} aria-expanded={open} aria-haspopup="dialog"

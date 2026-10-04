@@ -84,7 +84,7 @@ export function legacyIdFor(t: ThemeV2): ThemeId {
 
 /** Pre-paint (beta only): mark the edition, unlock Premium, and paint the mood before React hydrates. */
 export const themeV2BootScript = `(function(){try{var d=document.documentElement;d.dataset.edition="beta";
-try{localStorage.setItem("lakshly.plan","premium")}catch(e){}
+try{var storedPlan=localStorage.getItem("lakshly.plan");if(storedPlan!=="free"&&storedPlan!=="premium")localStorage.setItem("lakshly.plan","premium")}catch(e){}
 var M={calm:["graphite","sage","quartz"],vivid:["lakshmi","tide"],classic:["gold"],lotusGlass:[]};
 var L={lakshmi:["vivid","lakshmi"],monochromeGold:["classic","gold"],graphite:["calm","graphite"],ocean:["vivid","tide"],forest:["calm","sage"],roseQuartz:["calm","quartz"]};
 var t="lotusGlass",a=null,raw=null,leg=null;try{raw=localStorage.getItem("${THEME_V2_KEY}");leg=localStorage.getItem("lakshly.themeId")}catch(e){}
