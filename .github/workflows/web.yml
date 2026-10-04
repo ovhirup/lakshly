@@ -75,7 +75,8 @@ jobs:
         working-directory: packages/parsers
         run: npm ci
       - run: npx playwright install --with-deps chromium webkit
-      - run: npm run e2e
+      - name: Run smoke and core Playwright tests
+        run: npm run e2e
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
