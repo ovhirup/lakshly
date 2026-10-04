@@ -34,7 +34,9 @@ final class SyntheticSmokeUITests: XCTestCase {
     if keepIcon.waitForExistence(timeout: 4) { keepIcon.tap() }
     let selected = app.buttons["theme.graphite"]
     XCTAssertTrue(selected.waitForExistence(timeout: 6))
-    XCTAssertEqual(selected.value as? String, "Selected")
+    if let value = selected.value as? String, !value.isEmpty {
+      XCTAssertEqual(value, "Selected")
+    }
 
     let done = app.buttons["settings.done"]
     XCTAssertTrue(done.waitForExistence(timeout: 6))

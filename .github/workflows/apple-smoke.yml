@@ -76,6 +76,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          extra_settings=(CODE_SIGNING_ALLOWED=NO)
+          if [ '${{ matrix.platform }}' = 'macos' ]; then
+            # The smoke build omits the menu-bar extra and the setup window.
+            # A normal Debug or Release build does not define this flag.
+            extra_settings+=('SWIFT_ACTIVE_COMPILATION_CONDITIONS=$(inherited) DEBUG LAKSHLY_UI_TESTING')
+          fi
           xcodebuild \
             -project apps/apple/Lakshly.xcodeproj \
             -scheme '${{ matrix.scheme }}' \
@@ -85,7 +91,7 @@ jobs:
             -resultBundlePath "$RUNNER_TEMP/lakshly-smoke-${{ matrix.platform }}.xcresult" \
             -only-testing:'${{ matrix.only }}' \
             -parallel-testing-enabled NO \
-            CODE_SIGNING_ALLOWED=NO \
+            "${extra_settings[@]}" \
             test
       - name: Upload test results
         if: always()

@@ -36,6 +36,15 @@ import SwiftUI
   }
 
   /// Release passes `debugControlsEnabled: false`, which ignores the launch argument.
+  private static var skipsStoreKitForUITesting: Bool {
+    #if DEBUG
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: true)
+    #else
+    false
+    #endif
+  }
+
   private static var loadsSyntheticDemoAtLaunch: Bool {
     #if DEBUG
     LaunchOptions.loadsUITestingSyntheticData(
@@ -73,6 +82,7 @@ import SwiftUI
           Button("Data Sources Health") { session.requestOpen(health: true, step: nil) }
         }
       }
+    #if !LAKSHLY_UI_TESTING
     Window("Set up Lakshly", id: "setup") {
       let palette = ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance)
       SetupHost(store: store)
@@ -92,6 +102,7 @@ import SwiftUI
         .preferredColorScheme(appearance)
     }
     .menuBarExtraStyle(.window)
+    #endif
     #else
     mainScene
     #endif
@@ -131,8 +142,11 @@ import SwiftUI
         .preferredColorScheme(appearance)
         .task {
           await appIcons.start(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved)
-          await entitlements.loadProducts()
-          await entitlements.refresh()
+          // A UI-test launch must not wait on the App Store before the window is usable.
+          if !Self.skipsStoreKitForUITesting {
+            await entitlements.loadProducts()
+            await entitlements.refresh()
+          }
         }
         .onChange(of: entitlements.isPremium) { _, _ in
           Task { await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved) }
