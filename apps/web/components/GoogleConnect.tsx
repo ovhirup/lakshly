@@ -4,7 +4,7 @@
 // Gmail is called directly from the browser, and nothing goes to Lakshly's servers.
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { GOOGLE_CLIENT_ID } from "@/lib/edition";
-import { decodeIdToken, financeSources, GMAIL_SCOPE, GmailApiError, GmailClient, interpretPopupError, interpretTokenResponse, revokeToken, senderDomains, type FoundMessage, type GoogleIdentity, type ReadLogEntry } from "@/lib/gmail";
+import { decodeIdToken, financeSources, GMAIL_SCOPE, GmailApiError, GmailClient, gmailPane, interpretPopupError, interpretTokenResponse, revokeToken, senderDomains, type FoundMessage, type GoogleIdentity, type ReadLogEntry } from "@/lib/gmail";
 import { CATALOG } from "@/lib/sources.gen";
 import { Glass } from "./ui";
 import { Icon } from "./Icon";
@@ -162,6 +162,7 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
   const sources = financeSources(picked);
   const domains = senderDomains(sources);
   const connected = !!g.token;
+  const pane = gmailPane(connected, consent);
   const isGmail = /@(gmail|googlemail)\.com$/i.test(email) || !!g.identity;
   const hint = email || g.identity?.email;
   const nameOf = (id: string) => CATALOG.sources.find((s) => s.id === id)?.name ?? id;
@@ -197,41 +198,37 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
   return (
     <Glass className="card connect-card gmail-card" as="div">
       <div className="card-head"><h3><Icon name="shield" size={16} /> Connect Gmail (read-only)</h3><span className="badge">Beta · testers</span></div>
-      {!connected ? (
+      {pane === "start" ? (
         <>
-          {!consent ? (
-            <>
-              <p className="muted tiny">Lakshly can find statement emails from your banks, cards and CAS providers in Gmail and open the PDFs here. Your browser talks to Google directly; nothing passes through Lakshly&apos;s servers.</p>
-              <div className="row-actions">
-                <button className="btn primary" onClick={() => setConsent(true)} disabled={!isGmail && !!email} data-testid="gmail-start">Connect Gmail (read-only)</button>
-              </div>
-              {!isGmail && !!email && <p className="tiny muted">Gmail connect works for Gmail and Google Workspace addresses. For other mailboxes, use the guided search below.</p>}
-            </>
-          ) : (
-            <div className="consent-sheet" role="group" aria-label="What Lakshly will read" data-testid="gmail-consent">
-              <h4>Before you connect</h4>
-              <ul>
-                <li><b>Only finance senders.</b> Lakshly searches {domains.length} sender domains of {sources.length} banks, cards and CAS providers{picked.length ? " you picked" : ""}. <button className="linkish" aria-expanded={showDomains} onClick={() => setShowDomains(!showDomains)}>{showDomains ? "Hide list" : "Show list"}</button></li>
-                {showDomains && <li className="domain-list"><code>{domains.join(" · ")}</code></li>}
-                <li><b>What is read:</b> matching statement emails (date, sender, subject) and their PDF/CSV attachments. Everything else in your inbox is never searched or opened.</li>
-                <li><b>Where it goes:</b> straight from Google to this browser. Statements are read on this device. Nothing is sent to Lakshly.</li>
-                <li><b>Read-only:</b> Lakshly can&apos;t send, delete, label or mark anything. Access is kept in memory and ends when you close the tab.</li>
-                <li><b>Withdraw any time:</b> Disconnect revokes access at Google in one tap.</li>
-              </ul>
-              <p className="tiny muted">Beta: Google allows Gmail access only for invited test accounts while Lakshly&apos;s app review is pending.</p>
-              <div className="row-actions">
-                <button className="btn primary" disabled={!!g.busy} onClick={() => void connectGmail(hint, picked)} data-testid="gmail-agree">Agree and connect</button>
-                <button className="btn ghost" onClick={() => setConsent(false)}>Not now</button>
-              </div>
-            </div>
-          )}
+          <p className="muted tiny">Lakshly can find statement emails from your banks, cards and CAS providers in Gmail and open the PDFs here. Your browser talks to Google directly; nothing passes through Lakshly&apos;s servers.</p>
+          <div className="row-actions">
+            <button className="btn primary" onClick={() => setConsent(true)} disabled={!isGmail && !!email} data-testid="gmail-start">Connect Gmail (read-only)</button>
+          </div>
+          {!isGmail && !!email && <p className="tiny muted">Gmail connect works for Gmail and Google Workspace addresses. For other mailboxes, use the guided search below.</p>}
         </>
+      ) : pane === "consent" ? (
+        <div className="consent-sheet" role="group" aria-label="What Lakshly will read" data-testid="gmail-consent">
+          <h4>Before you connect</h4>
+          <ul>
+            <li><b>Only finance senders.</b> Lakshly searches {domains.length} sender domains of {sources.length} banks, cards and CAS providers{picked.length ? " you picked" : ""}. <button className="linkish" aria-expanded={showDomains} onClick={() => setShowDomains(!showDomains)}>{showDomains ? "Hide list" : "Show list"}</button></li>
+            {showDomains && <li className="domain-list"><code>{domains.join(" · ")}</code></li>}
+            <li><b>What is read:</b> matching statement emails (date, sender, subject) and their PDF/CSV attachments. Everything else in your inbox is never searched or opened.</li>
+            <li><b>Where it goes:</b> straight from Google to this browser. Statements are read on this device. Nothing is sent to Lakshly.</li>
+            <li><b>Read-only:</b> Lakshly can&apos;t send, delete, label or mark anything. Access is kept in memory and ends when you close the tab.</li>
+            <li><b>Withdraw any time:</b> Disconnect revokes access at Google in one tap.</li>
+          </ul>
+          <p className="tiny muted">Beta: Google allows Gmail access only for invited test accounts while Lakshly&apos;s app review is pending.</p>
+          <div className="row-actions">
+            <button className="btn primary" disabled={!!g.busy} onClick={() => void connectGmail(hint, picked)} data-testid="gmail-agree">Agree and connect</button>
+            <button className="btn ghost" onClick={() => setConsent(false)}>Not now</button>
+          </div>
+        </div>
       ) : (
         <div className="mailbox" data-testid="gmail-connected">
           <div className="mailbox-head">
             <span className="provider-dot" aria-hidden="true">G</span>
             <span className="grow"><strong>{g.email || g.identity?.email || "Gmail"}</strong><small className="muted">Read-only · finance senders only · access ends when you close this tab</small></span>
-            <button className="btn ghost small" onClick={() => void disconnectGmail()} data-testid="gmail-disconnect">Disconnect</button>
+            <button className="btn ghost small" onClick={() => { setConsent(false); void disconnectGmail(); }} data-testid="gmail-disconnect">Disconnect</button>
           </div>
           <div className="row-actions">
             <button className="btn primary" disabled={!!g.busy} onClick={() => void find()} data-testid="gmail-find">{g.found ? "Search again" : "Find my statements"}</button>

@@ -3751,6 +3751,18 @@
       "startDate": "2025-04-05",
       "tenureMonths": 42,
       "accountId": "acc_zqmjeg93"
+    },
+    {
+      "id": "debt_family_demo",
+      "name": "Loan from family",
+      "kind": "family",
+      "lender": "Family (Demo)",
+      "principal": 1000000,
+      "outstanding": 1000000,
+      "annualRatePct": 0,
+      "emi": 0,
+      "startDate": "2026-01-15",
+      "tenureMonths": 12
     }
   ],
   "sips": [
