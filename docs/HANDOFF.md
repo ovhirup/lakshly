@@ -12,8 +12,9 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 ## Cursor status
 
 - **Done:** #29 merged into `web/beta` as `afee887` (4 Oct 2026, 15:01 IST), including #31. Chromium shows `blur(24px)` on quiet cards and `blur(20px)` on the sidebar. Hero blur stays none. Safari was not launched.
-- **Next:** Gmail connect end-to-end on beta, then record which commit beta.lakshly.com serves. Redeploy only after Abhirup says so.
-- **Blockers:** Redeploy and any merge of `web/beta` into `main` wait on Abhirup. Gmail CAS-password retry is his.
+- **Done:** Checked https://beta.lakshly.com on 4 Oct 2026, 15:19 IST. The CSS includes #29 (`blur(24px)`, webkit property first, `lotusGlass`, `beta-ribbon`). The HTML is the public edition: title is not "Lakshly Beta", and `data-edition` is never set, so Theme v2 and the Gmail card stay off. Gmail unit tests: 14 passed. Live privacy page matches the browser-only Gmail claims. No Google secret used. No live mailbox sign-in.
+- **Next:** A beta rebuild needs `NEXT_PUBLIC_LAKSHLY_EDITION=beta` on the Cloudflare Pages project, then a redeploy. That waits on Abhirup. After the beta UI is actually live, he still needs to retry connect and the CAS password as a Testing-mode user.
+- **Blockers:** Cloudflare env/redeploy, and his Gmail retry. Do not merge `web/beta` into `main` until he says so.
 
 ## Codex status
 
@@ -150,3 +151,7 @@ Merged #29 into `web/beta` as `afee887` after Abhirup's OK. Chromium blur is on 
 - Recorded six suite/platform versions, separate Public Beta/Stable channels, SuperUser/private authority, access versus availability, shared generation, adaptive visual parity, data/distribution boundaries, release gates, and future deterministic evidence rules for bounded AI agents.
 - The smallest proposed first batch is Beta Free/Premium testability, owned by Cursor. No Web/Apple code, catalog/schema, signing, billing, deployment, private source, or real data was changed. No app tests were rerun for this documentation task.
 - Three delegated passes were used: two independent read-only platform audits and one advisor review, using three subagents. No new automation was created and no scheduled run has executed yet. Preserved Cursor's concurrent status, claim, and logs.
+
+### 2026-10-04, 15:19 IST (Cursor)
+
+beta.lakshly.com already has the #29 glass CSS, but the pages were built without the beta edition flag, so testers still see the public shell. Gmail connect code and the privacy page match; 14 synthetic Gmail tests passed. No redeploy and no live Google sign-in.
