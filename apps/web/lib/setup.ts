@@ -329,6 +329,40 @@ export function freshness(p: SourceProgress | undefined, cadence: Source["cadenc
   return "stale";
 }
 
+export interface DueStatement { id: string; name: string; freshness: "due" | "stale" }
+
+/** Imported sources whose next statement is due or older. Skipped sources are left out. Stale comes first. */
+export function dueStatements(
+  targets: { id: string; name: string; source?: Source; supported?: boolean }[],
+  progress: Record<string, SourceProgress | undefined>,
+  today: string,
+): DueStatement[] {
+  const out: DueStatement[] = [];
+  for (const t of targets) {
+    if (t.supported === false || !t.source) continue;
+    const p = progress[t.id];
+    if (p?.status === "skipped") continue;
+    const state = freshness(p, t.source.cadence, today);
+    if (state === "due" || state === "stale") out.push({ id: t.id, name: t.name, freshness: state });
+  }
+  return out.sort((a, b) => Number(b.freshness === "stale") - Number(a.freshness === "stale") || a.name.localeCompare(b.name));
+}
+
+/** Copy for the Premium reminder. Cadence comes from the source. Gmail is only offered when this tab is already connected. */
+export function freshnessNotice(item: DueStatement, email: string | null, gmailInThisTab: boolean): { detail: string; canCheck: boolean } {
+  const word = item.freshness === "stale" ? "out of date" : "due";
+  const cycle = `${item.name} is ${word}. This follows that account's statement cycle, not a made-up schedule.`;
+  const mailbox = email ? ` Mailbox: ${email}.` : " Add the email your statements go to.";
+  const gmail = !!email && detectProvider(email) === "gmail";
+  if (gmail && gmailInThisTab) {
+    return { detail: `${cycle}${mailbox} Gmail is already connected in this tab. Checking stays in this browser. Nothing is sent to Lakshly.`, canCheck: true };
+  }
+  if (gmail) {
+    return { detail: `${cycle}${mailbox} Connect Gmail in setup to look in that mailbox, or import the file.`, canCheck: false };
+  }
+  return { detail: `${cycle}${mailbox} Import the file on this device. Nothing is sent.`, canCheck: false };
+}
+
 /* ───────────── device flags (localStorage) ───────────── */
 
 export const FLAGS_KEY = "lk-setup-flags";
