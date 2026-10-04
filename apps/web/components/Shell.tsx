@@ -28,6 +28,7 @@ export const NAV: { href: string; label: string; icon: string; feature?: Feature
   { href: "/investments/", label: "Investments", icon: "invest", feature: "investments.insights" },
   { href: "/rewards/", label: "Rewards", icon: "rewards", feature: "rewards.tracking" },
   { href: "/history/", label: "History", icon: "history" },
+  { href: "/ask/", label: "Ask Lakshly", icon: "sparkle" },
   { href: "/import/", label: "Import", icon: "import" },
   { href: "/feedback/", label: "Feedback & Requests", icon: "feedback" },
   { href: "/profile/", label: "Profile", icon: "user" },
