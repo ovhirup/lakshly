@@ -1,0 +1,14 @@
+---
+description: Cursor may do Apple work while Codex is paused or near its limit
+alwaysApply: true
+---
+
+# Apple work is allowed
+
+Abhirup authorized Cursor to edit the SwiftUI iPhone and Mac apps, parsers, and Apple CI while Codex is paused or near its usage limit.
+
+- Take Apple work he asks for. Do not wait for Codex.
+- Do not resume the paused P36 catalog refresh (draft PR 59) unless he asks for that item.
+- Do not delete local-only Codex files: `notch-panel`, uncommitted `apple-feedback`, or `cas-import-success-message`.
+- Do not launch the iOS Simulator unless a check truly needs it. Prefer headless tests.
+- Web changes that are good for main still go to `web/beta`.

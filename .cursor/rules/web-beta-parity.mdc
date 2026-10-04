@@ -1,0 +1,13 @@
+---
+description: Land accepted main web changes on web/beta as well
+alwaysApply: true
+---
+
+# Main and web/beta stay together
+
+When a Lakshly web change is accepted for `main`, put the same change on `web/beta`. Do not wait to be asked.
+
+- Cherry-pick or port the commit onto a branch from `origin/web/beta`.
+- Open a pull request against `web/beta`. Push with an explicit refspec so `web/beta` and `main` are not overwritten.
+- Merge that pull request once its checks pass.
+- Cursor may also do Apple, parsers, and Apple CI while Codex is paused or near its usage limit. Do not resume Codex's paused P36 catalog (draft PR 59) unless Abhirup asks. Do not delete local-only Codex files.

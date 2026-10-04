@@ -1,0 +1,12 @@
+---
+description: Stop local preview servers after the work is merged
+alwaysApply: true
+---
+
+# Do not leave preview servers running
+
+After a Lakshly preview is no longer needed, stop it. A merged pull request, a finished test, or the user asking about leftover terminals means the dev server should be shut down.
+
+- Stop the listener on that port. Exit code 143 is the shutdown, not a failure.
+- Do not leave Next or static preview servers running across later tasks.
+- The live sites are unchanged when a local preview stops.
