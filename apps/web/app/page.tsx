@@ -17,7 +17,7 @@ const TYPE_COLOR: Record<string, string> = {
 
 function OverviewView() {
   const { accounts, transactions, dataset, source } = useData();
-  const nw = netWorth(accounts);
+  const nw = netWorth(accounts, dataset.debts ?? []);
   const month = defaultMonth(transactions);
   const flow = monthlyCashflow(transactions).filter((m) => m.month <= month);
   const cur = flow[flow.length - 1];

@@ -24,6 +24,7 @@ export const NAV: { href: string; label: string; icon: string; feature?: Feature
   { href: "/badges/", label: "Badges", icon: "medal" },
   { href: "/budget/", label: "Budget", icon: "budget" },
   { href: "/debt/", label: "Debt", icon: "debt", feature: "debt.planner" },
+  { href: "/owed/", label: "Owed to you", icon: "debt" },
   { href: "/credit/", label: "Credit", icon: "credit", feature: "credit.insights" },
   { href: "/investments/", label: "Investments", icon: "invest", feature: "investments.insights" },
   { href: "/rewards/", label: "Rewards", icon: "rewards", feature: "rewards.tracking" },
