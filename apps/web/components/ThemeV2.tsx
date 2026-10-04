@@ -6,6 +6,7 @@ import { useTier } from "./useTier";
 import { Icon } from "./Icon";
 import { formatINR } from "@/lib/format";
 import { ACCENTS, BETA_DEFAULT, effectiveThemeV2, legacyIdFor, MOODS, moodById, normaliseAccent, resolveThemeV2, THEME_V2_KEY, type Accent, type Mood, type ThemeV2 } from "@/lib/themes-v2";
+import { applyGlass, GLASS_DEFAULT, GLASS_LEVEL_KEY, readGlassLevel } from "@/lib/glass";
 
 const listeners = new Set<() => void>();
 let cacheKey: string | undefined;
@@ -41,6 +42,9 @@ export function ThemeV2Root() {
     if (accent) d.dataset.accent = accent; else delete d.dataset.accent;
     const legacy = legacyIdFor({ v: 2, theme: mood, accent });
     if (theme !== legacy) setTheme(legacy);
+    let storedLevel: string | null = null;
+    try { storedLevel = localStorage.getItem(GLASS_LEVEL_KEY); } catch { /* blocked */ }
+    applyGlass(readGlassLevel(storedLevel), d.style);
   }, [mood, accent, theme, setTheme]);
   return <MoodArt mood={t.theme} dark={resolved === "dark"} />;
 }
@@ -116,6 +120,49 @@ export function MoodArt({ mood, dark }: { mood: Mood; dark: boolean }) {
 }
 
 /* ───────── picker grid (inside the existing theme popover) ───────── */
+const glassListeners = new Set<() => void>();
+function emitGlass() { glassListeners.forEach((listener) => listener()); }
+function subscribeGlass(listener: () => void) {
+  glassListeners.add(listener);
+  return () => { glassListeners.delete(listener); };
+}
+function glassLevelSnapshot() {
+  try { return readGlassLevel(localStorage.getItem(GLASS_LEVEL_KEY)); } catch { return GLASS_DEFAULT; }
+}
+function subscribeReduced(listener: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-transparency: reduce)");
+  mq.addEventListener("change", listener);
+  return () => mq.removeEventListener("change", listener);
+}
+function reducedSnapshot() {
+  return window.matchMedia("(prefers-reduced-transparency: reduce)").matches;
+}
+
+function GlassSlider() {
+  const level = useSyncExternalStore(subscribeGlass, glassLevelSnapshot, () => GLASS_DEFAULT);
+  const reduced = useSyncExternalStore(subscribeReduced, reducedSnapshot, () => false);
+  return (
+    <label className="glass-slider">
+      <span className="tiny muted">Glass</span>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={level}
+        disabled={reduced}
+        aria-label="Liquid glass for cards and navigation"
+        onChange={(e) => {
+          const next = readGlassLevel(e.target.value);
+          try { localStorage.setItem(GLASS_LEVEL_KEY, String(next)); } catch { /* blocked */ }
+          applyGlass(next, document.documentElement.style);
+          emitGlass();
+        }}
+      />
+      <span className="tiny muted">{reduced ? "Off" : level}</span>
+    </label>
+  );
+}
+
 const PREVIEW: Record<Mood, { light: [string, string, string]; dark: [string, string, string] }> = {
   calm: { light: ["linear-gradient(160deg,#F7F6F3,#ECEEF1)", "#1B1D22", "#0A6FD8"], dark: ["linear-gradient(160deg,#17191D,#0C0D0F)", "#F2F3F5", "#3D9BFF"] },
   vivid: { light: ["radial-gradient(60% 60% at 20% 20%,#C7B6FF,transparent),radial-gradient(50% 50% at 90% 10%,#FFB3D3,transparent),linear-gradient(160deg,#FFF6EC,#F3EEFF)", "#1A1440", "#5A2FD0"], dark: ["radial-gradient(60% 60% at 20% 20%,#5A3BD8,transparent),radial-gradient(50% 50% at 90% 10%,#C02A6E,transparent),linear-gradient(160deg,#160B46,#080826)", "#FFFFFF", "#FFD27A"] },
@@ -170,6 +217,7 @@ export function MoodGrid() {
           })}
         </div>
       )}
+      <GlassSlider />
       <p className="tiny muted">{current.blurb}. Beta: every look is unlocked for testers.</p>
     </div>
   );

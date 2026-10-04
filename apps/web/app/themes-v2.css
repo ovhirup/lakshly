@@ -280,6 +280,8 @@ html[data-edition="beta"][data-mood="classic"] .card { padding: calc(28px * var(
 .fig-vivid { font-weight: 850; }
 .mood-preview-pill { width: 18px; height: 8px; border-radius: 99px; flex-shrink: 0; }
 .mood-star { color: #D9A93F; }
+.glass-slider { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+.glass-slider input { width: 100%; accent-color: var(--lk-gold); }
 .accent-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .accent-swatch { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 999px; border: 1px solid var(--lk-border); background: var(--lk-glass-strong); font-size: .8rem; font-weight: 650; min-height: 36px; }
 .accent-swatch i { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
