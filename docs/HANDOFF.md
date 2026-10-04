@@ -7,7 +7,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 ## Now (claims)
 
 - **Cursor:** History net-worth work on `cursor/net-worth-history` (draft PR 35, base `web/beta`). Files: `apps/web/app/history/page.tsx`, `apps/web/app/globals.css`, `apps/web/components/charts.tsx`, `apps/web/lib/selectors.ts`, `apps/web/tests/net-worth-history.test.ts`. Not touching Codex's feature-policy claim.
-- **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts` on `codex/feature-policy-v1`, based on `main`. Owner authorized the versioned contract, synthetic fixtures, and subsequent generated Swift parity work. Initial batch stays inside this new policy namespace; existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
+- **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts`. C1 is complete in draft PR 36 on `codex/feature-policy-v1`, based on `main`. Owner-authorized generated Swift parity follows on `codex/feature-policy-swift`, stacked on C1; its seven-file scope stays inside the new policy namespace. Existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
 
@@ -22,7 +22,8 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 - Done, pending review: Apple CI PR 32 to `main`, head `afd3156`. Hosted run 37189181792 passed: iOS 111 tests / 2 skips / 0 failures; macOS 105 tests / 8 skips / 0 failures. Both platforms generated synthetic fixtures, preserved committed expected results, and uploaded test bundles.
 - Coverage limits: two opt-in render tests skipped on each platform; six macOS StoreKit session tests also skipped under the existing compatibility helper. All ten iOS StoreKit methods passed. macOS purchase flows, normal scene/menu runtime behavior, visual parity, and private editions remain unverified. A CI-only Debug host isolates macOS unit tests from the observed scene/menu startup loop; its production cause remains unresolved.
 - Done: owner-authorized six-version public-source audit and architecture proposal, draft PR 33 at `1fe183b`; two independent platform audits and advisor review passed. This is documentation, not implemented access or release policy.
-- Next: review PR 33 and its staged batches. The first proposed code change is Cursor-owned Beta Free/Premium testability; shared contract work requires a claim and one writer. PRs 30/32 still await owner merge approval. Private authorization, verified billing, native beta isolation, and visual/release gates remain unverified or future work.
+- Done: draft PR 36 at `3b87a4c` adds the unwired feature-policy v1 contract, strict schema/runtime validation, and synthetic cases. Independent gate and advisor review passed: 156 shared tests, typecheck and whitespace checks; 54 literal decisions also matched an independent integer model. No production catalog or application consumer was changed.
+- Next: separately gated generated Swift definitions and headless decision parity on `codex/feature-policy-swift`; no app or simulator launch. Cursor-owned Beta Free/Premium testability and consumer migration remain separate. PRs 30/32 still await owner merge approval. Private authorization, verified billing, native beta isolation, and visual/release gates remain unverified or future work.
 - Boundaries: no web or private-edition edits, branch reconciliation, or feature merges in the Apple CI batch. No real financial data, Gmail account, Google client secret, local app, or simulator was used.
 - Local-only work: `notch-panel`, uncommitted `apple-feedback`, and archived `codex/cas-import-success-message` remain **local only, keep** pending explicit rescue decisions. Local integration work is also preserved. Private source was not accessed.
 
@@ -91,6 +92,7 @@ Inherited aggregate Apple statements from Cursor's snapshot (reported, not indep
 | #30 | `codex/cas-overview` | `web/beta` | Ready for review; green CI and synthetic browser check; owner screenshot/merge approval pending. |
 | #32 | `codex/apple-ci` | `main` | Head `afd3156`; both hosted unit jobs green with documented skips; Ready for review after independent approval; owner merge approval pending. |
 | #33 | `codex/suite-release-model` | `main` | Draft proposal at `1fe183b`; documentation checks and advisor review passed; owner policy review. No implementation or external change. |
+| #36 | `codex/feature-policy-v1` | `main` | Draft unwired contract at `3b87a4c`; 156 tests, typecheck, independent gate and review passed. Consumer integration and merge remain separate. |
 
 #29 merged into `web/beta` at `afee887`. #31 was already merged into #29.
 
@@ -159,6 +161,14 @@ beta.lakshly.com already has the #29 glass CSS, but the pages were built without
 ### 2026-10-04, 15:43 IST (Cursor)
 
 Merged `web/beta` into `main` as PR 34, merge commit `2d79390`. Beta behaviour stays behind `NEXT_PUBLIC_LAKSHLY_EDITION`. Local web tests: 258 passed. Typecheck and a production build passed; the production HTML is still the public edition. GitHub checks were still running when the merge was accepted. The setup catalog stayed at main's 53 sources. The duplicated depository CAS adapter was removed.
+
+### 2026-10-04 (Codex policy C1)
+
+- Published draft PR 36 at `3b87a4c` from current public `main` at `2d79390`. Exactly six new shared policy files; no app, legacy entitlement, ledger schema, or private-source edits.
+- Versioned deterministic availability/access evaluation uses explicit time, upstream-verified entitlement facts, Free fallback, private authority, and overflow-safe quotas. The catalog is synthetic and unwired.
+- Independent gate: 156 tests passed (31 existing + 125 new), typecheck/whitespace checks passed; strict Ajv compiled nine definitions. All 54 literal decisions also matched an independent integer model. Advisor approved draft publication only.
+- The next separately gated batch is generated Swift contract/reference parity within the claimed namespace on `codex/feature-policy-swift`, stacked on C1. No product app, simulator, private source, merge, or deployment is authorized by this batch.
+- Preserved Cursor's History net-worth claim and all status/log entries. No direct message was sent to another chat. Zero scheduled nightly runs have executed.
 
 ### 2026-10-04 (Codex policy claim)
 
