@@ -6,7 +6,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** History net-worth work on `cursor/net-worth-history` (draft PR 35, base `web/beta`). Files: `apps/web/app/history/page.tsx`, `apps/web/app/globals.css`, `apps/web/components/charts.tsx`, `apps/web/lib/selectors.ts`, `apps/web/tests/net-worth-history.test.ts`. Not touching Codex's feature-policy claim.
+- **Cursor:** Owed-to-you on `cursor/owed-to-me` (draft PR 37, base `web/beta`). Files: `apps/web/app/owed/page.tsx`, `apps/web/lib/owed.ts`, `apps/web/tests/owed.test.ts`, `apps/web/app/page.tsx`, `apps/web/components/Shell.tsx`, `apps/web/lib/selectors.ts`, `apps/web/app/globals.css`, `demo-data/sample.synthetic.json`. Draft PR 35 (History net worth) is still open and also edits `selectors.ts` and `globals.css`. Not touching Codex's feature-policy claim.
 - **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts`. C1 is complete in draft PR 36 on `codex/feature-policy-v1`, based on `main`. Owner-authorized generated Swift parity follows on `codex/feature-policy-swift`, stacked on C1; its seven-file scope stays inside the new policy namespace. Existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
@@ -64,8 +64,8 @@ Coverage columns represent six suite/platform versions, with Public Web split in
 | Gmail connect | n/a | code on beta, Testing mode | not on main | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Tester name | n/a | done | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | CDSL/NSDL CAS | debt | done (#25, #28); #30 open | parser via #24 | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
-| Net worth over time | done (not in git) | todo | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
-| Owed-to-me tracker | done (not in git) | todo | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
+| Net worth over time | done (not in git) | draft PR 35 | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
+| Owed-to-me tracker | done (not in git) | draft PR 37 | todo | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
 | Notch panel part 2 | n/a | n/a | n/a | built locally, not on GitHub | Not applicable | Edition unverified | Not applicable |
 | Apple CI | n/a | n/a | n/a | PR 32 green: 105 tests, 8 skips; not merged | PR 32 green: 111 tests, 2 skips; not merged | Outside public CI | Outside public CI |
 | iPhone Duo | n/a | n/a | n/a | Edition unverified | Edition unverified | Edition unverified | Edition unverified |
@@ -177,3 +177,7 @@ Owner authorized shared policy implementation. Claimed the new feature-policy na
 ### 2026-10-04, 16:05 IST (Cursor)
 
 Draft PR 35 adds month-end net worth and an allocation table on History, synthetic data only. Privacy mode keeps shares and hides rupees. Apple parity for this view is still owed.
+
+### 2026-10-04, 16:25 IST (Cursor)
+
+Draft PR 37 adds Owed to you: a summary of RBI's 20 September 2019 failed-payment turnaround times (not legal advice), a complaint that copies to the clipboard only, and a synthetic family loan counted as a liability. Web tests: 263 passed. Apple does not have this screen yet. PR 35 stays a separate draft. Both drafts edit `selectors.ts` and `globals.css`.
