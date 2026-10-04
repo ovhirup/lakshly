@@ -1,0 +1,24 @@
+{
+  "proposalHead": "7bf0ef74a7f5d8cbf1f87995cf2ef7c021ea4671",
+  "oldSource": "2d79390e04196acc98ac67eb3be27004bcd64914",
+  "newSource": "779f9130e80adce66a1825212756d5f0acc8e677",
+  "paths": [
+    {
+      "path": "docs/public-feature-catalog.proposal.json",
+      "sha256": "259e677d29cea424a0f8bcc76c093de40eb935be6db3e4dd3e9aef4f1c09429e"
+    },
+    {
+      "path": "docs/PUBLIC-FEATURE-CATALOG.md",
+      "sha256": "c4c1985de0e4a1a91773563cce811c3ead3b51619ada2a18e208267df8db6708"
+    },
+    {
+      "path": "docs/APPLE-POLICY-MIGRATION.md",
+      "sha256": "0cad614eb63bf35cec880ec507b3b46afff79d4f39f3467e3ecb12bc2f492d07"
+    },
+    {
+      "path": "docs/scripts/check-public-feature-catalog.mjs",
+      "sha256": "5a5ab112350b812c9c3d82d2212915dbb4207256e98c548fd73eb0a6f0598bce"
+    }
+  ],
+  "appleSharedSchemaDiff": []
+}

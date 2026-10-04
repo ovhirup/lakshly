@@ -1,0 +1,38 @@
+[
+  {
+    "file": "plan.md",
+    "sha256": "e0406ebc79f25faa52db355f4d720d93df23bcfd3b8f12bfa471ce399d54c618"
+  },
+  {
+    "file": "web-delta.md",
+    "sha256": "281252e0c5c8426cbd09126d0dd8c6aba63577ea8d56ad4765f6a0d2dcd52ef7"
+  },
+  {
+    "file": "original-scope.json",
+    "sha256": "6b609027a1991e17b91b710ebdf22a1615bbf1ab59888fa8d95126ddb1ba80a4"
+  },
+  {
+    "file": "previous-plan.md",
+    "sha256": "57017ff5e4dea3fbb67fe0d959ca5480d0b162f0552ff764fc735800cb45cc28"
+  },
+  {
+    "file": "previous-web-audit.md",
+    "sha256": "eeda2e621f52c392870da53ec9a47f0dcc433acd64238339d9e5c625cdfe3f63"
+  },
+  {
+    "file": "previous-apple-audit.md",
+    "sha256": "6b3017c42e4d2e3659595c24a780da3468c69d8f40c628b75b16edb57d7e46ff"
+  },
+  {
+    "file": "updater-wip.py",
+    "sha256": "34bfc6d04da22ca7bdee498848f660737cd2491095a3b31afae0892e67f738ac"
+  },
+  {
+    "file": "immutable.mjs",
+    "sha256": "730e2f2acec5c647c5ef1569c515af040f501d21fb25ca041686662321a212fd"
+  },
+  {
+    "file": "negative.mjs",
+    "sha256": "550330d9bbb81f2b72d57952280f77446a5b930b2e6a8c8b855eff1f668e7c3e"
+  }
+]
