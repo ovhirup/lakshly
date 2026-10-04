@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyAction, buildInbox, canUndo, countLabel, emptyState, isoWeek, levelFor, monthlyRatio, normaliseState, overlayDecisions, type ReviewCtx,
-  questFor, regretMerchants, showSundayReminder, streakText, sundayReminderOn, sundaySnoozed, weekMonday, type ReviewAction, type ReviewState, type ReviewTxn,
+  questFor, questWaiting, regretMerchants, showSundayReminder, streakText, sundayReminderOn, sundaySnoozed, weekMonday, wishlistUntil, type ReviewAction, type ReviewState, type ReviewTxn,
 } from "../lib/review";
 
 const tx = (id: string, date: string, amount: number, merchant: string, category: ReviewTxn["category"], extra: Partial<ReviewTxn> = {}): ReviewTxn =>
@@ -265,5 +265,21 @@ describe("Sunday review reminder", () => {
     expect(sundaySnoozed("2026-10-11T12:00:00+05:30", sunday)).toBe(true);
     expect(sundaySnoozed("2026-10-03T12:00:00+05:30", sunday)).toBe(false);
     expect(sundaySnoozed(null, sunday)).toBe(false);
+  });
+});
+
+describe("3-day wait quest", () => {
+  it("stores one merchant wait in the review record and clears it without XP", () => {
+    expect(wishlistUntil("2026-10-04")).toBe("2026-10-07");
+    const started = applyAction(emptyState(), { type: "startQuest", merchant: "Sample Bazaar Online", until: "2026-10-07" }, ctx);
+    expect(started.state.quest).toEqual({ merchant: "Sample Bazaar Online", until: "2026-10-07" });
+    expect(started.xpGained).toBe(0);
+    expect(started.state.xp).toBe(0);
+    expect(questWaiting(started.state.quest, "2026-10-06")).toBe(true);
+    expect(questWaiting(started.state.quest, "2026-10-07")).toBe(false);
+    const cleared = applyAction(started.state, { type: "clearQuest" }, ctx);
+    expect(cleared.state.quest).toBeNull();
+    expect(normaliseState({ quest: { merchant: "", until: "nope" } }).quest).toBeNull();
+    expect(normaliseState({ quest: { merchant: "Sample Bazaar Online", until: "2026-10-07" } }).quest).toEqual({ merchant: "Sample Bazaar Online", until: "2026-10-07" });
   });
 });
