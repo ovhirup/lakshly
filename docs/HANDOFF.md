@@ -7,7 +7,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 ## Now (claims)
 
 - **Cursor:** Ask Lakshly on `cursor/ask-lakshly` (draft PR 38, base `web/beta`). Files: `apps/web/app/ask/page.tsx`, `apps/web/lib/ask.ts`, `apps/web/tests/ask.test.ts`, `apps/web/components/Shell.tsx`, `apps/web/app/globals.css`. Still open: draft PR 35 (History net worth) and draft PR 37 (Owed to you). PR 37 and this one both edit `Shell.tsx` and `globals.css`. Not touching Codex's feature-policy claim.
-- **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts`. C1 is complete in draft PR 36 on `codex/feature-policy-v1`, based on `main`. Owner-authorized generated Swift parity follows on `codex/feature-policy-swift`, stacked on C1; its seven-file scope stays inside the new policy namespace. Existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
+- **Codex:** Shared policy batches are complete in draft PR 36 (`codex/feature-policy-v1`, base `main`) and stacked draft PR 39 (`codex/feature-policy-swift`, base PR 36's branch). No active source writer; further shared edits need a new claim. Existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
 
@@ -23,7 +23,8 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 - Coverage limits: two opt-in render tests skipped on each platform; six macOS StoreKit session tests also skipped under the existing compatibility helper. All ten iOS StoreKit methods passed. macOS purchase flows, normal scene/menu runtime behavior, visual parity, and private editions remain unverified. A CI-only Debug host isolates macOS unit tests from the observed scene/menu startup loop; its production cause remains unresolved.
 - Done: owner-authorized six-version public-source audit and architecture proposal, draft PR 33 at `1fe183b`; two independent platform audits and advisor review passed. This is documentation, not implemented access or release policy.
 - Done: draft PR 36 at `3b87a4c` adds the unwired feature-policy v1 contract, strict schema/runtime validation, and synthetic cases. Independent gate and advisor review passed: 156 shared tests, typecheck and whitespace checks; 54 literal decisions also matched an independent integer model. No production catalog or application consumer was changed.
-- Next: separately gated generated Swift definitions and headless decision parity on `codex/feature-policy-swift`; no app or simulator launch. Cursor-owned Beta Free/Premium testability and consumer migration remain separate. PRs 30/32 still await owner merge approval. Private authorization, verified billing, native beta isolation, and visual/release gates remain unverified or future work.
+- Done: stacked draft PR 39 at `80ea6ee` generates 11 Swift models and 10 enums, plus an explicitly authored reference adapter. Independent gate and advisor review passed: 54 original literal decisions and 38 additional mutation decisions match TypeScript/Swift; numeric, malformed transport, required-null round-trip, immutability, and drift checks passed. Shared tests remain 156 passing; typecheck/whitespace passed. C1 schema/evaluator/types/fixtures/tests are byte-identical. Only the headless Foundation/CoreFoundation CLI ran.
+- Next: review PRs 36/39, then separately claim an approved public release catalog and consumer migration. Cursor-owned Beta Free/Premium testability remains separate. PRs 30/32 still await owner merge approval. Private authorization, verified billing, native beta isolation, and visual/release gates remain unverified or future work.
 - Boundaries: no web or private-edition edits, branch reconciliation, or feature merges in the Apple CI batch. No real financial data, Gmail account, Google client secret, local app, or simulator was used.
 - Local-only work: `notch-panel`, uncommitted `apple-feedback`, and archived `codex/cas-import-success-message` remain **local only, keep** pending explicit rescue decisions. Local integration work is also preserved. Private source was not accessed.
 
@@ -93,10 +94,11 @@ Inherited aggregate Apple statements from Cursor's snapshot (reported, not indep
 | #32 | `codex/apple-ci` | `main` | Head `afd3156`; both hosted unit jobs green with documented skips; Ready for review after independent approval; owner merge approval pending. |
 | #33 | `codex/suite-release-model` | `main` | Draft proposal at `1fe183b`; documentation checks and advisor review passed; owner policy review. No implementation or external change. |
 | #36 | `codex/feature-policy-v1` | `main` | Draft unwired contract at `3b87a4c`; 156 tests, typecheck, independent gate and review passed. Consumer integration and merge remain separate. |
+| #39 | `codex/feature-policy-swift` | `codex/feature-policy-v1` | Stacked draft at `80ea6ee`; 54+38 decision parity, generation/drift, transport/null checks, 156 shared tests, independent gate and review passed. Unwired; merge/activation separate. |
 
 #29 merged into `web/beta` at `afee887`. #31 was already merged into #29.
 
-`main` is `cb58f9f`. `web/beta` now includes #29 at `afee887`. The branches have still diverged. Do not rebase either branch.
+`main` is `2d79390`, including the Cursor/owner merge of `web/beta` via PR 34. `web/beta` remains `afee887`. Published branches must not be rebased. The inherited parity table above predates that merge; code present on `main` still needs edition/channel-specific verification before it counts as public behavior.
 
 ## Local only, keep
 
@@ -111,7 +113,7 @@ These are not on GitHub. Do not delete, reset, or clean them.
 
 1. Done: #29 is on `web/beta`. Redeploy beta.lakshly.com from that branch?
 2. May #30 and #32 merge?
-3. Merge `web/beta` into `main` this week (beta-only behaviour stays behind the edition flag), or keep them separate?
+3. Done: Cursor merged `web/beta` into `main` via PR 34 at `2d79390`; beta-only behavior stays behind the edition flag.
 4. Did Gmail connect work for the Testing-mode test users, and did the CAS password retry succeed?
 5. May Codex push notch-panel and the Apple feedback work? Should the private Apple app get a private GitHub repo?
 6. Has the retired OAuth client secret been deleted in Google Cloud? Do not paste the secret here.
@@ -185,3 +187,12 @@ Draft PR 37 adds Owed to you: a summary of RBI's 20 September 2019 failed-paymen
 ### 2026-10-04, 16:42 IST (Cursor)
 
 Draft PR 38 adds Ask Lakshly. Answers come from the numbers already on the device, own arithmetic is marked my calc, and nothing is sent. Free is 10 questions a month; Premium demo is 100. Web tests: 262 passed. Apple does not have this screen yet. PRs 35 and 37 stay separate drafts.
+
+
+### 2026-10-04 (Codex policy C2 complete)
+
+- Published stacked draft PR 39 at `80ea6ee`, base `codex/feature-policy-v1` / PR 36. Exactly seven scoped paths; C1 contract bytes and all consumers remain unchanged.
+- Schema-derived Swift models/constants and separately authored reference semantics passed 54 original literal cases and 38 mutation cases in both languages. Numeric parsing, malformed transport continuation, explicit-null Codable round-trip, immutability, and isolated drift rejection passed. Shared tests: 156 passed; typecheck/whitespace passed.
+- Two advisor-directed generator repair cycles resolved implementation errors; an unrelated default module-cache denial was infrastructure and resolved using the authorized temporary cache. Independent verifier repeated the full final gate; advisor approved unwired draft publication. No third repair cycle.
+- This policy work used 14 delegated passes across three reused subagents (advisor, executor, verifier). No new automation was created and zero scheduled runs have executed. No product app/simulator, private source, real statement/account, merge, or deployment was used.
+- Released the active shared-file claim after publication. Approved real catalogs, application integration, upstream authority/payment verification, native channels, and visual/release gates remain separate work. Preserved all concurrent Cursor claims/status/logs.
