@@ -2,11 +2,11 @@
 
 Public status for the two agents on this repo. No private data, no account numbers, and no amounts.
 
-Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** (`codex/<topic>`, Apple, parsers, Apple CI). Shared contracts in `packages/shared` and `packages/schema` need a CLAIM line here before either agent edits them. `sync/handoff` is fast-forward only.
+Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI, and also Apple, parsers, and Apple CI while Codex is paused or near its usage limit) and **Codex** (`codex/<topic>`, Apple, parsers, Apple CI when it has usage). Shared contracts in `packages/shared` and `packages/schema` need a CLAIM line here before either agent edits them. `sync/handoff` is fast-forward only.
 
 ## Now (claims)
 
-- **Cursor:** Beta Free/Premium tester switch on `cursor/beta-plan-switch` (draft PR 43, base `web/beta`). Also drafted: PR 42 data export, PR 41 Gmail disconnect. Still open and green or in CI: PRs 35, 37, 38, 40. Not touching Codex's feature-policy files. No merges until Abhirup says so. Codex resumes after 19:37 IST.
+- **Cursor:** Abhirup authorized Cursor to do Apple work too, because Codex usage is near its limit again. Codex stays paused on the P36 catalog refresh (draft PR 59). Do not resume that catalog unless Abhirup says so. Cursor may edit the SwiftUI iPhone and Mac apps, parsers, and Apple CI for work he asks for. Do not delete local-only Codex files (`notch-panel`, uncommitted `apple-feedback`, `cas-import-success-message`). Web changes that are good for main still go to `web/beta`.
 - **Codex PAUSED:** Owner paused implementation for a usage-limit/provider handoff. P36 refresh of draft PR 59 remains unwritten; proposal head `7bf0ef7` is unchanged. Web delta audit and exact plan for source `779f913` are complete. Citation updater failed twice before writes; advisor disposition is pending. Resume file: [RESUME-HANDOFF.md](RESUME-HANDOFF.md), with durable support artifacts. No active writer or policy/helper/catalog activation. Resume only on owner instruction; nightly doc sync must not resume implementation.
 
 ## Cursor status
@@ -227,3 +227,7 @@ Draft PR 42 adds the free on-device JSON and transactions CSV download. Draft PR
 - P36 completed two read-only delegated passes: bounded Web delta audit and advisor plan. Reopening the executor failed with a thread-limit error. The main agent's updater then failed twice before repository writes on an unchanged Gmail citation moved/reindented from line 218 to 225. Routed the repeated failure to advisor; no disposition was received before pause. No final refresh gate/review or publication has occurred.
 - Confirmed proposal branch/head `codex/public-feature-catalog` / `7bf0ef7`, no tracked/staged proposal modifications, and the two preexisting Web instruction files preserved. Old checker/syntax passed; those results do not verify the unfinished refresh. No product app, private source, real statement/account, merge, policy activation, or deployment was used.
 - Owner requested this handoff practice at intelligent checkpoints when usage runs low: update the same resume file before another costly batch, preserving exact state/evidence and owner boundaries. No new automation was created. The existing nightly doc schedule remains separate; its execution count was not rechecked at this time. Preserve the pause during routine sync.
+
+### 2026-10-04, 21:06 IST (Cursor)
+
+Abhirup authorized Cursor to take Apple, parsers, and Apple CI while Codex is paused or near its usage limit. The paused P36 catalog (draft PR 59) stays paused unless he says to resume it. No Apple source was edited for this note.
