@@ -237,6 +237,7 @@ function ReviewView() {
         <div className="review-hero-main">
           <p className="eyebrow">Only what&apos;s new since your last review</p>
           <p className="review-big">{inbox.count ? <>{countLabel(inbox.count)} <span>to review</span></> : <>Inbox zero <span>✨</span></>}</p>
+          {source === "demo" && <button className="btn ghost" type="button" onClick={() => review.resetDemo()}>Reset demo</button>}
           <p className="muted tiny">Confirm +{RULES.xp.confirm} · Change +{RULES.xp.change} · Clear the week +{RULES.xp.weekCleared} and a streak bonus. Up to {RULES.xp.weeklyCap} XP a week.</p>
         </div>
         <div className="review-hero-side">
