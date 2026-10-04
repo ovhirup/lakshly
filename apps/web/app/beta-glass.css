@@ -7,8 +7,8 @@
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .content:not(:has(.fb-subnav)) .card.glass:not(.hero) {
   background: color-mix(in srgb, var(--lk-glass) 80%, var(--lk-glass-strong));
   border: .5px solid color-mix(in srgb, var(--mood-edge) 40%, var(--mood-hairline));
-  -webkit-backdrop-filter: blur(24px) saturate(130%);
-  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(130%);
+  backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(130%);
   box-shadow: var(--lk-elevation-1), inset 0 1px 0 color-mix(in srgb, var(--mood-rim-hi) 28%, transparent);
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .content:not(:has(.fb-subnav)) .card.glass:not(.hero)::before,
@@ -21,8 +21,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .sidebar.glas
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .tabbar.glass {
   background: color-mix(in srgb, var(--mood-tint) 75%, var(--lk-glass-strong));
   border: 0;
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+  backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
   box-shadow: var(--lk-elevation-3, var(--lk-shadow)), 0 0 0 .5px var(--mood-edge), inset 0 1px 0 var(--mood-rim-hi), inset 0 -1px 0 var(--mood-rim-lo);
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .sidebar.glass::after,
@@ -58,8 +58,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .tabbar.glass
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .topbar.glass {
     background: color-mix(in srgb, var(--mood-tint) 75%, var(--lk-glass-strong));
     border: 0;
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+    backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
     box-shadow: var(--lk-elevation-3, var(--lk-shadow)), 0 0 0 .5px var(--mood-edge), inset 0 1px 0 var(--mood-rim-hi), inset 0 -1px 0 var(--mood-rim-lo);
   }
 }
@@ -70,8 +70,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .theme-upsell
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .name-sheet {
   background: color-mix(in srgb, var(--lk-surface) 88%, var(--mood-tint));
   border: 1px solid color-mix(in srgb, var(--mood-rim-lo) 50%, var(--mood-edge));
-  -webkit-backdrop-filter: blur(20px) saturate(130%);
-  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(130%);
+  backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(130%);
   box-shadow: var(--lk-elevation-3, var(--lk-shadow)), inset 0 1px 0 var(--mood-rim-hi);
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .mobile-menu.glass,
@@ -95,6 +95,30 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"]) .badge-detail
   display: none;
 }
 
+/* ── 3b. Lotus uses the same slider. Hero stays unblurred. Webkit property first. ── */
+html[data-edition="beta"][data-mood="lotusGlass"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero) {
+  -webkit-backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(150%);
+  backdrop-filter: blur(var(--lk-glass-card, 24px)) saturate(150%);
+}
+html[data-edition="beta"][data-mood="lotusGlass"] .sidebar.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .tabbar.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .theme-popover.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .theme-upsell.glass,
+html[data-edition="beta"][data-mood="lotusGlass"] .name-sheet {
+  -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+  backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+}
+html[data-edition="beta"][data-mood] .hero {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+@media (max-width: 860px) {
+  html[data-edition="beta"][data-mood="lotusGlass"] .topbar.glass {
+    -webkit-backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+    backdrop-filter: blur(var(--lk-glass-nav, 20px)) saturate(150%);
+  }
+}
+
 /* ── 4. Fallbacks (same targets; mobile topbar stays inside the mobile query) ── */
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero),
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .sidebar.glass,
@@ -104,11 +128,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-gl
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .name-sheet,
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .mobile-menu.glass,
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .badge-detail.glass {
-  background: var(--mood-solid);
   border: 1px solid var(--mood-edge);
   box-shadow: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
 }
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero)::before,
 html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .content:not(:has(.fb-subnav)) .card.glass:not(.hero)::after,
@@ -130,11 +151,8 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-gl
 }
 @media (max-width: 860px) {
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .topbar.glass {
-    background: var(--mood-solid);
     border: 1px solid var(--mood-edge);
     box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
   }
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .topbar.glass::before,
   html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-glass="true"] .topbar.glass::after {

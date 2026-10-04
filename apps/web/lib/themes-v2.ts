@@ -91,4 +91,6 @@ var t="lotusGlass",a=null,raw=null,leg=null;try{raw=localStorage.getItem("${THEM
 var p=null;try{p=raw?JSON.parse(raw):null}catch(e){}
 if(p&&M[p.theme]){t=p.theme;a=p.accent}else if(leg&&L[leg]){t=L[leg][0];a=L[leg][1]}
 if(M[t].length){if(M[t].indexOf(a)<0)a=M[t][0]}else a=null;
-d.dataset.mood=t;if(a)d.dataset.accent=a;else delete d.dataset.accent}catch(e){}})();`;
+d.dataset.mood=t;if(a)d.dataset.accent=a;else delete d.dataset.accent;
+var g=70;try{var gs=localStorage.getItem("lakshly.glassLevel");if(gs!=null&&gs!==""){var n=Number(gs);if(isFinite(n))g=Math.max(0,Math.min(100,Math.round(n)))}}catch(e){}
+d.style.setProperty("--lk-glass-card",Math.round(g*24/70)+"px");d.style.setProperty("--lk-glass-nav",Math.round(g*20/70)+"px")}catch(e){}})();`;
