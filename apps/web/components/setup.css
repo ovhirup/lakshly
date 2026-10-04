@@ -75,7 +75,11 @@ code.query { display: block; padding: 10px 12px; border-radius: 12px; background
 .search-block { display: grid; gap: 8px; margin-bottom: 10px; }
 .search-links { display: grid; gap: 8px; }
 .search-links .row-actions { flex-wrap: wrap; }
-.pw-hints { margin: 4px 0; padding-left: 18px; display: grid; gap: 4px; }
+/* Password hints: plain text chips (never styled like inputs). */
+.pw-hints { margin: 2px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.pw-hints li, .found-list .pw-hints li { display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 3px 10px; border: 0; border-radius: 999px; background: var(--lk-grid); box-shadow: none; color: var(--lk-text-muted); font-size: var(--lk-caption); font-weight: 550; line-height: 1.35; }
+.pw-hints li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--lk-gold); flex: none; }
+.pw-hints-label { margin: 0; font-size: var(--lk-caption); color: var(--lk-text-muted); }
 .skip-row { display: flex; justify-content: flex-end; }
 .ask-card { border-color: var(--lk-gold); }
 .plan-card .card-head { flex-wrap: wrap; gap: 10px; }
@@ -133,4 +137,62 @@ button.link { border: 0; background: none; padding: 0; color: var(--lk-gold-text
   .stepper output { min-width: 76px; font-size: .9rem; }
   .budget-lines li { flex-wrap: wrap; }
   .setup-bar .btn { padding: 10px 12px; }
+}
+
+/* Gmail connect + Sign in with Google (beta) */
+.gsi-wrap { display: grid; gap: 8px; justify-items: start; }
+.gsi-button { min-height: 44px; }
+.gsi-signed-in, .mailbox-head { display: flex; align-items: center; gap: 12px; }
+.gsi-signed-in .grow, .mailbox-head .grow { display: grid; min-width: 0; }
+.gsi-signed-in small, .mailbox-head small { font-size: var(--lk-caption); overflow-wrap: anywhere; }
+.gsi-avatar, .provider-dot { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; font-weight: 750;
+  background: linear-gradient(140deg, #F7DA8E, #D9A93F); color: #231B09; }
+.provider-dot { background: conic-gradient(#4285F4 0 25%, #34A853 0 50%, #FBBC05 0 75%, #EA4335 0); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.4); }
+.consent-sheet { display: grid; gap: 10px; padding: 14px 16px; border-radius: var(--lk-radius-sm); background: var(--lk-grid); border: 1px solid var(--lk-border); }
+.consent-sheet h4 { margin: 0; font-size: .95rem; }
+.consent-sheet ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; font-size: .85rem; }
+.domain-list code { font-size: .74rem; line-height: 1.7; overflow-wrap: anywhere; }
+.mailbox { display: grid; gap: 12px; }
+.found-list, .read-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.found-list > li { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: var(--lk-glass-strong); border: 1px solid var(--lk-border); }
+.found-list .grow { display: grid; min-width: 0; }
+.found-list small { font-size: var(--lk-caption); overflow-wrap: anywhere; }
+.read-log { font-size: .78rem; max-height: 260px; overflow: auto; padding: 10px 12px; border-radius: 14px; background: var(--lk-grid); }
+.read-log li { overflow-wrap: anywhere; }
+.log-tag { display: inline-block; min-width: 76px; font-size: .68rem; font-weight: 750; text-transform: uppercase; letter-spacing: .05em; color: var(--lk-text-muted); }
+.log-tag.attachment { color: var(--lk-gold-text); } .log-tag.skipped { color: var(--lk-danger); } .log-tag.revoked { color: var(--lk-success); }
+.spinner.small { width: 12px; height: 12px; display: inline-block; vertical-align: -2px; }
+.log-tag.error { color: var(--lk-danger); } .log-tag.check { color: var(--lk-success); }
+.gmail-error { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.gmail-error p { margin: 0; flex: 1 1 220px; }
+
+/* Gmail results: selection + bulk import (Lotus Glass) */
+.gm-results { display: grid; gap: 10px; }
+.gm-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 12px; border-radius: 14px; background: var(--lk-glass); border: 1px solid var(--lk-border); }
+.gm-check { display: inline-flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+.gm-check input, .gm-row-check { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--lk-gold); flex: none; }
+.gm-selectall { font-weight: 650; align-items: center; }
+.gm-selectall input { margin: 0; }
+.gm-count { margin-right: auto; }
+.gm-bulk { display: flex; flex-wrap: wrap; gap: 8px; }
+.gm-list > li.gm-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 6px 10px; }
+.gm-row .gm-one { align-self: center; }
+.gm-row.st-imported { opacity: .86; }
+.gm-file { font-variant-numeric: tabular-nums; }
+.gm-copies { color: var(--lk-gold-text); font-weight: 650; }
+.gm-status { justify-self: start; margin-top: 6px; }
+.gm-status.st-imported { color: var(--lk-success); }
+.gm-status.st-queued, .gm-status.st-skipped { color: var(--lk-text-muted); }
+.gm-status.st-importing, .gm-status.st-needs-password { color: var(--lk-gold-text); background: var(--lk-ambient-gold); }
+.gm-status.st-failed { color: var(--lk-danger); white-space: normal; }
+.gm-pw { display: grid; gap: 8px; margin-top: 8px; padding: 10px; border-radius: 12px; background: var(--lk-glass); border: 1px solid var(--lk-border); }
+.gm-pw .field { display: grid; gap: 6px; font-weight: 650; font-size: .85rem; }
+.gm-pw .field input { width: 100%; min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--lk-text) 24%, transparent); background: var(--lk-surface); color: var(--lk-text); font: inherit; font-weight: 500; }
+.gm-pw .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.gm-summary { margin: 0; padding: 8px 12px; border-radius: 12px; background: var(--lk-glass-strong); border: 1px solid var(--lk-border); }
+@media (max-width: 560px) {
+  .gm-bulk { width: 100%; }
+  .gm-bulk .btn { flex: 1 1 140px; }
+  .gm-list > li.gm-row { grid-template-columns: auto minmax(0, 1fr); }
+  .gm-row .gm-one { grid-column: 2; justify-self: start; }
 }

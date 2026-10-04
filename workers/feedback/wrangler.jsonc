@@ -10,7 +10,7 @@
   "vars": {
     "FEEDBACK_REPO": "ovhirup/lakshly-feedback",
     // Exact browser origins allowed by CORS. Native apps send no Origin and must send X-Lakshly-Client.
-    "ALLOWED_ORIGINS": "https://lakshly.com,https://www.lakshly.com,https://app.lakshly.com"
+    "ALLOWED_ORIGINS": "https://lakshly.com,https://www.lakshly.com,https://app.lakshly.com,https://beta.lakshly.com"
   },
   // Secrets (never in this file): GITHUB_TOKEN, IP_SALT  ->  npx wrangler secret put <NAME>
   "ratelimits": [

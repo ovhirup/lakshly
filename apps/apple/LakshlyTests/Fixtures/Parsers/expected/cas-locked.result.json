@@ -340,5 +340,10 @@
       "periodTo": "2026-09-30"
     }
   ],
-  "warnings": []
+  "warnings": [],
+  "accountAliases": {
+    "acc_1g36flsm9fh": "acc_0nrvndcwmxh",
+    "acc_1vmvomjgtxf": "acc_1b2nte55fh8",
+    "acc_0k37yec5qhd": "acc_1g03gp3zqke"
+  }
 }

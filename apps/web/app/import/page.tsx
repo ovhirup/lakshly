@@ -5,6 +5,7 @@ import { Glass, PageHeader, } from "@/components/ui";
 import { Importer, importToast } from "@/components/Importer";
 import { Icon } from "@/components/Icon";
 import { useData } from "@/components/DataState";
+import { useSetup } from "@/components/SetupState";
 import { formatDate } from "@/lib/format";
 import "./import.css";
 
@@ -18,6 +19,9 @@ export default function ImportPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  const setup = useSetup();
+  // Setup details (email, picked banks) live in the encrypted vault even before the first import.
+  const hasSetupData = setup.ready && (setup.state.mode === "mine" || setup.state.emails.length > 0 || setup.state.picked.length > 0 || setup.state.custom.length > 0 || !!setup.state.goal);
   const counts = user ? { accounts: user.dataset.accounts.length, txns: user.dataset.transactions.length, files: user.imports.length } : null;
 
   return (
@@ -41,15 +45,15 @@ export default function ImportPage() {
 
         <aside className="import-side">
           <Glass className="card">
-            <div className="card-head"><h2>Your data</h2></div>
+            <div className="card-head"><h2 id="your-data">Your data</h2></div>
             <div className="chips" role="group" aria-label="Data shown in the app">
               <button className={`chip ${source === "demo" ? "active" : ""}`} aria-pressed={source === "demo"} onClick={() => setSource("demo")}>Demo data</button>
               <button className={`chip ${source === "mine" ? "active" : ""}`} aria-pressed={source === "mine"} onClick={() => setSource("mine")}>My data</button>
             </div>
             <p className="muted tiny side-note">
-              {!ready ? "Unlocking vault…" : counts ? `${counts.accounts} accounts · ${counts.txns} transactions · ${counts.files} imports, encrypted on this device.` : "No imported data yet."}
+              {!ready ? "Unlocking vault…" : counts ? `${counts.accounts} accounts · ${counts.txns} transactions · ${counts.files} imports, encrypted on this device.` : hasSetupData ? "No imported data yet. Your setup details are encrypted on this device." : "No imported data yet."}
             </p>
-            {counts && (
+            {(counts || hasSetupData) && (
               confirmDelete ? (
                 <div className="danger-zone" role="alertdialog" aria-label="Confirm delete">
                   <p className="tiny">Delete all imported data and the encryption key from this browser? This can&apos;t be undone.</p>

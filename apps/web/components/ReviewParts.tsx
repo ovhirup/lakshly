@@ -42,6 +42,7 @@ export function ReviewEntryCard() {
 
 /** Opt-in Sunday-evening banner (web has no push; reminders are in-app only). */
 const PREFS_KEY = "lk-review-prefs";
+const subscribe = (l: () => void) => { const ev = ["storage", PREFS_KEY]; ev.forEach((e) => window.addEventListener(e, l)); return () => ev.forEach((e) => window.removeEventListener(e, l)); };
 const readReminder = () => { try { return JSON.parse(localStorage.getItem(PREFS_KEY) ?? "{}").reminder === true; } catch { return false; } };
 export function SundayBanner() {
   const { review } = useData();
@@ -52,9 +53,6 @@ export function SundayBanner() {
 }
 
 // --- Worth-it month card -------------------------------------------------------------------------------------------
-const SNOOZE_KEY = "lk-worth-snooze";
-const subscribe = (l: () => void) => { const ev = ["storage", "lk-worth-snooze", "lk-review-prefs"]; ev.forEach((e) => window.addEventListener(e, l)); return () => ev.forEach((e) => window.removeEventListener(e, l)); };
-const readSnooze = () => localStorage.getItem(SNOOZE_KEY) ?? "";
 
 export function latestRatedMonth(txns: readonly ReviewTxn[], worth: Record<string, string>): string | null {
   let m: string | null = null;
@@ -70,18 +68,12 @@ export function WorthItCard({ compact = false }: { compact?: boolean }) {
   const month = latestRatedMonth(txns, state.worth) ?? localDate(now).slice(0, 7);
   const ratio = useMemo(() => monthlyRatio(txns, state, month), [txns, state, month]);
   const regrets = useMemo(() => regretMerchants(txns, state, now), [txns, state, now]);
-  const snooze = useSyncExternalStore(subscribe, readSnooze, () => "");
-  const snoozed = (() => { try { const s = JSON.parse(snooze) as Record<string, string>; return (m: string) => !!s[m] && Date.parse(s[m]) > now.getTime(); } catch { return () => false; } })();
+  const snoozed = (m: string) => { const u = state.snoozed?.[m]; return !!u && Date.parse(u) > now.getTime(); };
   const regret = ratio.ratio !== null ? regrets.find((m) => !snoozed(m)) : undefined;
   const cat = regret ? txns.find((t) => (t.merchant ?? t.description) === regret)?.category : undefined;
   const quest = regret ? questFor(regret, cat, tier === "premium") : null;
-  const notNow = (m: string) => {
-    let s: Record<string, string> = {};
-    try { s = JSON.parse(localStorage.getItem(SNOOZE_KEY) ?? "{}"); } catch { s = {}; }
-    s[m] = new Date(now.getTime() + 30 * 86400000).toISOString();
-    localStorage.setItem(SNOOZE_KEY, JSON.stringify(s));
-    window.dispatchEvent(new Event("lk-worth-snooze"));
-  };
+  // Snoozes live in the encrypted review record (merchant names are derived from imported data).
+  const notNow = (m: string) => { review.dispatch({ type: "snooze", merchant: m, until: new Date(now.getTime() + 30 * 86400000).toISOString() }); };
   const noCount = regret ? txns.filter((t) => (t.merchant ?? t.description) === regret && state.worth[t.id] === "no").length : 0;
   return (
     <div className={`worth-card ${compact ? "compact" : ""}`}>

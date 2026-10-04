@@ -1,4 +1,5 @@
 "use client";
+import { IS_BETA } from "@/lib/edition";
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import {
   APPEARANCE_KEY, applyDocumentTheme, isPremiumTheme, isThemeId, LEGACY_THEME_KEY, PLAN_KEY,
@@ -29,11 +30,12 @@ const AppCtx = createContext<Ctx | null>(null);
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((listener) => listener());
 
-const SERVER: Snapshot = { plan: "free", theme: "lakshmi", appearance: "system", resolved: "light" };
+const SERVER: Snapshot = { plan: IS_BETA ? "premium" : "free", theme: "lakshmi", appearance: "system", resolved: "light" };
 let current: Snapshot = SERVER;
 let migrated = false;
 
 function readPlan(): Plan {
+  if (IS_BETA) return "premium"; // beta testers get every Premium feature
   try {
     return localStorage.getItem(PLAN_KEY) === "premium" ? "premium" : "free";
   } catch {

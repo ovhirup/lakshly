@@ -4,6 +4,7 @@ import { Icon } from "./Icon";
 import { useTier } from "./useTier";
 import { Amount } from "./Privacy";
 import { PRICE_TEXT, type FeatureId } from "@/lib/entitlements";
+import { pctMasked } from "@/lib/privacy";
 
 export function Glass({ children, className = "", as: Tag = "section", style }: {
   children: React.ReactNode; className?: string; as?: "section" | "div" | "article"; style?: React.CSSProperties;
@@ -37,7 +38,9 @@ export function Progress({ pct, color }: { pct: number; color?: string }) {
   const clamped = Math.min(100, Math.max(0, pct));
   const over = pct > 100;
   return (
-    <div className="progress" role="progressbar" aria-label="Progress" aria-valuetext={`${Math.round(pct)}%`} aria-valuenow={Math.round(clamped)} aria-valuemin={0} aria-valuemax={100}>
+    <div className="progress" role="progressbar" aria-label="Progress" {...(pctMasked()
+      ? { "aria-valuetext": "Percentage hidden" }
+      : { "aria-valuetext": `${Math.round(pct)}%`, "aria-valuenow": Math.round(clamped), "aria-valuemin": 0, "aria-valuemax": 100 })}>
       <span style={{ width: `${clamped}%`, background: over ? "var(--danger)" : color ?? "var(--accent-grad)" }} />
     </div>
   );
