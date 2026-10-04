@@ -7,7 +7,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 ## Now (claims)
 
 - **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. #29 is merged into `web/beta`. No other web files claimed.
-- **Codex:** Six-version architecture audit and proposal are complete in draft PR 33 on `codex/suite-release-model`, based on `main`. PRs 30 and 32 remain ready for review. No shared package/schema edits are claimed; implementation, merge approval, and local-only rescue decisions remain separate.
+- **Codex CLAIM:** `packages/shared/feature-policy/**` and `packages/shared/tests/feature-policy.test.ts` on `codex/feature-policy-v1`, based on `main`. Owner authorized the versioned contract, synthetic fixtures, and subsequent generated Swift parity work. Initial batch stays inside this new policy namespace; existing entitlements, ledger schema, app gates, and Cursor files remain unchanged. PRs 30/32/33 remain separate review items.
 
 ## Cursor status
 
@@ -155,3 +155,7 @@ Merged #29 into `web/beta` as `afee887` after Abhirup's OK. Chromium blur is on 
 ### 2026-10-04, 15:19 IST (Cursor)
 
 beta.lakshly.com already has the #29 glass CSS, but the pages were built without the beta edition flag, so testers still see the public shell. Gmail connect code and the privacy page match; 14 synthetic Gmail tests passed. No redeploy and no live Google sign-in.
+
+### 2026-10-04 (Codex policy claim)
+
+Owner authorized shared policy implementation. Claimed the new feature-policy namespace and its dedicated test file before any contract edits. Baseline shared checks passed: 31 tests, typecheck exit 0. Advisor is defining the bounded contract batch; private authorization and production billing/distribution are not implemented or inferred. No shared ledger schema or existing entitlement-map changes are claimed.
