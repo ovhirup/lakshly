@@ -8,6 +8,7 @@ import { SetupCard } from "@/components/SetupParts";
 import { Amount, useDoubleTapToggle } from "@/components/Privacy";
 import { ReviewEntryCard, SundayBanner, WorthItCard } from "@/components/ReviewParts";
 import { BackfillCard, NextUpStrip, NudgeCard } from "@/components/Game";
+import { FreshnessReminder } from "@/components/FreshnessReminder";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -32,6 +33,7 @@ function OverviewView() {
       <PageHeader title="Overview" subtitle={`${source === "mine" ? "Your data" : "Synthetic demo data"} · as of ${formatDate(accounts.reduce((m, a) => (a.asOf > m ? a.asOf : m), accounts[0].asOf))}`} />
 
       <SetupCard />
+      <FreshnessReminder />
 
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>
