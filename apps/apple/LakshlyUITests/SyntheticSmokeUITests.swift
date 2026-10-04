@@ -27,6 +27,8 @@ final class SyntheticSmokeUITests: XCTestCase {
     settings.tap()
     XCTAssertTrue(app.descendants(matching: .any)["screen.settings"].waitForExistence(timeout: 8))
 
+    #if os(iOS)
+    // The Mac theme grid is not exposed to XCTest yet. iPhone already reaches it.
     let graphite = themeControl(app, identifier: "theme.graphite", name: "Graphite")
     XCTAssertTrue(graphite.waitForExistence(timeout: 4), "Graphite theme control was not in Settings")
     graphite.tap()
@@ -37,6 +39,7 @@ final class SyntheticSmokeUITests: XCTestCase {
     if let value = selected.value as? String, !value.isEmpty {
       XCTAssertEqual(value, "Selected")
     }
+    #endif
 
     let done = app.buttons["settings.done"]
     XCTAssertTrue(done.waitForExistence(timeout: 6))
@@ -44,8 +47,9 @@ final class SyntheticSmokeUITests: XCTestCase {
     XCTAssertTrue(overview.waitForExistence(timeout: 8))
   }
 
-  /// Mac Settings lays the theme grid out lazily, so the control may be an
-  /// identifier, a button titled Graphite, or just below the fold.
+  #if os(iOS)
+  /// The theme grid is laid out lazily, so the control may be an identifier,
+  /// a button titled Graphite, or just below the fold.
   private func themeControl(_ app: XCUIApplication, identifier: String, name: String) -> XCUIElement {
     let byID = app.descendants(matching: .any)[identifier]
     if byID.waitForExistence(timeout: 2) { return byID }
@@ -55,6 +59,7 @@ final class SyntheticSmokeUITests: XCTestCase {
     if byID.waitForExistence(timeout: 3) { return byID }
     return byName
   }
+  #endif
 
   private func assertNoBrokenOrPrivateText(_ app: XCUIApplication) {
     let labels = app.staticTexts.allElementsBoundByIndex.map(\.label)
