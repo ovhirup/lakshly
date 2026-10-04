@@ -173,6 +173,20 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_FILE: ""
         TEST_TARGET_NAME: Lakshly-iOS
+  LakshlyMacUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: LakshlyUITests/SyntheticSmokeUITests.swift
+    dependencies:
+      - target: Lakshly-macOS
+    settings:
+      base:
+        PRODUCT_NAME: LakshlyMacUITests
+        PRODUCT_BUNDLE_IDENTIFIER: app.lakshly.Lakshly.macuitests
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: ""
+        TEST_TARGET_NAME: Lakshly-macOS
   LakshlyGlance:
     type: framework
     platform: iOS
@@ -290,6 +304,13 @@ schemes:
       targets:
         Lakshly-macOS: all
         LakshlyWidgets-macOS: all
+        LakshlyMacUITests: [test]
     run:
       config: Debug
       storeKitConfiguration: StoreKit/Lakshly.storekit
+    test:
+      config: Debug
+      storeKitConfiguration: StoreKit/Lakshly.storekit
+      targets:
+        - name: LakshlyMacUITests
+          parallelizable: false

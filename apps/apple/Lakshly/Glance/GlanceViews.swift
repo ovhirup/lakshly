@@ -421,15 +421,19 @@ struct MenuBarGlanceBody: View {
         Button(setupLine, action: onSetup)
           .font(.caption.weight(.semibold))
           .frame(minHeight: 44, alignment: .leading)
+          .accessibilityIdentifier("glance.setup")
       }
       Divider().overlay(theme.secondaryText.opacity(0.2))
       HStack {
         Button(revealed ? "Hide amounts" : "Reveal amounts", action: onReveal)
+          .accessibilityIdentifier("glance.reveal")
         Spacer()
         Button("Open Lakshly", action: onOpen)
+          .accessibilityIdentifier("glance.open")
       }
       .font(.caption.weight(.semibold))
       Button("Quit", action: onQuit).font(.caption).foregroundStyle(theme.secondaryText)
+        .accessibilityIdentifier("glance.quit")
     }
     .padding(16)
     .frame(width: 320, alignment: .leading)

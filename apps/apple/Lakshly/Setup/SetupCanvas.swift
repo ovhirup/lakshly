@@ -297,7 +297,9 @@ struct SetupWelcomeStep: View {
     }
     HStack(spacing: 8) {
       Button("Set up with my data") { actions.next() }.buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("setup.mine")
       Button("Explore with demo data") { actions.chooseMode(.demo) }.buttonStyle(SetupGhostStyle())
+        .accessibilityIdentifier("setup.demo")
     }
   }
 }

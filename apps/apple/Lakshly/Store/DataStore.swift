@@ -60,7 +60,7 @@ import Observation
     }.sorted { $0.amount > $1.amount }
   }
 
-  init(backing: StoredDataBacking = SecureStore(), defaults: UserDefaults = .standard) {
+  init(backing: StoredDataBacking = SecureStore(), defaults: UserDefaults = .standard, loadSyntheticDemo: Bool = false) {
     self.backing = backing
     self.defaults = defaults
     do {
@@ -88,6 +88,18 @@ import Observation
       try? applySeed(try? Self.loadSeed(), persist: false)
     }
     applyLaunchSource()
+    if loadSyntheticDemo { showBundledSyntheticDemo() }
+  }
+
+  /// DEBUG `-uiTestingSyntheticData` only. Shows the bundled seed and leaves imported rows in place.
+  private func showBundledSyntheticDemo() {
+    writable = true
+    source = .demo
+    persistSourceHint()
+    do {
+      try applySeed(try Self.loadSeed(), persist: true)
+    } catch { self.error = error.localizedDescription }
+    selectLatestMonth()
   }
 
   func save() {
