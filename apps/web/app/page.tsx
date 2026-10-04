@@ -8,6 +8,7 @@ import { SetupCard } from "@/components/SetupParts";
 import { Amount, useDoubleTapToggle } from "@/components/Privacy";
 import { ReviewEntryCard, SundayBanner, WorthItCard } from "@/components/ReviewParts";
 import { BackfillCard, NextUpStrip, NudgeCard } from "@/components/Game";
+import { CardDueReminder } from "@/components/CardDueReminder";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, defaultMonth, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
 
@@ -33,6 +34,7 @@ function OverviewView() {
 
       <SetupCard />
       <SundayBanner />
+      <CardDueReminder />
 
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>
