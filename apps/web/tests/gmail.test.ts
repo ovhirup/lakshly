@@ -1,7 +1,7 @@
 // Gmail connect: allow-list, ID-token decoding and the client against a mocked (synthetic) Gmail API.
 import { describe, expect, it } from "vitest";
 import {
-  assertAllowedGmailUrl, decodeIdToken, financeSources, fromAddress, GMAIL_API, GMAIL_SCOPE, GmailApiError, gmailApiError, interpretPopupError, interpretTokenResponse, GmailClient, GOOGLE_CLIENT_ID_DEFAULT, revokeToken,
+  assertAllowedGmailUrl, decodeIdToken, financeSources, fromAddress, GMAIL_API, GMAIL_SCOPE, GmailApiError, gmailApiError, gmailPane, interpretPopupError, interpretTokenResponse, GmailClient, GOOGLE_CLIENT_ID_DEFAULT, revokeToken,
   senderAllowed, senderDomains, statementParts, statementQueries, type FetchLike,
 } from "../lib/gmail";
 import { findSource } from "../lib/setup";
@@ -9,6 +9,14 @@ import { findSource } from "../lib/setup";
 const b64url = (s: string | Uint8Array) => Buffer.from(s).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 const jwt = (payload: object) => `${b64url(JSON.stringify({ alg: "RS256" }))}.${b64url(JSON.stringify(payload))}.sig`;
 const hdfc = findSource("hdfc-bank")!;
+
+describe("Gmail pane", () => {
+  it("returns to the start screen after disconnect clears consent", () => {
+    expect(gmailPane(true, true)).toBe("mailbox");
+    expect(gmailPane(false, true)).toBe("consent");
+    expect(gmailPane(false, false)).toBe("start");
+  });
+});
 
 describe("ID token (display only)", () => {
   it("decodes name/email for our client and rejects other audiences", () => {

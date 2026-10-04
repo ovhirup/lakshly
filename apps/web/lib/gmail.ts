@@ -12,6 +12,14 @@ export const GMAIL_SCOPE = "https://www.googleapis.com/auth/gmail.readonly";
 export const SIGNIN_SCOPES = ["openid", "email", "profile"] as const;
 export const GMAIL_API = "https://gmail.googleapis.com/gmail/v1/users/me";
 export const REVOKE_URL = "https://oauth2.googleapis.com/revoke";
+
+export type GmailPane = "start" | "consent" | "mailbox";
+
+/** Connected mailbox, the consent sheet, or the start button. Disconnect must pass consent=false. */
+export function gmailPane(connected: boolean, consent: boolean): GmailPane {
+  if (connected) return "mailbox";
+  return consent ? "consent" : "start";
+}
 /** Statement sources only: banks, cards and consolidated account statements. */
 export const FINANCE_KINDS: readonly SourceKind[] = ["bank", "card", "cas"];
 
