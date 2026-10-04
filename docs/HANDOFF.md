@@ -7,7 +7,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 ## Now (claims)
 
 - **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. #29 is merged into `web/beta`. No other web files claimed.
-- **Codex:** Apple CI PR 32 is ready for review on `codex/apple-ci`, based on `main`; PR 30 is also ready. Next is the suite/access/channel setup audit and plan. No shared package/schema edits are claimed. Merge approval and local-only rescue decisions remain pending.
+- **Codex:** Six-version architecture audit and proposal are complete in draft PR 33 on `codex/suite-release-model`, based on `main`. PRs 30 and 32 remain ready for review. No shared package/schema edits are claimed; implementation, merge approval, and local-only rescue decisions remain separate.
 
 ## Cursor status
 
@@ -20,7 +20,8 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 - Done: CAS identity repair merged into `web/beta` via PR 28; Overview PR 30 is ready for review with green checks; glass blur fix PR 31 is merged into Cursor's branch.
 - Done, pending review: Apple CI PR 32 to `main`, head `afd3156`. Hosted run 37189181792 passed: iOS 111 tests / 2 skips / 0 failures; macOS 105 tests / 8 skips / 0 failures. Both platforms generated synthetic fixtures, preserved committed expected results, and uploaded test bundles.
 - Coverage limits: two opt-in render tests skipped on each platform; six macOS StoreKit session tests also skipped under the existing compatibility helper. All ten iOS StoreKit methods passed. macOS purchase flows, normal scene/menu runtime behavior, visual parity, and private editions remain unverified. A CI-only Debug host isolates macOS unit tests from the observed scene/menu startup loop; its production cause remains unresolved.
-- Next: owner review/merge decisions for PRs 30 and 32; staged six-version suite/access/channel audit and setup plan. Shared catalog generation for Apple, verified Web purchases, native beta distribution, and release-promotion gates are concrete follow-ups, not completed work.
+- Done: owner-authorized six-version public-source audit and architecture proposal, draft PR 33 at `1fe183b`; two independent platform audits and advisor review passed. This is documentation, not implemented access or release policy.
+- Next: review PR 33 and its staged batches. The first proposed code change is Cursor-owned Beta Free/Premium testability; shared contract work requires a claim and one writer. PRs 30/32 still await owner merge approval. Private authorization, verified billing, native beta isolation, and visual/release gates remain unverified or future work.
 - Boundaries: no web or private-edition edits, branch reconciliation, or feature merges in the Apple CI batch. No real financial data, Gmail account, Google client secret, local app, or simulator was used.
 - Local-only work: `notch-panel`, uncommitted `apple-feedback`, and archived `codex/cas-import-success-message` remain **local only, keep** pending explicit rescue decisions. Local integration work is also preserved. Private source was not accessed.
 
@@ -46,6 +47,8 @@ Setup sequence requested by the owner: audit existing versions/access/data/chann
 Future deterministic outcome engine: versioned explicit rules evaluate inputs and verification evidence consistently, with an explanation of each decision. AI agents may propose changes and collect evidence; release and access decisions must obey the defined rules and required owner authority. This engine is a future design request, not implemented or scheduled work.
 
 This records product intent and gaps, not completed implementation. Private source remains outside this public repository and is not accessed by the Apple CI task.
+
+The detailed audit and proposed sequence are in [draft PR 33](https://github.com/ovhirup/lakshly/pull/33), `docs/SUITE-ARCHITECTURE.md`. Updated Web Beta baseline `afee887` forces Premium, so normal Beta controls cannot currently exercise Free. Existing Web/Apple tier helpers also allow Premium for unknown/missing access keys; the proposed availability contract separately denies unknown, unsupported, private, or unreleased public capabilities. These observations are source evidence, not new runtime tests.
 
 ## Parity
 
@@ -86,6 +89,7 @@ Inherited aggregate Apple statements from Cursor's snapshot (reported, not indep
 |---|---|---|---|
 | #30 | `codex/cas-overview` | `web/beta` | Ready for review; green CI and synthetic browser check; owner screenshot/merge approval pending. |
 | #32 | `codex/apple-ci` | `main` | Head `afd3156`; both hosted unit jobs green with documented skips; Ready for review after independent approval; owner merge approval pending. |
+| #33 | `codex/suite-release-model` | `main` | Draft proposal at `1fe183b`; documentation checks and advisor review passed; owner policy review. No implementation or external change. |
 
 #29 merged into `web/beta` at `afee887`. #31 was already merged into #29.
 
@@ -139,3 +143,10 @@ Opened `sync/handoff` from `main` at `cb58f9f`. Fast-forwarded #29 from `44cf675
 ### 2026-10-04, 15:01 IST (Cursor)
 
 Merged #29 into `web/beta` as `afee887` after Abhirup's OK. Chromium blur is on for quiet cards and the sidebar. Safari was not launched. Next is the Gmail check, not a deploy.
+
+### 2026-10-04 (Codex suite audit)
+
+- Published draft PR 33, one documentation file, from `main` at `cb58f9f`. Audited Web Beta at `afee887` and attributed pending Apple CI evidence to `afd3156`.
+- Recorded six suite/platform versions, separate Public Beta/Stable channels, SuperUser/private authority, access versus availability, shared generation, adaptive visual parity, data/distribution boundaries, release gates, and future deterministic evidence rules for bounded AI agents.
+- The smallest proposed first batch is Beta Free/Premium testability, owned by Cursor. No Web/Apple code, catalog/schema, signing, billing, deployment, private source, or real data was changed. No app tests were rerun for this documentation task.
+- Three delegated passes were used: two independent read-only platform audits and one advisor review, using three subagents. No new automation was created and no scheduled run has executed yet. Preserved Cursor's concurrent status, claim, and logs.
