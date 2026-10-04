@@ -40,19 +40,45 @@ function snooze() {
   window.dispatchEvent(new Event(EVENT));
 }
 
+const CLOSE_KEY = "lakshly.statementclose.until";
+const CLOSE_EVENT = "lakshly-statementclose";
+function subscribeClose(l: () => void) {
+  window.addEventListener("storage", l);
+  window.addEventListener(CLOSE_EVENT, l);
+  return () => { window.removeEventListener("storage", l); window.removeEventListener(CLOSE_EVENT, l); };
+}
+let closeCache = SERVER;
+function readCloseSnap(): Snap {
+  let until: string | null = null;
+  try { until = localStorage.getItem(CLOSE_KEY); } catch { until = null; }
+  const today = localToday();
+  const snoozed = !!until && Date.parse(until) > Date.now();
+  if (closeCache.today === today && closeCache.snoozed === snoozed) return closeCache;
+  closeCache = { today, snoozed };
+  return closeCache;
+}
+function snoozeClose() {
+  try { localStorage.setItem(CLOSE_KEY, new Date(Date.now() + 7 * 86400000).toISOString()); } catch { /* ignore */ }
+  window.dispatchEvent(new Event(CLOSE_EVENT));
+}
+
+function soonCards(accounts: ReturnType<typeof creditCards>, today: string, dayOf: (c: ReturnType<typeof creditCards>[number]) => number | undefined) {
+  return accounts
+    .filter((c) => typeof dayOf(c) === "number")
+    .map((c) => {
+      const date = nextDueDate(dayOf(c) as number, today);
+      return { name: c.name, date, days: daysUntil(today, date) };
+    })
+    .filter((c) => cardDueSoon(c.days))
+    .sort((a, b) => a.days - b.days || a.name.localeCompare(b.name));
+}
+
 export function useCardDueToday(): { name: string; when: string; date: string; extra: string } | null {
   const { can } = useTier();
   const { accounts } = useData();
   const snap = useSyncExternalStore(subscribe, readSnap, () => SERVER);
   if (!can("credit.insights") || snap.snoozed) return null;
-  const due = creditCards(accounts)
-    .filter((c) => typeof c.dueDay === "number")
-    .map((c) => {
-      const date = nextDueDate(c.dueDay as number, snap.today);
-      return { id: c.id, name: c.name, date, days: daysUntil(snap.today, date) };
-    })
-    .filter((c) => cardDueSoon(c.days))
-    .sort((a, b) => a.days - b.days || a.name.localeCompare(b.name));
+  const due = soonCards(creditCards(accounts), snap.today, (c) => c.dueDay);
   const first = due[0];
   if (!first) return null;
   const extra = due.length > 1 ? ` ${due.length - 1} more ${due.length === 2 ? "is" : "are"} due too.` : "";
@@ -79,4 +105,32 @@ export function CardDueReminder({ row = false }: { row?: boolean }) {
       {body}
     </Glass>
   );
+}
+
+export function useStatementCloseToday(): { name: string; when: string; date: string; extra: string } | null {
+  const { accounts } = useData();
+  const snap = useSyncExternalStore(subscribeClose, readCloseSnap, () => SERVER);
+  if (snap.snoozed) return null;
+  const due = soonCards(creditCards(accounts), snap.today, (c) => c.statementDay);
+  const first = due[0];
+  if (!first) return null;
+  const extra = due.length > 1 ? ` ${due.length - 1} more ${due.length === 2 ? "closes" : "close"} too.` : "";
+  return { name: first.name, when: cardDueWhen(first.days), date: first.date, extra };
+}
+
+export function StatementCloseReminder({ row = false }: { row?: boolean }) {
+  const item = useStatementCloseToday();
+  if (!item) return null;
+  const body = (
+    <>
+      {row ? <h3>Statement closes</h3> : null}
+      <p>{item.name} statement closes {item.when}, on {formatDate(item.date)}. Nothing is sent.{item.extra}</p>
+      <div className="row-actions">
+        <Link className="btn primary" href="/credit/">Credit</Link>
+        <button className="btn ghost" type="button" onClick={snoozeClose}>Not now</button>
+      </div>
+    </>
+  );
+  if (row) return <div className="today-row">{body}</div>;
+  return <Glass className="card card-due">{body}</Glass>;
 }
