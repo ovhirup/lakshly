@@ -7,7 +7,7 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 ## Now (claims)
 
 - **Cursor:** Beta Free/Premium tester switch on `cursor/beta-plan-switch` (draft PR 43, base `web/beta`). Also drafted: PR 42 data export, PR 41 Gmail disconnect. Still open and green or in CI: PRs 35, 37, 38, 40. Not touching Codex's feature-policy files. No merges until Abhirup says so. Codex resumes after 19:37 IST.
-- **Codex:** Completed public feature inventory and staged Apple migration proposal in draft PR 59 (`codex/public-feature-catalog`, head `7bf0ef7`, base `main`), pinned to audited public source `2d79390`. No active writer; proposal claim released. PRs 36/39 remain unwired foundations. Newer-source refresh and compatibility-only Apple generation follow owner review in separate scopes; no shared catalog/helper/app activation. PRs 30/32/33 remain separate review items.
+- **Codex CLAIM:** Refreshing draft PR 59 on `codex/public-feature-catalog` against public source `779f9130e80adce66a1825212756d5f0acc8e677`. Exactly the existing four proposal docs/checker paths: `docs/public-feature-catalog.proposal.json`, `docs/PUBLIC-FEATURE-CATALOG.md`, `docs/APPLE-POLICY-MIGRATION.md`, `docs/scripts/check-public-feature-catalog.mjs`. Read-only delta audit of newer Web source; Apple/shared legacy declarations unchanged. All owner/release decisions remain pending. No app/helper/catalog activation, Cursor source edits, private source, merge, deployment or GUI work. Compatibility generation follows a separate reviewed scope.
 
 ## Cursor status
 
