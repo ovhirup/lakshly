@@ -66,9 +66,12 @@ struct FeedbackView: View {
         Picker("Kind", selection: $kind) {
           ForEach(FeedbackKind.allCases) { Text($0.displayName).tag($0) }
         }.pickerStyle(.segmented)
+          .accessibilityIdentifier("feedback.kind")
         TextField("Title (optional)", text: $title).textFieldStyle(ThemedFieldStyle())
+          .accessibilityIdentifier("feedback.title")
         TextField("Your message", text: $details, axis: .vertical).lineLimit(3...6)
           .textFieldStyle(ThemedFieldStyle())
+          .accessibilityIdentifier("feedback.message")
         if priority {
           Pill(text: "Priority label", color: theme.lotus, symbol: "star.fill")
           Text("Premium requests get the priority label and are triaged first")
@@ -93,6 +96,7 @@ struct FeedbackView: View {
           confirmation = true
         }.buttonStyle(ThemedSubmitStyle())
           .disabled(details.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+          .accessibilityIdentifier("feedback.openGitHub")
         if let error = store.error { Text(error).foregroundStyle(theme.danger) }
       }.id("issuePreview")
       Card(title: "Community requests · synthetic") {
@@ -121,7 +125,7 @@ struct FeedbackView: View {
         }
       }
     }.alert("Opened in your browser", isPresented: $confirmation) {
-      Button("Done", role: .cancel) {}
+      Button("Done", role: .cancel) {}.accessibilityIdentifier("feedback.done")
     } message: {
       Text("Review it and press Submit on GitHub. Nothing is sent until you do.")
     }

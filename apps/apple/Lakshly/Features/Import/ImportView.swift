@@ -157,6 +157,7 @@ struct ImportView: View {
           Text("Demo data").tag(DataSource.demo)
           Text("My data").tag(DataSource.mine)
         }.pickerStyle(.segmented)
+          .accessibilityIdentifier("import.source")
         if store.hasUserData {
           let user = store.userDataset
           Text(
@@ -211,6 +212,7 @@ struct ImportView: View {
   private var picker: some View {
     Card(title: "Statement") {
       Button("Choose statement PDF") { picking = true }.buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.choose")
       Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
       if let error = model.error { Text(error).foregroundStyle(theme.danger) }
     }
@@ -220,16 +222,19 @@ struct ImportView: View {
     Card(title: "Password") {
       Text("This statement is locked.").foregroundStyle(theme.secondaryText)
       SecureField("Password", text: $password).textFieldStyle(ThemedFieldStyle())
+        .accessibilityIdentifier("import.password")
       if model.incorrect { Text("Incorrect password").foregroundStyle(theme.danger) }
       Button("Unlock") {
         let attempt = password
         password = ""
         model.unlock(attempt)
       }.buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.unlock")
       Button("Cancel") {
         password = ""
         model.cancelPassword()
       }
+      .accessibilityIdentifier("import.cancel")
       Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
     }
   }
@@ -298,6 +303,7 @@ struct ImportView: View {
       }
       Button("Import \(result.transactions.count) transactions") { model.confirm(into: store) }
         .buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.confirm")
     }
   }
 
@@ -311,6 +317,7 @@ struct ImportView: View {
         MetricRow(title: "SIPs", value: "\(report.sipsUpserted)")
       }
       Button("Import another") { model.reset() }.buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.another")
     }
   }
 

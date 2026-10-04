@@ -27,12 +27,23 @@ import SwiftUI
     #if os(macOS)
     _menuBarExtra = AppStorage(wrappedValue: true, GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences)
     #endif
-    let store = DataStore()
+    let store = DataStore(loadSyntheticDemo: Self.loadsSyntheticDemoAtLaunch)
     _store = State(initialValue: store)
     _session = State(initialValue: SetupSession(store: store))
     _lock = State(initialValue: AppLock())
     _entitlements = State(initialValue: EntitlementStore())
     _appIcons = State(initialValue: AppIconController())
+  }
+
+  /// Release passes `debugControlsEnabled: false`, which ignores the launch argument.
+  private static var loadsSyntheticDemoAtLaunch: Bool {
+    #if DEBUG
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: true)
+    #else
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: false)
+    #endif
   }
   private var appearance: ColorScheme? {
     switch LaunchOptions.current.appearance ?? appearanceID {
@@ -154,88 +165,104 @@ struct RootView: View {
             Button(lock.message == nil ? "Unlock with Face ID / Touch ID" : "Try again") { Task { await lock.unlock() } }.buttonStyle(
               .glass
             ).disabled(lock.authenticating)
+              .accessibilityIdentifier("lock.unlock")
           } else if lock.allowDemo {
             Button("Continue (demo mode)") { lock.continueDemo() }.buttonStyle(.glass)
+              .accessibilityIdentifier("lock.demo")
           } else {
             Button("Try again") { Task { await lock.unlock() } }.buttonStyle(.glass)
               .disabled(lock.authenticating)
+              .accessibilityIdentifier("lock.retry")
           }
           if lock.forced { Text("Lock screen preview").font(.caption) }
           if let message = lock.message { Text(message).font(.caption) }
         }.padding(36).modifier(GlassCard(tint: theme.lockBackground.opacity(0.9))).tint(theme.lockGold).padding()
         }.frame(maxWidth: .infinity, maxHeight: .infinity).background(theme.lockBackground.ignoresSafeArea())
           .foregroundStyle(theme.lockGold)
+          .accessibilityIdentifier("screen.lock")
       } else {
         TabView(selection: $selected) {
-          Tab("Overview", systemImage: "square.grid.2x2", value: "overview") {
-            navigation {
+          Tab(value: "overview") {
+            screen("screen.overview") {
               DataGate(store: store, title: "Overview", need: [.accounts, .transactions]) {
                 OverviewView(store: store, showFeedback: { selected = "feedback" })
               }
             }
+          } label: {
+            tabLabel("Overview", systemImage: "square.grid.2x2", identifier: "tab.overview")
           }
-          Tab("Spend", systemImage: "chart.pie", value: "spend") {
-            navigation {
+          Tab(value: "spend") {
+            screen("screen.spend") {
               DataGate(store: store, title: "Spend", need: [.transactions]) {
                 SpendView(store: store)
               }
             }
+          } label: {
+            tabLabel("Spend", systemImage: "chart.pie", identifier: "tab.spend")
           }
-          Tab("Budget", systemImage: "target", value: "budget") {
-            navigation {
+          Tab(value: "budget") {
+            screen("screen.budget") {
               DataGate(store: store, title: "Budget", need: [.transactions]) {
                 BudgetView(store: store)
               }
             }
+          } label: {
+            tabLabel("Budget", systemImage: "target", identifier: "tab.budget")
           }
-          Tab("Feedback", systemImage: "heart.text.square", value: "feedback") {
-            navigation { FeedbackView(store: store) }
+          Tab(value: "feedback") {
+            screen("screen.feedback") { FeedbackView(store: store) }
+          } label: {
+            tabLabel("Feedback", systemImage: "heart.text.square", identifier: "tab.feedback")
           }
           Tab(value: "debt") {
-            navigation {
+            screen("screen.debt") {
               DataGate(store: store, title: "Debt", need: [.debts]) {
                 DebtView(store: store)
               }
             }
           } label: {
-            premiumTab("Debt", systemImage: "chart.line.downtrend.xyaxis")
+            premiumTab("Debt", systemImage: "chart.line.downtrend.xyaxis", identifier: "tab.debt")
           }
           Tab(value: "credit") {
-            navigation {
+            screen("screen.credit") {
               DataGate(store: store, title: "Credit", need: [.cards]) {
                 CreditView(store: store)
               }
             }
           } label: {
-            premiumTab("Credit", systemImage: "creditcard")
+            premiumTab("Credit", systemImage: "creditcard", identifier: "tab.credit")
           }
           Tab(value: "investments") {
-            navigation {
+            screen("screen.investments") {
               DataGate(store: store, title: "Investments & SIPs", need: [.sips]) {
                 InvestmentsView(store: store)
               }
             }
           } label: {
-            premiumTab("Investments", systemImage: "chart.line.uptrend.xyaxis")
+            premiumTab("Investments", systemImage: "chart.line.uptrend.xyaxis", identifier: "tab.investments")
           }
           Tab(value: "rewards") {
-            navigation {
+            screen("screen.rewards") {
               DataGate(store: store, title: "Rewards", need: [.rewards]) {
                 RewardsView(store: store)
               }
             }
           } label: {
-            premiumTab("Rewards", systemImage: "gift")
+            premiumTab("Rewards", systemImage: "gift", identifier: "tab.rewards")
           }
-          Tab("History", systemImage: "clock", value: "history") {
-            navigation {
+          Tab(value: "history") {
+            screen("screen.history") {
               DataGate(store: store, title: "History", need: [.savings, .transactions]) {
                 HistoryView(store: store)
               }
             }
+          } label: {
+            tabLabel("History", systemImage: "clock", identifier: "tab.history")
           }
-          Tab("Import", systemImage: "square.and.arrow.down", value: "import") {
-            navigation { ImportView(store: store) }
+          Tab(value: "import") {
+            screen("screen.import") { ImportView(store: store) }
+          } label: {
+            tabLabel("Import", systemImage: "square.and.arrow.down", identifier: "tab.import")
           }
         }.tabViewStyle(.sidebarAdaptable)
           .environment(\.openImport) { selected = "import" }
@@ -256,7 +283,7 @@ struct RootView: View {
         #if DEBUG
         let options = LaunchOptions.current
         let suppress = options.openSettings == true || options.showPaywall == true || options.startTab != nil
-          || options.importDemo != nil
+          || options.importDemo != nil || options.uiTestingSyntheticData == true
         #else
         let suppress = false
         #endif
@@ -313,12 +340,20 @@ struct RootView: View {
       tier: entitlements.tier)
     GlancePublisher.publish(dataset: store.dataset)
   }
-  private func navigation<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+  private func screen<Content: View>(_ identifier: String, @ViewBuilder content: () -> Content) -> some View {
     NavigationStack {
-      content().toolbar { Button("Settings", systemImage: "gearshape") { settings = true } }
+      content().toolbar {
+        Button("Settings", systemImage: "gearshape") { settings = true }
+          .accessibilityIdentifier("nav.settings")
+      }
     }
+    .accessibilityIdentifier(identifier)
   }
-  private func premiumTab(_ title: String, systemImage: String) -> some View {
+  private func tabLabel(_ title: String, systemImage: String, identifier: String) -> some View {
+    Label(title, systemImage: systemImage)
+      .accessibilityIdentifier(identifier)
+  }
+  private func premiumTab(_ title: String, systemImage: String, identifier: String) -> some View {
     let locked = !entitlements.isPremium
     return Label {
       HStack(spacing: 4) {
@@ -332,6 +367,7 @@ struct RootView: View {
     } icon: {
       Image(systemName: systemImage)
     }
+    .accessibilityIdentifier(identifier)
     .accessibilityLabel(title)
     .accessibilityValue(locked ? "Premium" : "")
   }

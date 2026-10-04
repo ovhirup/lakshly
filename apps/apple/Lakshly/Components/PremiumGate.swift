@@ -7,6 +7,7 @@ struct PremiumGate<Content: View>: View {
   let feature: Feature
   let title: String
   let message: String
+  var seePremiumIdentifier: String? = nil
   @ViewBuilder var content: () -> Content
   @State private var paywallPresented = false
 
@@ -31,6 +32,7 @@ struct PremiumGate<Content: View>: View {
           .fixedSize(horizontal: false, vertical: true)
         Button("See Premium") { paywallPresented = true }
           .buttonStyle(ThemedSubmitStyle())
+          .accessibilityIdentifier(seePremiumIdentifier ?? "premium.see.\(feature.rawValue)")
           .accessibilityHint("Opens Lakshly Premium")
       }
       .frame(maxWidth: .infinity, alignment: .leading)
