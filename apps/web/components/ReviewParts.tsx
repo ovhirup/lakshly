@@ -7,7 +7,7 @@ import { LevelLine } from "./Game";
 import { Glass } from "./ui";
 import { useTier } from "./useTier";
 import { countLabel, localDate, monthlyRatio, questFor, questWaiting, regretMerchants, showSundayReminder, streakText, sundayReminderOn, sundaySnoozed, weekNumber, wishlistUntil, type ReviewTxn } from "@/lib/review";
-import { formatDate, formatMonth, formatPct } from "@/lib/format";
+import { formatMonth, formatPct } from "@/lib/format";
 
 export function ReviewCountBadge({ className = "" }: { className?: string }) {
   const { review } = useData();
@@ -68,19 +68,32 @@ function snoozeSunday() {
   try { localStorage.setItem(SNOOZE_KEY, new Date(Date.now() + 7 * 86400000).toISOString()); } catch { /* ignore */ }
   window.dispatchEvent(new Event(PREFS_EVENT));
 }
-export function SundayBanner() {
+export function useSundayToday(): { count: number } | null {
   const { can } = useTier();
   const { review } = useData();
   const snap = useSyncExternalStore(subscribe, readSnap, () => SERVER_SNAP);
   if (!can("review.reminder") || !showSundayReminder(snap.day, review.inbox.count, snap.enabled, snap.snoozed)) return null;
-  return (
-    <Glass className="card sunday-banner">
-      <div className="card-head"><h2>Sunday review</h2></div>
-      <p>{countLabel(review.inbox.count)} to review. A weekly check on this device. Nothing is sent.</p>
+  return { count: review.inbox.count };
+}
+
+export function SundayBanner({ row = false }: { row?: boolean }) {
+  const item = useSundayToday();
+  if (!item) return null;
+  const body = (
+    <>
+      {row ? <h3>Sunday review</h3> : null}
+      <p>{countLabel(item.count)} to review. A weekly check on this device. Nothing is sent.</p>
       <div className="row-actions">
         <Link className="btn primary" href="/review/">Review</Link>
         <button className="btn ghost" type="button" onClick={snoozeSunday}>Not now</button>
       </div>
+    </>
+  );
+  if (row) return <div className="today-row">{body}</div>;
+  return (
+    <Glass className="card sunday-banner">
+      <div className="card-head"><h2>Sunday review</h2></div>
+      {body}
     </Glass>
   );
 }
@@ -94,6 +107,14 @@ function readQuestDay() {
   if (questDayCache === today) return questDayCache;
   questDayCache = today;
   return questDayCache;
+}
+
+export function useQuestToday(): { waiting: boolean; merchant: string; until: string } | null {
+  const { review } = useData();
+  const today = useSyncExternalStore(() => () => {}, readQuestDay, () => questDayCache);
+  const quest = review.state.quest;
+  if (!quest) return null;
+  return { waiting: questWaiting(quest, today), merchant: quest.merchant, until: quest.until };
 }
 
 export function latestRatedMonth(txns: readonly ReviewTxn[], worth: Record<string, string>): string | null {
@@ -117,9 +138,6 @@ export function WorthItCard({ compact = false }: { compact?: boolean }) {
   // Snoozes live in the encrypted review record (merchant names are derived from imported data).
   const notNow = (m: string) => { review.dispatch({ type: "snooze", merchant: m, until: new Date(now.getTime() + 30 * 86400000).toISOString() }); };
   const noCount = regret ? txns.filter((t) => (t.merchant ?? t.description) === regret && state.worth[t.id] === "no").length : 0;
-  const today = useSyncExternalStore(() => () => {}, readQuestDay, () => questDayCache);
-  const waiting = questWaiting(state.quest, today);
-  const finished = !!state.quest && !waiting;
   const canStart = !!regret && !!quest && (quest.id === "wishlist_three" || quest.id === "custom");
   return (
     <div className={`worth-card ${compact ? "compact" : ""}`}>
@@ -133,20 +151,6 @@ export function WorthItCard({ compact = false }: { compact?: boolean }) {
         </div>
       </div>
       {!compact && <p className="muted tiny">Tap 👍 or 👎 on Wants and Vices while you review. No XP, no judgement: it&apos;s just for you.</p>}
-      {waiting && state.quest && (
-        <div className="worth-suggest">
-          <p>Wait until <b>{formatDate(state.quest.until)}</b> before buying from <b>{state.quest.merchant}</b>.</p>
-          <p className="muted tiny">On this device. Nothing is sent.</p>
-        </div>
-      )}
-      {finished && state.quest && (
-        <div className="worth-suggest">
-          <p>The 3-day wait for <b>{state.quest.merchant}</b> is over.</p>
-          <div className="row-actions">
-            <button className="btn primary" type="button" onClick={() => review.dispatch({ type: "clearQuest" })}>Got it</button>
-          </div>
-        </div>
-      )}
       {!state.quest && regret && quest && (
         <div className="worth-suggest">
           <p>You&apos;ve said &lsquo;not really&rsquo; to <b>{regret}</b> {noCount} times. Try {quest.title}?{quest.premium ? <span className="badge premium small" style={{ marginLeft: 6 }}>✦ Premium</span> : null}</p>
