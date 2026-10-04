@@ -6,14 +6,14 @@ Owners: **Cursor** (`cursor/<topic>`, web, site, workers, web CI) and **Codex** 
 
 ## Now (claims)
 
-- **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. Merging `codex/beta-glass-blur-fix` (#31) into `cursor/beta-liquid-glass-polish` (#29). Files: `apps/web/app/beta-glass.css` only.
+- **Cursor:** `docs/HANDOFF.md` on `sync/handoff`. #31 is now in `cursor/beta-liquid-glass-polish` at `9cc9024` (`apps/web/app/beta-glass.css` only). Not merging #29 into `web/beta` until Abhirup says so.
 - **Codex:** `codex/cas-overview` (#30) toward `web/beta`. Apple and parser work stays on `codex/` branches. Mac-only rescue (notch panel, Apple feedback, local CAS message) waits for Abhirup.
 
 ## Cursor status
 
 - **Done:** Draft #29, Beta glass polish for cards, navigation, and dialogs. CI was green on `44cf675`.
-- **In progress:** Land #31 into #29 so Chromium keeps the standard `backdrop-filter` (prefixed property first). Do not merge #29 into `web/beta` until Abhirup says so.
-- **Next:** Re-check blur, attach screenshots, then ask to merge #29. After that, Gmail connect end-to-end on beta, then record which commit beta.lakshly.com serves.
+- **Done:** #31's blur-order commit `9cc9024` is fast-forwarded onto #29. CI on that commit is the next check. Do not merge #29 into `web/beta` until Abhirup says so.
+- **Next:** Re-check blur in Chromium, attach screenshots, then ask to merge #29. After that, Gmail connect end-to-end on beta, then record which commit beta.lakshly.com serves.
 - **Blockers:** Abhirup's OK before any merge to `web/beta` or `main`. Gmail CAS-password retry is his.
 
 ## Codex status
@@ -48,8 +48,8 @@ Versions: private web, public web beta, public web main, public Mac, public iPho
 
 | PR | Branch | Base | Waits on |
 |---|---|---|---|
-| #29 | `cursor/beta-liquid-glass-polish` | `web/beta` | #31 landed, screenshots, Abhirup's OK. Do not merge yet. |
-| #31 | `codex/beta-glass-blur-fix` | #29's branch | Cursor merges this into #29 first. |
+| #29 | `cursor/beta-liquid-glass-polish` | `web/beta` | Head is `9cc9024` (includes #31). Screenshots and Abhirup's OK. Do not merge yet. |
+| #31 | `codex/beta-glass-blur-fix` | #29's branch | Merged 4 Oct 2026, 12:53 IST. |
 | #30 | `codex/cas-overview` | `web/beta` | Codex finishes it; Abhirup's OK. |
 
 `main` is `cb58f9f`. `web/beta` is `f25573f`. They have diverged (commits only on each side). Do not rebase either branch.
@@ -76,4 +76,4 @@ These are not on GitHub. Do not delete, reset, or clean them.
 
 ### 2026-10-04 (Cursor)
 
-Opened `sync/handoff` from `main` at `cb58f9f`. Claimed the handoff file and the #31 merge into #29. No merge to `web/beta`. Yesterday: #29 opened. Today: land the blur-order fix. Blocker: Abhirup's OK before #29 merges.
+Opened `sync/handoff` from `main` at `cb58f9f`. Fast-forwarded #29 from `44cf675` to `9cc9024` (Codex's blur-order fix). No merge to `web/beta`. Blocker: Abhirup's OK, plus a fresh blur check, before #29 merges.
