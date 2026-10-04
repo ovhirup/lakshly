@@ -2,17 +2,18 @@
 import { Glass } from "./ui";
 import { useData } from "./DataState";
 import { SundayBanner, useQuestToday, useSundayToday } from "./ReviewParts";
-import { CardDueReminder, useCardDueToday } from "./CardDueReminder";
+import { CardDueReminder, StatementCloseReminder, useCardDueToday, useStatementCloseToday } from "./CardDueReminder";
 import { FreshnessReminder, useFreshnessToday } from "./FreshnessReminder";
 import { formatDate } from "@/lib/format";
 
 export function TodayCard() {
   const sunday = useSundayToday();
+  const closing = useStatementCloseToday();
   const due = useCardDueToday();
   const fresh = useFreshnessToday();
   const quest = useQuestToday();
   const { review } = useData();
-  if (!sunday && !due && !fresh && !quest) return null;
+  if (!sunday && !closing && !due && !fresh && !quest) return null;
   return (
     <Glass className="card today-card">
       <div className="card-head"><h2>Today</h2></div>
@@ -32,6 +33,7 @@ export function TodayCard() {
           </div>
         </div>
       )}
+      {closing && <StatementCloseReminder row />}
       {due && <CardDueReminder row />}
       {fresh && <FreshnessReminder row />}
     </Glass>
