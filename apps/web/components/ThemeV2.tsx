@@ -1,6 +1,6 @@
 "use client";
 // Theme System v2 runtime (beta edition): stored mood/accent, the canvas art layer, and the picker grid.
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useAppState } from "./AppState";
 import { useTier } from "./useTier";
 import { Icon } from "./Icon";
@@ -120,19 +120,27 @@ export function MoodArt({ mood, dark }: { mood: Mood; dark: boolean }) {
 }
 
 /* ───────── picker grid (inside the existing theme popover) ───────── */
+const glassListeners = new Set<() => void>();
+function emitGlass() { glassListeners.forEach((listener) => listener()); }
+function subscribeGlass(listener: () => void) {
+  glassListeners.add(listener);
+  return () => { glassListeners.delete(listener); };
+}
+function glassLevelSnapshot() {
+  try { return readGlassLevel(localStorage.getItem(GLASS_LEVEL_KEY)); } catch { return GLASS_DEFAULT; }
+}
+function subscribeReduced(listener: () => void) {
+  const mq = window.matchMedia("(prefers-reduced-transparency: reduce)");
+  mq.addEventListener("change", listener);
+  return () => mq.removeEventListener("change", listener);
+}
+function reducedSnapshot() {
+  return window.matchMedia("(prefers-reduced-transparency: reduce)").matches;
+}
+
 function GlassSlider() {
-  const [level, setLevel] = useState(GLASS_DEFAULT);
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    let stored: string | null = null;
-    try { stored = localStorage.getItem(GLASS_LEVEL_KEY); } catch { /* blocked */ }
-    setLevel(readGlassLevel(stored));
-    const mq = window.matchMedia("(prefers-reduced-transparency: reduce)");
-    const sync = () => setReduced(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
+  const level = useSyncExternalStore(subscribeGlass, glassLevelSnapshot, () => GLASS_DEFAULT);
+  const reduced = useSyncExternalStore(subscribeReduced, reducedSnapshot, () => false);
   return (
     <label className="glass-slider">
       <span className="tiny muted">Glass</span>
@@ -145,9 +153,9 @@ function GlassSlider() {
         aria-label="Liquid glass for cards and navigation"
         onChange={(e) => {
           const next = readGlassLevel(e.target.value);
-          setLevel(next);
           try { localStorage.setItem(GLASS_LEVEL_KEY, String(next)); } catch { /* blocked */ }
           applyGlass(next, document.documentElement.style);
+          emitGlass();
         }}
       />
       <span className="tiny muted">{reduced ? "Off" : level}</span>
