@@ -94,18 +94,20 @@ final class StoreKitTests: XCTestCase {
     try await requireWorkingSession()
     try await session.buyProduct(identifier: EntitlementStore.yearlyProductID)
     let relaunched = EntitlementStore(syncPurchases: {})
-    await relaunched.refresh()
+    // buyProduct can return before currentEntitlements lists the purchase.
+    await waitForPremium(relaunched, expected: true)
     XCTAssertTrue(relaunched.isPremium)
     XCTAssertEqual(relaunched.activeProductID, EntitlementStore.yearlyProductID)
 
     let restoring = EntitlementStore(syncPurchases: {})
-    await restoring.restore()
+    await waitForRestore(restoring, premium: true)
     XCTAssertEqual(restoring.purchaseState, "Premium restored")
     XCTAssertTrue(restoring.can(.debtPlanner))
 
     session.clearTransactions()
     let empty = EntitlementStore(syncPurchases: {})
-    await empty.restore()
+    await waitForPremium(empty, expected: false)
+    await waitForRestore(empty, premium: false)
     XCTAssertEqual(empty.purchaseState, "Nothing to restore")
     XCTAssertFalse(empty.isPremium)
     XCTAssertEqual(empty.tier, .free)
@@ -306,5 +308,17 @@ final class StoreKitTests: XCTestCase {
       try? await Task.sleep(nanoseconds: 150_000_000)
     }
     await store.refresh()
+  }
+
+  /// Restore reads entitlements once. The test session can lag, so try again until it settles.
+  private func waitForRestore(_ store: EntitlementStore, premium: Bool) async {
+    let expected = premium ? "Premium restored" : "Nothing to restore"
+    let deadline = Date().addingTimeInterval(8)
+    while Date() < deadline {
+      await store.restore()
+      if store.isPremium == premium, store.purchaseState == expected { return }
+      try? await Task.sleep(nanoseconds: 150_000_000)
+    }
+    await store.restore()
   }
 }
