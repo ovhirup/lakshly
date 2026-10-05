@@ -2,6 +2,7 @@ import SwiftUI
 
 @main struct LakshlyApp: App {
   @State private var store: DataStore
+  @State private var session: SetupSession
   @State private var lock: AppLock
   @State private var entitlements: EntitlementStore
   @State private var appIcons: AppIconController
@@ -26,10 +27,32 @@ import SwiftUI
     #if os(macOS)
     _menuBarExtra = AppStorage(wrappedValue: true, GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences)
     #endif
-    _store = State(initialValue: DataStore())
+    let store = DataStore(loadSyntheticDemo: Self.loadsSyntheticDemoAtLaunch)
+    _store = State(initialValue: store)
+    _session = State(initialValue: SetupSession(store: store))
     _lock = State(initialValue: AppLock())
     _entitlements = State(initialValue: EntitlementStore())
     _appIcons = State(initialValue: AppIconController())
+  }
+
+  /// Release passes `debugControlsEnabled: false`, which ignores the launch argument.
+  private static var skipsStoreKitForUITesting: Bool {
+    #if DEBUG
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: true)
+    #else
+    false
+    #endif
+  }
+
+  private static var loadsSyntheticDemoAtLaunch: Bool {
+    #if DEBUG
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: true)
+    #else
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: false)
+    #endif
   }
   private var appearance: ColorScheme? {
     switch LaunchOptions.current.appearance ?? appearanceID {
@@ -49,19 +72,85 @@ import SwiftUI
     return stored.rawValue
   }
   var body: some Scene {
+    #if os(macOS)
+    #if DEBUG && LAKSHLY_MAC_UNIT_TEST_HOST
+    WindowGroup("Lakshly unit tests") { Text("Lakshly unit tests") }
+    #else
+    mainScene
+      .commands {
+        CommandGroup(after: .appSettings) {
+          Button("Set Up Lakshly…") { session.requestOpen(health: false, step: nil) }
+        }
+        CommandGroup(after: .windowArrangement) {
+          Button("Data Sources Health") { session.requestOpen(health: true, step: nil) }
+        }
+      }
+    #if !LAKSHLY_UI_TESTING
+    Window("Set up Lakshly", id: "setup") {
+      let palette = ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance)
+      SetupHost(store: store)
+        .environment(\.theme, palette).environment(store).environment(session).environment(entitlements)
+        .environment(\.selectTheme) { themeID = $0; launchTheme = nil }
+        .foregroundStyle(palette.text).tint(palette.gold)
+        .preferredColorScheme(appearance)
+    }
+    .defaultSize(width: 760, height: 600)
+    .windowResizability(.contentMinSize)
+    MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: menuBarInserted) {
+      MenuBarPanel()
+        .environment(\.theme, ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance))
+        .environment(store)
+        .environment(session)
+        .environment(entitlements)
+        .preferredColorScheme(appearance)
+    }
+    .menuBarExtraStyle(.window)
+    #endif
+    #endif
+    #else
+    mainScene
+    #endif
+  }
+
+  #if os(macOS)
+  /// A Debug UI-test launch leaves the menu-bar extra out. The window-style
+  /// extra keeps the app from finishing launch on a test runner. Release never sets this.
+  private var menuBarInserted: Binding<Bool> {
+    Binding(
+      get: { menuBarExtra && !Self.uiTestingOmitsMenuBar },
+      set: { menuBarExtra = $0 }
+    )
+  }
+
+  private static var uiTestingOmitsMenuBar: Bool {
+    #if DEBUG
+    LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ProcessInfo.processInfo.arguments, debugControlsEnabled: true)
+    #else
+    false
+    #endif
+  }
+  #endif
+
+  private var mainScene: some Scene {
     WindowGroup(id: "main") {
       let palette = ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance)
       RootView(store: store, lock: lock, themeSelection: Binding(
         get: { effectiveThemeID },
         set: { themeID = $0; launchTheme = nil }
       ))
-        .environment(\.theme, palette).environment(entitlements).environment(appIcons)
+        .environment(\.theme, palette).environment(entitlements).environment(appIcons).environment(session)
+        .environment(\.selectTheme) { themeID = $0; launchTheme = nil }
+        .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
         .foregroundStyle(palette.text).tint(palette.gold)
         .preferredColorScheme(appearance)
         .task {
           await appIcons.start(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved)
-          await entitlements.loadProducts()
-          await entitlements.refresh()
+          // A UI-test launch must not wait on the App Store before the window is usable.
+          if !Self.skipsStoreKitForUITesting {
+            await entitlements.loadProducts()
+            await entitlements.refresh()
+          }
         }
         .onChange(of: entitlements.isPremium) { _, _ in
           Task { await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved) }
@@ -70,16 +159,6 @@ import SwiftUI
           Task { await appIcons.updateEntitlements(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved) }
         }
     }
-    #if os(macOS)
-    MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: $menuBarExtra) {
-      MenuBarPanel()
-        .environment(\.theme, ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance))
-        .environment(store)
-        .environment(entitlements)
-        .preferredColorScheme(appearance)
-    }
-    .menuBarExtraStyle(.window)
-    #endif
   }
 }
 
@@ -90,10 +169,15 @@ struct RootView: View {
   let lock: AppLock
   @Binding var themeSelection: String
   @Environment(\.scenePhase) private var phase
+  @Environment(SetupSession.self) private var session
+  #if os(macOS)
+  @Environment(\.openWindow) private var openWindow
+  #endif
   @AppStorage("settings.appLock") private var lockEnabled = true
   @State private var settings = false
   @State private var selected = "overview"
   @State private var pendingTab: String?
+  @State private var deferredSetup: String?? = nil
   @AppStorage("settings.appearance") private var appearanceStored = "system"
 
   init(store: DataStore, lock: AppLock, themeSelection: Binding<String>) {
@@ -119,70 +203,137 @@ struct RootView: View {
             Button(lock.message == nil ? "Unlock with Face ID / Touch ID" : "Try again") { Task { await lock.unlock() } }.buttonStyle(
               .glass
             ).disabled(lock.authenticating)
+              .accessibilityIdentifier("lock.unlock")
           } else if lock.allowDemo {
             Button("Continue (demo mode)") { lock.continueDemo() }.buttonStyle(.glass)
+              .accessibilityIdentifier("lock.demo")
           } else {
             Button("Try again") { Task { await lock.unlock() } }.buttonStyle(.glass)
               .disabled(lock.authenticating)
+              .accessibilityIdentifier("lock.retry")
           }
           if lock.forced { Text("Lock screen preview").font(.caption) }
           if let message = lock.message { Text(message).font(.caption) }
         }.padding(36).modifier(GlassCard(tint: theme.lockBackground.opacity(0.9))).tint(theme.lockGold).padding()
         }.frame(maxWidth: .infinity, maxHeight: .infinity).background(theme.lockBackground.ignoresSafeArea())
           .foregroundStyle(theme.lockGold)
+          .accessibilityIdentifier("screen.lock")
       } else {
         TabView(selection: $selected) {
-          Tab("Overview", systemImage: "square.grid.2x2", value: "overview") {
-            navigation { OverviewView(store: store, showFeedback: { selected = "feedback" }) }
+          Tab(value: "overview") {
+            screen("screen.overview") {
+              DataGate(store: store, title: "Overview", need: [.accounts, .transactions]) {
+                OverviewView(store: store, showFeedback: { selected = "feedback" })
+              }
+            }
+          } label: {
+            tabLabel("Overview", systemImage: "square.grid.2x2", identifier: "tab.overview")
           }
-          Tab("Spend", systemImage: "chart.pie", value: "spend") {
-            navigation { SpendView(store: store) }
+          Tab(value: "spend") {
+            screen("screen.spend") {
+              DataGate(store: store, title: "Spend", need: [.transactions]) {
+                SpendView(store: store)
+              }
+            }
+          } label: {
+            tabLabel("Spend", systemImage: "chart.pie", identifier: "tab.spend")
           }
-          Tab("Budget", systemImage: "target", value: "budget") {
-            navigation { BudgetView(store: store) }
+          Tab(value: "budget") {
+            screen("screen.budget") {
+              DataGate(store: store, title: "Budget", need: [.transactions]) {
+                BudgetView(store: store)
+              }
+            }
+          } label: {
+            tabLabel("Budget", systemImage: "target", identifier: "tab.budget")
           }
-          Tab("Feedback", systemImage: "heart.text.square", value: "feedback") {
-            navigation { FeedbackView(store: store) }
+          Tab(value: "feedback") {
+            screen("screen.feedback") { FeedbackView(store: store) }
+          } label: {
+            tabLabel("Feedback", systemImage: "heart.text.square", identifier: "tab.feedback")
           }
           Tab(value: "debt") {
-            navigation { DebtView(store: store) }
+            screen("screen.debt") {
+              DataGate(store: store, title: "Debt", need: [.debts]) {
+                DebtView(store: store)
+              }
+            }
           } label: {
-            premiumTab("Debt", systemImage: "chart.line.downtrend.xyaxis")
+            premiumTab("Debt", systemImage: "chart.line.downtrend.xyaxis", identifier: "tab.debt")
           }
           Tab(value: "credit") {
-            navigation { CreditView(store: store) }
+            screen("screen.credit") {
+              DataGate(store: store, title: "Credit", need: [.cards]) {
+                CreditView(store: store)
+              }
+            }
           } label: {
-            premiumTab("Credit", systemImage: "creditcard")
+            premiumTab("Credit", systemImage: "creditcard", identifier: "tab.credit")
           }
           Tab(value: "investments") {
-            navigation { InvestmentsView(store: store) }
+            screen("screen.investments") {
+              DataGate(store: store, title: "Investments & SIPs", need: [.sips]) {
+                InvestmentsView(store: store)
+              }
+            }
           } label: {
-            premiumTab("Investments", systemImage: "chart.line.uptrend.xyaxis")
+            premiumTab("Investments", systemImage: "chart.line.uptrend.xyaxis", identifier: "tab.investments")
           }
           Tab(value: "rewards") {
-            navigation { RewardsView(store: store) }
+            screen("screen.rewards") {
+              DataGate(store: store, title: "Rewards", need: [.rewards]) {
+                RewardsView(store: store)
+              }
+            }
           } label: {
-            premiumTab("Rewards", systemImage: "gift")
+            premiumTab("Rewards", systemImage: "gift", identifier: "tab.rewards")
           }
-          Tab("History", systemImage: "clock", value: "history") {
-            navigation { HistoryView(store: store) }
+          Tab(value: "history") {
+            screen("screen.history") {
+              DataGate(store: store, title: "History", need: [.savings, .transactions]) {
+                HistoryView(store: store)
+              }
+            }
+          } label: {
+            tabLabel("History", systemImage: "clock", identifier: "tab.history")
           }
-          Tab("Import", systemImage: "square.and.arrow.down", value: "import") {
-            navigation { ImportView(store: store) }
+          Tab(value: "import") {
+            screen("screen.import") { ImportView(store: store) }
+          } label: {
+            tabLabel("Import", systemImage: "square.and.arrow.down", identifier: "tab.import")
           }
         }.tabViewStyle(.sidebarAdaptable)
+          .environment(\.openImport) { selected = "import" }
+          .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
       }
     }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock, themeSelection: $themeSelection) }
+      #if os(iOS)
+      .fullScreenCover(isPresented: Bindable(session).presented) {
+        SetupHost(store: store)
+          .environment(\.theme, theme).environment(entitlements).environment(session)
+          .environment(\.selectTheme) { themeSelection = $0 }
+      }
+      #endif
       .modifier(LaunchPaywallModifier(locked: lock.locked))
       .onAppear {
         if !lockEnabled && !lock.forced { lock.locked = false }
         publishGlance()
+        #if DEBUG
+        let options = LaunchOptions.current
+        let suppress = options.openSettings == true || options.showPaywall == true || options.startTab != nil
+          || options.importDemo != nil || options.uiTestingSyntheticData == true
+        #else
+        let suppress = false
+        #endif
+        session.consumeLaunch(suppressAuto: suppress)
       }
       .onOpenURL { url in
         switch GlanceLinks.effect(for: url, locked: lock.locked) {
         case .ignore: break
         case .select(let tab): selected = tab
         case .deferUntilUnlock(let tab): pendingTab = tab
+        case .openSetup(let step): session.requestOpen(health: false, step: step)
+        case .deferSetup(let step): deferredSetup = .some(step)
         }
       }
       .onChange(of: lock.locked) { _, locked in
@@ -191,8 +342,24 @@ struct RootView: View {
           selected = pendingTab
           self.pendingTab = nil
         }
+        if let deferredSetup {
+          session.requestOpen(health: false, step: deferredSetup)
+          self.deferredSetup = nil
+        }
         publishGlance()
       }
+      .onChange(of: session.requestSettings) { _, requested in
+        if requested {
+          settings = true
+          session.requestSettings = false
+        }
+      }
+      .onChange(of: store.setupEpoch) { _, _ in session.syncFromStore() }
+      #if os(macOS)
+      .onChange(of: session.presented) { _, shown in
+        if shown { openWindow(id: "setup") }
+      }
+      #endif
       .onChange(of: themeSelection) { _, _ in publishGlance() }
       .onChange(of: entitlements.tier) { _, _ in publishGlance() }
       .onChange(of: entitlements.hasResolved) { _, _ in publishGlance() }
@@ -211,12 +378,20 @@ struct RootView: View {
       tier: entitlements.tier)
     GlancePublisher.publish(dataset: store.dataset)
   }
-  private func navigation<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+  private func screen<Content: View>(_ identifier: String, @ViewBuilder content: () -> Content) -> some View {
     NavigationStack {
-      content().toolbar { Button("Settings", systemImage: "gearshape") { settings = true } }
+      content().toolbar {
+        Button("Settings", systemImage: "gearshape") { settings = true }
+          .accessibilityIdentifier("nav.settings")
+      }
     }
+    .accessibilityIdentifier(identifier)
   }
-  private func premiumTab(_ title: String, systemImage: String) -> some View {
+  private func tabLabel(_ title: String, systemImage: String, identifier: String) -> some View {
+    Label(title, systemImage: systemImage)
+      .accessibilityIdentifier(identifier)
+  }
+  private func premiumTab(_ title: String, systemImage: String, identifier: String) -> some View {
     let locked = !entitlements.isPremium
     return Label {
       HStack(spacing: 4) {
@@ -230,6 +405,7 @@ struct RootView: View {
     } icon: {
       Image(systemName: systemImage)
     }
+    .accessibilityIdentifier(identifier)
     .accessibilityLabel(title)
     .accessibilityValue(locked ? "Premium" : "")
   }

@@ -3,6 +3,7 @@ import SwiftUI
 
 struct OverviewView: View {
   @Environment(\.theme) private var theme
+  @Environment(SetupSession.self) private var session
   let store: DataStore
   let showFeedback: () -> Void
   private var accounts: [Account] { store.dataset?.accounts ?? [] }
@@ -12,17 +13,21 @@ struct OverviewView: View {
   }
   var body: some View {
     Page(title: "Every rupee on target.", subtitle: "Your money, in a little more focus.") {
+      setupCard
       Button(action: showFeedback) {
         HStack {
           Text("Have an idea? Tell us →").font(.subheadline.weight(.semibold))
           Spacer()
         }.frame(maxWidth: .infinity).modifier(GlassCard())
       }.buttonStyle(.plain)
+        .accessibilityIdentifier("overview.feedback")
       Card(title: "Net worth") {
         Text(Money.format(assets - liabilities)).font(
           .system(size: 38, weight: .bold, design: .rounded)
         ).foregroundStyle(theme.gold).minimumScaleFactor(0.5)
-        Pill(text: "Demo data")
+          .accessibilityIdentifier("overview.netWorth")
+          .accessibilityLabel("Net worth")
+        DataPill(source: store.source)
         MetricRow(title: "Assets", value: Money.format(assets))
         MetricRow(title: "Liabilities", value: Money.format(liabilities))
       }
@@ -48,7 +53,7 @@ struct OverviewView: View {
           .foregroundStyle(theme.secondaryText)
       }
       Card(title: "Top categories · \(store.selectedMonth)") {
-        MonthPicker(store: store)
+        MonthPicker(store: store, identifier: "overview.month")
         ForEach(Array(store.categoryTotals.prefix(5))) { group in
           MetricRow(title: group.name.capitalized, value: Money.format(group.amount), semantic: group.name == "investments" ? .invest : .spend)
         }
@@ -59,7 +64,7 @@ struct OverviewView: View {
             title: "\(account.name) · \(nextMonthlyDate(day: account.dueDay ?? 1))",
             value: Money.format(abs(account.balance)))
         }
-        ForEach(store.dataset?.debts ?? []) { debt in
+        ForEach((store.dataset?.debts ?? []).filter { $0.emi > 0 }) { debt in
           MetricRow(
             title: "\(debt.name) EMI · \(nextMonthlyDate(day: Int(debt.startDate.suffix(2)) ?? 1))",
             value: Money.format(debt.emi), semantic: .spend)
@@ -69,6 +74,41 @@ struct OverviewView: View {
             title: "SIP · \(nextMonthlyDate(day: sip.dayOfMonth))", value: Money.format(sip.amount), semantic: .invest)
         }
       }
+      DataNote(source: store.source)
+    }
+  }
+
+  @ViewBuilder private var setupCard: some View {
+    let score = session.score()
+    let refresh = store.setup.map { setupRefreshCount($0, today: session.today) } ?? 0
+    let show = score.percent < 100 && session.state.dismissedAt == nil
+      && (store.setup != nil || store.source == .mine)
+    if show {
+      Card(title: store.setup?.mode == .demo ? "Use your own data · continue setup" : "Finish setting up · \(score.done) of \(score.applicable)") {
+        HStack(alignment: .center, spacing: 12) {
+          SetupRing(percent: score.percent).frame(width: 44, height: 44)
+          Text("Your data stays on this device. Continue at your pace.")
+            .font(.subheadline).foregroundStyle(theme.secondaryText)
+        }
+        HStack(spacing: 8) {
+          Button("Continue setup") {
+            if store.setup?.mode == .demo { session.useOwnData() }
+            else { session.requestOpen(health: false, step: nil) }
+          }
+          .buttonStyle(ThemedSubmitStyle())
+          .accessibilityIdentifier("overview.continueSetup")
+          Button("Hide") { session.dismissCard() }.buttonStyle(.plain).frame(minHeight: 44)
+            .accessibilityIdentifier("overview.hideSetup")
+        }
+      }
+    }
+    if refresh > 0 {
+      Button(refresh == 1 ? "1 source needs a refresh" : "\(refresh) sources need a refresh") {
+        session.requestOpen(health: true, step: nil)
+      }
+      .buttonStyle(.plain)
+      .frame(minHeight: 44)
+      .accessibilityIdentifier("overview.refresh")
     }
   }
 }

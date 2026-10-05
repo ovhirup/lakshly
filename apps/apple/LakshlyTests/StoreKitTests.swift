@@ -18,6 +18,12 @@ enum StoreKitTestRuntime {
 
 @MainActor
 final class StoreKitTests: XCTestCase {
+  /// Features Lakshly Free always includes: basic widgets, import and first-run setup (setup-wizard spec §10).
+  static let freeFeatures: Set<Feature> = [
+    .basicWidgets, .importStatements, .setupWizard, .setupEmailGuide, .setupExtraEmails, .setupSuggestions,
+    .setupHealth, .mailSyncConnect, .mailSyncIMAP, .mailSyncStatementPasswordKeychain,
+  ]
+
   private var session: SKTestSession!
 
   override func setUpWithError() throws {
@@ -99,6 +105,7 @@ final class StoreKitTests: XCTestCase {
 
     session.clearTransactions()
     let empty = EntitlementStore(syncPurchases: {})
+    await waitForPremium(empty, expected: false)
     await empty.restore()
     XCTAssertEqual(empty.purchaseState, "Nothing to restore")
     XCTAssertFalse(empty.isPremium)
@@ -189,7 +196,7 @@ final class StoreKitTests: XCTestCase {
     XCTAssertEqual(EntitlementsMap.standard[.basicWidgets], .free)
     XCTAssertEqual(EntitlementsMap.standard[.extraWidgets], .premium)
     for feature in Feature.allCases {
-      if feature == .basicWidgets {
+      if Self.freeFeatures.contains(feature) {
         XCTAssertEqual(EntitlementsMap.standard[feature], .free)
         XCTAssertTrue(can(feature, tier: .free))
       } else {
@@ -204,6 +211,12 @@ final class StoreKitTests: XCTestCase {
   }
 
   func testDefaultsAndLaunchArgumentsCannotGrantPremium() async throws {
+    session.clearTransactions()
+    let baseline = EntitlementStore(syncPurchases: {})
+    await waitForPremium(baseline, expected: false)
+    XCTAssertFalse(baseline.isPremium, "StoreKit fixture did not settle to Free after clearing transactions.")
+    XCTAssertEqual(baseline.tier, .free)
+    guard !baseline.isPremium else { return }
     let domain = "app.lakshly.entitlement-test.\(UUID().uuidString)"
     let defaults = try XCTUnwrap(UserDefaults(suiteName: domain))
     defer { defaults.removePersistentDomain(forName: domain) }
@@ -232,7 +245,7 @@ final class StoreKitTests: XCTestCase {
     XCTAssertTrue(store.can(.basicWidgets))
     XCTAssertTrue(can(.basicWidgets, tier: .free))
     XCTAssertFalse(store.can(.extraWidgets))
-    for feature in Feature.allCases where feature != .basicWidgets {
+    for feature in Feature.allCases where !Self.freeFeatures.contains(feature) {
       XCTAssertFalse(store.can(feature), feature.rawValue)
       XCTAssertFalse(can(feature, tier: .free), feature.rawValue)
     }

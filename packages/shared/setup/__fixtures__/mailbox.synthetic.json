@@ -1,0 +1,82 @@
+{
+ "_doc": "SYNTHETIC mailbox for setup-wizard.md §4.2 sync tests. Headers only; bodies are irrelevant to the allow-list logic. No real people or accounts.",
+ "first": [
+  {
+   "id": "msg_a001",
+   "date": "2026-09-01T09:10:00+05:30",
+   "from": "alerts@hdfcbank.bank.in",
+   "subject": "You have done a UPI txn. Check details!"
+  },
+  {
+   "id": "msg_a002",
+   "date": "2026-10-02T21:31:00+05:30",
+   "from": "alerts@hdfcbank.bank.in",
+   "subject": "Rs.420.00 debited from account **0001"
+  },
+  {
+   "id": "msg_a003",
+   "date": "2026-09-22T10:00:00+05:30",
+   "from": "alerts@hdfcbank.net",
+   "subject": "Alert : Update on your HDFC Bank Credit Card"
+  },
+  {
+   "id": "msg_x001",
+   "date": "2026-09-28T12:00:00+05:30",
+   "from": "information@mailers.hdfcbank.bank.in",
+   "subject": "Festive alert: offers on your card"
+  },
+  {
+   "id": "msg_c001",
+   "date": "2026-09-14T08:00:00+05:30",
+   "from": "donotreply@camsonline.com",
+   "subject": "Consolidated Account Statement - CAMS+KFintech",
+   "attachments": [
+    {
+     "name": "CAS_synthetic.pdf",
+     "type": "application/pdf",
+     "encrypted": true
+    }
+   ]
+  },
+  {
+   "id": "msg_n001",
+   "date": "2026-09-05T07:00:00+05:30",
+   "from": "info@account.netflix.com",
+   "subject": "Your Netflix payment receipt"
+  },
+  {
+   "id": "msg_p001",
+   "date": "2026-09-30T19:00:00+05:30",
+   "from": "friend.demo@example.org",
+   "subject": "Trip photos and the bill split"
+  },
+  {
+   "id": "msg_g001",
+   "date": "2026-10-01T09:00:00+05:30",
+   "from": "noreply@groww.in",
+   "subject": "SIP allotted"
+  }
+ ],
+ "second": [
+  {
+   "id": "msg_a004",
+   "date": "2026-10-03T15:05:00+05:30",
+   "from": "alerts@hdfcbank.bank.in",
+   "subject": "Rs.99.00 debited via UPI"
+  },
+  {
+   "id": "msg_p002",
+   "date": "2026-10-03T16:00:00+05:30",
+   "from": "bank.statement.lookalike@example.org",
+   "subject": "Your statement is ready"
+  }
+ ],
+ "picked": [
+  "hdfc-bank",
+  "hdfc-card",
+  "cams-cas",
+  "netflix"
+ ],
+ "firstSyncAt": "2026-10-03T11:20:00+05:30",
+ "secondSyncAt": "2026-10-04T09:00:00+05:30"
+}

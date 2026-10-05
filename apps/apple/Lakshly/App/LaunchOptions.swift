@@ -17,6 +17,14 @@ struct LaunchOptions {
   var feedbackDemo: Bool?
   var appIconDemo: String?
   var settingsScroll: String?
+  /// Screenshot control: force Demo data or My data. Ignored in Release.
+  var dataSource: String?
+  /// Screenshot control: open the setup wizard on a step. Ignored in Release.
+  var setupDemo: String?
+  /// Screenshot control: show the email consent sheet. Ignored in Release.
+  var setupConsent: Bool?
+  /// UI-test hook: show the bundled synthetic demo dataset. Ignored in Release.
+  var uiTestingSyntheticData: Bool?
 
   static func parse(arguments: [String]) -> LaunchOptions {
     var options = LaunchOptions()
@@ -39,11 +47,20 @@ struct LaunchOptions {
       case "appIconDemo": options.appIconDemo = value
       case "settingsScroll": options.settingsScroll = value
       case "feedbackDemo": options.feedbackDemo = parseBool(value)
+      case "dataSource":
+        if value == "demo" || value == "mine" { options.dataSource = value }
+      case "setupDemo": options.setupDemo = value
+      case "setupConsent": options.setupConsent = parseBool(value)
+      case "uiTestingSyntheticData": options.uiTestingSyntheticData = parseBool(value)
       case "appearance": options.appearance = value
       case "theme": options.theme = value
       default: break
       }
       index += 2
+    }
+    // Maestro and XCUITest often pass the bare flag with no YES/NO value.
+    if options.uiTestingSyntheticData == nil, arguments.contains("-uiTestingSyntheticData") {
+      options.uiTestingSyntheticData = true
     }
     return options
   }
@@ -56,6 +73,17 @@ struct LaunchOptions {
     }
   }
   #endif
+
+  /// True only when debug controls are enabled and `-uiTestingSyntheticData` is set.
+  /// A non-debug caller always gets false, so Release cannot replace saved data.
+  static func loadsUITestingSyntheticData(arguments: [String], debugControlsEnabled: Bool) -> Bool {
+    guard debugControlsEnabled else { return false }
+    #if DEBUG
+    return parse(arguments: arguments).uiTestingSyntheticData == true
+    #else
+    return false
+    #endif
+  }
 
   static var current: LaunchOptions {
     #if DEBUG

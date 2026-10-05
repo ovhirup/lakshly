@@ -1,0 +1,117 @@
+{
+ "_doc": "SYNTHETIC setup-wizard state after an interrupted first run (resumable). Stored encrypted on device (vault record setup.state / SecureStore setup.state).",
+ "v": 1,
+ "startedAt": "2026-10-03T10:40:00+05:30",
+ "updatedAt": "2026-10-03T10:58:00+05:30",
+ "completedAt": null,
+ "dismissedAt": null,
+ "currentStep": "import",
+ "stepsDone": [
+  "welcome",
+  "email",
+  "accounts"
+ ],
+ "stepsSkipped": [],
+ "profile": {
+  "name": "Asha",
+  "currency": "INR"
+ },
+ "mode": "mine",
+ "email": {
+  "primary": "demo.user@example.com",
+  "provider": "gmail",
+  "skipped": false
+ },
+ "sources": [
+  {
+   "catalogId": "hdfc-bank",
+   "status": "imported",
+   "lastDataDate": "2026-10-02",
+   "importIds": [
+    "imp_001"
+   ],
+   "accountIds": [
+    "acc_sav001"
+   ],
+   "searchedAt": "2026-10-03T10:50:00+05:30"
+  },
+  {
+   "catalogId": "hdfc-card",
+   "status": "imported",
+   "lastDataDate": "2026-08-20",
+   "importIds": [
+    "imp_002"
+   ],
+   "accountIds": [
+    "acc_crd001"
+   ]
+  },
+  {
+   "catalogId": "cams-cas",
+   "status": "todo",
+   "lastDataDate": null,
+   "importIds": [],
+   "accountIds": []
+  },
+  {
+   "catalogId": "netflix",
+   "status": "todo",
+   "lastDataDate": null,
+   "importIds": [],
+   "accountIds": []
+  }
+ ],
+ "imports": [
+  {
+   "id": "imp_001",
+   "at": "2026-10-03T10:55:00+05:30",
+   "file": "hdfc-bank.synthetic.pdf",
+   "adapter": "bank.hdfc",
+   "added": 39,
+   "duplicates": 0
+  },
+  {
+   "id": "imp_002",
+   "at": "2026-10-03T10:57:00+05:30",
+   "file": "hdfc-card.synthetic.pdf",
+   "adapter": "card.hdfc",
+   "added": 15,
+   "duplicates": 0
+  }
+ ],
+ "appLock": false,
+ "events": [],
+ "session": {
+  "now": "2026-10-03T11:00:00+05:30",
+  "actions": [
+   {
+    "at": "2026-10-03T11:05:00+05:30",
+    "type": "importAttributed",
+    "file": "cas.synthetic.pdf",
+    "adapter": "cas.cams-kfintech",
+    "accountIds": [
+     "acc_mfd001"
+    ],
+    "added": 6,
+    "duplicates": 0,
+    "lastDataDate": "2026-09-30"
+   },
+   {
+    "at": "2026-10-03T11:06:00+05:30",
+    "type": "setSourceStatus",
+    "catalogId": "netflix",
+    "status": "skipped",
+    "reason": "charges-come-via-card"
+   },
+   {
+    "at": "2026-10-03T11:10:00+05:30",
+    "type": "acceptBudget",
+    "factorPct": 95
+   },
+   {
+    "at": "2026-10-03T11:12:00+05:30",
+    "type": "acceptGoal"
+   }
+  ]
+ }
+}

@@ -8,6 +8,8 @@ struct SettingsView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(EntitlementStore.self) private var entitlements
   @Environment(AppIconController.self) private var appIcons
+  @Environment(SetupSession.self) private var session
+  @Environment(\.openSetup) private var openSetup
   @AppStorage("settings.appearance") private var appearance = "system"
   @AppStorage("settings.appLock") private var appLock = true
   @AppStorage(GlancePreferences.showAmountsKey, store: GlanceStore.preferences) private var showAmounts = true
@@ -19,6 +21,7 @@ struct SettingsView: View {
   @AppStorage(GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences) private var menuBarExtra = true
   #endif
   @State private var reset = false
+  @State private var deleteMine = false
   @State private var paywall: PaywallContext?
   @State private var pendingIcon: ThemeID?
   @State private var offeredIcon: ThemeID?
@@ -31,6 +34,7 @@ struct SettingsView: View {
     NavigationStack {
       ScrollViewReader { scroll in
         Form {
+          setupSection
           Section("Theme") {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
               ForEach(ThemeID.allCases) { id in
@@ -58,6 +62,7 @@ struct SettingsView: View {
               Text("Light").tag("light")
               Text("Dark").tag("dark")
             }.pickerStyle(.segmented)
+              .accessibilityIdentifier("settings.appearance")
           }.listRowBackground(theme.surface)
           glanceSection
           Section("Lakshly Premium") {
@@ -100,20 +105,37 @@ struct SettingsView: View {
                 }
               }
             )).disabled(lock.authenticating)
+              .accessibilityIdentifier("settings.appLock")
             if let message = lock.message { Text(message).font(.caption).foregroundStyle(theme.danger) }
           }.listRowBackground(theme.surface)
           Section("Private by design") {
             Text(store.encryptionStatus)
-            Text("No network requests except Apple's App Store for purchases. No analytics or accounts. All data is synthetic.")
+            Text(
+              store.source == .mine
+                ? "No network requests except Apple's App Store for purchases. No analytics or accounts. Your imported data is encrypted on this device."
+                : "No network requests except Apple's App Store for purchases. No analytics or accounts. All data is synthetic."
+            )
             if let error = store.error { Text(error).foregroundStyle(theme.danger) }
           }.listRowBackground(theme.surface)
-          Section { Button("Reset demo data", role: .destructive) { reset = true } }
-            .listRowBackground(theme.surface)
+          Section("Data") {
+            Button("Reset demo data", role: .destructive) { reset = true }
+              .accessibilityIdentifier("settings.resetDemo")
+            if store.hasUserData {
+              Button("Delete my data", role: .destructive) { deleteMine = true }
+                .accessibilityIdentifier("settings.deleteMine")
+            }
+          }.listRowBackground(theme.surface)
         }.scrollContentBackground(.hidden).background { ThemeBackground() }
           .foregroundStyle(theme.text).tint(theme.gold).navigationTitle("Settings")
-          .toolbar { Button("Done") { dismiss() } }
-          .confirmationDialog("Reset data and local requests?", isPresented: $reset) {
+          .toolbar { Button("Done") { dismiss() }.accessibilityIdentifier("settings.done") }
+          .accessibilityIdentifier("screen.settings")
+          .confirmationDialog("Reset demo data and local requests? Imported data is kept.", isPresented: $reset) {
             Button("Reset demo data", role: .destructive) { store.reset() }
+              .accessibilityIdentifier("settings.resetDemo.confirm")
+          }
+          .confirmationDialog("Delete all imported data from this device? This cannot be undone.", isPresented: $deleteMine) {
+            Button("Delete my data", role: .destructive) { store.deleteMyData() }
+              .accessibilityIdentifier("settings.deleteMine.confirm")
           }
           .confirmationDialog("Use the \(offeredIcon?.definition.name ?? "Lakshmi") app icon too?",
                               isPresented: $showIconOffer, titleVisibility: .visible) {
@@ -156,14 +178,18 @@ struct SettingsView: View {
   private var glanceSection: some View {
     Section {
       Toggle("Show amounts in widgets", isOn: $showAmounts)
+        .accessibilityIdentifier("settings.showAmounts")
       Toggle("Show amounts on Lock Screen", isOn: $lockScreenAmounts)
+        .accessibilityIdentifier("settings.lockScreenAmounts")
       Text("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
         .font(.caption).foregroundStyle(theme.secondaryText)
       #if os(iOS)
       Toggle("Live Activities", isOn: $liveActivities)
+        .accessibilityIdentifier("settings.liveActivities")
       #endif
       #if os(macOS)
       Toggle("Show in menu bar", isOn: $menuBarExtra)
+        .accessibilityIdentifier("settings.menuBar")
       #endif
       glanceKind("Budget pace", feature: .basicWidgets)
       glanceKind("Upcoming bill", feature: .basicWidgets)
@@ -185,6 +211,50 @@ struct SettingsView: View {
       } else {
         Text("Included").font(.caption).foregroundStyle(theme.secondaryText)
       }
+    }
+  }
+
+  private var setupSection: some View {
+    let score = session.score()
+    let email = session.state.email.primary
+    return Section("Setup & data sources") {
+      Button {
+        openSetup(score.percent >= 100, nil)
+      } label: {
+        HStack(spacing: 12) {
+          SetupRing(percent: score.percent).frame(width: 36, height: 36)
+          VStack(alignment: .leading, spacing: 2) {
+            Text(score.percent >= 100 ? "Data sources health" : "Setup \(score.percent)%")
+            Text(email.isEmpty ? "No mailbox saved" : "Mailbox saved on this device")
+              .font(.caption).foregroundStyle(theme.secondaryText)
+          }
+          Spacer(minLength: 0)
+        }
+        .frame(minHeight: 44)
+      }
+      if !email.isEmpty {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(email)
+          Text(mailboxDetail).font(.caption).foregroundStyle(theme.secondaryText)
+          Text("Automatic sync is not switched on in this build. This address is used for one-tap searches.")
+            .font(.caption).foregroundStyle(theme.secondaryText)
+        }
+      } else if session.state.email.skipped {
+        Text("Email step skipped. You can add an address from setup.")
+          .font(.caption).foregroundStyle(theme.secondaryText)
+      }
+    }
+    .listRowBackground(theme.surface)
+  }
+
+  private var mailboxDetail: String {
+    switch session.state.email.pickerProvider ?? detectMailProvider(session.state.email.primary) {
+    case .google: "Gmail"
+    case .microsoft: "Outlook"
+    case .icloud: "iCloud"
+    case .yahoo: "Yahoo"
+    case .zoho: "Zoho"
+    case .other: "Mail"
     }
   }
 

@@ -54,7 +54,7 @@ for binary in \
   while IFS= read -r -d '' dylib; do binaries+=("$dylib"); done < <(find "$app_path" -type f -name '*.debug.dylib' -print0)
   for executable in "${binaries[@]}"; do
     /usr/bin/strings -a "$executable" > "$strings_file"
-    if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile|showPaywall|feedbackDemo|appIconDemo|settingsScroll' "$strings_file"; then
+    if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile|showPaywall|feedbackDemo|appIconDemo|settingsScroll|dataSource|setupDemo|setupConsent|uiTestingSyntheticData' "$strings_file"; then
       echo "FAIL: DEBUG launch controls found in $executable" >&2
       exit 1
     fi
@@ -71,6 +71,11 @@ for binary in \
   if find "$app_path" -name '*.synthetic.pdf' -print | grep -q .; then
     echo "FAIL: synthetic statement PDF bundled in Release: $app_path" >&2
     find "$app_path" -name '*.synthetic.pdf' -print >&2
+    exit 1
+  fi
+  if find "$app_path" \( -name 'state.midway.json' -o -name 'dataset.after-import.json' \) -print | grep -q .; then
+    echo "FAIL: setup screenshot fixtures bundled in Release: $app_path" >&2
+    find "$app_path" \( -name 'state.midway.json' -o -name 'dataset.after-import.json' \) -print >&2
     exit 1
   fi
   appex="$(find "$app_path" -type d -path '*/PlugIns/LakshlyWidgets.appex' -print -quit)"
@@ -99,7 +104,7 @@ for binary in \
     exit 1
   fi
   /usr/bin/strings -a "$appex_binary" > "$strings_file"
-  if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile|showPaywall|feedbackDemo|appIconDemo|settingsScroll' "$strings_file"; then
+  if grep -nE 'demoUnlocked|showLock|startTab|openSettings|importDemo|importDemoFile|showPaywall|feedbackDemo|appIconDemo|settingsScroll|dataSource|setupDemo|setupConsent|uiTestingSyntheticData' "$strings_file"; then
     echo "FAIL: DEBUG launch controls found in $appex_binary" >&2
     exit 1
   fi

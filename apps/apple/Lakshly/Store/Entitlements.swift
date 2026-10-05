@@ -25,6 +25,20 @@ enum Feature: String, CaseIterable, Sendable {
   case basicWidgets
   /// Net worth and debt widgets.
   case extraWidgets
+  // Import and first-run setup are always free (setup-wizard spec §10).
+  case importStatements = "import.statements"
+  case setupWizard = "setup.wizard"
+  case setupEmailGuide = "setup.emailGuide"
+  case setupExtraEmails = "setup.extraEmails"
+  case setupSuggestions = "setup.suggestions"
+  case setupHealth = "setup.health"
+  case mailSyncConnect = "mailSync.connect"
+  case mailSyncIMAP = "mailSync.imap"
+  case mailSyncStatementPasswordKeychain = "mailSync.statementPasswordKeychain"
+  /// Scheduled background mail sync.
+  case mailSyncBackground = "mailSync.background"
+  /// Local notifications when a data source goes stale.
+  case setupFreshnessReminders = "setup.freshnessReminders"
 }
 
 enum PremiumProduct {
@@ -43,7 +57,31 @@ struct EntitlementsMap {
     .priorityFeedback: .premium,
     .basicWidgets: .free,
     .extraWidgets: .premium,
+    .importStatements: .free,
+    .setupWizard: .free,
+    .setupEmailGuide: .free,
+    .setupExtraEmails: .free,
+    .setupSuggestions: .free,
+    .setupHealth: .free,
+    .mailSyncConnect: .free,
+    .mailSyncIMAP: .free,
+    .mailSyncStatementPasswordKeychain: .free,
+    .mailSyncBackground: .premium,
+    .setupFreshnessReminders: .premium,
   ]
+
+  /// Per-tier quantity limits (mirrors web ENTITLEMENT_LIMITS). Features without an entry are unlimited.
+  static let limits: [Feature: [Tier: Int]] = [
+    .setupExtraEmails: [.free: 3, .premium: 10],
+    .mailSyncConnect: [.free: 1, .premium: 5],
+  ]
+}
+
+/// Quantity allowed for a feature: 0 when the tier can't use it, `Int.max` when unlimited.
+func limit(_ feature: Feature, tier: Tier) -> Int {
+  guard can(feature, tier: tier) else { return 0 }
+  guard let byTier = EntitlementsMap.limits[feature] else { return .max }
+  return byTier[tier] ?? byTier[.premium] ?? .max
 }
 
 enum EntitlementRule {
