@@ -15,6 +15,18 @@ fs.writeFileSync(
   ].join("\n"),
 );
 
+test("a sample statement can be reviewed without a bank file", async ({ page }) => {
+  await page.goto("/import/");
+  await page.getByTestId("try-sample").click();
+  await expect(page.getByRole("heading", { name: /Review bank\.synthetic\.csv/ })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("Swiggy").first()).toBeVisible();
+  await page.getByRole("button", { name: /Confirm import/ }).click();
+  await expect(page.getByRole("heading", { name: "Saved on this device" })).toBeVisible();
+  await page.getByRole("link", { name: "See Overview" }).click();
+  await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
+  await expect(page.locator("#main-content").getByText("Your data · as of")).toBeVisible();
+});
+
 test("a synthetic bank CSV imports and shows on Overview", async ({ page }) => {
   await page.goto("/import/");
   await expect(page.getByRole("heading", { name: "Import" })).toBeVisible();
