@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Glass, PageHeader, } from "@/components/ui";
 import { Importer, importToast } from "@/components/Importer";
@@ -21,6 +21,12 @@ export default function ImportPage() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [sample, setSample] = useState<File | null>(null);
   const [justImported, setJustImported] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("sample") !== "1") return;
+    setSample(sampleBankFile());
+  }, []);
 
   const setup = useSetup();
   // Setup details (email, picked banks) live in the encrypted vault even before the first import.
