@@ -27,6 +27,19 @@ test("a sample statement can be reviewed without a bank file", async ({ page }) 
   await expect(page.locator("#main-content").getByText("Your data · as of")).toBeVisible();
 });
 
+test("profile can delete an imported sample", async ({ page }) => {
+  await page.goto("/import/");
+  await page.getByTestId("try-sample").click();
+  await expect(page.getByRole("heading", { name: /Review bank\.synthetic\.csv/ })).toBeVisible({ timeout: 20_000 });
+  await page.getByRole("button", { name: /Confirm import/ }).click();
+  await page.goto("/profile/");
+  await page.getByRole("button", { name: "Delete all my data" }).click();
+  await page.getByRole("button", { name: "Delete everything" }).click();
+  await expect(page.getByText("All your data was deleted from this device.")).toBeVisible();
+  await page.goto("/import/");
+  await expect(page.getByText("No imported data yet.")).toBeVisible();
+});
+
 test("a synthetic bank CSV imports and shows on Overview", async ({ page }) => {
   await page.goto("/import/");
   await expect(page.getByRole("heading", { name: "Import" })).toBeVisible();

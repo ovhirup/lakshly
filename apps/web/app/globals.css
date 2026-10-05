@@ -192,6 +192,8 @@ nav[aria-label="Main"] { display: flex; flex-direction: column; gap: 2px; overfl
 .btn { border: 0; padding: 11px 18px; min-height: 44px; border-radius: 14px; font-weight: 650; }
 .btn.primary { background: var(--lk-gold); color: var(--lk-on-gold); box-shadow: var(--lk-elevation-1); }
 .btn.ghost { background: var(--lk-glass-strong); border: 1px solid var(--lk-border); }
+.btn.danger { background: var(--lk-danger); color: #fff; }
+.danger-zone { display: grid; gap: 8px; margin-top: 14px; padding: 12px; border-radius: 14px; border: 1px solid var(--lk-danger); }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 .btn, .icon-btn, .chip, .tab, .nav-item, .plan-switch button { transition: transform var(--lk-motion) var(--lk-spring), box-shadow var(--lk-motion) var(--lk-spring), background-color var(--lk-color-motion) ease, color var(--lk-color-motion) ease; }
 @media (hover: hover) {

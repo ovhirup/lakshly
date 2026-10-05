@@ -23,12 +23,13 @@ const UPSELL_ID = "profile.card";
 export default function ProfilePage() {
   const profile = useProfile();
   const { tier, can } = useTier();
-  const { dataset } = useData();
+  const { dataset, deleteAll } = useData();
   const { setPlan } = useAppState();
   const [draft, setDraft] = useState<string | null>(null);
   const [showUpsell, setShowUpsell] = useState(false);
   const [paywall, setPaywall] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (tier !== "free") return;
@@ -154,6 +155,21 @@ export default function ProfilePage() {
             <button className="btn primary" type="button" onClick={() => saveFile(exportFilename("json", todayIso()), datasetJson(dataset), "application/json")}>Download JSON</button>
             <button className="btn ghost" type="button" onClick={() => saveFile(exportFilename("csv", todayIso()), transactionsCsv(dataset.transactions), "text/csv")}>Download transactions CSV</button>
           </div>
+          {can("data.delete") && (
+            confirmDelete ? (
+              <div className="danger-zone" role="alertdialog" aria-label="Confirm delete">
+                <p className="tiny">Delete imported statements and the encryption key from this browser? The demo stays available. This can&apos;t be undone.</p>
+                <div className="row-actions">
+                  <button className="btn danger" type="button" onClick={() => { void deleteAll().then(() => { setConfirmDelete(false); flash("All your data was deleted from this device."); }); }}>Delete everything</button>
+                  <button className="btn ghost" type="button" onClick={() => setConfirmDelete(false)}>Keep</button>
+                </div>
+              </div>
+            ) : (
+              <div className="row-actions">
+                <button className="btn ghost" type="button" onClick={() => setConfirmDelete(true)}>Delete all my data</button>
+              </div>
+            )
+          )}
         </Glass>
       )}
       <CoachSettings />
