@@ -15,6 +15,28 @@ fs.writeFileSync(
   ].join("\n"),
 );
 
+test("the tester site shows three things to try", async ({ page }) => {
+  test.skip(process.env.LAKSHLY_E2E_EDITION !== "beta", "The public build does not include the tester card.");
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Three things to try" })).toBeVisible();
+  await page.getByRole("button", { name: "Hide this" }).click();
+  await expect(page.getByRole("heading", { name: "Three things to try" })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Three things to try" })).toHaveCount(0);
+});
+
+test("an empty My data Overview opens the sample review", async ({ page }) => {
+  await page.goto("/import/");
+  await page.getByRole("button", { name: "My data" }).click();
+  await page.goto("/");
+  const open = page.locator("#main-content");
+  await expect(open.getByRole("heading", { name: "Nothing here yet" })).toBeVisible();
+  await expect(open.getByText("My data has no statements yet.")).toBeVisible();
+  await expect(open.getByRole("heading", { name: "Three things to try" })).toHaveCount(0);
+  await open.getByRole("link", { name: "Try a sample statement" }).click();
+  await expect(page.getByRole("heading", { name: /Review bank\.synthetic\.csv/ })).toBeVisible({ timeout: 20_000 });
+});
+
 test("a sample statement can be reviewed without a bank file", async ({ page }) => {
   await page.goto("/import/");
   await page.getByTestId("try-sample").click();

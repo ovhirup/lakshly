@@ -288,6 +288,7 @@ html[data-edition="beta"][data-mood="classic"] .card { padding: calc(28px * var(
 .accent-swatch.on { box-shadow: 0 0 0 2px var(--lk-gold-text); }
 
 /* ───────────────────────── beta chrome ───────────────────────── */
+.tester-start { margin: 0 0 14px; padding-left: 1.2rem; display: grid; gap: 8px; }
 .beta-ribbon { position: fixed; top: 0; left: 0; z-index: 90; width: 92px; height: 92px; overflow: hidden; pointer-events: none; }
 .beta-ribbon span { position: absolute; top: 16px; left: -30px; width: 130px; transform: rotate(-45deg); text-align: center; padding: 3px 0;
   font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #231B09;
