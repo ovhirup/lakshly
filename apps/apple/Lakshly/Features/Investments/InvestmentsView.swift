@@ -66,7 +66,8 @@ struct InvestmentsView: View {
       PremiumGate(
         feature: .investmentInsights,
         title: "A possible ten-year horizon",
-        message: "An illustrative ten-year horizon from today's holdings and active SIPs."
+        message: "An illustrative ten-year horizon from today's holdings and active SIPs.",
+        seePremiumIdentifier: "premium.see.investmentHorizon"
       ) {
         Chart(projection) { point in
           LineMark(x: .value("Years", point.month), y: .value("Value", point.amount))

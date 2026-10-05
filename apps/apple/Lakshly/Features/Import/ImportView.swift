@@ -44,12 +44,27 @@ import UniformTypeIdentifiers
     stage = .picker
   }
 
+  var recordsImport = true
+
+  func stageFile(_ data: Data, fileName: String, csv: Bool) {
+    accept(data, fileName: fileName, csv: csv)
+  }
+
   func confirm(into store: DataStore) {
     guard let result else { return }
-    report = store.importParsed(result)
+    if recordsImport {
+      report = store.importParsed(result, fileName: fileName ?? "statement")
+    } else {
+      report = MergeReport(
+        added: result.transactions.count, duplicates: 0, accountsAdded: result.accounts.count, accountsUpdated: 0,
+        sipsUpserted: result.sips.count)
+      localImportID = "imp_preview"
+    }
     bytes = nil
     stage = .done
   }
+
+  private(set) var localImportID: String?
 
   func reset() {
     stage = .picker
@@ -121,18 +136,46 @@ import UniformTypeIdentifiers
 struct ImportView: View {
   @Environment(\.theme) private var theme
   let store: DataStore
+  var embedded = false
+  var preset: ImportPreset?
+  var recordsImport = true
+  var onDone: ((MergeReport, ParseResult, String) -> Void)?
   @State private var model = ImportModel()
   @State private var picking = false
   @State private var password = ""
+  @State private var stagedPreset = false
+  @State private var reported = false
 
   var body: some View {
     Page(title: "Import", subtitle: "Statements stay on this device.") {
+      if !embedded {
+      Card(title: "Your data") {
+        Picker("Data shown in the app", selection: Binding(
+          get: { store.source },
+          set: { store.setSource($0) }
+        )) {
+          Text("Demo data").tag(DataSource.demo)
+          Text("My data").tag(DataSource.mine)
+        }.pickerStyle(.segmented)
+          .accessibilityIdentifier("import.source")
+        if store.hasUserData {
+          let user = store.userDataset
+          Text(
+            "\(user?.accounts.count ?? 0) accounts · \(user?.transactions.count ?? 0) transactions, encrypted on this device."
+          )
+          .font(.caption).foregroundStyle(theme.secondaryText)
+        } else {
+          Text("No imported data yet.").font(.caption).foregroundStyle(theme.secondaryText)
+        }
+      }
+      }
       switch model.stage {
       case .picker: picker
       case .password: passwordPrompt
       case .preview: preview
       case .done: done
       }
+      if !embedded { DataNote(source: store.source) }
     }
     .fileImporter(isPresented: $picking, allowedContentTypes: [.pdf, .commaSeparatedText], allowsMultipleSelection: false) { result in
       switch result {
@@ -145,20 +188,31 @@ struct ImportView: View {
       }
     }
     .onAppear {
-      model.applyLaunchDemo(into: store)
+      model.recordsImport = recordsImport
+      if !embedded { model.applyLaunchDemo(into: store) }
       if model.presentPicker {
         model.presentPicker = false
         picking = true
       }
+      if let preset, !stagedPreset {
+        stagedPreset = true
+        model.stageFile(preset.data, fileName: preset.fileName, csv: preset.fileName.lowercased().hasSuffix(".csv"))
+      }
     }
     .onChange(of: model.stage) { _, stage in
       if stage != .password { password = "" }
+      if embedded, stage == .done, !reported, let report = model.report, let result = model.result {
+        reported = true
+        let id = model.localImportID ?? store.imports.last?.id ?? ""
+        onDone?(report, result, id)
+      }
     }
   }
 
   private var picker: some View {
     Card(title: "Statement") {
       Button("Choose statement PDF") { picking = true }.buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.choose")
       Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
       if let error = model.error { Text(error).foregroundStyle(theme.danger) }
     }
@@ -168,16 +222,19 @@ struct ImportView: View {
     Card(title: "Password") {
       Text("This statement is locked.").foregroundStyle(theme.secondaryText)
       SecureField("Password", text: $password).textFieldStyle(ThemedFieldStyle())
+        .accessibilityIdentifier("import.password")
       if model.incorrect { Text("Incorrect password").foregroundStyle(theme.danger) }
       Button("Unlock") {
         let attempt = password
         password = ""
         model.unlock(attempt)
       }.buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.unlock")
       Button("Cancel") {
         password = ""
         model.cancelPassword()
       }
+      .accessibilityIdentifier("import.cancel")
       Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
     }
   }
@@ -246,6 +303,7 @@ struct ImportView: View {
       }
       Button("Import \(result.transactions.count) transactions") { model.confirm(into: store) }
         .buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.confirm")
     }
   }
 
@@ -259,6 +317,7 @@ struct ImportView: View {
         MetricRow(title: "SIPs", value: "\(report.sipsUpserted)")
       }
       Button("Import another") { model.reset() }.buttonStyle(ThemedSubmitStyle())
+        .accessibilityIdentifier("import.another")
     }
   }
 

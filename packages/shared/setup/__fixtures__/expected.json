@@ -1,0 +1,607 @@
+{
+ "_doc": "Expected outputs for setup-wizard.md §11, computed by gen_setup_fixture.py (reference semantics). SYNTHETIC.",
+ "now": "2026-10-03T11:00:00+05:30",
+ "provider": {
+  "demo.user@example.com": "other",
+  "someone@gmail.com": "gmail",
+  "someone@outlook.com": "outlook",
+  "someone@hotmail.co.in": "outlook",
+  "someone@company.in": "other"
+ },
+ "outlookOpenUrl": {
+  "someone@outlook.com": "https://outlook.live.com/mail/0/",
+  "someone@company.in": "https://outlook.office.com/mail/"
+ },
+ "gmailUrlNoEmail": "https://mail.google.com/mail/u/0/#search/from%3Anetflix.com",
+ "links": [
+  {
+   "source": "hdfc-bank",
+   "search": "alerts",
+   "gmailQuery": "from:(hdfcbank.bank.in OR hdfcbank.net OR hdfcbank.com) -from:mailers.hdfcbank.bank.in subject:(debited OR credited OR UPI OR transaction OR alert) newer_than:1y",
+   "gmailUrl": "https://mail.google.com/mail/u/?authuser=demo.user%40example.com#search/from%3A%28hdfcbank.bank.in%20OR%20hdfcbank.net%20OR%20hdfcbank.com%29%20-from%3Amailers.hdfcbank.bank.in%20subject%3A%28debited%20OR%20credited%20OR%20UPI%20OR%20transaction%20OR%20alert%29%20newer_than%3A1y",
+   "outlookQuery": "(from:hdfcbank.bank.in OR from:hdfcbank.net OR from:hdfcbank.com) AND NOT from:mailers.hdfcbank.bank.in AND (subject:debited OR subject:credited OR subject:UPI OR subject:transaction OR subject:alert)"
+  },
+  {
+   "source": "hdfc-bank",
+   "search": "statements",
+   "gmailQuery": "from:(hdfcbank.bank.in OR hdfcbank.net OR hdfcbank.com) -from:mailers.hdfcbank.bank.in subject:statement has:attachment filename:pdf newer_than:2y",
+   "gmailUrl": "https://mail.google.com/mail/u/?authuser=demo.user%40example.com#search/from%3A%28hdfcbank.bank.in%20OR%20hdfcbank.net%20OR%20hdfcbank.com%29%20-from%3Amailers.hdfcbank.bank.in%20subject%3Astatement%20has%3Aattachment%20filename%3Apdf%20newer_than%3A2y",
+   "outlookQuery": "(from:hdfcbank.bank.in OR from:hdfcbank.net OR from:hdfcbank.com) AND NOT from:mailers.hdfcbank.bank.in AND subject:statement AND hasattachments:yes"
+  },
+  {
+   "source": "cdsl-cas",
+   "search": "cas",
+   "gmailQuery": "from:eCAS@cdslstatement.com subject:(CAS OR \"Consolidated Account Statement\") has:attachment filename:pdf newer_than:2y",
+   "gmailUrl": "https://mail.google.com/mail/u/?authuser=demo.user%40example.com#search/from%3AeCAS%40cdslstatement.com%20subject%3A%28CAS%20OR%20%22Consolidated%20Account%20Statement%22%29%20has%3Aattachment%20filename%3Apdf%20newer_than%3A2y",
+   "outlookQuery": "from:eCAS@cdslstatement.com AND (subject:CAS OR subject:\"Consolidated Account Statement\") AND hasattachments:yes"
+  },
+  {
+   "source": "groww",
+   "search": "orders",
+   "gmailQuery": "from:groww.in -from:digest.groww.in subject:(SIP OR order OR allotted OR \"contract note\") newer_than:1y",
+   "gmailUrl": "https://mail.google.com/mail/u/?authuser=demo.user%40example.com#search/from%3Agroww.in%20-from%3Adigest.groww.in%20subject%3A%28SIP%20OR%20order%20OR%20allotted%20OR%20%22contract%20note%22%29%20newer_than%3A1y",
+   "outlookQuery": "from:groww.in AND NOT from:digest.groww.in AND (subject:SIP OR subject:order OR subject:allotted OR subject:\"contract note\")"
+  },
+  {
+   "source": "netflix",
+   "search": "receipts",
+   "gmailQuery": "from:netflix.com subject:(payment OR receipt OR membership OR \"your account\") newer_than:1y",
+   "gmailUrl": "https://mail.google.com/mail/u/?authuser=demo.user%40example.com#search/from%3Anetflix.com%20subject%3A%28payment%20OR%20receipt%20OR%20membership%20OR%20%22your%20account%22%29%20newer_than%3A1y",
+   "outlookQuery": "from:netflix.com AND (subject:payment OR subject:receipt OR subject:membership OR subject:\"your account\")"
+  }
+ ],
+ "budget": {
+  "mode": "history",
+  "confidence": "ok",
+  "months": [
+   "2026-07",
+   "2026-08",
+   "2026-09"
+  ],
+  "factorPct": 95,
+  "dropped": [
+   "other"
+  ],
+  "lines": [
+   {
+    "id": "bud_202610groceries",
+    "month": "2026-10",
+    "category": "groceries",
+    "limit": 1000000,
+    "median": 1045000,
+    "rollover": false
+   },
+   {
+    "id": "bud_202610shopping",
+    "month": "2026-10",
+    "category": "shopping",
+    "limit": 700000,
+    "median": 750000,
+    "rollover": false
+   },
+   {
+    "id": "bud_202610dining",
+    "month": "2026-10",
+    "category": "dining",
+    "limit": 550000,
+    "median": 560000,
+    "rollover": false
+   },
+   {
+    "id": "bud_202610transport",
+    "month": "2026-10",
+    "category": "transport",
+    "limit": 230000,
+    "median": 238000,
+    "rollover": false
+   },
+   {
+    "id": "bud_202610subscriptions",
+    "month": "2026-10",
+    "category": "subscriptions",
+    "limit": 110000,
+    "median": 114800,
+    "rollover": false
+   },
+   {
+    "id": "bud_202610entertainment",
+    "month": "2026-10",
+    "category": "entertainment",
+    "limit": 100000,
+    "median": 110000,
+    "rollover": false
+   }
+  ],
+  "total": 2690000
+ },
+ "goal": {
+  "rule": "annualPayment",
+  "kind": "sinking",
+  "name": "SafeLife Insurance renewal",
+  "target": 1300000,
+  "saved": 0,
+  "monthly": 150000,
+  "due": "2027-07-15",
+  "fromTransaction": "txn_sw0012",
+  "monthsLeft": 9,
+  "monthsCovered": 3.2,
+  "medianMonthlySpend": 6472800
+ },
+ "goalIfLowCash": {
+  "rule": "emergency3",
+  "kind": "emergency",
+  "name": "Emergency fund · 3 months",
+  "target": 20000000,
+  "saved": 4000000,
+  "monthly": 1340000,
+  "due": "2027-10-03",
+  "monthsCovered": 0.6,
+  "medianMonthlySpend": 6472800
+ },
+ "budgetStarterWhenNoCompleteMonth": "starter",
+ "freshnessAtNow": {
+  "hdfc-bank": "fresh",
+  "hdfc-card": "stale",
+  "cams-cas": "todo",
+  "netflix": "todo"
+ },
+ "checklistBefore": {
+  "web": {
+   "items": [
+    {
+     "id": "profile",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "myData",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "email",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "sources",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "firstImport",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "investments",
+     "done": false,
+     "required": false
+    },
+    {
+     "id": "allSources",
+     "done": false,
+     "required": false
+    },
+    {
+     "id": "budget",
+     "done": false,
+     "required": true
+    },
+    {
+     "id": "goal",
+     "done": false,
+     "required": false
+    }
+   ],
+   "done": 5,
+   "applicable": 9,
+   "percent": 55,
+   "upAndRunning": false
+  },
+  "ios": {
+   "items": [
+    {
+     "id": "profile",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "myData",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "email",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "sources",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "firstImport",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "investments",
+     "done": false,
+     "required": false
+    },
+    {
+     "id": "allSources",
+     "done": false,
+     "required": false
+    },
+    {
+     "id": "budget",
+     "done": false,
+     "required": true
+    },
+    {
+     "id": "goal",
+     "done": false,
+     "required": false
+    },
+    {
+     "id": "appLock",
+     "done": false,
+     "required": false
+    }
+   ],
+   "done": 5,
+   "applicable": 10,
+   "percent": 50,
+   "upAndRunning": false
+  }
+ },
+ "checklistAfter": {
+  "web": {
+   "items": [
+    {
+     "id": "profile",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "myData",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "email",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "sources",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "firstImport",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "investments",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "allSources",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "budget",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "goal",
+     "done": true,
+     "required": false
+    }
+   ],
+   "done": 9,
+   "applicable": 9,
+   "percent": 100,
+   "upAndRunning": true
+  },
+  "ios": {
+   "items": [
+    {
+     "id": "profile",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "myData",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "email",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "sources",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "firstImport",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "investments",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "allSources",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "budget",
+     "done": true,
+     "required": true
+    },
+    {
+     "id": "goal",
+     "done": true,
+     "required": false
+    },
+    {
+     "id": "appLock",
+     "done": false,
+     "required": false
+    }
+   ],
+   "done": 9,
+   "applicable": 10,
+   "percent": 90,
+   "upAndRunning": true
+  }
+ },
+ "events": [
+  {
+   "event": "setup.completed",
+   "at": "2026-10-03T11:10:00+05:30",
+   "payload": {
+    "mode": "mine",
+    "required": [
+     "profile",
+     "myData",
+     "sources",
+     "firstImport",
+     "budget"
+    ],
+    "platform": "web"
+   }
+  }
+ ],
+ "completedAt": "2026-10-03T11:10:00+05:30",
+ "goalsAfter": [
+  {
+   "id": "goal_setup01",
+   "name": "SafeLife Insurance renewal",
+   "kind": "sinking",
+   "target": 1300000,
+   "saved": 0,
+   "monthly": 150000,
+   "due": "2027-07-15",
+   "createdAt": "2026-10-03T11:12:00+05:30",
+   "createdBy": "setup"
+  }
+ ],
+ "attribution": {
+  "cas.cams-kfintech with [hdfc-bank, cams-cas]": {
+   "auto": "cams-cas",
+   "ask": []
+  },
+  "cas.cams-kfintech with [cams-cas, navi-mf]": {
+   "auto": null,
+   "ask": [
+    "cams-cas",
+    "navi-mf"
+   ]
+  },
+  "bank.generic with [hdfc-bank, kotak-bank]": {
+   "auto": null,
+   "ask": [
+    "kotak-bank",
+    "hdfc-bank"
+   ]
+  }
+ },
+ "sync": {
+  "first": {
+   "queries": [
+    {
+     "key": "hdfc-bank/alerts",
+     "q": "from:(hdfcbank.bank.in OR hdfcbank.net OR hdfcbank.com) -from:mailers.hdfcbank.bank.in subject:(debited OR credited OR UPI OR transaction OR alert) newer_than:1y"
+    },
+    {
+     "key": "hdfc-bank/statements",
+     "q": "from:(hdfcbank.bank.in OR hdfcbank.net OR hdfcbank.com) -from:mailers.hdfcbank.bank.in subject:statement has:attachment filename:pdf newer_than:2y"
+    },
+    {
+     "key": "hdfc-card/alerts",
+     "q": "from:(hdfcbank.net OR hdfcbank.bank.in) -from:mailers.hdfcbank.bank.in subject:(\"credit card\" OR spent OR transaction OR alert) newer_than:1y"
+    },
+    {
+     "key": "hdfc-card/statements",
+     "q": "from:(hdfcbank.net OR hdfcbank.bank.in) -from:mailers.hdfcbank.bank.in subject:(statement OR e-statement) has:attachment filename:pdf newer_than:2y"
+    },
+    {
+     "key": "cams-cas/cas",
+     "q": "from:camsonline.com subject:(CAS OR \"Consolidated Account Statement\" OR \"Account Statement\") has:attachment filename:pdf newer_than:2y"
+    },
+    {
+     "key": "cams-cas/orders",
+     "q": "from:camsonline.com subject:(purchase OR SIP OR processed OR allotment) newer_than:1y"
+    },
+    {
+     "key": "netflix/receipts",
+     "q": "from:netflix.com subject:(payment OR receipt OR membership OR \"your account\") newer_than:1y"
+    }
+   ],
+   "fetched": [
+    "msg_a001",
+    "msg_n001",
+    "msg_c001",
+    "msg_a003",
+    "msg_a002"
+   ],
+   "readLog": [
+    {
+     "messageId": "msg_a001",
+     "date": "2026-09-01T09:10:00+05:30",
+     "from": "alerts@hdfcbank.bank.in",
+     "subject": "You have done a UPI txn. Check details!",
+     "matched": [
+      "hdfc-bank/alerts"
+     ],
+     "route": "email.alert",
+     "outcome": "parsed"
+    },
+    {
+     "messageId": "msg_n001",
+     "date": "2026-09-05T07:00:00+05:30",
+     "from": "info@account.netflix.com",
+     "subject": "Your Netflix payment receipt",
+     "matched": [
+      "netflix/receipts"
+     ],
+     "route": "email.receipt",
+     "outcome": "enrichOnly"
+    },
+    {
+     "messageId": "msg_c001",
+     "date": "2026-09-14T08:00:00+05:30",
+     "from": "donotreply@camsonline.com",
+     "subject": "Consolidated Account Statement - CAMS+KFintech",
+     "matched": [
+      "cams-cas/cas"
+     ],
+     "route": "pdf.cas",
+     "outcome": "awaitingPassword",
+     "passwordHints": [
+      "cas_chosen",
+      "pan_caps",
+      "dob_ddmmyyyy",
+      "folio"
+     ]
+    },
+    {
+     "messageId": "msg_a003",
+     "date": "2026-09-22T10:00:00+05:30",
+     "from": "alerts@hdfcbank.net",
+     "subject": "Alert : Update on your HDFC Bank Credit Card",
+     "matched": [
+      "hdfc-bank/alerts",
+      "hdfc-card/alerts"
+     ],
+     "route": "email.alert",
+     "outcome": "parsed"
+    },
+    {
+     "messageId": "msg_a002",
+     "date": "2026-10-02T21:31:00+05:30",
+     "from": "alerts@hdfcbank.bank.in",
+     "subject": "Rs.420.00 debited from account **0001",
+     "matched": [
+      "hdfc-bank/alerts"
+     ],
+     "route": "email.alert",
+     "outcome": "parsed"
+    }
+   ],
+   "neverFetched": [
+    "msg_g001",
+    "msg_p001",
+    "msg_x001"
+   ]
+  },
+  "cursorsAfterFirst": {
+   "hdfc-bank/alerts": "2026-10-02T11:20:00+05:30",
+   "hdfc-bank/statements": "2026-10-02T11:20:00+05:30",
+   "hdfc-card/alerts": "2026-10-02T11:20:00+05:30",
+   "hdfc-card/statements": "2026-10-02T11:20:00+05:30",
+   "cams-cas/cas": "2026-10-02T11:20:00+05:30",
+   "cams-cas/orders": "2026-10-02T11:20:00+05:30",
+   "netflix/receipts": "2026-10-02T11:20:00+05:30"
+  },
+  "second": {
+   "queries": [
+    {
+     "key": "hdfc-bank/alerts",
+     "q": "from:(hdfcbank.bank.in OR hdfcbank.net OR hdfcbank.com) -from:mailers.hdfcbank.bank.in subject:(debited OR credited OR UPI OR transaction OR alert) after:1790920200"
+    },
+    {
+     "key": "hdfc-bank/statements",
+     "q": "from:(hdfcbank.bank.in OR hdfcbank.net OR hdfcbank.com) -from:mailers.hdfcbank.bank.in subject:statement has:attachment filename:pdf after:1790920200"
+    },
+    {
+     "key": "hdfc-card/alerts",
+     "q": "from:(hdfcbank.net OR hdfcbank.bank.in) -from:mailers.hdfcbank.bank.in subject:(\"credit card\" OR spent OR transaction OR alert) after:1790920200"
+    },
+    {
+     "key": "hdfc-card/statements",
+     "q": "from:(hdfcbank.net OR hdfcbank.bank.in) -from:mailers.hdfcbank.bank.in subject:(statement OR e-statement) has:attachment filename:pdf after:1790920200"
+    },
+    {
+     "key": "cams-cas/cas",
+     "q": "from:camsonline.com subject:(CAS OR \"Consolidated Account Statement\" OR \"Account Statement\") has:attachment filename:pdf after:1790920200"
+    },
+    {
+     "key": "cams-cas/orders",
+     "q": "from:camsonline.com subject:(purchase OR SIP OR processed OR allotment) after:1790920200"
+    },
+    {
+     "key": "netflix/receipts",
+     "q": "from:netflix.com subject:(payment OR receipt OR membership OR \"your account\") after:1790920200"
+    }
+   ],
+   "fetched": [
+    "msg_a004"
+   ],
+   "readLog": [
+    {
+     "messageId": "msg_a004",
+     "date": "2026-10-03T15:05:00+05:30",
+     "from": "alerts@hdfcbank.bank.in",
+     "subject": "Rs.99.00 debited via UPI",
+     "matched": [
+      "hdfc-bank/alerts"
+     ],
+     "route": "email.alert",
+     "outcome": "parsed"
+    }
+   ]
+  },
+  "graphFirstQueriesHdfcBank": [
+   {
+    "key": "hdfc-bank/alerts",
+    "search": "(from:hdfcbank.bank.in OR from:hdfcbank.net OR from:hdfcbank.com) AND NOT from:mailers.hdfcbank.bank.in AND (subject:debited OR subject:credited OR subject:UPI OR subject:transaction OR subject:alert) AND received>=2025-10-03"
+   },
+   {
+    "key": "hdfc-bank/statements",
+    "search": "(from:hdfcbank.bank.in OR from:hdfcbank.net OR from:hdfcbank.com) AND NOT from:mailers.hdfcbank.bank.in AND subject:statement AND hasattachments:true AND received>=2024-10-03"
+   }
+  ],
+  "graphIncrementalExample": "(from:hdfcbank.bank.in OR from:hdfcbank.net OR from:hdfcbank.com) AND NOT from:mailers.hdfcbank.bank.in AND (subject:debited OR subject:credited OR subject:UPI OR subject:transaction OR subject:alert) AND received>=2026-10-02",
+  "imapExample": {
+   "generic": "UID SEARCH SINCE 02-Oct-2026 OR OR FROM \"hdfcbank.bank.in\" FROM \"hdfcbank.net\" FROM \"hdfcbank.com\"",
+   "gmailXGmRaw": "UID SEARCH X-GM-RAW \"from:(hdfcbank.bank.in OR hdfcbank.net OR hdfcbank.com) -from:mailers.hdfcbank.bank.in subject:(debited OR credited OR UPI OR transaction OR alert) after:1790920200\""
+  }
+ }
+}

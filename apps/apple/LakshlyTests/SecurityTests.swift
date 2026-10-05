@@ -9,7 +9,7 @@ final class SecurityTests: XCTestCase {
     let options = LaunchOptions.parse(arguments: ["Lakshly", "-demoUnlocked", "YES",
       "-startTab", "spend", "-theme", "ocean", "-appearance", "dark",
       "-openSettings", "YES", "-showPaywall", "YES", "-showLock", "YES", "-importDemo", "preview",
-      "-importDemoFile", "cas"])
+      "-importDemoFile", "cas", "-dataSource", "mine"])
     XCTAssertEqual(options.demoUnlocked, true)
     XCTAssertEqual(options.showLock, true)
     XCTAssertEqual(options.startTab, "spend")
@@ -19,6 +19,7 @@ final class SecurityTests: XCTestCase {
     XCTAssertEqual(options.theme, "ocean")
     XCTAssertEqual(options.importDemo, "preview")
     XCTAssertEqual(options.importDemoFile, "cas")
+    XCTAssertEqual(options.dataSource, "mine")
   }
 
   func testLaunchOptionsRejectsMalformedAndPersistedKeys() {
@@ -32,6 +33,7 @@ final class SecurityTests: XCTestCase {
     XCTAssertNil(empty.theme)
     XCTAssertNil(empty.importDemo)
     XCTAssertNil(empty.importDemoFile)
+    XCTAssertNil(empty.dataSource)
 
     let options = LaunchOptions.parse(arguments: ["Lakshly", "-appLock", "NO",
       "-premium", "YES", "-settings.appLock", "NO", "-demoUnlocked", "invalid",
@@ -46,8 +48,11 @@ final class SecurityTests: XCTestCase {
     XCTAssertNil(options.appearance)
     XCTAssertNil(options.importDemo)
     XCTAssertNil(options.importDemoFile)
+    XCTAssertNil(options.dataSource)
     XCTAssertEqual(LaunchOptions.parse(arguments: ["Lakshly", "-demoUnlocked", "YES",
       "-demoUnlocked", "NO"]).demoUnlocked, false)
+    XCTAssertNil(LaunchOptions.parse(arguments: ["Lakshly", "-dataSource", "prod"]).dataSource)
+    XCTAssertEqual(LaunchOptions.parse(arguments: ["Lakshly", "-dataSource", "demo"]).dataSource, "demo")
   }
 
   func testDemoRequiresExplicitlyMissingDevicePasscode() {

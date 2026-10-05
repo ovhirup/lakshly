@@ -16,6 +16,7 @@ struct DeviceOwnerAuthenticator: GlanceAuthenticating {
 
 struct MenuBarPanel: View {
   @Environment(DataStore.self) private var store
+  @Environment(SetupSession.self) private var setupSession
   @Environment(EntitlementStore.self) private var entitlements
   @Environment(\.openWindow) private var openWindow
   @Environment(\.theme) private var theme
@@ -30,7 +31,9 @@ struct MenuBarPanel: View {
       message: session.message,
       onReveal: toggleReveal,
       onOpen: openLakshly,
-      onQuit: { NSApplication.shared.terminate(nil) })
+      onQuit: { NSApplication.shared.terminate(nil) },
+      setupLine: setupLine,
+      onSetup: openSetup)
       .onDisappear { session.noteClosed() }
       .background(MenuBarLockMonitor { session.noteLocked() })
       .task(id: session.isRevealed) {
@@ -67,6 +70,18 @@ struct MenuBarPanel: View {
         try GlanceVault.dataset(from: store)
       }
     }
+  }
+
+  private var setupLine: String? {
+    guard let setup = store.setup else { return nil }
+    let today = SetupISO.today(instant: Date())
+    let score = liveChecklist(setup, dataset: setupDataset(from: store.userDataset, goals: store.goals), today: today)
+    return setupMenuLine(percent: score.percent, refreshCount: setupRefreshCount(setup, today: today))
+  }
+
+  private func openSetup() {
+    setupSession.requestOpen(health: false, step: nil)
+    openWindow(id: "setup")
   }
 
   private func openLakshly() {

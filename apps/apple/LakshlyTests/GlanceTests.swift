@@ -25,9 +25,12 @@ final class GlanceTests: XCTestCase {
     XCTAssertEqual(snapshot.budget.monthElapsedPercent, 10.0 / 30.0 * 100, accuracy: 0.001)
     XCTAssertEqual(snapshot.budget.status, .over)
     XCTAssertEqual(snapshot.budget.safeToSpendPerDay, 62_147)
-    XCTAssertEqual(snapshot.debtRepaidPercent, 39.666666666666664, accuracy: 0.001)
+    // Personal loan plus the zero-EMI family loan. A zero EMI is still debt, but it is not a bill.
+    let principal = 31_000_000.0
+    let outstanding = 19_100_000.0
+    XCTAssertEqual(snapshot.debtRepaidPercent, (principal - outstanding) / principal * 100, accuracy: 0.001)
     XCTAssertEqual(snapshot.netWorth, 56_153_800)
-    XCTAssertEqual(snapshot.debtOutstanding, 18_100_000)
+    XCTAssertEqual(snapshot.debtOutstanding, 19_100_000)
     XCTAssertEqual(snapshot.netWorthTrend, .down)
     XCTAssertEqual(snapshot.tier, .premium)
     XCTAssertEqual(snapshot.version, GlanceSnapshot.currentVersion)
