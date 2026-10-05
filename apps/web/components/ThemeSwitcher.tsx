@@ -233,20 +233,22 @@ export function ThemeSwitcher() {
           <li>Payoff planner</li>
           <li>Priority requests</li>
         </ul>
-        <button
-          type="button"
-          className="btn primary"
-          onClick={() => {
-            const next = upsell;
-            setPlan("premium");
-            setTheme(next);
-            setUpsell(null);
-          }}
-        >
-          Preview Premium (demo)
-        </button>
+        {IS_BETA ? (
+          <button
+            type="button"
+            className="btn primary"
+            onClick={() => {
+              const next = upsell;
+              setPlan("premium");
+              setTheme(next);
+              setUpsell(null);
+            }}
+          >
+            Preview Premium (demo)
+          </button>
+        ) : null}
         <button type="button" className="btn ghost" onClick={() => setUpsell(null)}>Not now</button>
-        <p className="tiny muted">Demo only. No payment is taken.</p>
+        <p className="tiny muted">{IS_BETA ? "Demo only. No payment is taken." : "Payments aren’t live yet. This theme stays locked."}</p>
       </div>
     </div>,
     document.body,

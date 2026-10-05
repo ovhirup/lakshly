@@ -8,6 +8,7 @@ import { can } from "@/lib/entitlements";
 import { buildGitHubIssue, issueEnvironment, issueKind, type GitHubIssue } from "@/lib/github-issue";
 import { themeById } from "@/lib/themes";
 import { APP_VERSION } from "@/lib/version";
+import { IS_BETA } from "@/lib/edition";
 import {
   AREAS, autoAck, displayVotes, getServerSnapshot, getSnapshot, KIND_LABEL, replyBy, reset, ROADMAP, ROADMAP_UPDATED, save,
   STATUS_LABEL, STEPS, subscribe, TEAM, type Kind, type Request, type RoadmapItem, type Status,
@@ -142,8 +143,8 @@ function PremiumUpsell({ setPlan }: { setPlan: (p: Plan) => void }) {
         <li><strong>Early access to what you asked for</strong></li>
       </ul>
       <p className="price" data-lk-price><strong>₹119</strong>/month · or <strong>₹999</strong>/year</p>
-      <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
-      <p className="tiny muted">Demo only. No payment is taken in this preview.</p>
+      {IS_BETA && <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>}
+      <p className="tiny muted">{IS_BETA ? "Demo only. No payment is taken in this preview." : "Payments aren’t live yet."}</p>
     </Glass>
   );
 }

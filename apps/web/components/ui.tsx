@@ -4,6 +4,7 @@ import { Icon } from "./Icon";
 import { useTier } from "./useTier";
 import { Amount } from "./Privacy";
 import { PRICE_TEXT, type FeatureId } from "@/lib/entitlements";
+import { IS_BETA } from "@/lib/edition";
 import { pctMasked } from "@/lib/privacy";
 
 export function Glass({ children, className = "", as: Tag = "section", style }: {
@@ -79,8 +80,8 @@ export function PremiumGate({ children, feature, id }: { children: React.ReactNo
           <h3>{feature} is part of Premium</h3>
           <p className="muted">Unlock the full picture: debt planner, credit, investments, rewards, unlimited budgets and history.</p>
           <p className="price" data-lk-price><strong>{PRICE_TEXT.yearly}</strong>/year <span className="muted">(≈{PRICE_TEXT.yearlyPerMonth}/month)</span> · or <strong>{PRICE_TEXT.monthly}</strong>/month</p>
-          <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
-          <p className="tiny muted">Demo only. No payment is taken in this preview.</p>
+          {IS_BETA && <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>}
+          <p className="tiny muted">{IS_BETA ? "Demo only. No payment is taken in this preview." : "Payments aren’t live yet."}</p>
         </Glass>
       </div>
     </div>

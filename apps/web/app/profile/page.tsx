@@ -16,6 +16,7 @@ import { FEATURES, FREE_BILL_OF_RIGHTS, PRICE_TEXT, premiumFeatures } from "@/li
 import { formatDate } from "@/lib/format";
 import { renewsOn, saveProfile, useProfile } from "@/lib/profile";
 import { loadUpsell, markShown, mayShow, snooze, storeUpsell } from "@/lib/upsell";
+import { IS_BETA } from "@/lib/edition";
 
 const UPSELL_ID = "profile.card";
 
@@ -131,10 +132,12 @@ export default function ProfilePage() {
                 <div className="price-main" data-lk-price>{PRICE_TEXT.yearly}/year<small>≈{PRICE_TEXT.yearlyPerMonth}/month</small></div>
                 <div className="muted" data-lk-price>or {PRICE_TEXT.monthly}/month. Renews automatically; cancel anytime in your store settings.</div>
               </div>
-              <div className="row-actions">
-                <button className="btn primary" onClick={startPremium}>Preview Premium (demo)</button>
-              </div>
-              <p className="tiny muted">Payments aren’t live yet. This preview unlocks Premium on this device only, and no payment is taken.</p>
+              {IS_BETA && (
+                <div className="row-actions">
+                  <button className="btn primary" onClick={startPremium}>Preview Premium (demo)</button>
+                </div>
+              )}
+              <p className="tiny muted">{IS_BETA ? "Payments aren’t live yet. This preview unlocks Premium on this device only, and no payment is taken." : "Payments aren’t live yet. Premium stays locked on this site."}</p>
               <div className="legal"><a href="https://lakshly.com/privacy.html" rel="noopener">Privacy</a><span className="muted">Terms: coming with payments</span><span className="muted">Family Sharing: planned on Apple</span></div>
             </div>
           )}
