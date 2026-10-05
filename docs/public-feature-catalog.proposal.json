@@ -2,7 +2,7 @@
   "proposalVersion": 1,
   "kind": "public-feature-review-inventory",
   "status": "pending-owner-approval",
-  "sourceCommit": "2d79390e04196acc98ac67eb3be27004bcd64914",
+  "sourceCommit": "779f9130e80adce66a1825212756d5f0acc8e677",
   "runtimeEvidence": "not-reverified",
   "privateSuiteEvidence": "not-inspected",
   "legacyCatalog": {
@@ -44,7 +44,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented: `apps/web/components/Shell.tsx:20` declares Overview/Spend/Budget/History routes; `:35` mobile core routes. No explicit gate for this ID. Real source views: `apps/web/app/page.tsx:18`, `app/spend/page.tsx:14`, `app/budget/page.tsx:11`, `app/history/page.tsx:9`.",
+          "notes": "Implemented: `apps/web/components/Shell.tsx:20` declares Overview/Spend/Budget/History routes; `:37` mobile core routes. No explicit gate for this ID. Real source views: `apps/web/app/page.tsx:19`, `app/spend/page.tsx:14`, `app/budget/page.tsx:11`, `app/history/page.tsx:15`. New Owed and Ask navigation entries at `apps/web/components/Shell.tsx:27` and `apps/web/components/Shell.tsx:32` have no matching shared catalog IDs. TodayCard is a composition surface rather than an OS widget.",
           "evidence": [
             {
               "path": "apps/web/components/Shell.tsx",
@@ -202,12 +202,32 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented, bounded threat model: `apps/web/lib/vault.ts:47` creates nonextractable AES-GCM256 key; `:52` encrypts dataset, `:69` named records. `:3` states casual browser-profile protection, not protection from origin code. No ID gate.",
+          "notes": "Implemented cryptographic source: `apps/web/lib/vault.ts:23` holds an unlocked session key; the default nonextractable key is at `apps/web/lib/vault.ts:108`, dataset AES-GCM encryption at `apps/web/lib/vault.ts:116`, and record encryption at `apps/web/lib/vault.ts:133`. Optional passphrase wrapping uses PBKDF2/SHA256 at `apps/web/lib/vault-lock.ts:26`, wrapping at `apps/web/lib/vault-lock.ts:38` and nonextractable unwrapping at `apps/web/lib/vault-lock.ts:47`. The origin-code limitation remains at `apps/web/lib/vault.ts:5`. Enabling lock reencrypts sequentially at `apps/web/lib/vault.ts:64`, stores the lock at `apps/web/lib/vault.ts:84` and deletes the key in a separate transaction at `apps/web/lib/vault.ts:85`; atomic migration/recovery and all-sensitive-memory protection are not established. Cryptographic source presence is not an audited security guarantee.",
           "evidence": [
             {
               "path": "apps/web/lib/vault.ts",
-              "line": 47,
+              "line": 108,
               "needle": "const k = await crypto.subtle.generateKey({ name: \"AES-GCM\", length: 256 }, false, [\"encrypt\", \"decrypt\"]);"
+            },
+            {
+              "path": "apps/web/lib/vault.ts",
+              "line": 116,
+              "needle": "const ct = await crypto.subtle.encrypt({ name: \"AES-GCM\", iv }, await key(), plain);"
+            },
+            {
+              "path": "apps/web/lib/vault.ts",
+              "line": 133,
+              "needle": "const ct = await crypto.subtle.encrypt({ name: \"AES-GCM\", iv }, await key(), plain);"
+            },
+            {
+              "path": "apps/web/lib/vault-lock.ts",
+              "line": 26,
+              "needle": "async function derive(passphrase: string, salt: Uint8Array, iterations: number): Promise<CryptoKey> {"
+            },
+            {
+              "path": "apps/web/lib/vault.ts",
+              "line": 5,
+              "needle": "// browser profile; it does not protect against code running on this origin."
             }
           ],
           "releaseProposal": {
@@ -280,13 +300,38 @@
       "freeRight": true,
       "platforms": {
         "web": {
-          "sourceStatus": "sourceStub",
-          "notes": "Stub/planned: `apps/web/lib/vault.ts:4` explicitly says passphrase lock is planned. Catalog assertion `packages/shared/entitlements.json:13`; no app-lock implementation found in scoped Web source.",
+          "sourceStatus": "sourcePartial",
+          "notes": "Partial imported-vault lock: `apps/web/components/VaultLock.tsx:43` describes passphrase-wrapped imported data; enabling and locking are implemented at `apps/web/lib/vault.ts:77` and `apps/web/lib/vault.ts:98`. `apps/web/components/DataState.tsx:79` clears loaded imported UserData, while `apps/web/components/DataState.tsx:170` permits demo before the locked gate at `apps/web/components/DataState.tsx:171`. Demo, profile and navigation remain accessible. Whole-app locking, clearing already-loaded sensitive Setup/Review/Game provider state, atomic migration/recovery and security readiness are not established. Retain partial/hold under the declared App lock label.",
           "evidence": [
             {
+              "path": "apps/web/components/VaultLock.tsx",
+              "line": 43,
+              "needle": "<p className=\"muted\">A passphrase wraps the key for your imported data. The demo stays available. The passphrase is never stored or sent.</p>"
+            },
+            {
               "path": "apps/web/lib/vault.ts",
-              "line": 4,
-              "needle": "// browser profile; it does not protect against code running on this origin. A passphrase lock is a"
+              "line": 77,
+              "needle": "export async function enableVaultLock(passphrase: string): Promise<void> {"
+            },
+            {
+              "path": "apps/web/lib/vault.ts",
+              "line": 98,
+              "needle": "export function lockVaultNow(): void {"
+            },
+            {
+              "path": "apps/web/components/DataState.tsx",
+              "line": 79,
+              "needle": "const onLock = () => { setUser(null); setVaultLocked(true); };"
+            },
+            {
+              "path": "apps/web/components/DataState.tsx",
+              "line": 170,
+              "needle": "if (d.source === \"demo\") return <>{children}</>;"
+            },
+            {
+              "path": "apps/web/components/DataState.tsx",
+              "line": 171,
+              "needle": "if (d.vaultLocked) return ("
             }
           ],
           "releaseProposal": {
@@ -360,8 +405,23 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented, deletion caveat: `apps/web/app/import/page.tsx:57` confirmation UI; `apps/web/components/DataState.tsx:119` calls deleteVault and clears state. `apps/web/lib/vault.ts:96` resolves `onblocked` before successful database deletion, so guaranteed deletion under blocked IDB remains unverified. No ID gate.",
+          "notes": "Implemented deletion source with blocked-delete caveat: `apps/web/lib/vault.ts:153` defines deletion, but `apps/web/lib/vault.ts:157` resolves on blocked deletion. Provider clearing/deletion calls are at `apps/web/components/DataState.tsx:137` and `apps/web/components/DataState.tsx:138`; import confirmation remains at `apps/web/app/import/page.tsx:57`. Guaranteed erasure and lock/session-key interactions are not independently verified.",
           "evidence": [
+            {
+              "path": "apps/web/lib/vault.ts",
+              "line": 153,
+              "needle": "export function deleteVault(): Promise<void> {"
+            },
+            {
+              "path": "apps/web/lib/vault.ts",
+              "line": 157,
+              "needle": "req.onblocked = () => resolve();"
+            },
+            {
+              "path": "apps/web/components/DataState.tsx",
+              "line": 137,
+              "needle": "const deleteAll = useCallback(async () => {"
+            },
             {
               "path": "apps/web/app/import/page.tsx",
               "line": 57,
@@ -438,24 +498,44 @@
       "freeRight": true,
       "platforms": {
         "web": {
-          "sourceStatus": "notFoundInAudit",
-          "notes": "No evidence: Catalog at `packages/shared/entitlements.json:15`. No financial dataset export flow in bounded Web app/components/lib scan; badge PNG export is a separate feature. Bounded absence in the public source audit; the catalog anchor is a declaration, not implementation evidence. Private/external implementations and deployed behavior were not inspected.",
+          "sourceStatus": "sourceImplemented",
+          "notes": "Implemented for the active books: gated profile action at `apps/web/app/profile/page.tsx:146` downloads dataset JSON at `apps/web/app/profile/page.tsx:151` and transactions CSV at `apps/web/app/profile/page.tsx:152`; browser save is at `apps/web/app/profile/page.tsx:57`. Exporters at `apps/web/lib/export.ts:4` and `apps/web/lib/export.ts:15` serialize the active dataset and transaction rows with paise, including demo when active. This is not a complete vault/UserData backup: separately stored holdings, statement metadata, import logs, goals/profile/review/game records are not included by datasetJson(dataset). Restoration round-trip UI/runtime behavior is not established.",
           "evidence": [
             {
-              "path": "packages/shared/entitlements.json",
+              "path": "apps/web/lib/export.ts",
+              "line": 4,
+              "needle": "export function datasetJson(dataset: LakshlyDataset): string {"
+            },
+            {
+              "path": "apps/web/lib/export.ts",
               "line": 15,
-              "needle": "\"data.export\":"
+              "needle": "export function transactionsCsv(transactions: Transaction[]): string {"
+            },
+            {
+              "path": "apps/web/app/profile/page.tsx",
+              "line": 146,
+              "needle": "{can(\"data.export\") && ("
+            },
+            {
+              "path": "apps/web/app/profile/page.tsx",
+              "line": 151,
+              "needle": "<button className=\"btn primary\" type=\"button\" onClick={() => saveFile(exportFilename(\"json\", todayIso()), datasetJson(dataset), \"application/json\")}>Download JSON</button>"
+            },
+            {
+              "path": "apps/web/app/profile/page.tsx",
+              "line": 152,
+              "needle": "<button className=\"btn ghost\" type=\"button\" onClick={() => saveFile(exportFilename(\"csv\", todayIso()), transactionsCsv(dataset.transactions), \"text/csv\")}>Download transactions CSV</button>"
             }
           ],
           "releaseProposal": {
             "beta": {
-              "suggestion": "holdForImplementationOrScopeDecision",
-              "rationale": "Implementation is partial, stubbed, or absent in the bounded audit; resolve implementation/scope and collect release evidence first.",
+              "suggestion": "evidenceReviewCandidate",
+              "rationale": "Concrete source exists only within the qualified scope in this observation; runtime, security, purchase/device and channel release evidence still require review.",
               "approval": "pending"
             },
             "stable": {
-              "suggestion": "holdForImplementationOrScopeDecision",
-              "rationale": "Implementation is partial, stubbed, or absent in the bounded audit; resolve implementation/scope and collect release evidence first.",
+              "suggestion": "evidenceReviewCandidate",
+              "rationale": "Concrete source exists only within the qualified scope in this observation; runtime, security, purchase/device and channel release evidence still require review.",
               "approval": "pending"
             }
           }
@@ -518,7 +598,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented: `apps/web/components/ThemeSwitcher.tsx:51`, `:130`, `:165` consume gate for theme choice; Beta mood picker also consumes it at `components/ThemeV2.tsx:130`. Catalog \u201c3 extra themes\u201d label does not fully describe Beta ThemeV2 scope.",
+          "notes": "Implemented: `apps/web/components/ThemeSwitcher.tsx:51`, `:130`, `:165` consume gate for theme choice; Beta mood picker also consumes it at `components/ThemeV2.tsx:177`. Catalog \u201c3 extra themes\u201d label does not fully describe Beta ThemeV2 scope. The newer glass slider at `apps/web/components/ThemeV2.tsx:141` is a separate local preference with reduced-transparency disabling at `apps/web/components/ThemeV2.tsx:152`; no Premium entitlement rule is demonstrated for that slider.",
           "evidence": [
             {
               "path": "apps/web/components/ThemeSwitcher.tsx",
@@ -601,11 +681,11 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourcePartial",
-          "notes": "Partial: Catalog `packages/shared/entitlements.json:17` defines Free1/Premium unlimited; no runtime `limit` consumer for this ID. `apps/web/components/DataState.tsx:98` saves/replaces a month\u2019s lines without budget-count validation.",
+          "notes": "Partial: Catalog `packages/shared/entitlements.json:17` defines Free1/Premium unlimited; no runtime `limit` consumer for this ID. `apps/web/components/DataState.tsx:116` saves/replaces a month\u2019s lines without budget-count validation. Repeating monthly plan selection at `apps/web/lib/selectors.ts:219` uses an existing monthly set until changed; it does not resolve one-budget grouping/count semantics or enforce a count.",
           "evidence": [
             {
               "path": "apps/web/components/DataState.tsx",
-              "line": 98,
+              "line": 116,
               "needle": "const saveBudgets = useCallback(async (month: string, lines: { category: Budget[\"category\"]; limit: number }[]) => {"
             }
           ],
@@ -684,7 +764,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented UI allowance; persistence gap: `apps/web/app/budget/page.tsx:16` reads allowance and `:23` slices visible lines. Setup reads it at `app/setup/page.tsx:581`, uses maxLines in suggestions `:587`, addition `:592`. `DataState.tsx:98` persistence itself does not validate cap.",
+          "notes": "Implemented UI allowance; persistence gap: `apps/web/app/budget/page.tsx:16` reads allowance and `:23` slices visible lines. Setup reads it at `app/setup/page.tsx:581`, uses maxLines in suggestions `:587`, addition `:592`. `DataState.tsx:116` persistence itself does not validate cap.",
           "evidence": [
             {
               "path": "apps/web/app/budget/page.tsx",
@@ -767,12 +847,27 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourcePartial",
-          "notes": "Partial/display-only allowance: `apps/web/app/history/page.tsx:12` reads limit; `:20` describes 12months/unlimited. `:14` balanceHistory and `:15` cashflow use all transactions; no cap applied to visible data or retention.",
+          "notes": "Partial chart allowance: `apps/web/app/history/page.tsx:18` reads the limit and `apps/web/app/history/page.tsx:23` slices only returned net-worth chart points. `apps/web/lib/selectors.ts:55` computes that history from transaction-month keys iterated at `apps/web/lib/selectors.ts:66`; the observed unit is last N returned transaction-month points, not guaranteed trailing N calendar months. Savings balance history at `apps/web/app/history/page.tsx:20` and cashflow at `apps/web/app/history/page.tsx:21` still use all transactions. No general history window or retention cap is established; imported history is not deleted by this code.",
           "evidence": [
             {
               "path": "apps/web/app/history/page.tsx",
-              "line": 12,
+              "line": 18,
               "needle": "const months = limit(\"history.full\");"
+            },
+            {
+              "path": "apps/web/app/history/page.tsx",
+              "line": 23,
+              "needle": "const worth = (months === null ? netWorthHistory(accounts, transactions) : netWorthHistory(accounts, transactions).slice(-months))"
+            },
+            {
+              "path": "apps/web/app/history/page.tsx",
+              "line": 20,
+              "needle": "const hist = balanceHistory(savings, transactions).map((p) => ({ ...p, label: formatDate(p.date).replace(/ \\d{4}$/, \"\") }));"
+            },
+            {
+              "path": "apps/web/app/history/page.tsx",
+              "line": 21,
+              "needle": "const flow = monthlyCashflow(transactions);"
             }
           ],
           "releaseProposal": {
@@ -925,12 +1020,17 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented: `apps/web/app/credit/page.tsx:16` derives cards; `:20` explicit PremiumGate; `:28` utilisation and `:42` statement/due dates. Navigation gate `Shell.tsx:27`.",
+          "notes": "Implemented: `apps/web/app/credit/page.tsx:16` derives cards; `:20` explicit PremiumGate; `:28` utilisation and `:42` statement/due dates. Navigation gate `Shell.tsx:28`. Premium in-app card-payment reminder consumes this existing gate at `apps/web/components/CardDueReminder.tsx:47`; due filtering is at `apps/web/components/CardDueReminder.tsx:54` and seven-day snooze at `apps/web/components/CardDueReminder.tsx:71`. The window is zero through three days under `apps/web/lib/card-due.ts:3`. No payment execution, push or runtime delivery assurance.",
           "evidence": [
             {
               "path": "apps/web/app/credit/page.tsx",
               "line": 16,
               "needle": "const cards = creditCards(accounts);"
+            },
+            {
+              "path": "apps/web/components/CardDueReminder.tsx",
+              "line": 47,
+              "needle": "if (!can(\"credit.insights\") || snap.snoozed) return null;"
             }
           ],
           "releaseProposal": {
@@ -1004,7 +1104,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented, dataset limitations: `apps/web/app/investments/page.tsx:12` accounts-based holdings; `:15` SIP projections; `:26` explicit PremiumGate. `:78` DataGate asks for SIP/mutual-fund evidence; depository-only holdings support is not established by this page. Navigation gate `Shell.tsx:28`.",
+          "notes": "Implemented, dataset limitations: `apps/web/app/investments/page.tsx:12` accounts-based holdings; `:15` SIP projections; `:26` explicit PremiumGate. `:78` DataGate asks for SIP/mutual-fund evidence; depository-only holdings support is not established by this page. Navigation gate `Shell.tsx:29`.",
           "evidence": [
             {
               "path": "apps/web/app/investments/page.tsx",
@@ -1083,7 +1183,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented tracking view: `apps/web/app/rewards/page.tsx:7` reward dataset; `:12` explicit PremiumGate; balances/value/expiry `:19`. `:23` promises expiry nudge; actual general nudge candidate generation is separate `components/Game.tsx:103`. Navigation gate `Shell.tsx:29`.",
+          "notes": "Implemented tracking view: `apps/web/app/rewards/page.tsx:7` reward dataset; `:12` explicit PremiumGate; balances/value/expiry `:19`. `:23` promises expiry nudge; actual general nudge candidate generation is separate `components/Game.tsx:103`. Navigation gate `Shell.tsx:30`.",
           "evidence": [
             {
               "path": "apps/web/app/rewards/page.tsx",
@@ -1639,24 +1739,39 @@
       "freeRight": false,
       "platforms": {
         "web": {
-          "sourceStatus": "notFoundInAudit",
-          "notes": "No evidence beyond catalog: `packages/shared/entitlements.json:30`; source has health statuses, but no consumer/scheduler for this ID in bounded Web source. Bounded absence in the public source audit; the catalog anchor is a declaration, not implementation evidence. Private/external implementations and deployed behavior were not inspected.",
+          "sourceStatus": "sourceImplemented",
+          "notes": "Implemented Premium in-app cadence notice: gate and due selection at `apps/web/components/FreshnessReminder.tsx:43` and `apps/web/components/FreshnessReminder.tsx:44`, with selection helper at `apps/web/lib/setup.ts:335`. Mounted through `apps/web/components/TodayCard.tsx:36` on Overview at `apps/web/app/page.tsx:36`. Seven-day Not now snooze is at `apps/web/components/FreshnessReminder.tsx:74`; optional foreground check at `apps/web/components/FreshnessReminder.tsx:66` uses an already connected Gmail tab. No push/background scheduler, new mailbox authority, notification delivery, or runtime release readiness is established.",
           "evidence": [
             {
-              "path": "packages/shared/entitlements.json",
-              "line": 30,
-              "needle": "\"setup.freshnessReminders\":"
+              "path": "apps/web/components/FreshnessReminder.tsx",
+              "line": 43,
+              "needle": "if (!can(\"setup.freshnessReminders\") || clock.snoozed) return null;"
+            },
+            {
+              "path": "apps/web/components/FreshnessReminder.tsx",
+              "line": 44,
+              "needle": "const due = dueStatements(importTargets(state), state.progress, clock.today);"
+            },
+            {
+              "path": "apps/web/lib/setup.ts",
+              "line": 335,
+              "needle": "export function dueStatements("
+            },
+            {
+              "path": "apps/web/components/TodayCard.tsx",
+              "line": 36,
+              "needle": "{fresh && <FreshnessReminder row />}"
             }
           ],
           "releaseProposal": {
             "beta": {
-              "suggestion": "holdForImplementationOrScopeDecision",
-              "rationale": "Implementation is partial, stubbed, or absent in the bounded audit; resolve implementation/scope and collect release evidence first.",
+              "suggestion": "evidenceReviewCandidate",
+              "rationale": "Concrete source exists only within the qualified scope in this observation; runtime, security, purchase/device and channel release evidence still require review.",
               "approval": "pending"
             },
             "stable": {
-              "suggestion": "holdForImplementationOrScopeDecision",
-              "rationale": "Implementation is partial, stubbed, or absent in the bounded audit; resolve implementation/scope and collect release evidence first.",
+              "suggestion": "evidenceReviewCandidate",
+              "rationale": "Concrete source exists only within the qualified scope in this observation; runtime, security, purchase/device and channel release evidence still require review.",
               "approval": "pending"
             }
           }
@@ -1723,12 +1838,27 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourcePartial",
-          "notes": "Partial, foreground read-only Gmail: `apps/web/components/GoogleConnect.tsx:101` requests/validates Gmail access; `:169` user-triggered search, `:175` download/import. Availability determined by `apps/web/lib/edition.ts:11` Beta or explicit Gmail flag and setup `:322`; no tier/mailbox quota consumer. UI fallback calls automatic sync coming soon at setup `:323`. This is not automatic background sync.",
+          "notes": "Partial foreground/manual read-only Gmail search/import: `apps/web/components/GoogleConnect.tsx:101` connects and `apps/web/components/GoogleConnect.tsx:178` searches. Same-tab checking at `apps/web/components/GoogleConnect.tsx:156` requires an existing token/client at `apps/web/components/GoogleConnect.tsx:157`; disconnect clears memory/revokes at `apps/web/components/GoogleConnect.tsx:144` and closes consent at `apps/web/components/GoogleConnect.tsx:239`. Availability at `apps/web/lib/edition.ts:18` is Beta or an explicit flag. No connected-mailbox count guard, automatic/background sync, verified billing or private authority is established.",
           "evidence": [
             {
               "path": "apps/web/components/GoogleConnect.tsx",
               "line": 101,
               "needle": "export async function connectGmail(loginHint: string | undefined, picked: readonly string[], opts: { consent?: boolean } = {}): Promise<void> {"
+            },
+            {
+              "path": "apps/web/components/GoogleConnect.tsx",
+              "line": 178,
+              "needle": "async function find() {"
+            },
+            {
+              "path": "apps/web/components/GoogleConnect.tsx",
+              "line": 156,
+              "needle": "export async function checkConnectedMailbox(): Promise<{ connected: false } | { connected: true; found: number }> {"
+            },
+            {
+              "path": "apps/web/lib/edition.ts",
+              "line": 18,
+              "needle": "export const GMAIL_CONNECT = IS_BETA || process.env.NEXT_PUBLIC_LAKSHLY_GMAIL === \"1\";"
             }
           ],
           "releaseProposal": {
@@ -1960,7 +2090,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "notFoundInAudit",
-          "notes": "No evidence beyond catalog: `packages/shared/entitlements.json:34`. Foreground Gmail token expires with closing tab per `apps/web/components/GoogleConnect.tsx:218`; no Web background scheduler in scoped source. Bounded absence in the public source audit; the catalog anchor is a declaration, not implementation evidence. Private/external implementations and deployed behavior were not inspected.",
+          "notes": "No evidence beyond catalog: `packages/shared/entitlements.json:34`. Foreground Gmail token expires with closing tab per `apps/web/components/GoogleConnect.tsx:225`; no Web background scheduler in scoped source. Bounded absence in the public source audit; the catalog anchor is a declaration, not implementation evidence. Private/external implementations and deployed behavior were not inspected.",
           "evidence": [
             {
               "path": "packages/shared/entitlements.json",
@@ -2355,11 +2485,11 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented: `apps/web/lib/review.ts:158` buildInbox; `apps/web/app/review/page.tsx:281` renders rows/actions; persisted provider `components/useReview.ts:64`. No ID gate.",
+          "notes": "Implemented: `apps/web/lib/review.ts:170` buildInbox; `apps/web/app/review/page.tsx:282` renders rows/actions; persisted provider `components/useReview.ts:64`. No ID gate.",
           "evidence": [
             {
               "path": "apps/web/lib/review.ts",
-              "line": 158,
+              "line": 170,
               "needle": "export function buildInbox(txns: readonly ReviewTxn[], state: ReviewState, now: Date, opts: InboxOptions = {}): Inbox {"
             }
           ],
@@ -2437,7 +2567,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented: `apps/web/app/review/page.tsx:67` remember checkbox; `:225` dispatch; `apps/web/lib/review.ts:248` stores rule, `:139` suggestion reads rules. No quota consumer; existing allowance unlimited.",
+          "notes": "Implemented: `apps/web/app/review/page.tsx:67` remember checkbox; `:225` dispatch; `apps/web/lib/review.ts:278` stores rule, `:151` suggestion reads rules. No quota consumer; existing allowance unlimited.",
           "evidence": [
             {
               "path": "apps/web/app/review/page.tsx",
@@ -2516,12 +2646,27 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented in-app only: `apps/web/app/review/page.tsx:226` persisted toggle; `:328` explicitly no notifications. SundayBanner at `components/ReviewParts.tsx:47` checks Sunday after17h/inbox. No ID gate.",
+          "notes": "Implemented in-app Sunday review: `apps/web/lib/review.ts:203` defines the stored preference with default-on unless false at `apps/web/lib/review.ts:204`. `apps/web/lib/review.ts:214` and `apps/web/lib/review.ts:215` require local Sunday, pending inbox items, enabled preference and no snooze, without an evening-hour restriction. The gate is at `apps/web/components/ReviewParts.tsx:75`, seven-day snooze at `apps/web/components/ReviewParts.tsx:67`, and Today rendering at `apps/web/components/TodayCard.tsx:19`. No push/notification delivery or runtime verification.",
           "evidence": [
             {
-              "path": "apps/web/app/review/page.tsx",
-              "line": 226,
-              "needle": "const setReminder = (on: boolean) => { localStorage.setItem(PREFS_KEY, JSON.stringify({ ...prefs, reminder: on })); window.dispatchEvent(new Event(\"lk-review-prefs\")); };"
+              "path": "apps/web/lib/review.ts",
+              "line": 203,
+              "needle": "export function sundayReminderOn(stored: unknown): boolean {"
+            },
+            {
+              "path": "apps/web/lib/review.ts",
+              "line": 215,
+              "needle": "return day === 0 && count > 0 && enabled && !snoozed;"
+            },
+            {
+              "path": "apps/web/components/ReviewParts.tsx",
+              "line": 75,
+              "needle": "if (!can(\"review.reminder\") || !showSundayReminder(snap.day, review.inbox.count, snap.enabled, snap.snoozed)) return null;"
+            },
+            {
+              "path": "apps/web/components/TodayCard.tsx",
+              "line": 19,
+              "needle": "{sunday && <SundayBanner row />}"
             }
           ],
           "releaseProposal": {
@@ -2595,7 +2740,7 @@
       "platforms": {
         "web": {
           "sourceStatus": "notFoundInAudit",
-          "notes": "No Web widget evidence: Catalog `packages/shared/entitlements.json:42`. In-app navigation count badge `apps/web/components/ReviewParts.tsx:11` exists; do not equate it to OS/home-screen widget. Bounded absence in the public source audit; the catalog anchor is a declaration, not implementation evidence. Private/external implementations and deployed behavior were not inspected.",
+          "notes": "No Web widget evidence: Catalog `packages/shared/entitlements.json:42`. In-app navigation count badge `apps/web/components/ReviewParts.tsx:12` exists; do not equate it to OS/home-screen widget. Bounded absence in the public source audit; the catalog anchor is a declaration, not implementation evidence. Private/external implementations and deployed behavior were not inspected.",
           "evidence": [
             {
               "path": "packages/shared/entitlements.json",
@@ -2674,12 +2819,22 @@
       "platforms": {
         "web": {
           "sourceStatus": "sourceImplemented",
-          "notes": "Implemented: `apps/web/app/review/page.tsx:33` thumb chips, `:181` action; `apps/web/lib/review.ts:266` persists rating; monthly ratio `:352`; display `components/ReviewParts.tsx:63`. No ID gate.",
+          "notes": "Implemented rating feature: thumbs UI at `apps/web/app/review/page.tsx:33`, rating action at `apps/web/lib/review.ts:296` and ratio computation at `apps/web/lib/review.ts:392`; WorthItCard is at `apps/web/components/ReviewParts.tsx:126`. The newer three-day wait quest at `apps/web/components/ReviewParts.tsx:158` is separate from the rating entitlement; other quest kinds remain coming soon at `apps/web/components/ReviewParts.tsx:161`.",
           "evidence": [
             {
               "path": "apps/web/app/review/page.tsx",
               "line": 33,
               "needle": "function WorthChips({ id, worth, onRate }: { id: string; worth?: Worth; onRate: (id: string, w: Worth | null) => void }) {"
+            },
+            {
+              "path": "apps/web/lib/review.ts",
+              "line": 296,
+              "needle": "if (action.worth) state.worth[action.tx] = action.worth;"
+            },
+            {
+              "path": "apps/web/components/ReviewParts.tsx",
+              "line": 126,
+              "needle": "export function WorthItCard({ compact = false }: { compact?: boolean }) {"
             }
           ],
           "releaseProposal": {
@@ -3868,11 +4023,11 @@
         "web": {
           "observedUnit": "Monthly budget grouping is unsettled",
           "enforcement": "noGuardFound",
-          "notes": "Month/category lines are retained across months; no budget-count limit consumer or save guard was found.",
+          "notes": "Month/category lines are retained across months; no budget-count limit consumer or save guard was found. Monthly plans repeat via `apps/web/lib/selectors.ts:219`; no budget-count guard is established.",
           "evidence": [
             {
               "path": "apps/web/components/DataState.tsx",
-              "line": 98,
+              "line": 116,
               "needle": "const saveBudgets = useCallback(async (month: string, lines: { category: Budget[\"category\"]; limit: number }[]) => {"
             }
           ]
@@ -3938,7 +4093,7 @@
             },
             {
               "path": "apps/web/components/DataState.tsx",
-              "line": 98,
+              "line": 116,
               "needle": "const saveBudgets = useCallback(async (month: string, lines: { category: Budget[\"category\"]; limit: number }[]) => {"
             }
           ]
@@ -3992,19 +4147,29 @@
       "proposedUnit": "Pending: calendar window versus display versus retention",
       "platformObservations": {
         "web": {
-          "observedUnit": "UI label: months; no applied window",
-          "enforcement": "noGuardFound",
-          "notes": "Free 12/Premium unlimited text exists, but all transactions feed history without display or retention cap.",
+          "observedUnit": "Last returned transaction-month points for the net-worth chart only.",
+          "enforcement": "sourceUIOnly",
+          "notes": "Partial chart allowance: `apps/web/app/history/page.tsx:18` reads the limit and `apps/web/app/history/page.tsx:23` slices only returned net-worth chart points. `apps/web/lib/selectors.ts:55` computes that history from transaction-month keys iterated at `apps/web/lib/selectors.ts:66`; the observed unit is last N returned transaction-month points, not guaranteed trailing N calendar months. Savings balance history at `apps/web/app/history/page.tsx:20` and cashflow at `apps/web/app/history/page.tsx:21` still use all transactions. No general history window or retention cap is established; imported history is not deleted by this code.",
           "evidence": [
             {
               "path": "apps/web/app/history/page.tsx",
-              "line": 12,
+              "line": 18,
               "needle": "const months = limit(\"history.full\");"
             },
             {
               "path": "apps/web/app/history/page.tsx",
-              "line": 14,
+              "line": 23,
+              "needle": "const worth = (months === null ? netWorthHistory(accounts, transactions) : netWorthHistory(accounts, transactions).slice(-months))"
+            },
+            {
+              "path": "apps/web/app/history/page.tsx",
+              "line": 20,
               "needle": "const hist = balanceHistory(savings, transactions).map((p) => ({ ...p, label: formatDate(p.date).replace(/ \\d{4}$/, \"\") }));"
+            },
+            {
+              "path": "apps/web/app/history/page.tsx",
+              "line": 21,
+              "needle": "const flow = monthlyCashflow(transactions);"
             }
           ]
         },
@@ -4144,7 +4309,7 @@
             },
             {
               "path": "apps/web/components/GoogleConnect.tsx",
-              "line": 169,
+              "line": 178,
               "needle": "async function find() {"
             }
           ]
@@ -4215,7 +4380,7 @@
           "evidence": [
             {
               "path": "apps/web/lib/review.ts",
-              "line": 248,
+              "line": 278,
               "needle": "if (action.rememberMerchant) state.merchantRules[merchantKey(row.tx)] = { category: action.category, nwv: action.nwv };"
             },
             {

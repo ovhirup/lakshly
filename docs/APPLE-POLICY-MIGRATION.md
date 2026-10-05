@@ -1,7 +1,10 @@
 # Apple policy migration: separately gated stages
 
 This is a future migration proposal based on public source at
-[`2d79390e04196acc98ac67eb3be27004bcd64914`](https://github.com/ovhirup/lakshly/tree/2d79390e04196acc98ac67eb3be27004bcd64914).
+[`779f9130e80adce66a1825212756d5f0acc8e677`](https://github.com/ovhirup/lakshly/tree/779f9130e80adce66a1825212756d5f0acc8e677).
+Web observations were refreshed from `2d79390` to this pin. Apple sources and
+shared legacy declarations are unchanged between those pins; native observations
+and pending policy decisions remain preserved.
 No current helper replacement, policy activation, purchase adapter, native release,
 private inspection or app launch is included. The [catalog inventory](PUBLIC-FEATURE-CATALOG.md)
 records 43 feature declarations, 19 Apple aliases and six quota reviews; all 258

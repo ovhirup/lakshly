@@ -1,8 +1,11 @@
 # Public feature catalog: review proposal
 
 This proposal inventories public source at pinned commit
-[`2d79390e04196acc98ac67eb3be27004bcd64914`](https://github.com/ovhirup/lakshly/tree/2d79390e04196acc98ac67eb3be27004bcd64914).
-It changes no app, helper, shared catalog, feature policy, or release eligibility.
+[`779f9130e80adce66a1825212756d5f0acc8e677`](https://github.com/ovhirup/lakshly/tree/779f9130e80adce66a1825212756d5f0acc8e677).
+This refresh moves the evidence snapshot from `2d79390` to `779f913` after a bounded
+Web delta audit. Apple sources and the shared legacy catalog/schema are unchanged
+between those pins. The proposal branch was not merged or rebased to newer app
+source. It changes no app, helper, shared catalog, feature policy, or release eligibility.
 The [JSON review inventory](public-feature-catalog.proposal.json) preserves every
 legacy feature object and its optional raw keys. It is not an executable policy.
 
@@ -12,7 +15,8 @@ form-factor adaptations: setup is full screen on iPhone and a separate Mac windo
 widgets, menus, alternate icons and Live Activities have separate platform paths.
 This does not prove runtime or visual parity. Runtime evidence was not reverified;
 private source/authentication, external implementations and deployed environment
-state were not inspected. Unmerged Cursor drafts are outside this pinned inventory.
+state were not inspected. Source merged at the new pin is included; later or
+unmerged work remains outside this fixed inventory.
 
 There are three separate questions: **declared access**, **source implementation**,
 and **release approval**. Eleven Free rights and finite allowances remain declared
@@ -36,9 +40,9 @@ records are introduced in this inventory.
 | core.tabs | free | yes | sourceImplemented | sourceImplemented | sourceImplemented | pending / pending on all platforms |
 | import.statements | free | yes | sourceImplemented | sourceImplemented | sourceImplemented | pending / pending on all platforms |
 | security.encryption | free | yes | sourceImplemented | sourceImplemented | sourceImplemented | pending / pending on all platforms |
-| security.lock | free | yes | sourceStub | sourceImplemented | sourceImplemented | pending / pending on all platforms |
+| security.lock | free | yes | sourcePartial | sourceImplemented | sourceImplemented | pending / pending on all platforms |
 | data.delete | free | yes | sourceImplemented | sourceImplemented | sourceImplemented | pending / pending on all platforms |
-| data.export | free | yes | notFoundInAudit | notFoundInAudit | notFoundInAudit | pending / pending on all platforms |
+| data.export | free | yes | sourceImplemented | notFoundInAudit | notFoundInAudit | pending / pending on all platforms |
 | themes.premium | premium | no | sourceImplemented | sourceImplemented | sourceImplemented | pending / pending on all platforms |
 | budgets.unlimited | premium | no | sourcePartial | sourcePartial | sourcePartial | pending / pending on all platforms |
 | budgets.lines | free | no | sourceImplemented | sourcePartial | sourcePartial | pending / pending on all platforms |
@@ -53,7 +57,7 @@ records are introduced in this inventory.
 | setup.extraEmails | free | no | sourceImplemented | sourcePartial | sourcePartial | pending / pending on all platforms |
 | setup.suggestions | free | no | sourceImplemented | sourceImplemented | sourceImplemented | pending / pending on all platforms |
 | setup.health | free | no | sourceImplemented | sourceImplemented | sourceImplemented | pending / pending on all platforms |
-| setup.freshnessReminders | premium | no | notFoundInAudit | sourceStub | sourceStub | pending / pending on all platforms |
+| setup.freshnessReminders | premium | no | sourceImplemented | sourceStub | sourceStub | pending / pending on all platforms |
 | mailSync.connect | free | yes | sourcePartial | sourceStub | sourceStub | pending / pending on all platforms |
 | mailSync.imap | free | no | notFoundInAudit | sourceStub | sourceStub | pending / pending on all platforms |
 | mailSync.statementPasswordKeychain | free | no | notFoundInAudit | sourceStub | sourceStub | pending / pending on all platforms |
@@ -101,9 +105,11 @@ mail/reminder tier declarations are stubs rather than live transports/schedulers
 - `privacy.mode`
 - `badges.core`
 
-Web lock is planned/stubbed; dataset export was not found on any audited platform;
-Web mailbox sync is only partial foreground, read-only Gmail, while Apple connectors
-remain inactive. These gaps do not revoke declared Free rights. Do not convert a
+Web now has partial imported-vault locking, with demo/profile/navigation still
+accessible. Active-dataset JSON and transaction CSV export exist on Web; broader
+vault/UserData backup and restoration are not established. Dataset export remains
+not found in the bounded native audit. Web mailbox sync is partial foreground,
+read-only Gmail, while Apple connectors remain inactive. These gaps do not revoke declared Free rights. Do not convert a
 catalog promise into an available feature or weaken rights to hide incomplete work.
 See [freeRights](#decision-freeRights) and [releaseEvidence](#decision-releaseEvidence).
 
@@ -114,7 +120,7 @@ See [freeRights](#decision-freeRights) and [releaseEvidence](#decision-releaseEv
 | --- | --- | --- | --- | --- | --- |
 | budgets.unlimited | `{"free":1,"premium":null}` | noGuardFound | noGuardFound | noGuardFound | budgets, releaseEvidence |
 | budgets.lines | `{"free":6,"premium":null}` | sourceUIOnly | sourceUIOnly | sourceUIOnly | budgets |
-| history.full | `{"free":12,"premium":null}` | noGuardFound | noGuardFound | noGuardFound | history, releaseEvidence |
+| history.full | `{"free":12,"premium":null}` | sourceUIOnly | noGuardFound | noGuardFound | history, releaseEvidence |
 | setup.extraEmails | `{"free":3,"premium":10}` | sourceOperationGuard | sourceUIOnly | sourceUIOnly | extraEmails |
 | mailSync.connect | `{"free":1,"premium":5}` | noGuardFound | noGuardFound | noGuardFound | mailboxes, nativeChannels, freeRights |
 | review.merchantRules | `{"free":null}` | noGuardFound | notApplicablePendingDecision | notApplicablePendingDecision | merchantRules |
@@ -130,7 +136,7 @@ a decision. None grants release readiness.
 
 Pending: grouped budget sets/months versus category records. Legacy minimum Premium coexists with Free allowance 1; availability-before-access migration must preserve finite Free use. Grouping is not yet approved.
 
-web: Month/category lines are retained across months; no budget-count limit consumer or save guard was found. iphone: Saving accepts multiple month sets, no tier-dependent budget-count restriction. macos: Saving accepts multiple month sets, no tier-dependent budget-count restriction.
+web: Month/category lines are retained and monthly plans repeat until changed; no budget-count limit consumer or save guard was found. Grouping/count semantics remain pending. iphone: Saving accepts multiple month sets, no tier-dependent budget-count restriction. macos: Saving accepts multiple month sets, no tier-dependent budget-count restriction.
 
 Decisions: [budgets](#decision-budgets), [releaseEvidence](#decision-releaseEvidence).
 
@@ -146,7 +152,7 @@ Decisions: [budgets](#decision-budgets).
 
 Pending: calendar window versus display versus retention. Premium minimum plus Free 12 allowance cannot be copied mechanically into an access-first evaluator. Do not silently hide/delete imported history; calendar, display and retention decisions remain pending.
 
-web: Free 12/Premium unlimited text exists, but all transactions feed history without display or retention cap. iphone: All transaction months are displayed; no Free 12-month boundary or Premium gate. macos: All transaction months are displayed; no Free 12-month boundary or Premium gate.
+web: The net-worth chart slices the last returned transaction-month points to the allowance. This is not a guaranteed trailing calendar window; balance and cashflow views still use all transactions, and no retention cap or deletion is established. iphone: All transaction months are displayed; no Free 12-month boundary or Premium gate. macos: All transaction months are displayed; no Free 12-month boundary or Premium gate.
 
 Decisions: [history](#decision-history), [releaseEvidence](#decision-releaseEvidence).
 
@@ -208,8 +214,12 @@ an explicit compatibility extension until [widgets](#decision-widgets) is approv
 
 ## Authority and migration limits
 
-Pinned Web Beta forces Premium in local AppState; normal mode reads a local plan,
-and profile copy says payments are not live. These are demo/simulation facts,
+Pinned Web Beta defaults to local Premium while honoring explicit stored Free
+and the tester-plan switch (`apps/web/lib/edition.ts:11`,
+`apps/web/lib/edition.ts:13`, `apps/web/components/AppState.tsx:40`,
+`apps/web/components/Shell.tsx:86`). Normal mode also uses a local chosen plan;
+profile copy at `apps/web/app/profile/page.tsx:137` says payments are not live.
+These are demo/simulation facts,
 **not verified payment authority**. Public SuperUser/private authorization cannot
 be inferred from them. Local app source and Debug/Release safeguards do not identify
 a deployed native Beta channel or establish cross-platform subscription ownership.
@@ -226,6 +236,29 @@ The [Apple migration plan](APPLE-POLICY-MIGRATION.md) begins with compatibility
 generation **after proposal review**, retaining behavior before context, time,
 availability and operation-level changes. Approval of this inventory is not
 approval to activate those later changes.
+
+## Functionality outside the forty-three-feature inventory
+
+Newer Web source also contains capabilities without matching shared IDs. Their
+presence does not add a catalog row, select a tier, or approve a release:
+
+- Ask uses separate hardcoded monthly limits of 10 Free / 100 Premium at
+  `apps/web/lib/ask.ts:7`; these remain outside the shared catalog.
+- Owed renders a view and a user-copied draft at `apps/web/app/owed/page.tsx:14`
+  and `apps/web/app/owed/page.tsx:30`; no external sending action is inferred.
+- The three-day wait quest at `apps/web/lib/review.ts:312` is separate from
+  WorthIt ratings.
+- Glass level at `apps/web/components/ThemeV2.tsx:141` is a local preference,
+  without a demonstrated entitlement ID.
+- Island storyboard/film source at `apps/web/app/island/page.tsx:144` has no
+  matching catalog ID or private/release approval inferred from its presence.
+- TodayCard at `apps/web/components/TodayCard.tsx:9` is a composition surface,
+  rather than an OS widget or a new shared quota.
+- The card-payment reminder explicitly consumes `credit.insights` at
+  `apps/web/components/CardDueReminder.tsx:47`.
+
+Newer test files are source evidence only; this documentation refresh does not
+execute application tests or establish runtime, purchase, security or release readiness.
 
 ## Owner decisions
 
@@ -319,6 +352,9 @@ git diff --check
 
 The checker validates exact shapes, pinned declarations/bytes/lines, preserved
 rights/limits/aliases, pending approvals, and the three deterministic matrices.
+It also checks explicit full application path-and-line citations in JSON and both
+documents. Citation existence is not semantic proof; source review remains required.
+Shortened continuation references are outside the automatic prose check.
 `--proposal <path>` supports isolated malformed copies without changing this
 proposal. No application tests or builds need rerunning for this documentation-only
 batch; application/runtime readiness remains a later evidence gate.

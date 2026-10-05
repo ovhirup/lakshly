@@ -7,7 +7,7 @@ import { isDeepStrictEqual } from 'node:util';
 
 // Read-only review-inventory verification. Never imported by product consumers.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const pinned = '2d79390e04196acc98ac67eb3be27004bcd64914';
+const pinned = '779f9130e80adce66a1825212756d5f0acc8e677';
 const catalogPath = 'packages/shared/entitlements.json';
 const applePath = 'apps/apple/Lakshly/Store/Entitlements.swift';
 const platforms = ['web', 'iphone', 'macos'];
@@ -61,6 +61,26 @@ function evidence(value, label, requireApplication = false) {
     assert(line !== undefined && line.includes(item.needle), `${label}: incorrect pinned evidence needle at ${item.path}:${item.line}`);
   }
   if (requireApplication) assert(value.some(item => item.path.startsWith('apps/')), `${label}: application-source anchor required`);
+}
+let proseCitations = 0;
+function citationText(value, label) {
+  const pattern = /\b(apps\/(?:web|apple)\/[^\s`"'<>():]+):([0-9]+)\b/g;
+  for (const match of value.matchAll(pattern)) {
+    const path = match[1], lineNumber = Number(match[2]);
+    const context = `${label}: explicit citation ${path}:${match[2]}`;
+    safePath(path);
+    assert(Number.isSafeInteger(lineNumber) && lineNumber > 0 && lineNumber <= 1_000_000, `${context}: bounded positive line required`);
+    const line = source(path).split('\n')[lineNumber - 1];
+    assert(line !== undefined && line.trim().length > 0, `${context}: missing or blank pinned line`);
+    proseCitations++;
+  }
+}
+function embeddedCitations(value, label) {
+  if (typeof value === 'string') citationText(value, label);
+  else if (Array.isArray(value)) value.forEach((item, index) => embeddedCitations(item, `${label}[${index}]`));
+  else if (value !== null && typeof value === 'object') {
+    for (const [key, item] of Object.entries(value)) embeddedCitations(item, `${label}.${key}`);
+  }
 }
 const args = process.argv.slice(2);
 assert(args.length === 0 || (args.length === 2 && args[0] === '--proposal' && args[1].length > 0), 'Use no arguments or --proposal <path>');
@@ -180,11 +200,15 @@ for (const [name, rendered] of [['feature', featureMatrix], ['quota', quotaMatri
   const section = markdown.split(start)[1].split(end)[0];
   equal(section, `\n${rendered}\n`, `${name} Markdown matrix`);
 }
+embeddedCitations(proposal, 'proposal');
 for (const document of ['PUBLIC-FEATURE-CATALOG.md', 'APPLE-POLICY-MIGRATION.md']) {
   const text = readFileSync(join(root, 'docs', document), 'utf8');
   for (const id of decisionIds) assert(text.includes(`decision-${id}`), `${document}: missing owner decision ${id}`);
+  citationText(text, document);
 }
+assert(proseCitations > 0, 'Explicit prose application citations required');
 console.log(`${proposal.features.length} features; ${observations} platform observations; ${approvals} pending channel approvals`);
 console.log(`${proposal.appleAliases.length} Apple aliases: ${mapped} mapped, ${pending} pending`);
 console.log(`${proposal.freeBillOfRights.length} Free rights; ${proposal.quotaReviews.length} quota reviews`);
+console.log(`Explicit prose application citations: ${proseCitations} checked`);
 console.log('Pinned evidence and review matrices: PASS');
