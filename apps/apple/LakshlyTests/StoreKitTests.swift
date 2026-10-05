@@ -105,6 +105,7 @@ final class StoreKitTests: XCTestCase {
 
     session.clearTransactions()
     let empty = EntitlementStore(syncPurchases: {})
+    await waitForPremium(empty, expected: false)
     await empty.restore()
     XCTAssertEqual(empty.purchaseState, "Nothing to restore")
     XCTAssertFalse(empty.isPremium)
