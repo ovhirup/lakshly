@@ -12,7 +12,7 @@ final class CurrencyTests: XCTestCase {
     let m = CurrencyCode.inr.info.magnitude
     XCTAssertEqual(CurrencyCode.inr.info.symbol, "₹")
     XCTAssertEqual(CurrencyCode.inr.info.compactUnits.map(\.suffix), ["Cr", "L", "K"])
-    XCTAssertEqual(CurrencyCode.inr.info.compactUnits.map(\.threshold), [10_000_000, 100_000, 1_000])
+    XCTAssertEqual(CurrencyCode.inr.info.compactUnits.map(\.thresholdMajor), [10_000_000, 100_000, 1_000])
     XCTAssertEqual(m.minBudgetLine, 50_000)
     XCTAssertEqual(m.budgetStepSmall, 10_000)
     XCTAssertEqual(m.budgetStepLarge, 50_000)
@@ -20,6 +20,14 @@ final class CurrencyTests: XCTestCase {
     XCTAssertEqual(m.glanceRounding, 100)
     XCTAssertEqual(m.starterBudgets.map(\.category), ["groceries", "dining", "transport", "shopping"])
     XCTAssertEqual(m.starterBudgets.map(\.amount), [600_000, 300_000, 200_000, 300_000])
+  }
+
+  func testMinimumsSitOnTheRoundingGrid() {
+    for code in CurrencyCode.allCases {
+      let m = code.info.magnitude
+      XCTAssertEqual(m.minBudgetLine % m.budgetStepSmall, 0, code.rawValue)
+      XCTAssertEqual(m.goalMonthlyMinimum % m.budgetStepSmall, 0, code.rawValue)
+    }
   }
 
   func testUsdKeepsInrRatios() {
@@ -37,6 +45,7 @@ final class CurrencyTests: XCTestCase {
     XCTAssertEqual(try CurrencyCode.usd.toMinor("-12.30"), -1230)
     XCTAssertEqual(try CurrencyCode.inr.toMinor("+5"), 500)
     XCTAssertEqual(try CurrencyCode.inr.toMinor("  42 "), 4200)
+    XCTAssertEqual(try CurrencyCode.inr.toMinor("42\n"), 4200)
     XCTAssertEqual(try CurrencyCode.inr.toMinor("-0"), 0)
   }
 
@@ -46,7 +55,7 @@ final class CurrencyTests: XCTestCase {
   }
 
   func testToMinorRejectsNonAmounts() {
-    for bad in ["", "abc", "1,234", "1.2.3", "₹5", ".5", "5.", "NaN"] {
+    for bad in ["", "abc", "1,234", "1.2.3", "₹5", ".5", "5.", "NaN", "5\u{301}", "٣"] {
       XCTAssertThrowsError(try CurrencyCode.inr.toMinor(bad), bad)
     }
     XCTAssertThrowsError(try CurrencyCode.inr.toMinor("99999999999999999999")) { XCTAssertEqual($0 as? CurrencyError, .outOfRange("99999999999999999999")) }

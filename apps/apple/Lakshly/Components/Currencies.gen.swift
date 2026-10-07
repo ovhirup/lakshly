@@ -1,6 +1,6 @@
 // Generated from packages/shared/currency/currencies.json by apps/web/scripts/gen-currencies.mjs. Do not edit.
 
-enum CurrencyCode: String, CaseIterable, Codable {
+enum CurrencyCode: String, CaseIterable {
   case inr = "INR"
   case usd = "USD"
 }
@@ -27,7 +27,7 @@ struct CurrencyInfo {
   let locale: String
   let mask: String
   /// Thresholds in MAJOR units, descending.
-  let compactUnits: [(threshold: Int64, suffix: String)]
+  let compactUnits: [(thresholdMajor: Int64, suffix: String)]
   let magnitude: CurrencyMagnitude
 }
 
@@ -58,7 +58,7 @@ extension CurrencyCode {
         exponent: 2, symbol: "$", locale: "en-US", mask: "$ •••••",
         compactUnits: [(1000000000, "B"), (1000000, "M"), (1000, "K")],
         magnitude: CurrencyMagnitude(
-          minBudgetLine: 2500,
+          minBudgetLine: 3000,
           budgetStepSmall: 1000,
           budgetStepLarge: 5000,
           budgetStepThreshold: 50000,
@@ -66,7 +66,7 @@ extension CurrencyCode {
           goalTargetRounding: 10000,
           goalEmergencyRounding: 50000,
           goalMonthlyRounding: 1000,
-          goalMonthlyMinimum: 2500,
+          goalMonthlyMinimum: 3000,
           customGoalDefault: 100000,
           glanceRounding: 100,
           starterBudgets: [("groceries", 40000), ("dining", 20000), ("transport", 15000), ("shopping", 20000)]

@@ -19,7 +19,7 @@ export type CurrencyMagnitude = {
 export type CurrencyInfo = {
   exponent: number; symbol: string; locale: string; mask: string;
   /** Thresholds in MAJOR units, descending. */
-  compactUnits: readonly (readonly [number, string])[];
+  compactUnits: readonly (readonly [thresholdMajor: number, suffix: string])[];
   /** Amounts in MINOR units. */
   magnitude: CurrencyMagnitude;
 };
@@ -95,7 +95,7 @@ export const CURRENCIES: Readonly<Record<CurrencyCode, CurrencyInfo>> = {
       ]
     ],
     "magnitude": {
-      "minBudgetLine": 2500,
+      "minBudgetLine": 3000,
       "budgetStepSmall": 1000,
       "budgetStepLarge": 5000,
       "budgetStepThreshold": 50000,
@@ -103,7 +103,7 @@ export const CURRENCIES: Readonly<Record<CurrencyCode, CurrencyInfo>> = {
       "goalTargetRounding": 10000,
       "goalEmergencyRounding": 50000,
       "goalMonthlyRounding": 1000,
-      "goalMonthlyMinimum": 2500,
+      "goalMonthlyMinimum": 3000,
       "customGoalDefault": 100000,
       "glanceRounding": 100,
       "starterBudgets": [

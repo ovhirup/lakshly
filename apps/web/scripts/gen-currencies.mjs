@@ -25,6 +25,7 @@ export function parse(json) {
     const keys = Object.keys(c.magnitude).filter((k) => k !== "starterBudgets");
     if (keys.join() !== scalarKeys.join()) throw new Error(`${code}: magnitude keys differ from ${codes[0]}`);
     for (const k of keys) if (!Number.isSafeInteger(c.magnitude[k]) || c.magnitude[k] <= 0) throw new Error(`${code}.${k}: must be a positive integer`);
+    for (const k of ["minBudgetLine", "goalMonthlyMinimum"]) if (c.magnitude[k] % c.magnitude.budgetStepSmall !== 0) throw new Error(`${code}.${k} must be a multiple of budgetStepSmall`);
     for (const [cat, amount] of c.magnitude.starterBudgets) if (!cat || !Number.isSafeInteger(amount) || amount <= 0) throw new Error(`${code}: bad starterBudgets`);
   }
   return { codes, scalarKeys, currencies: data.currencies };
@@ -43,7 +44,7 @@ export function render(json) {
     "export type CurrencyInfo = {",
     "  exponent: number; symbol: string; locale: string; mask: string;",
     "  /** Thresholds in MAJOR units, descending. */",
-    "  compactUnits: readonly (readonly [number, string])[];",
+    "  compactUnits: readonly (readonly [thresholdMajor: number, suffix: string])[];",
     "  /** Amounts in MINOR units. */",
     "  magnitude: CurrencyMagnitude;",
     "};",
@@ -53,14 +54,16 @@ export function render(json) {
 }
 
 const swiftString = (s) => JSON.stringify(s);
+const SWIFT_KEYWORDS = new Set(["try", "in", "is", "as", "do", "if", "for", "let", "var", "nil", "self", "init", "func", "case", "else", "true", "false"]);
+const swiftName = (code) => (SWIFT_KEYWORDS.has(code.toLowerCase()) ? `\`${code.toLowerCase()}\`` : code.toLowerCase());
 export function renderSwift(json) {
   const { codes, scalarKeys, currencies } = parse(json);
   const lc = (c) => c.toLowerCase();
   const lines = [
     "// Generated from packages/shared/currency/currencies.json by apps/web/scripts/gen-currencies.mjs. Do not edit.",
     "",
-    "enum CurrencyCode: String, CaseIterable, Codable {",
-    ...codes.map((c) => `  case ${lc(c)} = ${swiftString(c)}`),
+    "enum CurrencyCode: String, CaseIterable {",
+    ...codes.map((c) => `  case ${swiftName(c)} = ${swiftString(c)}`),
     "}",
     "",
     "/// Amounts are integers in MINOR units (paise, cents).",
@@ -75,7 +78,7 @@ export function renderSwift(json) {
     "  let locale: String",
     "  let mask: String",
     "  /// Thresholds in MAJOR units, descending.",
-    "  let compactUnits: [(threshold: Int64, suffix: String)]",
+    "  let compactUnits: [(thresholdMajor: Int64, suffix: String)]",
     "  let magnitude: CurrencyMagnitude",
     "}",
     "",

@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { CURRENCIES } from "@/lib/currencies.gen";
-import { currencyInfo, fromMinor, isCurrencyCode, minorFactor, toMinor } from "@/lib/currency";
+import { currencyInfo, fromMinor, isCurrencyCode, minorFactor, toMinor, tryToMinor, type CurrencyCode } from "@/lib/currency";
+
+const bad = (code: string) => code as unknown as CurrencyCode;
 import { MASK } from "@/lib/privacy";
 import { MIN_LINE, roundBudget } from "@/lib/setup-suggest";
 // @ts-expect-error plain .mjs generator without types
@@ -17,8 +19,9 @@ describe("currency table", () => {
   });
 
   it("throws on an unsupported currency instead of falling back", () => {
-    expect(() => currencyInfo("JPY")).toThrow("Unsupported currency");
-    expect(() => toMinor("1", "EUR")).toThrow();
+    expect(() => currencyInfo(bad("JPY"))).toThrow("Unsupported currency");
+    expect(() => toMinor("1", bad("EUR"))).toThrow();
+    expect(() => minorFactor(bad("EUR"))).toThrow();
   });
 
   it("INR rows equal today's hard-coded rupee constants (Principle 1: no India regression)", () => {
@@ -32,7 +35,14 @@ describe("currency table", () => {
     expect(m.starterBudgets).toEqual([["groceries", 600000], ["dining", 300000], ["transport", 200000], ["shopping", 300000]]);
   });
 
-  it("USD keeps the INR ratios", () => {
+  it("minimums sit on the rounding grid", () => {
+    for (const c of Object.values(CURRENCIES)) {
+      expect(c.magnitude.minBudgetLine % c.magnitude.budgetStepSmall).toBe(0);
+      expect(c.magnitude.goalMonthlyMinimum % c.magnitude.budgetStepSmall).toBe(0);
+    }
+  });
+
+  it("USD keeps the INR step ratios", () => {
     const i = CURRENCIES.INR.magnitude;
     const u = CURRENCIES.USD.magnitude;
     expect(u.budgetStepLarge / u.budgetStepSmall).toBe(i.budgetStepLarge / i.budgetStepSmall);
@@ -59,13 +69,18 @@ describe("toMinor / fromMinor", () => {
   });
   it("rejects non-amounts", () => {
     for (const bad of ["", "abc", "1,234", "1.2.3", "₹5", ".5", "5.", "NaN"]) expect(() => toMinor(bad, "INR")).toThrow();
-    expect(() => toMinor(Number.NaN, "INR")).toThrow();
-    expect(() => toMinor(Number.POSITIVE_INFINITY, "USD")).toThrow();
   });
-  it("accepts numbers via toFixed", () => {
-    expect(toMinor(19.99, "INR")).toBe(1999);
-    expect(toMinor(0.1 + 0.2, "USD")).toBe(30);
+  it("has no silent-rounding number overload (strings only)", () => {
+    // @ts-expect-error numbers are not accepted: a float cannot carry extra precision honestly
+    expect(() => toMinor(19.999, "USD")).toThrow();
   });
+  it("tryToMinor returns null instead of throwing, for text a user is still typing", () => {
+    expect(tryToMinor("12.", "INR")).toBeNull();
+    expect(tryToMinor("", "INR")).toBeNull();
+    expect(tryToMinor("1.005", "USD")).toBeNull();
+    expect(tryToMinor("12.50", "USD")).toBe(1250);
+  });
+  it("trims all surrounding whitespace, including newlines", () => expect(toMinor("42\n", "INR")).toBe(4200));
   it("round-trips minor to major", () => {
     expect(minorFactor("INR")).toBe(100);
     expect(fromMinor(1999, "USD")).toBe(19.99);
@@ -79,6 +94,11 @@ describe("generated files are current", () => {
   });
   it("Currencies.gen.swift matches the generator output", () => {
     expect(readFileSync(new URL("../../apple/Lakshly/Components/Currencies.gen.swift", import.meta.url), "utf8")).toBe(renderSwift(SRC));
+  });
+  it("the generator rejects an off-grid minimum", () => {
+    const off = JSON.parse(SRC);
+    off.currencies.USD.magnitude.minBudgetLine = 2500;
+    expect(() => render(JSON.stringify(off))).toThrow("multiple of budgetStepSmall");
   });
   it("the generator rejects a table with mismatched magnitude keys", () => {
     const bad = JSON.parse(SRC);

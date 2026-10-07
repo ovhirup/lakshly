@@ -15,7 +15,7 @@ extension CurrencyCode {
   /// Decimal text ("1234.56") to minor units, exactly (no floating point). More fraction digits than the
   /// currency allows is an error unless the extra digits are all zero. Mirrors apps/web/lib/currency.ts `toMinor`.
   func toMinor(_ text: String) throws -> Int64 {
-    let trimmed = text.trimmingCharacters(in: .whitespaces)
+    let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
     var rest = Substring(trimmed)
     var negative = false
     if let first = rest.first, first == "+" || first == "-" {
@@ -46,5 +46,5 @@ extension CurrencyCode {
 }
 
 private extension Character {
-  var isASCIIDigit: Bool { ("0"..."9").contains(self) }
+  var isASCIIDigit: Bool { asciiValue.map { (48...57).contains($0) } ?? false }
 }
