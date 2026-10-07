@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		009C8A5F49078C74A8F4AFCA /* hdfc-bank-locked.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2992B645E3AF5C02BAB36FDB /* hdfc-bank-locked.synthetic.pdf */; };
+		00AC1D7809844AE1C3EDC122 /* MoneyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */; };
 		012B08523F7C94524B122A7F /* Parsers in Resources */ = {isa = PBXBuildFile; fileRef = 82A3B9ED2BCBAEF8F924FB4F /* Parsers */; };
 		028F81D9B0E4C6779EF7E82E /* __fixtures__ in Resources */ = {isa = PBXBuildFile; fileRef = DEF1A41544C5C872996D8BFB /* __fixtures__ */; };
 		0294CF1357998E690AC5CEF0 /* Lakshly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 4F17FA443322997C13606406 /* Lakshly.storekit */; };
@@ -18,6 +19,7 @@
 		060FA7F84DE7FA23AB08A340 /* GlanceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701646DBB486D7E5A96188A9 /* GlanceLinks.swift */; };
 		06DDCA1AC8847337DFBB7ABE /* state.midway.json in Resources */ = {isa = PBXBuildFile; fileRef = 9D51A22CC96B96BFCDBEA27C /* state.midway.json */; };
 		071AA0DF4CEABEF54CF00AEE /* SetupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41934EE78C187EA7A23F69A7 /* SetupModel.swift */; };
+		0738C31B9D1E6E5D1BE8FEEF /* format-parity.json in Resources */ = {isa = PBXBuildFile; fileRef = F1352ECC80DFE774ACA92DA0 /* format-parity.json */; };
 		08334A0E63C49A5328D7EFD9 /* StoreKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958223EAAA07FB46C1C3D745 /* StoreKitTests.swift */; };
 		0847608D78A0862D08FC3507 /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */; };
 		090D7BCFEDC6D2EDC4B83BB0 /* SetupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02B9663BF2EFB0E60A5F2D9 /* SetupState.swift */; };
@@ -25,6 +27,7 @@
 		0AABF8ABE1438A20D6B91C2B /* GlanceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7C047934458E69157FD001 /* GlanceSnapshot.swift */; };
 		0B4F489F80E99D0B6C41AB88 /* LiveActivityPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C0DE6681509A9790D2B63 /* LiveActivityPlanner.swift */; };
 		0B71D21A30E99ED43E3DE5CE /* SetupSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027C7F670782DAA42B66C148 /* SetupSuggest.swift */; };
+		0C5528DF90CEC6E8BD956C8F /* format-parity.json in Resources */ = {isa = PBXBuildFile; fileRef = F1352ECC80DFE774ACA92DA0 /* format-parity.json */; };
 		0CCAC6679EBE4DAD688AAB70 /* GlanceRevealSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE937192E32C4441BE5EBF2 /* GlanceRevealSession.swift */; };
 		0DA20D32A0936564A02BB9F3 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
 		0DA71AF97C629EF17170EED8 /* Amounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FE03F0B1A9EF46808A2E3C /* Amounts.swift */; };
@@ -40,6 +43,7 @@
 		15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
 		1609E6A108A673EB3D9164F8 /* Lakshly-US.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 7D0E1E79DC6576739D2F5272 /* Lakshly-US.storekit */; };
 		188B58323D8A8D7E43BA1DEA /* Mask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E7F17A3B420C09D69AA682 /* Mask.swift */; };
+		1A27DC5283D5F47450F60322 /* MoneyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */; };
 		1EEA416FBCEA29DF7716DF22 /* DepositoryCAS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ADF63C3850DCC00E947334 /* DepositoryCAS.swift */; };
 		1EF89D89FA08E0488F6FB54E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09196754EE8047DADE4A2DD3 /* HistoryView.swift */; };
 		21B5A37E5BDEB015FB1A2C6D /* DebtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A7295D48190C72FBC6A0D /* DebtView.swift */; };
@@ -372,6 +376,7 @@
 		325AA735767E52909FF4FCEF /* PremiumGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumGate.swift; sourceTree = "<group>"; };
 		33139522A92ACF23DB08309D /* BudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetView.swift; sourceTree = "<group>"; };
 		379DCC9C3D1B54CBF3F10CEA /* GlanceRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceRenderTests.swift; sourceTree = "<group>"; };
+		3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneyParityTests.swift; sourceTree = "<group>"; };
 		3C51C3236E764B0BBDB6ADF5 /* nsdl-cas.synthetic.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "nsdl-cas.synthetic.pdf"; sourceTree = "<group>"; };
 		3D69907BE567998C075350B4 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsView.swift; sourceTree = "<group>"; };
@@ -455,6 +460,7 @@
 		EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubIssueLinkTests.swift; sourceTree = "<group>"; };
 		EFE95C855F94CA727C2DA167 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		F09DBDB7CE6050917F3757B1 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		F1352ECC80DFE774ACA92DA0 /* format-parity.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "format-parity.json"; sourceTree = "<group>"; };
 		F4627BEF8AC1B21D856D7BF9 /* GlanceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceViews.swift; sourceTree = "<group>"; };
 		F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLock.swift; sourceTree = "<group>"; };
 		F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -539,11 +545,10 @@
 		0F7F959E109D880D3CD4D28A /* __fixtures__ */ = {
 			isa = PBXGroup;
 			children = (
-				E818F2A9B3C999E373D6FC82 /* dataset.after-import.json */,
-				9D51A22CC96B96BFCDBEA27C /* state.midway.json */,
+				F1352ECC80DFE774ACA92DA0 /* format-parity.json */,
 			);
 			name = __fixtures__;
-			path = ../../packages/shared/setup/__fixtures__;
+			path = ../../packages/shared/money/__fixtures__;
 			sourceTree = "<group>";
 		};
 		0FACC6B24B93199E53EBCE90 /* Investments */ = {
@@ -552,6 +557,16 @@
 				3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */,
 			);
 			path = Investments;
+			sourceTree = "<group>";
+		};
+		1BB45317D5B8722283156351 /* __fixtures__ */ = {
+			isa = PBXGroup;
+			children = (
+				E818F2A9B3C999E373D6FC82 /* dataset.after-import.json */,
+				9D51A22CC96B96BFCDBEA27C /* state.midway.json */,
+			);
+			name = __fixtures__;
+			path = ../../packages/shared/setup/__fixtures__;
 			sourceTree = "<group>";
 		};
 		1DDAE8B1007048332745A18D /* Parsers */ = {
@@ -598,6 +613,7 @@
 				DEF1A41544C5C872996D8BFB /* __fixtures__ */,
 				82A3B9ED2BCBAEF8F924FB4F /* Parsers */,
 				0F7F959E109D880D3CD4D28A /* __fixtures__ */,
+				1BB45317D5B8722283156351 /* __fixtures__ */,
 				011204229F841061855641A2 /* demo-data */,
 				E0DA5BA87B54176E673A822A /* docs */,
 				EB18B57ECF7CC76209D8A365 /* Lakshly */,
@@ -859,6 +875,7 @@
 				379DCC9C3D1B54CBF3F10CEA /* GlanceRenderTests.swift */,
 				A296E05D13D8E69E92F24C52 /* GlanceTests.swift */,
 				D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */,
+				3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */,
 				5796053083CD3E0031D2B848 /* ParserFixtureTests.swift */,
 				19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */,
 				BEEBE3EE720257A408CCE67E /* SetupEntitlementsTests.swift */,
@@ -1203,6 +1220,7 @@
 				44EBEDC2781D9E5CC78E6285 /* Lakshly.storekit in Resources */,
 				012B08523F7C94524B122A7F /* Parsers in Resources */,
 				5D1B2C9ABC6027B720B9C2FD /* __fixtures__ in Resources */,
+				0738C31B9D1E6E5D1BE8FEEF /* format-parity.json in Resources */,
 				AA9A3FDB46A12D85AECF1EA4 /* themes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1262,6 +1280,7 @@
 				3C6F8313749DF5C027164EC4 /* Lakshly.storekit in Resources */,
 				72965C37FC925F615127AD1F /* Parsers in Resources */,
 				028F81D9B0E4C6779EF7E82E /* __fixtures__ in Resources */,
+				0C5528DF90CEC6E8BD956C8F /* format-parity.json in Resources */,
 				931F0540CDEB98EC510CE7B8 /* themes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1379,6 +1398,7 @@
 				D179EBF207631D20AB46FD3A /* GlanceRenderTests.swift in Sources */,
 				C7FD5B8068ADE02F35793D74 /* GlanceTests.swift in Sources */,
 				2E613728918B30F78B5E7F37 /* LakshlyTests.swift in Sources */,
+				00AC1D7809844AE1C3EDC122 /* MoneyParityTests.swift in Sources */,
 				4B1A69D5D36E085868F958D0 /* ParserFixtureTests.swift in Sources */,
 				5C8485DA814CED83A76BE8DC /* SecurityTests.swift in Sources */,
 				2F6423FD2044B3D9464725B8 /* SetupEntitlementsTests.swift in Sources */,
@@ -1406,6 +1426,7 @@
 				C064F524A2573B8D5AEAA0D6 /* GlanceRenderTests.swift in Sources */,
 				7B33F1302387E76587328537 /* GlanceTests.swift in Sources */,
 				541D6B919B187F6447F84773 /* LakshlyTests.swift in Sources */,
+				1A27DC5283D5F47450F60322 /* MoneyParityTests.swift in Sources */,
 				B187FDAA13F3C6BEBC36211B /* ParserFixtureTests.swift in Sources */,
 				C3FC0FA1D90FE6268D75F843 /* SecurityTests.swift in Sources */,
 				15191387FA7F87D969E2A560 /* SetupEntitlementsTests.swift in Sources */,

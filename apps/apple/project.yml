@@ -136,6 +136,8 @@ targets:
       - path: ../../packages/shared/setup/__fixtures__
         type: folder
         buildPhase: resources
+      - path: ../../packages/shared/money/__fixtures__/format-parity.json
+        buildPhase: resources
       - path: ../../docs/themes.json
         buildPhase: resources
       - path: StoreKit/Lakshly.storekit
@@ -167,6 +169,8 @@ targets:
         buildPhase: resources
       - path: ../../packages/shared/setup/__fixtures__
         type: folder
+        buildPhase: resources
+      - path: ../../packages/shared/money/__fixtures__/format-parity.json
         buildPhase: resources
       - path: ../../docs/themes.json
         buildPhase: resources

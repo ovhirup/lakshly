@@ -1,0 +1,444 @@
+{
+ "note": "Pinned CURRENT output of web formatINR/formatINRCompact and Swift Money.format/glance/compact. Differences are listed in knownDivergences and are fixed in WP2, not here.",
+ "knownDivergences": [
+  1,
+  49,
+  50,
+  149,
+  150,
+  1999,
+  62147,
+  62150,
+  99950,
+  100000,
+  9999999,
+  10000000,
+  30000000,
+  -1,
+  -62150,
+  -32000000,
+  -1100000000
+ ],
+ "rows": [
+  {
+   "paise": 0,
+   "web": {
+    "full": "₹0",
+    "decimals": "₹0.00",
+    "signed": "₹0",
+    "compact": "₹0"
+   },
+   "swift": {
+    "format": "₹0",
+    "formatKeepZero": "₹0.00",
+    "glance": "₹0",
+    "compact": "₹0"
+   }
+  },
+  {
+   "paise": 1,
+   "web": {
+    "full": "₹0",
+    "decimals": "₹0.01",
+    "signed": "+₹0",
+    "compact": "₹0"
+   },
+   "swift": {
+    "format": "₹0.01",
+    "formatKeepZero": "₹0.01",
+    "glance": "₹0",
+    "compact": "₹0.01"
+   }
+  },
+  {
+   "paise": 49,
+   "web": {
+    "full": "₹0",
+    "decimals": "₹0.49",
+    "signed": "+₹0",
+    "compact": "₹0"
+   },
+   "swift": {
+    "format": "₹0.49",
+    "formatKeepZero": "₹0.49",
+    "glance": "₹0",
+    "compact": "₹0.49"
+   }
+  },
+  {
+   "paise": 50,
+   "web": {
+    "full": "₹1",
+    "decimals": "₹0.50",
+    "signed": "+₹1",
+    "compact": "₹1"
+   },
+   "swift": {
+    "format": "₹0.50",
+    "formatKeepZero": "₹0.50",
+    "glance": "₹1",
+    "compact": "₹0.50"
+   }
+  },
+  {
+   "paise": 149,
+   "web": {
+    "full": "₹1",
+    "decimals": "₹1.49",
+    "signed": "+₹1",
+    "compact": "₹1"
+   },
+   "swift": {
+    "format": "₹1.49",
+    "formatKeepZero": "₹1.49",
+    "glance": "₹1",
+    "compact": "₹1.49"
+   }
+  },
+  {
+   "paise": 150,
+   "web": {
+    "full": "₹2",
+    "decimals": "₹1.50",
+    "signed": "+₹2",
+    "compact": "₹2"
+   },
+   "swift": {
+    "format": "₹1.50",
+    "formatKeepZero": "₹1.50",
+    "glance": "₹2",
+    "compact": "₹1.50"
+   }
+  },
+  {
+   "paise": 1999,
+   "web": {
+    "full": "₹20",
+    "decimals": "₹19.99",
+    "signed": "+₹20",
+    "compact": "₹20"
+   },
+   "swift": {
+    "format": "₹19.99",
+    "formatKeepZero": "₹19.99",
+    "glance": "₹20",
+    "compact": "₹19.99"
+   }
+  },
+  {
+   "paise": 50000,
+   "web": {
+    "full": "₹500",
+    "decimals": "₹500.00",
+    "signed": "+₹500",
+    "compact": "₹500"
+   },
+   "swift": {
+    "format": "₹500",
+    "formatKeepZero": "₹500.00",
+    "glance": "₹500",
+    "compact": "₹500"
+   }
+  },
+  {
+   "paise": 62147,
+   "web": {
+    "full": "₹621",
+    "decimals": "₹621.47",
+    "signed": "+₹621",
+    "compact": "₹621"
+   },
+   "swift": {
+    "format": "₹621.47",
+    "formatKeepZero": "₹621.47",
+    "glance": "₹621",
+    "compact": "₹621.47"
+   }
+  },
+  {
+   "paise": 62150,
+   "web": {
+    "full": "₹622",
+    "decimals": "₹621.50",
+    "signed": "+₹622",
+    "compact": "₹622"
+   },
+   "swift": {
+    "format": "₹621.50",
+    "formatKeepZero": "₹621.50",
+    "glance": "₹622",
+    "compact": "₹621.50"
+   }
+  },
+  {
+   "paise": 95000,
+   "web": {
+    "full": "₹950",
+    "decimals": "₹950.00",
+    "signed": "+₹950",
+    "compact": "₹950"
+   },
+   "swift": {
+    "format": "₹950",
+    "formatKeepZero": "₹950.00",
+    "glance": "₹950",
+    "compact": "₹950"
+   }
+  },
+  {
+   "paise": 99950,
+   "web": {
+    "full": "₹1,000",
+    "decimals": "₹999.50",
+    "signed": "+₹1,000",
+    "compact": "₹1000"
+   },
+   "swift": {
+    "format": "₹999.50",
+    "formatKeepZero": "₹999.50",
+    "glance": "₹1,000",
+    "compact": "₹999.50"
+   }
+  },
+  {
+   "paise": 100000,
+   "web": {
+    "full": "₹1,000",
+    "decimals": "₹1,000.00",
+    "signed": "+₹1,000",
+    "compact": "₹1K"
+   },
+   "swift": {
+    "format": "₹1,000",
+    "formatKeepZero": "₹1,000.00",
+    "glance": "₹1,000",
+    "compact": "₹1.0K"
+   }
+  },
+  {
+   "paise": 1250000,
+   "web": {
+    "full": "₹12,500",
+    "decimals": "₹12,500.00",
+    "signed": "+₹12,500",
+    "compact": "₹12.5K"
+   },
+   "swift": {
+    "format": "₹12,500",
+    "formatKeepZero": "₹12,500.00",
+    "glance": "₹12,500",
+    "compact": "₹12.5K"
+   }
+  },
+  {
+   "paise": 9999999,
+   "web": {
+    "full": "₹1,00,000",
+    "decimals": "₹99,999.99",
+    "signed": "+₹1,00,000",
+    "compact": "₹100K"
+   },
+   "swift": {
+    "format": "₹99,999.99",
+    "formatKeepZero": "₹99,999.99",
+    "glance": "₹1,00,000",
+    "compact": "₹100.0K"
+   }
+  },
+  {
+   "paise": 10000000,
+   "web": {
+    "full": "₹1,00,000",
+    "decimals": "₹1,00,000.00",
+    "signed": "+₹1,00,000",
+    "compact": "₹1L"
+   },
+   "swift": {
+    "format": "₹1,00,000",
+    "formatKeepZero": "₹1,00,000.00",
+    "glance": "₹1,00,000",
+    "compact": "₹1.0L"
+   }
+  },
+  {
+   "paise": 12000000,
+   "web": {
+    "full": "₹1,20,000",
+    "decimals": "₹1,20,000.00",
+    "signed": "+₹1,20,000",
+    "compact": "₹1.2L"
+   },
+   "swift": {
+    "format": "₹1,20,000",
+    "formatKeepZero": "₹1,20,000.00",
+    "glance": "₹1,20,000",
+    "compact": "₹1.2L"
+   }
+  },
+  {
+   "paise": 30000000,
+   "web": {
+    "full": "₹3,00,000",
+    "decimals": "₹3,00,000.00",
+    "signed": "+₹3,00,000",
+    "compact": "₹3L"
+   },
+   "swift": {
+    "format": "₹3,00,000",
+    "formatKeepZero": "₹3,00,000.00",
+    "glance": "₹3,00,000",
+    "compact": "₹3.0L"
+   }
+  },
+  {
+   "paise": 32000000,
+   "web": {
+    "full": "₹3,20,000",
+    "decimals": "₹3,20,000.00",
+    "signed": "+₹3,20,000",
+    "compact": "₹3.2L"
+   },
+   "swift": {
+    "format": "₹3,20,000",
+    "formatKeepZero": "₹3,20,000.00",
+    "glance": "₹3,20,000",
+    "compact": "₹3.2L"
+   }
+  },
+  {
+   "paise": 1100000000,
+   "web": {
+    "full": "₹1,10,00,000",
+    "decimals": "₹1,10,00,000.00",
+    "signed": "+₹1,10,00,000",
+    "compact": "₹1.1Cr"
+   },
+   "swift": {
+    "format": "₹1,10,00,000",
+    "formatKeepZero": "₹1,10,00,000.00",
+    "glance": "₹1,10,00,000",
+    "compact": "₹1.1Cr"
+   }
+  },
+  {
+   "paise": 1234567850,
+   "web": {
+    "full": "₹1,23,45,679",
+    "decimals": "₹1,23,45,678.50",
+    "signed": "+₹1,23,45,679",
+    "compact": "₹1.2Cr"
+   },
+   "swift": {
+    "format": "₹1,23,45,678.50",
+    "formatKeepZero": "₹1,23,45,678.50",
+    "glance": "₹1,23,45,679",
+    "compact": "₹1.2Cr"
+   }
+  },
+  {
+   "paise": 3400000000,
+   "web": {
+    "full": "₹3,40,00,000",
+    "decimals": "₹3,40,00,000.00",
+    "signed": "+₹3,40,00,000",
+    "compact": "₹3.4Cr"
+   },
+   "swift": {
+    "format": "₹3,40,00,000",
+    "formatKeepZero": "₹3,40,00,000.00",
+    "glance": "₹3,40,00,000",
+    "compact": "₹3.4Cr"
+   }
+  },
+  {
+   "paise": 12345678900,
+   "web": {
+    "full": "₹12,34,56,789",
+    "decimals": "₹12,34,56,789.00",
+    "signed": "+₹12,34,56,789",
+    "compact": "₹12.3Cr"
+   },
+   "swift": {
+    "format": "₹12,34,56,789",
+    "formatKeepZero": "₹12,34,56,789.00",
+    "glance": "₹12,34,56,789",
+    "compact": "₹12.3Cr"
+   }
+  },
+  {
+   "paise": -1,
+   "web": {
+    "full": "−₹0",
+    "decimals": "−₹0.01",
+    "signed": "−₹0",
+    "compact": "−₹0"
+   },
+   "swift": {
+    "format": "−₹0.01",
+    "formatKeepZero": "−₹0.01",
+    "glance": "₹0",
+    "compact": "−₹0.01"
+   }
+  },
+  {
+   "paise": -50000,
+   "web": {
+    "full": "−₹500",
+    "decimals": "−₹500.00",
+    "signed": "−₹500",
+    "compact": "−₹500"
+   },
+   "swift": {
+    "format": "−₹500",
+    "formatKeepZero": "−₹500.00",
+    "glance": "−₹500",
+    "compact": "−₹500"
+   }
+  },
+  {
+   "paise": -62150,
+   "web": {
+    "full": "−₹622",
+    "decimals": "−₹621.50",
+    "signed": "−₹622",
+    "compact": "−₹622"
+   },
+   "swift": {
+    "format": "−₹621.50",
+    "formatKeepZero": "−₹621.50",
+    "glance": "−₹622",
+    "compact": "−₹621.50"
+   }
+  },
+  {
+   "paise": -32000000,
+   "web": {
+    "full": "−₹3,20,000",
+    "decimals": "−₹3,20,000.00",
+    "signed": "−₹3,20,000",
+    "compact": "−₹3.2L"
+   },
+   "swift": {
+    "format": "−₹3,20,000",
+    "formatKeepZero": "−₹3,20,000.00",
+    "glance": "−₹3,20,000",
+    "compact": "₹-3.2L"
+   }
+  },
+  {
+   "paise": -1100000000,
+   "web": {
+    "full": "−₹1,10,00,000",
+    "decimals": "−₹1,10,00,000.00",
+    "signed": "−₹1,10,00,000",
+    "compact": "−₹1.1Cr"
+   },
+   "swift": {
+    "format": "−₹1,10,00,000",
+    "formatKeepZero": "−₹1,10,00,000.00",
+    "glance": "−₹1,10,00,000",
+    "compact": "₹-1.1Cr"
+   }
+  }
+ ]
+}
