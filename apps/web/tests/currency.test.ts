@@ -27,7 +27,8 @@ describe("currency table", () => {
   it("INR rows equal today's hard-coded rupee constants (Principle 1: no India regression)", () => {
     const m = CURRENCIES.INR.magnitude;
     expect(CURRENCIES.INR.mask).toBe(MASK);
-    expect(m.minBudgetLine).toBe(MIN_LINE);
+    expect(m.minBudgetLine).toBe(50000); // ₹500: a literal, so this stays a guard even though MIN_LINE now derives from the table
+    expect(MIN_LINE).toBe(50000);
     // roundBudget: step is ₹100 below ₹5,000 and ₹500 at or above.
     expect(m.budgetStepThreshold).toBe(500000);
     expect(roundBudget(m.budgetStepThreshold - 1, 100) % m.budgetStepSmall).toBe(0);
