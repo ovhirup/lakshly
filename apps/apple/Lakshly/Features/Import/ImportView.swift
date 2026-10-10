@@ -53,7 +53,8 @@ import UniformTypeIdentifiers
   func confirm(into store: DataStore) {
     guard let result else { return }
     if recordsImport {
-      report = store.importParsed(result, fileName: fileName ?? "statement")
+      report = store.importParsed(result, fileName: fileName ?? "statement", contentHash: bytes.map { BulkImportFile(name: fileName ?? "statement", data: $0).hash }, fileSize: bytes?.count)
+      if store.error != nil { error = store.error; return }
     } else {
       report = MergeReport(
         added: result.transactions.count, duplicates: 0, accountsAdded: result.accounts.count, accountsUpdated: 0,
@@ -107,7 +108,6 @@ import UniformTypeIdentifiers
     if csv {
       let text = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
       result = parseCsv(text, fileName: fileName)
-      bytes = nil
       stage = .preview
       return
     }
@@ -119,7 +119,6 @@ import UniformTypeIdentifiers
     do {
       let document = try PDFTextExtractor.extract(data: bytes, password: password, fileName: fileName)
       result = parseDocument(document)
-      self.bytes = nil
       incorrect = false
       stage = .preview
     } catch let required as PasswordRequired {
@@ -140,11 +139,14 @@ struct ImportView: View {
   var preset: ImportPreset?
   var recordsImport = true
   var onDone: ((MergeReport, ParseResult, String) -> Void)?
+  var onBatchImported: ((MergeReport, ParseResult, String, String) -> Void)?
+  var onBatchFinished: (() -> Void)?
   @State private var model = ImportModel()
   @State private var picking = false
   @State private var password = ""
   @State private var stagedPreset = false
   @State private var reported = false
+  @State private var batch: BulkImportController?
 
   var body: some View {
     Page(title: "Import", subtitle: "Statements stay on this device.") {
@@ -177,14 +179,29 @@ struct ImportView: View {
       }
       if !embedded { DataNote(source: store.source) }
     }
-    .fileImporter(isPresented: $picking, allowedContentTypes: [.pdf, .commaSeparatedText], allowsMultipleSelection: false) { result in
+    .fileImporter(isPresented: $picking, allowedContentTypes: [.pdf, .commaSeparatedText], allowsMultipleSelection: true) { result in
       switch result {
       case .success(let urls):
-        if let url = urls.first { model.ingest(url) }
+        if urls.count == 1, let url = urls.first { model.ingest(url) }
+        else {
+          let loaded = BulkStatementParser.read(urls)
+          if !loaded.files.isEmpty { batch = BulkImportController(files: loaded.files, imports: store.imports) }
+          if loaded.failures > 0 { model.error = "\(loaded.failures) files could not be read." }
+        }
       case .failure(let error):
         let ns = error as NSError
         if ns.domain == NSCocoaErrorDomain, ns.code == CocoaError.userCancelled.rawValue { return }
         model.error = "This file could not be read."
+      }
+    }
+    .sheet(isPresented: Binding(get: { batch != nil }, set: { if !$0 { batch?.cancel(); batch = nil } }), onDismiss: {
+      onBatchFinished?()
+    }) {
+      if let batch {
+        BulkImportView(store: store, controller: batch, recordsImport: recordsImport) { report, result, id, name in
+          if let onBatchImported { onBatchImported(report, result, id, name) }
+          else { onDone?(report, result, id) }
+        }
       }
     }
     .onAppear {
@@ -211,10 +228,14 @@ struct ImportView: View {
 
   private var picker: some View {
     Card(title: "Statement") {
-      Button("Choose statement PDF") { picking = true }.buttonStyle(ThemedSubmitStyle())
+      Button("Choose PDF or CSV statements") { picking = true }.buttonStyle(ThemedSubmitStyle())
         .accessibilityIdentifier("import.choose")
       Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
       if let error = model.error { Text(error).foregroundStyle(theme.danger) }
+    }.setupFileDrop(enabled: true) { files in
+      if files.count == 1, let file = files.first {
+        model.stageFile(file.data, fileName: file.name, csv: file.name.lowercased().hasSuffix(".csv"))
+      } else if !files.isEmpty { batch = BulkImportController(files: files, imports: store.imports) }
     }
   }
 

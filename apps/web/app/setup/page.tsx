@@ -23,6 +23,7 @@ import {
   type Freshness, type Provider, type SkipReason, type StepId,
 } from "@/lib/setup";
 import { goalFacts, PRESET_FACTOR, roundBudget, suggestBudget, suggestGoal, VARIABLE_CATEGORIES, type Preset } from "@/lib/setup-suggest";
+import { CURRENCIES } from "@/lib/currencies.gen";
 import "@/components/setup.css";
 import { GMAIL_CONNECT } from "@/lib/edition";
 import { GmailConnectCard, SignInWithGoogle, useGoogle } from "@/components/GoogleConnect";
@@ -642,7 +643,9 @@ function PlanStep({ continueRef, flash }: StepProps & { flash: (t: string) => vo
     setPreset(p);
     setLines(base.lines.map((l) => ({ category: l.category, limit: roundBudget(l.median || l.suggested, PRESET_FACTOR[p]) })));
   }
-  const step = (v: number) => (v < 500000 ? 10000 : 50000);
+  // INR for now; the profile currency lands with WP3.
+  const { budgetStepThreshold, budgetStepSmall, budgetStepLarge } = CURRENCIES.INR.magnitude;
+  const step = (v: number) => (v < budgetStepThreshold ? budgetStepSmall : budgetStepLarge);
   async function saveBudget() {
     setSaving(true);
     await data.saveBudgets(month, lines.filter((l) => l.limit > 0));

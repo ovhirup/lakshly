@@ -94,19 +94,20 @@ final class StoreKitTests: XCTestCase {
     try await requireWorkingSession()
     try await session.buyProduct(identifier: EntitlementStore.yearlyProductID)
     let relaunched = EntitlementStore(syncPurchases: {})
-    await relaunched.refresh()
+    // buyProduct can return before currentEntitlements lists the purchase.
+    await waitForPremium(relaunched, expected: true)
     XCTAssertTrue(relaunched.isPremium)
     XCTAssertEqual(relaunched.activeProductID, EntitlementStore.yearlyProductID)
 
     let restoring = EntitlementStore(syncPurchases: {})
-    await restoring.restore()
+    await waitForRestore(restoring, premium: true)
     XCTAssertEqual(restoring.purchaseState, "Premium restored")
     XCTAssertTrue(restoring.can(.debtPlanner))
 
     session.clearTransactions()
     let empty = EntitlementStore(syncPurchases: {})
     await waitForPremium(empty, expected: false)
-    await empty.restore()
+    await waitForRestore(empty, premium: false)
     XCTAssertEqual(empty.purchaseState, "Nothing to restore")
     XCTAssertFalse(empty.isPremium)
     XCTAssertEqual(empty.tier, .free)
@@ -251,7 +252,7 @@ final class StoreKitTests: XCTestCase {
     }
   }
 
-  func testAppSourcesUseStoreKitAsTheOnlyNetworkFramework() throws {
+  func testAppSourcesAllowOnlyStoreKitAndFixedHostFeedbackTransport() throws {
     let root = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent()
       .deletingLastPathComponent()
@@ -261,6 +262,7 @@ final class StoreKitTests: XCTestCase {
     }
     let forbidden = ["URLSession", "URLRequest", "NWConnection", "import Network", "WKWebView",
                      "import StoreKitTest", "SKTestSession", "AppStorage(\"settings.premium\")"]
+    let transport = root.appendingPathComponent("Features/Feedback/FeedbackTransport.swift")
     var importedStoreKit = false
     guard let enumerator = FileManager.default.enumerator(at: root, includingPropertiesForKeys: nil) else {
       XCTFail("Could not read \(root.path)")
@@ -270,7 +272,16 @@ final class StoreKitTests: XCTestCase {
       guard url.pathExtension == "swift" else { continue }
       let text = try String(contentsOf: url, encoding: .utf8)
       if text.contains("import StoreKit\n") || text.contains("import StoreKit\r") { importedStoreKit = true }
+      if url.standardizedFileURL == transport.standardizedFileURL {
+        let regex = try NSRegularExpression(pattern: #"https://[^"\s]+"#)
+        let literals = regex.matches(in: text, range: NSRange(text.startIndex..., in: text)).compactMap {
+          Range($0.range, in: text).map { String(text[$0]) }
+        }
+        XCTAssertEqual(literals, ["https://feedback.lakshly.com"])
+        XCTAssertFalse(text.contains("http://"))
+      }
       for token in forbidden {
+        if url.standardizedFileURL == transport.standardizedFileURL && ["URLSession", "URLRequest"].contains(token) { continue }
         XCTAssertFalse(text.contains(token), "\(url.lastPathComponent) contains \(token)")
       }
     }
@@ -307,5 +318,17 @@ final class StoreKitTests: XCTestCase {
       try? await Task.sleep(nanoseconds: 150_000_000)
     }
     await store.refresh()
+  }
+
+  /// Restore reads entitlements once. The test session can lag, so try again until it settles.
+  private func waitForRestore(_ store: EntitlementStore, premium: Bool) async {
+    let expected = premium ? "Premium restored" : "Nothing to restore"
+    let deadline = Date().addingTimeInterval(8)
+    while Date() < deadline {
+      await store.restore()
+      if store.isPremium == premium, store.purchaseState == expected { return }
+      try? await Task.sleep(nanoseconds: 150_000_000)
+    }
+    await store.restore()
   }
 }

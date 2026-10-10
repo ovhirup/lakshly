@@ -16,9 +16,13 @@ swiftc -target arm64-apple-macos26.0 -sdk "$sdk" -parse-as-library -D DEBUG \
   -o "$root/build/setup-renderer" \
   "$root/Lakshly/Components/Theme.swift" \
   "$root/Lakshly/Components/ThemeDefinitions.swift" \
+  "$root/Lakshly/Components/Currencies.gen.swift" \
+  "$root/Lakshly/Components/Currency.swift" \
   "$root/Lakshly/Components/Money.swift" \
   "$root/Lakshly/Components/GlassCard.swift" \
   "$root/Lakshly/Components/Layout.swift" \
+  "$root/Lakshly/Models/Profile.swift" \
+  "$root/Lakshly/Import/BulkImport.swift" \
   "$root/Lakshly/Models/Dataset.swift" \
   "$root/Lakshly/Import/Parsers/Regex.swift" \
   "$root/Lakshly/Import/Parsers/Dates.swift" \

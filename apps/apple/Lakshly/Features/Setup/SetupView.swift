@@ -71,6 +71,10 @@ func setupLiveActions(session: SetupSession, openURL: OpenURLAction, selectTheme
     agree: { session.agreeConsent() },
     declineConsent: { session.declineConsent() },
     openAppLock: { session.openChecklist("appLock") },
+    dropFiles: { id, files in
+      if !session.state.sources.contains(where: { $0.catalogId == id }) { session.toggleSource(id) }
+      session.beginBatch(files, catalogId: id)
+    },
     dropFile: { id, data, name in
       if !session.state.sources.contains(where: { $0.catalogId == id }) { session.toggleSource(id) }
       session.beginImport(data: data, fileName: name, catalogId: id)
@@ -96,6 +100,7 @@ struct SetupHost: View {
   @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
   @State private var picking = false
+  @State private var batch: BulkImportController?
 
   var body: some View {
     let model = setupCanvasModel(session: session, themeID: theme.id.rawValue, tier: entitlements.tier)
@@ -108,12 +113,22 @@ struct SetupHost: View {
       #endif
     }
     .environment(\.theme, theme)
-    .fileImporter(isPresented: $picking, allowedContentTypes: [.pdf, .commaSeparatedText], allowsMultipleSelection: false) { result in
-      if case .success(let urls) = result, let url = urls.first {
-        let scoped = url.startAccessingSecurityScopedResource()
-        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        if let data = try? Data(contentsOf: url) {
-          session.beginImport(data: data, fileName: url.lastPathComponent)
+    .fileImporter(isPresented: $picking, allowedContentTypes: [.pdf, .commaSeparatedText], allowsMultipleSelection: true) { result in
+      if case .success(let urls) = result {
+        let loaded = BulkStatementParser.read(urls)
+        session.beginBatch(loaded.files)
+        if loaded.failures > 0 { session.showToast("\(loaded.failures) files could not be read.") }
+      }
+    }
+    .onChange(of: session.batchFiles) { _, files in
+      guard !files.isEmpty else { return }
+      batch = BulkImportController(files: files, imports: store.imports)
+      session.batchFiles = []
+    }
+    .sheet(isPresented: Binding(get: { batch != nil }, set: { if !$0 { batch?.cancel(); batch = nil; session.forcedCatalogId = nil } })) {
+      if let batch {
+        BulkImportView(store: store, controller: batch, recordsImport: session.recordsImport()) { report, result, id, name in
+          session.completeImport(report: report, result: result, importId: id, fileName: name, catalogId: session.forcedCatalogId)
         }
       }
     }
@@ -154,6 +169,14 @@ struct SetupHost: View {
           session.completeImport(report: report, result: result, importId: importId, fileName: name, catalogId: forced)
           session.importPresented = false
           session.importPreset = nil
+        },
+        onBatchImported: { report, result, importId, name in
+          session.completeImport(report: report, result: result, importId: importId, fileName: name, catalogId: session.forcedCatalogId)
+        },
+        onBatchFinished: {
+          session.importPresented = false
+          session.importPreset = nil
+          session.forcedCatalogId = nil
         })
       .presentationDetents([.large])
     }

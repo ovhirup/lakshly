@@ -99,6 +99,8 @@ struct ImportLogEntry: Codable, Equatable, Identifiable {
   var added: Int
   var duplicates: Int
   var confidence: Double?
+  var contentHash: String? = nil
+  var fileSize: Int? = nil
 }
 struct AmountGroup: Identifiable {
   var id: String { name }
@@ -126,6 +128,7 @@ struct StoredData: Codable {
   var setup: SetupState?
   var goals: [Goal]?
   var imports: [ImportLogEntry]?
+  var profile: ProfileRecord?
 
   init(
     dataset: Dataset,
@@ -134,7 +137,8 @@ struct StoredData: Codable {
     userDataset: Dataset? = nil,
     setup: SetupState? = nil,
     goals: [Goal]? = nil,
-    imports: [ImportLogEntry]? = nil
+    imports: [ImportLogEntry]? = nil,
+    profile: ProfileRecord? = nil
   ) {
     self.dataset = dataset
     self.requests = requests
@@ -142,6 +146,7 @@ struct StoredData: Codable {
     self.userDataset = userDataset
     self.setup = setup
     self.goals = goals
+    self.profile = profile
     self.imports = imports
   }
 
@@ -155,14 +160,14 @@ struct StoredData: Codable {
         userDataset: userDataset,
         setup: setup,
         goals: goals,
-        imports: imports)
+        imports: imports, profile: profile)
     }
     let user = dataset.userRows(notIn: seed)
     return StoredData(
       dataset: seed,
       requests: requests,
       source: user == nil ? .demo : .mine,
-      userDataset: user)
+      userDataset: user, setup: setup, goals: goals, imports: imports, profile: profile)
   }
 }
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Glass, PageHeader, } from "@/components/ui";
 import { Importer, importToast } from "@/components/Importer";
@@ -7,7 +7,16 @@ import { Icon } from "@/components/Icon";
 import { useData } from "@/components/DataState";
 import { useSetup } from "@/components/SetupState";
 import { formatDate } from "@/lib/format";
+import { sampleBankFile } from "@/lib/import/sample-statement";
 import "./import.css";
+
+function subscribeSampleQuery() {
+  return () => {};
+}
+
+function readSampleQuery() {
+  return new URLSearchParams(window.location.search).get("sample") === "1";
+}
 
 const SUPPORTED = [
   "Mutual fund CAS (CAMS / KFintech)", "HDFC Bank", "SBI", "ICICI Bank", "HDFC Bank credit card", "SBI Card", "Any other bank or card (generic)", "CSV exports",
@@ -18,6 +27,11 @@ export default function ImportPage() {
   const [step, setStep] = useState("idle");
   const [toast, setToast] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [picked, setPicked] = useState<File | null>(null);
+  const [justImported, setJustImported] = useState(false);
+  const openSample = useSyncExternalStore(subscribeSampleQuery, readSampleQuery, () => false);
+  const fromQuery = useMemo(() => (openSample ? sampleBankFile() : null), [openSample]);
+  const sample = picked ?? fromQuery;
 
   const setup = useSetup();
   // Setup details (email, picked banks) live in the encrypted vault even before the first import.
@@ -40,7 +54,28 @@ export default function ImportPage() {
 
       <div className={`grid import-grid ${step === "review" ? "reviewing" : ""}`}>
         <div className="import-main">
-          <Importer onPhase={setStep} onImported={(_r, report) => { setToast(importToast(report)); setTimeout(() => setToast(null), 5000); }} />
+          {step !== "review" && (
+            <Glass className="card">
+              <div className="card-head"><h2>Practise first</h2><span className="badge">Fake numbers</span></div>
+              <p className="muted">A salary, Swiggy and a grocery shop. You see the same review screen a real statement uses. These rows stay on this device.</p>
+              <button className="btn ghost" type="button" data-testid="try-sample" onClick={() => { setJustImported(false); setPicked(sampleBankFile()); }}>Try a sample statement</button>
+            </Glass>
+          )}
+          <Importer
+            incoming={sample}
+            onPhase={(next) => { setStep(next); if (next === "reading" || next === "review") setJustImported(false); }}
+            onImported={(_r, report) => { setJustImported(true); setToast(importToast(report)); setTimeout(() => setToast(null), 5000); }}
+          />
+          {justImported && step === "idle" && (
+            <Glass className="card">
+              <h2>Saved on this device</h2>
+              <p className="muted">Open Overview to see the numbers. If one looks wrong, send a note. Nothing was uploaded.</p>
+              <div className="row-actions">
+                <Link className="btn primary" href="/">See Overview</Link>
+                <Link className="btn ghost" href="/feedback/">Something looks wrong</Link>
+              </div>
+            </Glass>
+          )}
         </div>
 
         <aside className="import-side">

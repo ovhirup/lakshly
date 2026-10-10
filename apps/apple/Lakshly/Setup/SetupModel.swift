@@ -277,6 +277,7 @@ struct SetupActions {
   var agree: @MainActor () -> Void = {}
   var declineConsent: @MainActor () -> Void = {}
   var openAppLock: @MainActor () -> Void = {}
+  var dropFiles: @MainActor (String, [BulkImportFile]) -> Void = { _, _ in }
   var dropFile: @MainActor (String, Data, String) -> Void = { _, _, _ in }
 }
 

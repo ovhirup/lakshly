@@ -9,9 +9,9 @@
     "sync-data": "node scripts/sync-data.mjs",
     "gen:themes": "node scripts/gen-themes.mjs",
     "gen:types": "json2ts -i ../../packages/schema/lakshly.schema.json -o lib/schema.gen.ts --bannerComment \"/* Generated from packages/schema/lakshly.schema.json. Do not edit. */\"",
-    "predev": "npm run sync-data && npm run gen:themes && npm run gen:entitlements",
+    "predev": "npm run sync-data && npm run gen:themes && npm run gen:entitlements && npm run gen:currencies",
     "dev": "next dev",
-    "prebuild": "npm run sync-data && npm run gen:themes && npm run gen:entitlements",
+    "prebuild": "npm run sync-data && npm run gen:themes && npm run gen:entitlements && npm run gen:currencies",
     "build": "next build",
     "start": "npx serve out",
     "lint": "eslint .",
@@ -22,7 +22,8 @@
     "e2e:nightly": "npm run build && playwright test",
     "pretypecheck": "npm run sync-data && npm run gen:themes && npm run gen:entitlements",
     "prelint": "npm run sync-data && npm run gen:themes && npm run gen:entitlements",
-    "gen:entitlements": "node scripts/gen-entitlements.mjs"
+    "gen:entitlements": "node scripts/gen-entitlements.mjs",
+    "gen:currencies": "node scripts/gen-currencies.mjs"
   },
   "dependencies": {
     "next": "^16.3.8",

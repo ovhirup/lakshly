@@ -197,10 +197,11 @@ export function DataGate({ title, need = ["transactions"], children }: { title: 
       <Glass className="card empty-state">
         <span className="empty-icon" aria-hidden="true"><Icon name="import" size={26} /></span>
         <h2>Nothing here yet</h2>
-        <p className="muted">Import a bank, credit-card or mutual fund (CAS) statement to fill this page. Parsing happens on this device; nothing is uploaded.</p>
+        <p className="muted">My data has no statements yet. Practise with a fake sample, or import a bank, card or mutual fund statement. Parsing stays on this device.</p>
         <div className="row-actions">
-          <Link className="btn primary" href="/setup/?step=resume">Guided setup</Link>
+          <Link className="btn primary" href="/import/?sample=1">Try a sample statement</Link>
           <Link className="btn ghost" href="/import/">Import a statement</Link>
+          <Link className="btn ghost" href="/setup/?step=resume">Guided setup</Link>
           <button className="btn ghost" onClick={() => d.setSource("demo")}>View demo data</button>
         </div>
       </Glass>

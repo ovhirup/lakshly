@@ -249,10 +249,16 @@ struct SetupWelcomeStep: View {
 
   var body: some View {
     Card(title: "About you") {
-      Text("What should we call you?").font(.subheadline.weight(.semibold))
-      Text("Optional · on this device only").font(.caption).foregroundStyle(theme.secondaryText)
+      Text("What should we call you? (optional)").font(.subheadline.weight(.semibold))
+      Text("On this device only, encrypted").font(.caption).foregroundStyle(theme.secondaryText)
       SetupEntry(prompt: "Your name", text: $name, rendering: model.rendering)
-        .onChange(of: name) { _, value in actions.setProfile(value, currency) }
+        .accessibilityLabel("What should we call you? Optional")
+        .accessibilityIdentifier("profile.name")
+        .onChange(of: name) { _, value in
+          let limited = String(value.prefix(40))
+          if limited != name { name = limited }
+          actions.setProfile(limited, currency)
+        }
       Text("Currency").font(.subheadline.weight(.semibold))
       SetupEntry(prompt: "INR", text: $currency, rendering: model.rendering)
         .onChange(of: currency) { _, value in
@@ -606,8 +612,8 @@ struct SetupImportStep: View {
         Button("Try again") { actions.setStatus(picked.catalogId, .todo, nil) }.buttonStyle(SetupGhostStyle())
       }
     }
-    .setupFileDrop(enabled: (model.showsFolderWatch || model.platform == .macos) && !model.rendering) { data, name in
-      actions.dropFile(picked.catalogId, data, name)
+    .setupFileDrop(enabled: (model.showsFolderWatch || model.platform == .macos) && !model.rendering) { files in
+      actions.dropFiles(picked.catalogId, files)
     }
   }
 
@@ -850,14 +856,14 @@ struct SetupPlanStep: View {
         Text("You usually spend \(shown(median))").font(.caption).foregroundStyle(theme.secondaryText)
       }
       HStack(spacing: 6) {
-        stepper("−100", delta: -10_000, line: line, words: "Reduce \(line.category) by ₹100")
-        stepper("−500", delta: -50_000, line: line, words: "Reduce \(line.category) by ₹500")
+        stepper("−100", delta: -stepSmall, line: line, words: "Reduce \(line.category) by ₹100")
+        stepper("−500", delta: -stepLarge, line: line, words: "Reduce \(line.category) by ₹500")
         Text(model.hideAmounts ? "••••" : "₹" + rupeeField(line.limit))
           .lineLimit(1).minimumScaleFactor(0.8)
           .frame(minWidth: 64, minHeight: 44)
           .accessibilityLabel("\(setupTitleCase(line.category)) budget limit")
-        stepper("+100", delta: 10_000, line: line, words: "Increase \(line.category) by ₹100")
-        stepper("+500", delta: 50_000, line: line, words: "Increase \(line.category) by ₹500")
+        stepper("+100", delta: stepSmall, line: line, words: "Increase \(line.category) by ₹100")
+        stepper("+500", delta: stepLarge, line: line, words: "Increase \(line.category) by ₹500")
       }
     }
   }
@@ -873,8 +879,12 @@ struct SetupPlanStep: View {
       .accessibilityLabel(words)
   }
 
+  /// ± step sizes from the currency table (INR until the profile currency lands with WP3). Labels stay rupee text for now.
+  private var stepSmall: Int64 { CurrencyCode.inr.info.magnitude.budgetStepSmall }
+  private var stepLarge: Int64 { CurrencyCode.inr.info.magnitude.budgetStepLarge }
+
   private func rupeeField(_ paise: Int64) -> String {
-    let rupees = Double(paise) / 100
+    let rupees = Double(paise) / Double(CurrencyCode.inr.minorFactor)
     if rupees == rupees.rounded() { return String(Int(rupees)) }
     return String(format: "%.2f", rupees)
   }
@@ -936,7 +946,7 @@ struct SetupPlanStep: View {
 
   private func paise(_ text: String) -> Int64 {
     let value = Double(text) ?? 0
-    return Int64((value * 100).rounded())
+    return CurrencyCode.inr.roundToMinor(value)
   }
 
   private func shown(_ paise: Int64) -> String { setupMask(Money.format(paise), hidden: model.hideAmounts) }
@@ -1100,7 +1110,7 @@ struct SetupConfetti: View {
 }
 
 extension View {
-  @ViewBuilder func setupFileDrop(enabled: Bool, deliver: @escaping (Data, String) -> Void) -> some View {
+  @ViewBuilder func setupFileDrop(enabled: Bool, deliver: @escaping ([BulkImportFile]) -> Void) -> some View {
     #if os(macOS)
     if enabled {
       onDrop(of: [.pdf, .commaSeparatedText, .fileURL], isTargeted: nil) { providers in
@@ -1115,33 +1125,35 @@ extension View {
 }
 
 #if os(macOS)
-func loadSetupDrop(_ providers: [NSItemProvider], _ deliver: @escaping (Data, String) -> Void) {
-  for provider in providers {
+func loadSetupDrop(_ providers: [NSItemProvider], _ deliver: @escaping ([BulkImportFile]) -> Void) {
+  // Collect the entire drop before opening the importer. Provider completion order must not replace a staged file.
+  let group = DispatchGroup()
+  let lock = NSLock()
+  var loaded: [Int: BulkImportFile] = [:]
+  for (index, provider) in providers.enumerated() {
     let types = [UTType.fileURL.identifier, UTType.pdf.identifier, UTType.commaSeparatedText.identifier]
     guard let type = types.first(where: { provider.hasItemConformingToTypeIdentifier($0) }) else { continue }
+    group.enter()
     provider.loadItem(forTypeIdentifier: type, options: nil) { item, _ in
-      if let url = item as? URL {
+      defer { group.leave() }
+      let url = (item as? URL) ?? ((type == UTType.fileURL.identifier ? item as? Data : nil).flatMap { URL(dataRepresentation: $0, relativeTo: nil) })
+      var file: BulkImportFile?
+      if let url {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        if let data = try? Data(contentsOf: url) {
-          Task { @MainActor in deliver(data, url.lastPathComponent) }
+        if let bytes = try? Data(contentsOf: url) {
+          let date = try? url.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
+          file = BulkImportFile(name: url.lastPathComponent, data: bytes, modified: date)
         }
-        return
+      } else if let data = item as? Data {
+        file = BulkImportFile(name: type == UTType.pdf.identifier ? "statement.pdf" : "statement.csv", data: data)
       }
-      if let data = item as? Data, type == UTType.fileURL.identifier, let url = URL(dataRepresentation: data, relativeTo: nil) {
-        let scoped = url.startAccessingSecurityScopedResource()
-        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        if let file = try? Data(contentsOf: url) {
-          Task { @MainActor in deliver(file, url.lastPathComponent) }
-        }
-        return
-      }
-      if let data = item as? Data {
-        let name = type == UTType.pdf.identifier ? "statement.pdf" : "statement.csv"
-        Task { @MainActor in deliver(data, name) }
-      }
+      if let file { lock.lock(); loaded[index] = file; lock.unlock() }
     }
-    return
+  }
+  group.notify(queue: .main) {
+    lock.lock(); let files = loaded.keys.sorted().compactMap { loaded[$0] }; lock.unlock()
+    deliver(files)
   }
 }
 #endif

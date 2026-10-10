@@ -311,7 +311,8 @@ private func ceilTo(_ value: Int64, _ step: Int64) -> Int64 {
   return ((value + step - 1) / step) * step
 }
 
-func suggestBudget(_ dataset: SetupDataset, today: String, factorPct: Int = 95) -> BudgetSuggestion {
+func suggestBudget(_ dataset: SetupDataset, today: String, factorPct: Int = 95, currency: CurrencyCode = .inr) -> BudgetSuggestion {
+  let magnitude = currency.info.magnitude
   let months = completeMonths(dataset, today: today)
   if months.isEmpty {
     return BudgetSuggestion(mode: "starter", confidence: nil, months: months, factorPct: nil, dropped: nil, lines: [], total: nil)
@@ -325,7 +326,7 @@ func suggestBudget(_ dataset: SetupDataset, today: String, factorPct: Int = 95) 
     }
     return (category, median(spends))
   }
-  .filter { $0.median >= 50_000 }
+  .filter { $0.median >= magnitude.minBudgetLine }
   .sorted { lhs, rhs in
     if lhs.median != rhs.median { return lhs.median > rhs.median }
     return lhs.category < rhs.category
@@ -334,7 +335,7 @@ func suggestBudget(_ dataset: SetupDataset, today: String, factorPct: Int = 95) 
   let stamp = monthKey.replacingOccurrences(of: "-", with: "")
   let lines = candidates.prefix(6).map { candidate -> SuggestedBudgetLine in
     let scaled = candidate.median * Int64(factorPct)
-    let step: Int64 = scaled >= 500_000 * 100 ? 50_000 : 10_000
+    let step: Int64 = scaled >= magnitude.budgetStepThreshold * 100 ? magnitude.budgetStepLarge : magnitude.budgetStepSmall
     let limit = ((scaled + step * 50) / (step * 100)) * step
     return SuggestedBudgetLine(
       id: "bud_\(stamp)\(candidate.category)",
@@ -356,7 +357,8 @@ func suggestBudget(_ dataset: SetupDataset, today: String, factorPct: Int = 95) 
   )
 }
 
-func suggestGoal(_ dataset: SetupDataset, today: String) -> GoalSuggestion {
+func suggestGoal(_ dataset: SetupDataset, today: String, currency: CurrencyCode = .inr) -> GoalSuggestion {
+  let magnitude = currency.info.magnitude
   let months = completeMonths(dataset, today: today)
   let med: Int64 = months.isEmpty ? 0 : median(months.map { month in
     dataset.transactions.reduce(Int64(0)) { total, transaction in
@@ -372,9 +374,9 @@ func suggestGoal(_ dataset: SetupDataset, today: String) -> GoalSuggestion {
   }
   let cover10: Int64? = med == 0 ? nil : (liquid * 10) / med
   func emergency(_ monthsCovered: Int64, rule: String) -> GoalSuggestion {
-    let target = ceilTo(monthsCovered * med, 1_000_000)
+    let target = ceilTo(monthsCovered * med, magnitude.goalEmergencyRounding)
     let saved = min(liquid, target)
-    let monthly: Int64 = target > saved ? max(50_000, ceilTo(max(target - saved, 0) / 12, 10_000)) : 0
+    let monthly: Int64 = target > saved ? max(magnitude.goalMonthlyMinimum, ceilTo(max(target - saved, 0) / 12, magnitude.goalMonthlyRounding)) : 0
     return GoalSuggestion(
       rule: rule,
       kind: .emergency,
@@ -398,7 +400,7 @@ func suggestGoal(_ dataset: SetupDataset, today: String) -> GoalSuggestion {
   let order = dataset.transactions.indices.sorted { dataset.transactions[$0].date > dataset.transactions[$1].date }
   for index in order {
     let transaction = dataset.transactions[index]
-    if !annual.contains(transaction.category) || !isOut(transaction) || -transaction.amount < 500_000 || transaction.date < cutoff { continue }
+    if !annual.contains(transaction.category) || !isOut(transaction) || -transaction.amount < magnitude.annualPaymentThreshold || transaction.date < cutoff { continue }
     let prior = dataset.transactions.indices.contains { otherIndex in
       guard otherIndex != index else { return false }
       let other = dataset.transactions[otherIndex]
@@ -409,7 +411,7 @@ func suggestGoal(_ dataset: SetupDataset, today: String) -> GoalSuggestion {
     let due = addYears(transaction.date)
     if !prior && due > today && due <= addYears(today) {
       let left = wholeMonths(from: today, to: due)
-      let target = ceilTo(-transaction.amount, 100_000)
+      let target = ceilTo(-transaction.amount, magnitude.goalTargetRounding)
       let perMonth = left == 0 ? target : (target + Int64(left) - 1) / Int64(left)
       return GoalSuggestion(
         rule: "annualPayment",
@@ -417,7 +419,7 @@ func suggestGoal(_ dataset: SetupDataset, today: String) -> GoalSuggestion {
         name: "\(transaction.merchant ?? "undefined") renewal",
         target: target,
         saved: 0,
-        monthly: ceilTo(perMonth, 10_000),
+        monthly: ceilTo(perMonth, magnitude.goalMonthlyRounding),
         due: due,
         monthsCovered: Double(cover10 ?? 0) / 10,
         medianMonthlySpend: med,
@@ -438,8 +440,8 @@ private func wholeMonths(from today: String, to due: String) -> Int {
   return max(left, 1)
 }
 
-func goalFromSuggestion(_ dataset: SetupDataset, today: String, now: String) -> SetupGoal? {
-  let suggestion = suggestGoal(dataset, today: today)
+func goalFromSuggestion(_ dataset: SetupDataset, today: String, now: String, currency: CurrencyCode = .inr) -> SetupGoal? {
+  let suggestion = suggestGoal(dataset, today: today, currency: currency)
   guard let target = suggestion.target, let due = suggestion.due else { return nil }
   return SetupGoal(
     id: "goal_setup01",

@@ -62,6 +62,21 @@ enum GlanceShotCatalog {
           premium: true,
           message: revealed ? nil : "Amounts stay hidden until you reveal them."))
       }
+      let panel = CGSize(width: 480, height: 340)
+      let settings = CGSize(width: 480, height: 240)
+      let hiddenNotch = NotchGlanceModel.make(snapshot: snapshot, revealed: false, showsNetWorth: true)
+      let revealedNotch = NotchGlanceModel.make(snapshot: snapshot, revealed: true, showsNetWorth: true)
+      func notch(_ name: String, _ size: CGSize, _ view: some View) {
+        items.append(Item(
+          name: "notch-\(name)-\(theme.rawValue)-\(appearance)",
+          size: size,
+          view: AnyView(frame(view, size: size, theme: theme, scheme: scheme))))
+      }
+      notch("hidden", panel, NotchPanelShot(content: hiddenNotch))
+      notch("revealed", panel, NotchPanelShot(content: revealedNotch))
+      notch("free-locked", settings, NotchSettingsShot(entitled: false, hasNotch: true, isOn: false))
+      notch("settings", settings, NotchSettingsShot(entitled: true, hasNotch: true, isOn: true))
+      notch("settings-nonotch", settings, NotchSettingsShot(entitled: true, hasNotch: false, isOn: true))
     }
     return items
   }

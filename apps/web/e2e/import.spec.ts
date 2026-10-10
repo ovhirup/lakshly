@@ -15,6 +15,53 @@ fs.writeFileSync(
   ].join("\n"),
 );
 
+test("the tester site shows three things to try", async ({ page }) => {
+  test.skip(process.env.LAKSHLY_E2E_EDITION !== "beta", "The public build does not include the tester card.");
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Three things to try" })).toBeVisible();
+  await page.getByRole("button", { name: "Hide this" }).click();
+  await expect(page.getByRole("heading", { name: "Three things to try" })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Three things to try" })).toHaveCount(0);
+});
+
+test("an empty My data Overview opens the sample review", async ({ page }) => {
+  await page.goto("/import/");
+  await page.getByRole("button", { name: "My data" }).click();
+  await page.goto("/");
+  const open = page.locator("#main-content");
+  await expect(open.getByRole("heading", { name: "Nothing here yet" })).toBeVisible();
+  await expect(open.getByText("My data has no statements yet.")).toBeVisible();
+  await expect(open.getByRole("heading", { name: "Three things to try" })).toHaveCount(0);
+  await open.getByRole("link", { name: "Try a sample statement" }).click();
+  await expect(page.getByRole("heading", { name: /Review bank\.synthetic\.csv/ })).toBeVisible({ timeout: 20_000 });
+});
+
+test("a sample statement can be reviewed without a bank file", async ({ page }) => {
+  await page.goto("/import/");
+  await page.getByTestId("try-sample").click();
+  await expect(page.getByRole("heading", { name: /Review bank\.synthetic\.csv/ })).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("Swiggy").first()).toBeVisible();
+  await page.getByRole("button", { name: /Confirm import/ }).click();
+  await expect(page.getByRole("heading", { name: "Saved on this device" })).toBeVisible();
+  await page.getByRole("link", { name: "See Overview" }).click();
+  await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
+  await expect(page.locator("#main-content").getByText("Your data · as of")).toBeVisible();
+});
+
+test("profile can delete an imported sample", async ({ page }) => {
+  await page.goto("/import/");
+  await page.getByTestId("try-sample").click();
+  await expect(page.getByRole("heading", { name: /Review bank\.synthetic\.csv/ })).toBeVisible({ timeout: 20_000 });
+  await page.getByRole("button", { name: /Confirm import/ }).click();
+  await page.goto("/profile/");
+  await page.getByRole("button", { name: "Delete all my data" }).click();
+  await page.getByRole("button", { name: "Delete everything" }).click();
+  await expect(page.getByText("All your data was deleted from this device.")).toBeVisible();
+  await page.goto("/import/");
+  await expect(page.getByText("No imported data yet.")).toBeVisible();
+});
+
 test("a synthetic bank CSV imports and shows on Overview", async ({ page }) => {
   await page.goto("/import/");
   await expect(page.getByRole("heading", { name: "Import" })).toBeVisible();
