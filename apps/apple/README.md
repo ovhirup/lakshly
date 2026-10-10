@@ -275,3 +275,13 @@ Lakshmi text-bearing tokens match the web app's `docs/design-tokens.md` (`--lk-s
 | lockGold | #7C416E | #E8B4D4 |
 | ambient primary | #B66F9E (0.05) | #B66F9E (0.12) |
 | ambient secondary | #7C416E (0.025) | #E8B4D4 (0.05) |
+
+## Feedback & Requests
+
+Free and Premium members can send ideas, bugs and praise. Only the typed kind, title (90 UTF-16 units), details (1000), area, plan, optional credit (40) and reply email (120), and an empty honeypot are sent. Diagnostics default off; opting in adds only app version and platform. The live sorted JSON preview matches the submitted bytes. `X-Lakshly-Client` is `ios` or `macos`; only with diagnostics enabled does it append `/CFBundleShortVersionString`. No balances, datasets, theme, device identifiers or locale go to the relay. No automatic refresh or background retries run.
+
+Request history lives in Application Support JSON. Lookup secrets live only in the Keychain, generic passwords under `app.lakshly.feedback`, account = request id, AfterFirstUnlockThisDeviceOnly, never synchronizable. Check for updates uses the secret only on an explicit tap.
+
+The Release checker has one narrow HTTP exception: `URLSession` and `URLRequest` are allowed only in `Features/Feedback/FeedbackTransport.swift`, which has exactly one HTTPS URL, `https://feedback.lakshly.com`. Feedback is the only user data that leaves the device through app HTTP, only on Send to this host (status checks are explicit taps); redirects are refused. StoreKit performs subscription verification separately. Only the macOS app has network.client; widgets have no network entitlement and network.server is forbidden. The GitHub fallback opens a public draft for review and includes only the same previewed payload fields.
+
+`scripts/render_feedback_shots.sh /tmp/feedbackshots-test` renders seven fictional screens at 390 pt and 900 pt, in Lakshmi dark and Monochrome Gold light, using offscreen ImageRenderer and a stub transport. It opens no windows and makes no network requests.

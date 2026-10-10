@@ -69,4 +69,35 @@ final class CurrencyTests: XCTestCase {
       XCTAssertEqual(try CurrencyCode.usd.toMinor(CurrencyCode.usd.fromMinor(minor)), minor)
     }
   }
+
+  func testRoundToMinorKeepsTodaysRounding() {
+    // Same expression the setup canvas used before: Int64((value * 100).rounded()).
+    var x = -2_000.0
+    while x <= 2_000.0 {
+      XCTAssertEqual(CurrencyCode.inr.roundToMinor(x), Int64((x * 100).rounded()), "\(x)")
+      x += 0.001
+    }
+    for value in [12.345, 19.999, 1.005, 0.1 + 0.2, 99.995, -99.995, 1_000_000_000.005] {
+      XCTAssertEqual(CurrencyCode.inr.roundToMinor(value), Int64((value * 100).rounded()), "\(value)")
+    }
+  }
+
+  func testRoundToMinorNeverTraps() {
+    XCTAssertEqual(CurrencyCode.usd.roundToMinor(.nan), 0)
+    XCTAssertEqual(CurrencyCode.usd.roundToMinor(.infinity), 0)
+    XCTAssertEqual(CurrencyCode.usd.roundToMinor(1e30), 0)
+    XCTAssertEqual(CurrencyCode.usd.roundToMinor(-1e30), 0)
+    XCTAssertEqual(CurrencyCode.usd.roundToMinor(19.99), 1999)
+  }
+
+  func testRoundToMinorGuardEdges() {
+    XCTAssertEqual(CurrencyCode.inr.roundToMinor(8.9e16), 8_900_000_000_000_000_000)
+    XCTAssertEqual(CurrencyCode.inr.roundToMinor(9.1e16), 0)
+  }
+
+  func testMoneyFormatHandlesTheInt64Extremes() {
+    XCTAssertEqual(Money.format(Int64.max), "₹92,23,37,20,36,85,47,758.07")
+    XCTAssertEqual(Money.format(Int64.min), "−₹92,23,37,20,36,85,47,758.08")
+    XCTAssertEqual(Money.format(Int64.min + 1), "−₹92,23,37,20,36,85,47,758.07")
+  }
 }

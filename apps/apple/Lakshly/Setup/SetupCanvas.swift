@@ -850,14 +850,14 @@ struct SetupPlanStep: View {
         Text("You usually spend \(shown(median))").font(.caption).foregroundStyle(theme.secondaryText)
       }
       HStack(spacing: 6) {
-        stepper("−100", delta: -10_000, line: line, words: "Reduce \(line.category) by ₹100")
-        stepper("−500", delta: -50_000, line: line, words: "Reduce \(line.category) by ₹500")
+        stepper("−100", delta: -stepSmall, line: line, words: "Reduce \(line.category) by ₹100")
+        stepper("−500", delta: -stepLarge, line: line, words: "Reduce \(line.category) by ₹500")
         Text(model.hideAmounts ? "••••" : "₹" + rupeeField(line.limit))
           .lineLimit(1).minimumScaleFactor(0.8)
           .frame(minWidth: 64, minHeight: 44)
           .accessibilityLabel("\(setupTitleCase(line.category)) budget limit")
-        stepper("+100", delta: 10_000, line: line, words: "Increase \(line.category) by ₹100")
-        stepper("+500", delta: 50_000, line: line, words: "Increase \(line.category) by ₹500")
+        stepper("+100", delta: stepSmall, line: line, words: "Increase \(line.category) by ₹100")
+        stepper("+500", delta: stepLarge, line: line, words: "Increase \(line.category) by ₹500")
       }
     }
   }
@@ -873,8 +873,12 @@ struct SetupPlanStep: View {
       .accessibilityLabel(words)
   }
 
+  /// ± step sizes from the currency table (INR until the profile currency lands with WP3). Labels stay rupee text for now.
+  private var stepSmall: Int64 { CurrencyCode.inr.info.magnitude.budgetStepSmall }
+  private var stepLarge: Int64 { CurrencyCode.inr.info.magnitude.budgetStepLarge }
+
   private func rupeeField(_ paise: Int64) -> String {
-    let rupees = Double(paise) / 100
+    let rupees = Double(paise) / Double(CurrencyCode.inr.minorFactor)
     if rupees == rupees.rounded() { return String(Int(rupees)) }
     return String(format: "%.2f", rupees)
   }
@@ -936,7 +940,7 @@ struct SetupPlanStep: View {
 
   private func paise(_ text: String) -> Int64 {
     let value = Double(text) ?? 0
-    return Int64((value * 100).rounded())
+    return CurrencyCode.inr.roundToMinor(value)
   }
 
   private func shown(_ paise: Int64) -> String { setupMask(Money.format(paise), hidden: model.hideAmounts) }
