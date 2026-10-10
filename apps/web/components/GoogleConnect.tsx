@@ -205,12 +205,12 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
 
   return (
     <Glass className="card connect-card gmail-card" as="div">
-      <div className="card-head"><h3><Icon name="shield" size={16} /> Connect Gmail (read-only)</h3><span className="badge">Beta · testers</span></div>
+      <div className="card-head"><h3><Icon name="shield" size={16} /> Connect Gmail (read-only)</h3><span className="badge soon-pill" data-testid="gmail-soon">Coming soon · testers only</span></div>
       {pane === "start" ? (
         <>
-          <p className="muted tiny">Lakshly can find statement emails from your banks, cards and CAS providers in Gmail and open the PDFs here. Your browser talks to Google directly; nothing passes through Lakshly&apos;s servers.</p>
+          <p className="muted tiny" data-testid="gmail-invite-note">Google currently allows Gmail connect only for invited testers; everyone else, use manual import above.</p>
           <div className="row-actions">
-            <button className="btn primary" onClick={() => setConsent(true)} disabled={!isGmail && !!email} data-testid="gmail-start">Connect Gmail (read-only)</button>
+            <button className="btn outline" onClick={() => setConsent(true)} disabled={!isGmail && !!email} data-testid="gmail-start">Connect Gmail (read-only)</button>
           </div>
           {!isGmail && !!email && <p className="tiny muted">Gmail connect works for Gmail and Google Workspace addresses. For other mailboxes, use the guided search below.</p>}
         </>
@@ -227,7 +227,7 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
           </ul>
           <p className="tiny muted">Beta: Google allows Gmail access only for invited test accounts while Lakshly&apos;s app review is pending.</p>
           <div className="row-actions">
-            <button className="btn primary" disabled={!!g.busy} onClick={() => void connectGmail(hint, picked)} data-testid="gmail-agree">Agree and connect</button>
+            <button className="btn outline" disabled={!!g.busy} onClick={() => void connectGmail(hint, picked)} data-testid="gmail-agree">Agree and connect</button>
             <button className="btn ghost" onClick={() => setConsent(false)}>Not now</button>
           </div>
         </div>
@@ -264,7 +264,7 @@ export function GmailConnectCard({ email, picked, onImported }: { email: string;
       {g.error && (
         <div className="gmail-error" role="alert" data-testid="gmail-error">
           <p className="tiny down">{g.error}</p>
-          {g.retry && !connected && <button className="btn primary small" disabled={!!g.busy} onClick={() => void connectGmail(hint, picked, { consent: true })} data-testid="gmail-retry">Try again</button>}
+          {g.retry && !connected && <button className="btn outline small" disabled={!!g.busy} onClick={() => void connectGmail(hint, picked, { consent: true })} data-testid="gmail-retry">Try again</button>}
         </div>
       )}
       {!connected && g.log.some((e) => e.action === "revoked") && !g.error && <p className="tiny muted">Disconnected. Access was revoked at Google.</p>}

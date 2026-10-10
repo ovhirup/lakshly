@@ -1,7 +1,7 @@
 // Gmail connect: allow-list, ID-token decoding and the client against a mocked (synthetic) Gmail API.
 import { describe, expect, it } from "vitest";
 import {
-  assertAllowedGmailUrl, decodeIdToken, financeSources, fromAddress, GMAIL_API, GMAIL_SCOPE, GmailApiError, gmailApiError, gmailPane, interpretPopupError, interpretTokenResponse, GmailClient, GOOGLE_CLIENT_ID_DEFAULT, revokeToken,
+  assertAllowedGmailUrl, decodeIdToken, financeSources, fromAddress, GMAIL_API, GMAIL_INVITE_ONLY, GMAIL_SCOPE, GmailApiError, gmailApiError, gmailPane, interpretPopupError, interpretTokenResponse, GmailClient, GOOGLE_CLIENT_ID_DEFAULT, revokeToken,
   senderAllowed, senderDomains, statementParts, statementQueries, type FetchLike,
 } from "../lib/gmail";
 import { findSource } from "../lib/setup";
@@ -134,7 +134,13 @@ describe("grant + error handling (connect bug: 'Gmail access was not granted.' w
     // Granular consent with the Gmail box unticked: a token comes back, but without the scope.
     const unticked = interpretTokenResponse({ access_token: "ya29.x", scope: "openid email profile" }, granted);
     expect(unticked).toMatchObject({ ok: false, kind: "denied" });
-    expect(interpretTokenResponse({ error: "access_denied" }, granted)).toMatchObject({ ok: false, kind: "denied" });
+    // Not an invited test user (or Cancel): friendly invite-only copy, never the raw OAuth error.
+    expect(interpretTokenResponse({ error: "access_denied", error_description: "Access blocked: app not verified" }, granted)).toEqual({ ok: false, kind: "invite-only", message: GMAIL_INVITE_ONLY });
+    expect(interpretTokenResponse({ error: "admin_policy_enforced" }, granted)).toMatchObject({ kind: "invite-only" });
+    expect(GMAIL_INVITE_ONLY).toMatch(/^Gmail connect is invite-only for now — use manual import/);
+    const other = interpretTokenResponse({ error: "server_error", error_description: "raw oauth text" }, granted);
+    expect(other).toMatchObject({ ok: false, kind: "error" });
+    expect(other.ok ? "" : other.message).not.toMatch(/raw oauth text|server_error/);
     expect(interpretTokenResponse({}, granted)).toMatchObject({ ok: false, kind: "error" });
   });
   it("a closed or blocked popup is not a denial", () => {

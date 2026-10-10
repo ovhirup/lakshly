@@ -20,12 +20,14 @@ type Phase =
   | { step: "review"; file: File; result: ParseResult }
   | { step: "error"; file?: File; message: string };
 
-export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints, incoming, importRef }: {
+export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints, incoming, importRef, cta }: {
   onImported?: (r: ParseResult, report: MergeReport, fileName: string) => void;
   onPhase?: (step: Phase["step"]) => void;
   /** Setup source this import belongs to (recorded in the import log). */
   sourceId?: string;
   prompt?: string;
+  /** Gold primary "choose file" button under the drop target (the main path in setup). */
+  cta?: string;
   /** Format hints for this source's password (never values). */
   passwordHints?: string[];
   /** A file handed in by another flow (e.g. a Gmail attachment fetched in this browser); read like a dropped file. */
@@ -96,6 +98,9 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
                 <span className="muted tiny">{phase.step === "reading" ? "Extracting text and detecting the layout" : "or click to browse · PDF (password-protected is fine), CSV"}</span>
                 {phase.step === "reading" && <span className="spinner" aria-hidden="true" />}
               </div>
+              {cta && phase.step !== "reading" && (
+                <div className="drop-cta"><button type="button" className="btn primary" onClick={() => input.current?.click()} data-testid="manual-import-cta">{cta}</button></div>
+              )}
               <input ref={input} type="file" accept=".pdf,.csv,.tsv,application/pdf,text/csv" hidden data-testid="file-input"
                 onChange={(e) => { onFiles(e.target.files); e.target.value = ""; }} />
             </Glass>
