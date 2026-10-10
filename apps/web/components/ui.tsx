@@ -7,10 +7,11 @@ import { PRICE_TEXT, type FeatureId } from "@/lib/entitlements";
 import { IS_BETA } from "@/lib/edition";
 import { pctMasked } from "@/lib/privacy";
 
-export function Glass({ children, className = "", as: Tag = "section", style }: {
+export function Glass({ children, className = "", as: Tag = "section", style, ...rest }: {
   children: React.ReactNode; className?: string; as?: "section" | "div" | "article"; style?: React.CSSProperties;
+  "aria-labelledby"?: string; "data-testid"?: string;
 }) {
-  return <Tag className={`glass ${className}`} style={style}>{children}</Tag>;
+  return <Tag className={`glass ${className}`} style={style} {...rest}>{children}</Tag>;
 }
 
 export function PageHeader({ title, subtitle, children }: { title: string; subtitle?: string; children?: React.ReactNode }) {

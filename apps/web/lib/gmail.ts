@@ -106,6 +106,16 @@ const STATEMENT_SUBJECT_RE = /\b(e-?statements?|statements?|cas|consolidated acc
 const NON_STATEMENT_SUBJECT_RE = /\b(emi|offers?|thank\s+you|thanks for|otp|one[- ]time password|alerts?|cashback|rewards?|welcome|congratulations|pre-?approved|reminder|upgrade|promo(tion)?s?|sale|transaction alert|debited|credited|limit (increase|enhancement)|loan offer)\b/i;
 const STATEMENT_FILE_RE = /\.(pdf|csv|xlsx?)$/i;
 
+/** Guided Gmail search for any statement (manual import helper; opened in Gmail by the person, nothing is read by Lakshly). */
+export function anyStatementQuery(window = "1y"): string {
+  return [
+    `subject:(${STATEMENT_SUBJECT_TERMS.join(" OR ")})`,
+    `has:attachment (${["pdf", "csv"].map((e) => `filename:${e}`).join(" OR ")})`,
+    `-subject:(${NON_STATEMENT_SUBJECT_TERMS.join(" OR ")})`,
+    `newer_than:${window}`,
+  ].join(" ");
+}
+
 /** Gmail search for one sender group: statement subject, a statement-file attachment, and no promo/EMI/OTP subjects. */
 export function gmailStatementQuery(source: Source, window = "2y"): string {
   const senders = [...source.senders.domains, ...source.senders.addresses];
@@ -245,12 +255,16 @@ export function gmailApiError(status: number, body: unknown): GmailApiError {
 }
 
 export interface TokenResponseLike { access_token?: string; expires_in?: number; scope?: string; error?: string; error_description?: string }
-export type TokenOutcome = { ok: true; token: string; expiresIn: number } | { ok: false; kind: "denied" | "closed" | "error"; message: string };
+export type TokenOutcome = { ok: true; token: string; expiresIn: number } | { ok: false; kind: "denied" | "invite-only" | "closed" | "error"; message: string };
+/** Friendly copy while Google limits Gmail access to invited testers (never a raw OAuth error). */
+export const GMAIL_INVITE_ONLY = "Gmail connect is invite-only for now — use manual import above. Invited testers can try again and allow access.";
+const INVITE_ONLY_ERRORS = ["admin_policy_enforced", "org_internal", "unauthorized_client", "disallowed_useragent", "invalid_client"];
 
 /** Decides whether a GIS token response really grants gmail.readonly. Only ok:true may mark Gmail as connected. */
 export function interpretTokenResponse(resp: TokenResponseLike, hasGrantedAllScopes: (r: TokenResponseLike, ...s: string[]) => boolean): TokenOutcome {
-  if (resp.error === "access_denied") return { ok: false, kind: "denied", message: "You didn't give Lakshly Gmail access. Nothing was read." };
-  if (resp.error || !resp.access_token) return { ok: false, kind: "error", message: resp.error_description || resp.error || "Google didn't return access." };
+  // Testing mode: Google answers access_denied both for "not an invited test user" and for "Cancel".
+  if (resp.error === "access_denied" || INVITE_ONLY_ERRORS.includes(resp.error ?? "")) return { ok: false, kind: "invite-only", message: GMAIL_INVITE_ONLY };
+  if (resp.error || !resp.access_token) return { ok: false, kind: "error", message: GMAIL_INVITE_ONLY };
   if (!hasGrantedAllScopes(resp, GMAIL_SCOPE)) return { ok: false, kind: "denied", message: "Gmail read access wasn't granted. On Google's screen, tick \u201cView your email messages and settings\u201d, then continue." };
   return { ok: true, token: resp.access_token, expiresIn: resp.expires_in ?? 3600 };
 }

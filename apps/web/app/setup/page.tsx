@@ -26,6 +26,7 @@ import { goalFacts, PRESET_FACTOR, roundBudget, suggestBudget, suggestGoal, VARI
 import "@/components/setup.css";
 import { GMAIL_CONNECT } from "@/lib/edition";
 import { GmailConnectCard, SignInWithGoogle, useGoogle } from "@/components/GoogleConnect";
+import { anyStatementQuery, gmailStatementQuery } from "@/lib/gmail";
 
 const today = () => new Date().toISOString().slice(0, 10);
 const PROVIDER_LABEL: Record<Provider, string> = { gmail: "Gmail", outlook: "Outlook", icloud: "iCloud Mail", yahoo: "Yahoo Mail", other: "Custom domain" };
@@ -145,7 +146,7 @@ function Wizard() {
         <section className="setup-step" aria-labelledby="step-title">
           <p className="tiny muted step-of">Step {idx + 1} of {STEPS.length}</p>
           {at === "welcome" && <Welcome continueRef={continueRef} />}
-          {at === "email" && <EmailStep continueRef={continueRef} />}
+          {at === "email" && <EmailStep continueRef={continueRef} flash={flash} />}
           {at === "accounts" && <AccountsStep continueRef={continueRef} />}
           {at === "import" && <ImportStep continueRef={continueRef} flash={flash} />}
           {at === "plan" && <PlanStep continueRef={continueRef} flash={flash} />}
@@ -277,8 +278,9 @@ function Welcome({ continueRef }: StepProps) {
 
 /* ───────────── 2 · Email ───────────── */
 
-function EmailStep({ continueRef }: StepProps) {
+function EmailStep({ continueRef, flash }: StepProps & { flash: (t: string) => void }) {
   const { state, dispatch } = useSetup();
+  const imported = useData().user?.imports.length ?? 0;
   const { limit } = useTier();
   const extra = limit("setup.extraEmails") ?? 10;
   const google = useGoogle();
@@ -296,9 +298,12 @@ function EmailStep({ continueRef }: StepProps) {
   return (
     <>
       <h2 id="step-title">Where do your statements arrive?</h2>
-      <p className="muted lead">Banks email statements every month. Tell us which inbox, and every account in the next steps gets a ready-made search that opens straight in your mail.</p>
+      <p className="muted lead">Banks email statements every month. Download one and drop it here, or tell us which inbox and every account in the next steps gets a ready-made search that opens straight in your mail.</p>
+
+      <ManualImportCard flash={flash} email={normaliseEmail(primary)} />
 
       <Glass className="card">
+        <h3 className="email-card-title">Your statement inbox</h3>
         {emails.map((e, i) => {
           const p = detectProvider(e);
           return (
@@ -335,8 +340,55 @@ function EmailStep({ continueRef }: StepProps) {
         <code className="query">{provider === "outlook" ? outlookQuery(sample, today(), "statements") : gmailQuery(sample, "statements")}</code>
         <p className="muted tiny">{provider === "outlook" ? "Copy it, open Outlook and paste it into the search box." : "One click opens it in Gmail for the right account. Download the PDF and drop it into Lakshly."}</p>
       </Glass>
-      <StepBar continueRef={continueRef} onContinue={save} canContinue={valid && !!primary.trim()} />
+      <StepBar continueRef={continueRef} onContinue={save} canContinue={valid && (!!primary.trim() || imported > 0)} />
     </>
+  );
+}
+
+/* ───────────── Manual import: the main path (launch) ───────────── */
+
+const CAS_HELPERS = [["cams-cas", "CAMS CAS"], ["kfintech-cas", "KFintech CAS"]] as const;
+
+/** Gold primary drop/choose card. Guided Gmail searches are the helper underneath (the person opens them in Gmail). */
+function ManualImportCard({ flash, email, onImported, perAccount }: {
+  flash: (t: string) => void; email: string; perAccount?: boolean;
+  onImported?: (r: ParseResult, report: MergeReport) => void;
+}) {
+  const { state, dispatch } = useSetup();
+  const [copied, setCopied] = useState(false);
+  const gmailOk = !email || ["gmail", "other"].includes(detectProvider(email) ?? "other");
+  const cas = CAS_HELPERS.flatMap(([id, label]) => { const src = findSource(id); return src ? [{ src, label }] : []; });
+  function done(r: ParseResult, report: MergeReport) {
+    if (onImported) return onImported(r, report);
+    flash(importToast(report));
+    const a = attribute(r.adapter, state.picked, state.custom);
+    const periodTo = r.meta.map((m) => m.periodTo).filter(Boolean).sort().pop();
+    if (a.kind === "auto") dispatch({ type: "imported", id: a.sourceId, at: new Date().toISOString(), periodTo });
+  }
+  async function copy() {
+    try { await navigator.clipboard.writeText(gmailUrl(anyStatementQuery(), email)); setCopied(true); setTimeout(() => setCopied(false), 2500); } catch { setCopied(false); }
+  }
+  return (
+    <Glass className="card manual-card" as="section" aria-labelledby="manual-title" data-testid="manual-import">
+      <div className="card-head"><h3 id="manual-title"><Icon name="import" size={16} /> Import statements yourself</h3><span className="badge status-imported">Recommended</span></div>
+      <p className="muted tiny lead-tiny">Drop a bank or card statement PDF or CSV. Password-protected PDFs and CAMS / KFintech CAS work. Read on this device, never uploaded.</p>
+      <Importer onImported={done} cta="Choose a statement file" prompt="Drop a statement PDF or CSV here" />
+      <div className="manual-helper" role="note" aria-label="How to find your statements">
+        <strong className="tiny">Need to find one? Use the guided search</strong>
+        <ol className="tiny muted">
+          <li>Open the search in {gmailOk ? "Gmail" : "your mail"}.</li>
+          <li>Download the statement PDF.</li>
+          <li>Drop it above.{perAccount ? " Each account below has its own search too." : ""}</li>
+        </ol>
+        {gmailOk && (
+          <div className="row-actions">
+            <a className="btn ghost small" href={gmailUrl(anyStatementQuery(), email)} target="_blank" rel="noopener noreferrer" data-testid="manual-search-all">Search Gmail for statements ↗</a>
+            {cas.map(({ src, label }) => <a key={src.id} className="btn ghost small" href={gmailUrl(gmailStatementQuery(src), email)} target="_blank" rel="noopener noreferrer" aria-label={`Search Gmail for ${src.name} statements (opens Gmail)`}>{label} ↗</a>)}
+            <button className="btn ghost small" onClick={() => void copy()}>{copied ? "Copied ✓" : "Copy search link"}</button>
+          </div>
+        )}
+      </div>
+    </Glass>
   );
 }
 
@@ -426,7 +478,6 @@ function ImportStep({ continueRef, flash }: StepProps & { flash: (t: string) => 
   const targets = importTargets(state);
   const [open, setOpen] = useState<string | null>(() => targets.find((t) => t.supported && state.progress[t.id]?.status !== "imported")?.id ?? null);
   const [ask, setAsk] = useState<{ candidates: string[]; periodTo?: string } | null>(null);
-  const [general, setGeneral] = useState(false);
   const imported = data.user?.imports.length ?? 0;
 
   const periodOf = (r: ParseResult) => r.meta.map((m) => m.periodTo).filter(Boolean).sort().pop();
@@ -435,14 +486,13 @@ function ImportStep({ continueRef, flash }: StepProps & { flash: (t: string) => 
     const a = attribute(r.adapter, state.picked, state.custom);
     if (a.kind === "auto") dispatch({ type: "imported", id: a.sourceId, at: new Date().toISOString(), periodTo: periodOf(r) });
     else setAsk({ candidates: a.candidates.length ? a.candidates : state.picked, periodTo: periodOf(r) });
-    setGeneral(false);
   }
   const nameOf = (id: string) => targets.find((t) => t.id === id)?.name ?? id;
 
   return (
     <>
       <h2 id="step-title">Bring in your statements</h2>
-      <p className="muted lead">One statement per account is enough to start. Find it with the ready-made search, download it, drop it here. Everything is read on this device.</p>
+      <p className="muted lead">One statement per account is enough to start. Drop it here; the ready-made searches help you find it. Everything is read on this device.</p>
 
       {ask && (
         <Glass className="card ask-card" as="div">
@@ -457,6 +507,9 @@ function ImportStep({ continueRef, flash }: StepProps & { flash: (t: string) => 
         </Glass>
       )}
 
+      <ManualImportCard flash={flash} email={state.emails[0] ?? ""} onImported={onGeneral} perAccount={targets.length > 0} />
+
+      {targets.length > 0 && <h3 className="import-list-title">Or go account by account</h3>}
       <div className="import-list">
         {targets.map((t) => {
           const p = state.progress[t.id];
@@ -486,13 +539,6 @@ function ImportStep({ continueRef, flash }: StepProps & { flash: (t: string) => 
       {GMAIL_CONNECT && <GmailConnectCard email={state.emails[0] ?? ""} picked={state.picked}
         onImported={(id, r, report) => { flash(importToast(report)); dispatch({ type: "imported", id, at: new Date().toISOString(), periodTo: periodOf(r) }); }} />}
 
-      <Glass className="card general-import" as="div">
-        {general ? (
-          <Importer onImported={onGeneral} prompt="Drop any statement. We'll work out which account it belongs to" />
-        ) : (
-          <div className="card-head"><span className="muted">Have a statement that isn&apos;t listed?</span><button className="btn ghost small" onClick={() => setGeneral(true)}>Import any file</button></div>
-        )}
-      </Glass>
       <StepBar continueRef={continueRef} onContinue={() => dispatch({ type: "complete", step: "import" })} canContinue={imported > 0}
         continueLabel={imported > 0 ? "Continue" : "Import one to continue"} />
     </>
@@ -537,7 +583,7 @@ function HowTo({ targetId, source, supported, emails, onImported, onSkip, onUnsk
                       {email && emails.length > 1 && <span className="tiny">{email}</span>}
                       {showGmail && <code className="query">{gmailQuery(source, s.id)}</code>}
                       <div className="row-actions">
-                        {showGmail && <a className="btn primary small" href={gmailUrl(gmailQuery(source, s.id), email)} target="_blank" rel="noopener noreferrer">Search Gmail ↗</a>}
+                        {showGmail && <a className="btn ghost small" href={gmailUrl(gmailQuery(source, s.id), email)} target="_blank" rel="noopener noreferrer">Search Gmail ↗</a>}
                         {showGmail && <button className="btn ghost small" onClick={() => void copy(gmailUrl(gmailQuery(source, s.id), email), `g-${s.id}-${email}`)}>{copied === `g-${s.id}-${email}` ? "Copied ✓" : "Copy search link"}</button>}
                         {showOutlook && <button className="btn ghost small" onClick={() => void copy(oq, `o-${s.id}-${email}`)}>{copied === `o-${s.id}-${email}` ? "Copied ✓" : "Copy Outlook search"}</button>}
                         {showOutlook && <a className="btn ghost small" href={outlookOpenUrl(email)} target="_blank" rel="noopener noreferrer">Open Outlook ↗</a>}

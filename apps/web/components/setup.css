@@ -196,3 +196,25 @@ button.link { border: 0; background: none; padding: 0; color: var(--lk-gold-text
   .gm-list > li.gm-row { grid-template-columns: auto minmax(0, 1fr); }
   .gm-row .gm-one { grid-column: 2; justify-self: start; }
 }
+
+/* Launch: manual import is the main path; Gmail connect is a testers-only secondary */
+.btn.outline { background: transparent; border: 1.5px solid color-mix(in srgb, var(--lk-gold-text) 75%, transparent); color: var(--lk-text); box-shadow: none; }
+.btn.outline:hover:not(:disabled) { background: var(--lk-ambient-gold); }
+.soon-pill { color: var(--lk-gold-text); background: var(--lk-ambient-gold); border: 1px solid color-mix(in srgb, var(--lk-gold-text) 35%, transparent); white-space: nowrap; }
+.manual-card { display: grid; gap: 12px; border: 1.5px solid color-mix(in srgb, var(--lk-gold) 55%, var(--lk-border)); box-shadow: var(--lk-elevation-1), 0 0 0 4px var(--lk-ambient-gold); }
+.manual-card .card-head { flex-wrap: wrap; gap: 6px 10px; }
+.manual-card .card-head h3 { margin: 0; }
+.manual-card .lead-tiny { margin: 0; }
+.manual-card .dropzone { margin: 0; }
+.drop-cta { display: flex; justify-content: center; padding: 0 12px 14px; }
+.drop-cta .btn { min-height: 44px; min-width: min(260px, 100%); }
+.manual-helper { margin: 0; padding: 10px 12px; border-radius: 12px; background: var(--lk-glass); border: 1px solid var(--lk-border); display: grid; gap: 8px; }
+.manual-helper ol { margin: 0; padding-left: 1.2em; display: grid; gap: 2px; }
+.manual-helper .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.gmail-card .card-head { flex-wrap: wrap; gap: 6px 10px; }
+@media (max-width: 560px) {
+  .drop-cta .btn { width: 100%; }
+  .manual-helper .row-actions .btn { flex: 1 1 150px; }
+}
+.email-card-title, .import-list-title { margin: 0 0 6px; font-size: 1rem; }
+.import-list-title { margin: 6px 2px 0; color: var(--lk-text-muted); font-weight: 650; font-size: .92rem; }
