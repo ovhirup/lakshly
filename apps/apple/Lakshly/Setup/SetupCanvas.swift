@@ -878,7 +878,7 @@ struct SetupPlanStep: View {
   private var stepLarge: Int64 { CurrencyCode.inr.info.magnitude.budgetStepLarge }
 
   private func rupeeField(_ paise: Int64) -> String {
-    let rupees = Double(paise) / 100
+    let rupees = Double(paise) / Double(CurrencyCode.inr.minorFactor)
     if rupees == rupees.rounded() { return String(Int(rupees)) }
     return String(format: "%.2f", rupees)
   }
@@ -940,7 +940,7 @@ struct SetupPlanStep: View {
 
   private func paise(_ text: String) -> Int64 {
     let value = Double(text) ?? 0
-    return Int64((value * 100).rounded())
+    return CurrencyCode.inr.roundToMinor(value)
   }
 
   private func shown(_ paise: Int64) -> String { setupMask(Money.format(paise), hidden: model.hideAmounts) }
