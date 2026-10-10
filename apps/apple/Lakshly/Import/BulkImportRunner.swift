@@ -6,6 +6,8 @@ import Observation
   var rows: [BulkImportRow]
   private(set) var running = false
   var stopRequested = false
+  /// The summary line is only shown once a bulk run has started (never before any run).
+  var hasStarted = false
   init(rows: [BulkImportRow] = []) { self.rows = rows }
   var selectedCount: Int { rows.filter { $0.selected && $0.selectable && $0.status != .imported }.count }
   var summary: String {
@@ -19,7 +21,7 @@ import Observation
            attempt: (BulkImportFile, String?) async -> BulkImportAttempt,
            password: (BulkImportFile, Bool) async -> BulkPasswordAnswer?) async {
     guard !running else { return }
-    running = true; stopRequested = false
+    running = true; stopRequested = false; hasStarted = true
     var remembered: String?
     defer { remembered = nil; running = false; stopRequested = false }
     let indices = rows.indices.filter { index in

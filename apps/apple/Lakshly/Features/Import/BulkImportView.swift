@@ -115,7 +115,7 @@ struct BulkResultsCard: View {
         Button(runner.stopRequested ? "Stopping after this one…" : "Stop after this one") { runner.stopRequested = true }
           .disabled(runner.stopRequested).frame(minHeight: 44).accessibilityIdentifier("bulk.stop")
       }
-      Text(runner.summary).font(.caption).accessibilityIdentifier("bulk.summary")
+      if runner.hasStarted { Text(runner.summary).font(.caption).accessibilityIdentifier("bulk.summary") }
     }
   }
 }

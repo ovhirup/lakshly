@@ -87,6 +87,7 @@ enum ParityShotRenderer {
     })
     if screen == "results" { runner.rows[1].selected = false }
     if screen == "select-all" { runner.selectAll(true) }
+    if screen == "running" || screen == "summary" { runner.hasStarted = true }
     if screen == "running" {
       runner.rows[0].status = .imported; runner.rows[0].selected = false
       runner.rows[1].status = .importing; runner.rows[4].status = .queued

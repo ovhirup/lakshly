@@ -53,6 +53,17 @@ final class BulkImportTests: XCTestCase {
       return .imported
     }, password: { _, _ in XCTFail("No password needed"); return nil })
   }
+  @MainActor func testSummaryHiddenUntilRunStarts() async {
+    let files = [file("first.pdf", "1"), file("second.pdf", "2")]
+    let runner = BulkImportRunner(rows: BulkImportPlan.rows(files) { _ in .statement })
+    XCTAssertFalse(runner.hasStarted)
+    runner.selectAll(true)
+    XCTAssertFalse(runner.hasStarted, "selecting rows must not reveal the summary")
+    await runner.run(attempt: { _, _ in .imported }, password: { _, _ in nil })
+    XCTAssertTrue(runner.hasStarted)
+    XCTAssertFalse(runner.running)
+    XCTAssertEqual(runner.summary, "2 imported · 0 failed · 0 skipped")
+  }
   @MainActor func testWrongPasswordSkipFailureAndStop() async {
     let files = (1...4).map { file("statement-\($0).pdf", "\($0)") }
     let runner = BulkImportRunner(rows: BulkImportPlan.rows(files) { _ in .statement })
