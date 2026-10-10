@@ -19,14 +19,16 @@ enum Money {
   }
   /// Glance surfaces (widgets, Live Activity, menu bar) round to whole rupees.
   static func glance(_ paise: Int64) -> String {
-    let rounded = paise >= 0 ? (paise + 50) / 100 * 100 : (paise - 50) / 100 * 100
+    let step = CurrencyCode.inr.info.magnitude.glanceRounding
+    let half = step / 2
+    let rounded = paise >= 0 ? (paise + half) / step * step : (paise - half) / step * step
     return format(rounded)
   }
   static func compact(_ paise: Int64) -> String {
     let rupees = Double(paise) / 100
-    if abs(rupees) >= 10_000_000 { return String(format: "₹%.1fCr", rupees / 10_000_000) }
-    if abs(rupees) >= 100_000 { return String(format: "₹%.1fL", rupees / 100_000) }
-    if abs(rupees) >= 1_000 { return String(format: "₹%.1fK", rupees / 1_000) }
+    for unit in CurrencyCode.inr.info.compactUnits where abs(rupees) >= Double(unit.thresholdMajor) {
+      return String(format: "₹%.1f", rupees / Double(unit.thresholdMajor)) + unit.suffix
+    }
     return format(paise)
   }
 }
