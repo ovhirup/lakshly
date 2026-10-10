@@ -89,4 +89,15 @@ final class CurrencyTests: XCTestCase {
     XCTAssertEqual(CurrencyCode.usd.roundToMinor(-1e30), 0)
     XCTAssertEqual(CurrencyCode.usd.roundToMinor(19.99), 1999)
   }
+
+  func testRoundToMinorGuardEdges() {
+    XCTAssertEqual(CurrencyCode.inr.roundToMinor(8.9e16), 8_900_000_000_000_000_000)
+    XCTAssertEqual(CurrencyCode.inr.roundToMinor(9.1e16), 0)
+  }
+
+  func testMoneyFormatHandlesTheInt64Extremes() {
+    XCTAssertEqual(Money.format(Int64.max), "₹92,23,37,20,36,85,47,758.07")
+    XCTAssertEqual(Money.format(Int64.min), "−₹92,23,37,20,36,85,47,758.08")
+    XCTAssertEqual(Money.format(Int64.min + 1), "−₹92,23,37,20,36,85,47,758.07")
+  }
 }

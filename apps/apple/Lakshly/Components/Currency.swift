@@ -41,7 +41,7 @@ extension CurrencyCode {
 
   /// A typed or computed Double rounded to minor units (half away from zero), following the currency's exponent.
   /// The lenient counterpart to `toMinor`: it keeps today's behaviour for free-typed amount fields (12.345 rounds)
-  /// and never throws. Non-finite or out-of-range input gives 0 instead of trapping. Mirrors apps/web/lib/currency.ts `roundToMinor`.
+  /// and never throws. Non-finite or out-of-range input gives 0 instead of trapping. Same role as the web `roundToMinor` in apps/web/lib/currency.ts, but ties differ: Swift rounds half away from zero, JS `Math.round` half up. Each platform keeps its own prior behaviour.
   func roundToMinor(_ major: Double) -> Int64 {
     let scaled = (major * Double(minorFactor)).rounded()
     guard scaled.isFinite, abs(scaled) < 9.0e18 else { return 0 }
