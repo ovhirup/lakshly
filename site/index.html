@@ -14,6 +14,7 @@
 <meta property="og:description" content="Private, on-device personal finance for India.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/lotus.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="island.css">
 <script src="theme-init.js"></script>
@@ -40,7 +41,19 @@
       <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
     </button>
     <a class="btn primary small" href="#waitlist">Join the waitlist</a>
+    <button class="icon-btn menu-btn" id="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <svg class="i-menu" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg class="i-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
+  <nav class="mobile-menu" id="mobile-menu" aria-label="Sections" hidden>
+    <a href="#features">Features</a>
+    <a href="#island">Island</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a class="btn primary" href="#waitlist">Join the waitlist</a>
+  </nav>
 </header>
 
 <main id="main">

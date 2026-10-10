@@ -50,6 +50,26 @@
   });
   setCurrency(guessCurrency(), false);
 
+  // ---------- Mobile menu (narrow screens, where the inline section nav is hidden) ----------
+  var menuBtn = document.getElementById("menu-toggle");
+  var menu = document.getElementById("mobile-menu");
+  if (menuBtn && menu) {
+    var setMenu = function (open, focusBack) {
+      menu.hidden = !open;
+      menuBtn.setAttribute("aria-expanded", String(open));
+      menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      if (open) { var first = menu.querySelector("a"); if (first) first.focus(); }
+      else if (focusBack) menuBtn.focus();
+    };
+    menuBtn.addEventListener("click", function () { setMenu(menu.hidden, true); });
+    menu.addEventListener("click", function (e) { if (e.target.closest("a")) setMenu(false, false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !menu.hidden) setMenu(false, true); });
+    document.addEventListener("click", function (e) {
+      if (!menu.hidden && !menu.contains(e.target) && !menuBtn.contains(e.target)) setMenu(false, false);
+    });
+    window.matchMedia("(min-width: 1021px)").addEventListener("change", function (m) { if (m.matches) setMenu(false, false); });
+  }
+
   // ---------- Waitlist ----------
   var form = document.getElementById("waitlist-form");
   if (!form) return;
@@ -66,8 +86,7 @@
   // Native-form mode: point the real form at the provider, with the provider's field names.
   if (endpoint && cfg.WAITLIST_MODE === "form") {
     var fm = cfg.WAITLIST_FIELDS || { email: "email" };
-    form.action = endpoint; form.method = "post"; form.target = "_blank";
-    form.setAttribute("rel", "noopener noreferrer");
+    form.action = endpoint; form.method = "post"; // target is set per submit (named tab, or this tab)
     email.name = fm.email;
     consent.removeAttribute("name"); // consent is checked here; the provider doesn't need it
     Object.keys(cfg.WAITLIST_EXTRA || {}).forEach(function (k) {
@@ -90,10 +109,83 @@
     return (raw || "").replace(/[^A-Za-z0-9._-]/g, "").slice(0, 100);
   }
 
+  function emailOk() { return email.checkValidity() && /\S+@\S+\.\S+/.test(email.value); }
+
+  // Field errors clear as soon as the visitor fixes the field (they reappear only on the next submit).
+  email.addEventListener("input", function () {
+    if (!emailErr.hidden && emailOk()) { show(emailErr, false); email.setAttribute("aria-invalid", "false"); }
+  });
+  consent.addEventListener("change", function () {
+    if (!consentErr.hidden && consent.checked) { show(consentErr, false); consent.setAttribute("aria-invalid", "false"); }
+  });
+
+  // ---------- Buttondown hand-off (form mode) ----------
+  // Buttondown's embed-subscribe must be a native form POST (never fetch), and it sometimes answers the first
+  // POST with HTTP 400 plus a Cloudflare Turnstile "Verify your subscription" page, or a validation error. Its
+  // pages are cross-origin and send COOP: same-origin, so this page can't read them or even keep a handle on
+  // the tab. So we never claim success on submit:
+  //  1. open a named tab synchronously (null means the pop-up was blocked: say so, offer this tab instead);
+  //  2. POST into it and show a neutral "finish in the Buttondown tab" state (verification happens there);
+  //  3. only show "Almost there" when Buttondown's after-subscribe redirect lands back on lakshly.com
+  //     (?waitlist=subscribed). That page tells this one over a same-origin BroadcastChannel. Nothing is stored.
+  var CHANNEL = "lakshly-waitlist";
+  var POPUP = "lakshly-buttondown";
+  var pending = false;
+  var btn = form.querySelector("button[type=submit]");
+  var bc = null;
+  try { bc = new BroadcastChannel(CHANNEL); } catch (err) { bc = null; }
+
+  var MSG = {
+    subscribed: "<strong>Almost there! 💛</strong> Buttondown has your sign-up. Check your inbox and click the link in the confirmation email. You’re on the list once you do.",
+    confirmed: "<strong>You’re on the list. Thank you! 💛</strong> We’ll only email you about launch and major product updates. Unsubscribe anytime.",
+    pending: "<strong>Finish signing up in the Buttondown tab.</strong> Buttondown, our email provider, may ask you to verify you’re human first. Nothing is confirmed until it says so and you click the link in the confirmation email.",
+    back: "<strong>Still waiting for Buttondown.</strong> If its tab said you’re subscribed, check your inbox for the confirmation email. If it showed an error, or a verification you didn’t finish, press Join again.",
+  };
+  function settled(st) {
+    if (!MSG[st] || st === "pending" || st === "back") return;
+    pending = false;
+    form.reset();
+    say(MSG[st], "ok");
+  }
+  if (bc) bc.onmessage = function (ev) { if (pending && ev && ev.data) settled(String(ev.data.status || "")); };
+  document.addEventListener("visibilitychange", function () {
+    if (pending && document.visibilityState === "visible") say(MSG.back, "warn");
+  });
+
+  function submitHere() {
+    // Fallback when pop-ups are blocked: the same POST, in this tab.
+    form.target = "_self";
+    HTMLFormElement.prototype.submit.call(form);
+  }
+  function blocked() {
+    pending = false;
+    say("<strong>Nothing was sent yet.</strong> Your browser blocked the Buttondown sign-up tab. Allow pop-ups for lakshly.com and press Join again, or <button type=\"button\" class=\"linkish\" id=\"wl-same-tab\">continue in this tab</button>.", "bad");
+    var b = document.getElementById("wl-same-tab");
+    if (b) b.addEventListener("click", submitHere);
+  }
+  function handOff() {
+    var win = null;
+    try { win = window.open("", POPUP); } catch (err) { win = null; }
+    if (!win || win.closed) { blocked(); return; }
+    try { win.opener = null; } catch (err) { /* ignore */ } // Buttondown's page can't reach back into this one
+    form.target = POPUP;
+    HTMLFormElement.prototype.submit.call(form); // doesn't re-fire "submit"
+    pending = true;
+    say(MSG.pending, "pending");
+  }
+
+  // Landing back on lakshly.com from Buttondown's redirect (in the sign-up tab, or in this tab).
+  (function () {
+    var st = "";
+    try { st = new URLSearchParams(window.location.search).get("waitlist") || ""; } catch (err) { return; }
+    if (st !== "subscribed" && st !== "confirmed") return;
+    say(MSG[st], "ok");
+    if (bc) { try { bc.postMessage({ status: st }); } catch (err) { /* ignore */ } }
+  })();
+
   form.addEventListener("submit", function (e) {
-    var valid = function () { return email.checkValidity() && /\S+@\S+\.\S+/.test(email.value) && consent.checked; };
-    if (!(endpoint && cfg.WAITLIST_MODE === "form" && valid())) e.preventDefault();
-    var okEmail = email.checkValidity() && /\S+@\S+\.\S+/.test(email.value);
+    e.preventDefault(); // we always submit ourselves, after validating
+    var okEmail = emailOk();
     show(emailErr, !okEmail); email.setAttribute("aria-invalid", String(!okEmail));
     show(consentErr, !consent.checked); consent.setAttribute("aria-invalid", String(!consent.checked));
     if (!okEmail) { email.focus(); return; }
@@ -106,16 +198,9 @@
       return;
     }
     var f = cfg.WAITLIST_FIELDS || { email: "email" };
-    if (cfg.WAITLIST_MODE === "form") {
-      // Native POST (Buttondown's documented embed flow; it must not be called with fetch). The real form
-      // submits itself into a new tab, where Buttondown shows its confirmation (or a CAPTCHA if needed).
-      say("<strong>Almost there! 💛</strong> Check your inbox to confirm your email. Buttondown, our email provider, has opened a new tab to finish signing you up. You’re on the list once you click the link in the confirmation email.", "ok");
-      setTimeout(function () { form.reset(); }, 0);
-      return; // no preventDefault: let the browser POST the form
-    }
+    if (cfg.WAITLIST_MODE === "form") { handOff(); return; }
     var body = new FormData();
     body.append(f.email, email.value.trim());
-    var btn = form.querySelector("button[type=submit]");
     btn.disabled = true;
     say("Adding you…");
     fetch(endpoint, {
