@@ -128,8 +128,11 @@ struct FeedbackCanvas: View {
     Group {
       Card(title: "Your \(draft.kind.label.lowercased())") {
         Picker("Kind", selection: $draft.kind) { ForEach(FeedbackMessageKind.allCases) { Text($0.label).tag($0) } }
+          .accessibilityIdentifier("feedback.kind")
         formField("Title (at least 3 characters)", text: $draft.title)
+          .accessibilityIdentifier("feedback.title")
         formField(draft.kind == .bug ? "Steps to reproduce and what you expected" : "Tell us more", text: $draft.detail)
+          .accessibilityIdentifier("feedback.message")
         Picker("Area", selection: $draft.area) { ForEach(FeedbackHelpers.areas, id: \.self) { Text($0).tag($0) } }
         formField("Credit name (optional)", text: $draft.credit)
         formField("Reply email (optional)", text: $draft.replyEmail)
@@ -149,6 +152,7 @@ struct FeedbackCanvas: View {
         Button(busy ? "Sending…" : "Send") {
           if sensitive { confirmSensitive = true } else { Task { await send() } }
         }.buttonStyle(ThemedSubmitStyle()).disabled(busy || payload.title.utf16.count < 3)
+          .accessibilityIdentifier("feedback.send")
       }
     }
   }
@@ -181,6 +185,7 @@ struct FeedbackCanvas: View {
       }
       if let message { Text(message) }
       Button("My requests") { screen = .mine }
+      Button("Done") { screen = .hub }.accessibilityIdentifier("feedback.done")
     }
   }
   private var mine: some View {
@@ -217,10 +222,14 @@ struct FeedbackCanvas: View {
       Button("Try again") { if sensitive { confirmSensitive = true } else { Task { await send() } } }.disabled(busy || (retryAt.map { $0 > Date() } ?? false))
       Button("Open as GitHub issue instead") {
         openURL(fallbackURL)
-      }
+      }.accessibilityIdentifier("feedback.openGitHub")
       Text("GitHub opens a public draft with only the fields in your preview. Review it before submitting.")
         .font(.caption).fixedSize(horizontal: false, vertical: true)
+      #if FEEDBACK_SHOTS
+      Text("Prefer email? hello@lakshly.com").foregroundStyle(theme.gold).underline()
+      #else
       Link("Prefer email? hello@lakshly.com", destination: URL(string: "mailto:hello@lakshly.com")!)
+      #endif
     }
   }
   private var fallbackURL: URL {

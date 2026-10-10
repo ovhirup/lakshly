@@ -56,11 +56,17 @@ export interface ReviewState {
   skipped: string[];
   /** Every ISO week cleared, oldest first (feeds the Inbox Zero badge). */
   clearedWeeks: string[];
+  /** Worth-it "Not now" snoozes: merchant -> ISO time. Kept in this encrypted record, never in localStorage. */
+  snoozed: Record<string, string>;
+  /** One 3-day wait. Merchant name stays in this encrypted record, never in localStorage. */
+  quest: ActiveQuest | null;
 }
+
+export interface ActiveQuest { merchant: string; until: string }
 
 export const emptyState = (): ReviewState => ({
   v: 2, lastReviewedAt: null, lastClearedWeek: null, streak: 0, bestStreak: 0, freezesLeft: 1, clearsTowardFreeze: 0,
-  xp: 0, weekXP: {}, decisions: {}, merchantRules: {}, worth: {}, skipped: [], clearedWeeks: [],
+  xp: 0, weekXP: {}, decisions: {}, merchantRules: {}, worth: {}, skipped: [], clearedWeeks: [], snoozed: {}, quest: null,
 });
 
 /** Accepts v1 (spec) or v2 state, fills gaps defensively. */
@@ -83,7 +89,16 @@ export function normaliseState(raw: unknown): ReviewState {
     worth, skipped: Array.isArray(r.skipped) ? r.skipped.filter((s) => typeof s === "string") : [],
     clearedWeeks: Array.isArray(r.clearedWeeks) ? r.clearedWeeks.filter((s) => typeof s === "string")
       : typeof r.lastClearedWeek === "string" ? [r.lastClearedWeek] : [],
+    snoozed: obj<Record<string, string>>(r.snoozed),
+    quest: readQuest(r.quest),
   };
+}
+
+function readQuest(v: unknown): ActiveQuest | null {
+  if (!v || typeof v !== "object") return null;
+  const q = v as Partial<ActiveQuest>;
+  if (typeof q.merchant !== "string" || !q.merchant.trim() || typeof q.until !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(q.until)) return null;
+  return { merchant: q.merchant, until: q.until };
 }
 
 // ---------- dates & ISO weeks (device-local) ----------
@@ -125,7 +140,12 @@ export const weekNumber = (id: string) => Number(id.split("-W")[1]);
 
 // ---------- suggestions ----------
 export const merchantKey = (t: Pick<Transaction, "merchant" | "description">) => (t.merchant || t.description || "").trim().toLowerCase();
-export const isRefund = (t: Transaction) => t.amount > 0 && (t.tags ?? []).includes("refund");
+/** Statement parsers don't tag refunds, so also recognise refund wording and credits in a spending category. */
+const REFUND_RE = /\b(refund|refunded|reversal|reversed|chargeback|cashback|return(ed)? credit)\b/i;
+const SPEND_CATS = new Set<Category>(["groceries", "dining", "transport", "fuel", "shopping", "utilities", "health", "education", "entertainment", "travel", "subscriptions", "fees"]);
+export const isRefund = (t: Transaction) => t.amount > 0 && (
+  (t.tags ?? []).includes("refund") || REFUND_RE.test(`${t.description ?? ""} ${t.merchant ?? ""}`) || SPEND_CATS.has(t.category)
+);
 
 export interface Suggestion { category: Category; nwv: Nwv | null }
 export function suggest(t: ReviewTxn, state: ReviewState): Suggestion {
@@ -179,13 +199,32 @@ export function buildInbox(txns: readonly ReviewTxn[], state: ReviewState, now: 
 
 export const countLabel = (n: number) => (n > 50 ? "50+" : String(n));
 
+/** Unset stays on. Only an explicit false turns the Sunday card off. */
+export function sundayReminderOn(stored: unknown): boolean {
+  return stored !== false;
+}
+
+export function sundaySnoozed(until: string | null, nowMs: number): boolean {
+  if (!until) return false;
+  const at = Date.parse(until);
+  return Number.isFinite(at) && at > nowMs;
+}
+
+/** Real local Sunday, something waiting, reminder still on, and Not now has not covered today. */
+export function showSundayReminder(day: number, count: number, enabled: boolean, snoozed: boolean): boolean {
+  return day === 0 && count > 0 && enabled && !snoozed;
+}
+
 // ---------- reducer ----------
 export type ReviewAction =
   | { type: "confirm"; tx: string; nwv?: Nwv }
   | { type: "change"; tx: string; category: Category; nwv: Nwv | null; rememberMerchant?: boolean }
   | { type: "skip"; tx: string }
   | { type: "confirmAll" }
-  | { type: "rate"; tx: string; worth: Worth | null };
+  | { type: "rate"; tx: string; worth: Worth | null }
+  | { type: "snooze"; merchant: string; until: string }
+  | { type: "startQuest"; merchant: string; until: string }
+  | { type: "clearQuest" };
 
 export interface ReviewCtx { txns: readonly ReviewTxn[]; now: Date; opts?: InboxOptions }
 export interface ApplyResult { state: ReviewState; xpGained: number; cleared: boolean; streakBonus: number; message: string }
@@ -200,7 +239,7 @@ function award(state: ReviewState, week: string, amount: number): number {
 
 /** One entry point for every input path. Pure: returns a new state. */
 export function applyAction(prev: ReviewState, action: ReviewAction, ctx: ReviewCtx): ApplyResult {
-  const state: ReviewState = { ...prev, decisions: { ...prev.decisions }, merchantRules: { ...prev.merchantRules }, worth: { ...prev.worth }, skipped: [...prev.skipped], weekXP: { ...prev.weekXP }, clearedWeeks: [...prev.clearedWeeks] };
+  const state: ReviewState = { ...prev, decisions: { ...prev.decisions }, merchantRules: { ...prev.merchantRules }, worth: { ...prev.worth }, skipped: [...prev.skipped], weekXP: { ...prev.weekXP }, clearedWeeks: [...prev.clearedWeeks], snoozed: { ...(prev.snoozed ?? {}) } };
   const inbox = buildInbox(ctx.txns, prev, ctx.now, ctx.opts);
   const week = inbox.week;
   const at = isoLocal(ctx.now);
@@ -208,12 +247,13 @@ export function applyAction(prev: ReviewState, action: ReviewAction, ctx: Review
   const find = (id: string) => all.find((r) => r.tx.id === id);
   let xpGained = 0;
   let decided = 0;
+  let decidedRegular = 0;
   let message = "";
 
   const decide = (row: InboxRow, d: Omit<Decision, "at">, xp: number) => {
     state.decisions[row.tx.id] = { ...d, at, ...(state.worth[row.tx.id] ? { worth: state.worth[row.tx.id] } : {}) };
     state.skipped = state.skipped.filter((s) => s !== row.tx.id);
-    if (!row.older) xpGained += award(state, week, xp); // Older imports can be confirmed but earn no XP
+    if (!row.older) { xpGained += award(state, week, xp); decidedRegular += 1; } // Older imports can be confirmed but earn no XP
     decided += 1;
   };
 
@@ -264,13 +304,29 @@ export function applyAction(prev: ReviewState, action: ReviewAction, ctx: Review
       message = action.worth === "yes" ? "Marked worth it." : action.worth === "no" ? "Marked not really." : "Rating cleared.";
       break;
     }
+    case "snooze": {
+      state.snoozed[action.merchant] = action.until;
+      message = "Okay, not now.";
+      break;
+    }
+    case "startQuest": {
+      state.quest = { merchant: action.merchant, until: action.until };
+      message = "3-day wait started.";
+      break;
+    }
+    case "clearQuest": {
+      state.quest = null;
+      message = "Wait cleared.";
+      break;
+    }
   }
 
   let cleared = false;
   let streakBonus = 0;
   if (decided > 0) {
     const after = buildInbox(ctx.txns, state, ctx.now, ctx.opts);
-    if (after.count === 0 && state.lastClearedWeek !== week) {
+    // Only clearing a regular inbox row can complete the week; older late imports earn nothing (incl. the clear bonus).
+    if (decidedRegular > 0 && after.count === 0 && state.lastClearedWeek !== week) {
       cleared = true;
       const gap = state.lastClearedWeek ? weeksBetween(state.lastClearedWeek, week) : Infinity;
       if (gap === 1) state.streak += 1;
@@ -370,6 +426,15 @@ export function questFor(merchant: string, category: Category | undefined, premi
   if (category === "dining" && DELIVERY.test(merchant)) return { id: "no_delivery_week", title: "a No-Delivery Week", premium: false };
   if (QUICK_COMMERCE.test(merchant)) return { id: "qc_two_runs", title: "Two quick-commerce runs this week", premium: false };
   return premium ? { id: "custom", title: `a custom “skip ${merchant}” quest`, premium: true } : { id: "wishlist_three", title: "the Wishlist-three habit (wait 3 days before buying)", premium: false };
+}
+
+/** The day the 3-day wait ends. today itself counts as day zero. */
+export function wishlistUntil(today: string): string {
+  return addDays(today, 3);
+}
+
+export function questWaiting(quest: ActiveQuest | null, today: string): boolean {
+  return !!quest && today < quest.until;
 }
 
 // ---------- undo ----------

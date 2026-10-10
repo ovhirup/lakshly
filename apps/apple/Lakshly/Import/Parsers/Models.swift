@@ -206,6 +206,7 @@ struct ParseBody {
   var holdings: [Holding]
   var meta: [StatementMeta]
   var warnings: [String]
+  var accountAliases: [String: String] = [:]
 }
 
 struct ParseResult: Encodable {
@@ -219,6 +220,7 @@ struct ParseResult: Encodable {
   var holdings: [Holding]
   var meta: [StatementMeta]
   var warnings: [String]
+  var accountAliases: [String: String] = [:]
 
   func encode(to encoder: Encoder) throws {
     var c = encoder.container(keyedBy: CodingKeys.self)
@@ -232,10 +234,11 @@ struct ParseResult: Encodable {
     try c.encode(holdings, forKey: .holdings)
     try c.encode(meta, forKey: .meta)
     try c.encode(warnings, forKey: .warnings)
+    if !accountAliases.isEmpty { try c.encode(accountAliases, forKey: .accountAliases) }
   }
 
   private enum CodingKeys: String, CodingKey {
-    case adapter, adapterLabel, kind, confidence, accounts, transactions, sips, holdings, meta, warnings
+    case adapter, adapterLabel, kind, confidence, accounts, transactions, sips, holdings, meta, warnings, accountAliases
   }
 }
 

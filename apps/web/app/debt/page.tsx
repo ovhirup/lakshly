@@ -23,7 +23,7 @@ function DebtView() {
       <PremiumGate feature="Debt planner" id="debt.planner">
         <div className="grid g4">
           <Glass className="card"><Stat label="Outstanding" value={formatINR(d.outstanding)} hint={`${formatPct(paidPct, 0)} repaid`} /></Glass>
-          <Glass className="card"><Stat label="EMI" value={formatINR(d.emi)} hint={`${d.annualRatePct}% p.a.`} /></Glass>
+          <Glass className="card"><Stat label="EMI" value={formatINR(d.emi)} hint={`${formatPct(d.annualRatePct, 2).replace(/\.?0+%$/, "%")} p.a.`} /></Glass>
           <Glass className="card"><Stat label="Debt-free in" value={`${base.months} mo`} hint={`${formatINR(base.interest)} interest left`} /></Glass>
           <Glass className="card"><Stat label="With prepayment" value={`${fast.months} mo`} tone="up"
             hint={`Save ${formatINR(base.interest - fast.interest)} · ${base.months - fast.months} months sooner`} /></Glass>

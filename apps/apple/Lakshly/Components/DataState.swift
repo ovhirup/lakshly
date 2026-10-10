@@ -29,9 +29,9 @@ struct DataPill: View {
   var body: some View {
     switch source {
     case .demo:
-      Pill(text: "Demo data")
+      Pill(text: "Demo data").accessibilityIdentifier("data.demo")
     case .mine:
-      Pill(text: "My data", color: theme.gold)
+      Pill(text: "My data", color: theme.gold).accessibilityIdentifier("data.mine")
     }
   }
 }
@@ -76,9 +76,12 @@ struct DataGate<Content: View>: View {
           .foregroundStyle(theme.secondaryText)
           Button("Import a statement") { openImport() }
             .buttonStyle(ThemedSubmitStyle())
+            .accessibilityIdentifier("data.import")
           Button("Guided setup") { openSetup(false, nil) }
             .buttonStyle(ThemedSubmitStyle())
+            .accessibilityIdentifier("data.setup")
           Button("View demo data") { store.setSource(.demo) }
+            .accessibilityIdentifier("data.viewDemo")
         }
       }
     } else {

@@ -22,6 +22,23 @@ export class PasswordRequiredError extends Error {
   }
 }
 
+/** pdf.js PasswordException codes: 1 = NEED_PASSWORD, 2 = INCORRECT_PASSWORD. Anything else keeps its real reason. */
+export function mapPdfOpenError(e: unknown): Error {
+  const err = e as { name?: string; code?: number; message?: string };
+  if (err?.name === "PasswordException" && err.code === 2) return new PasswordRequiredError(true);
+  if (err?.name === "PasswordException" && err.code === 1) return new PasswordRequiredError(false);
+  return e instanceof Error ? e : new Error(String(err?.message ?? e));
+}
+
+/** Human reason for a non-password PDF failure (never reported as "wrong password"). */
+export function pdfErrorMessage(e: unknown): string {
+  const err = e as { name?: string; message?: string };
+  if (err?.name === "InvalidPDFException") return "This file isn't a valid PDF (it may be damaged or only partly downloaded).";
+  if (err?.name === "MissingPDFException") return "The PDF file is missing or empty.";
+  if (err?.name === "PasswordException") return `This PDF couldn't be unlocked (${err.message ?? "unsupported protection"}).`;
+  return err?.message ? `Couldn't read this PDF: ${err.message}` : "Couldn't read this PDF.";
+}
+
 /** Group positioned text runs into visual lines (same baseline within a tolerance), left → right. */
 export function itemsToLines(page: number, raw: { str: string; x: number; y: number; w: number }[], tol = 2.5): Line[] {
   const rows: { y: number; items: TextItem[] }[] = [];
@@ -66,9 +83,7 @@ export async function extractPdfText(pdfjs: PdfJsLike, data: Uint8Array, opts: {
   try {
     doc = await task.promise;
   } catch (e) {
-    const err = e as { name?: string; code?: number };
-    if (err?.name === "PasswordException") throw new PasswordRequiredError(err.code === 2);
-    throw e;
+    throw mapPdfOpenError(e);
   }
   const lines: Line[] = [];
   try {

@@ -1,0 +1,48 @@
+{
+  "$comment": "Single source for currency facts. Amounts in 'magnitude' are integers in MINOR units (paise, cents). compactUnits thresholds are in MAJOR units. INR values equal today's hard-coded rupee constants; USD values are scaled for US spending (not FX-converted), kept on the same rounding grid as the steps (minBudgetLine and goalMonthlyMinimum are multiples of budgetStepSmall), and are NOT ratio-preserving for every field. They are proposals for the owner to ratify. Generated into apps/web/lib/currencies.gen.ts and apps/apple/Lakshly/Components/Currencies.gen.swift by apps/web/scripts/gen-currencies.mjs.",
+  "version": 1,
+  "currencies": {
+    "INR": {
+      "exponent": 2,
+      "symbol": "₹",
+      "locale": "en-IN",
+      "mask": "₹ •••••",
+      "compactUnits": [[10000000, "Cr"], [100000, "L"], [1000, "K"]],
+      "magnitude": {
+        "minBudgetLine": 50000,
+        "budgetStepSmall": 10000,
+        "budgetStepLarge": 50000,
+        "budgetStepThreshold": 500000,
+        "annualPaymentThreshold": 500000,
+        "goalTargetRounding": 100000,
+        "goalEmergencyRounding": 1000000,
+        "goalMonthlyRounding": 10000,
+        "goalMonthlyMinimum": 50000,
+        "customGoalDefault": 5000000,
+        "glanceRounding": 100,
+        "starterBudgets": [["groceries", 600000], ["dining", 300000], ["transport", 200000], ["shopping", 300000]]
+      }
+    },
+    "USD": {
+      "exponent": 2,
+      "symbol": "$",
+      "locale": "en-US",
+      "mask": "$ •••••",
+      "compactUnits": [[1000000000, "B"], [1000000, "M"], [1000, "K"]],
+      "magnitude": {
+        "minBudgetLine": 3000,
+        "budgetStepSmall": 1000,
+        "budgetStepLarge": 5000,
+        "budgetStepThreshold": 50000,
+        "annualPaymentThreshold": 25000,
+        "goalTargetRounding": 10000,
+        "goalEmergencyRounding": 50000,
+        "goalMonthlyRounding": 1000,
+        "goalMonthlyMinimum": 3000,
+        "customGoalDefault": 100000,
+        "glanceRounding": 100,
+        "starterBudgets": [["groceries", 40000], ["dining", 20000], ["transport", 15000], ["shopping", 20000]]
+      }
+    }
+  }
+}

@@ -47,6 +47,8 @@ export interface StatementMeta {
 }
 
 export interface ParseResult {
+  /** Transient hashed legacy MF account IDs mapped to their canonical IDs. */
+  accountAliases?: Record<string, string>;
   adapter: string;
   adapterLabel: string;
   kind: StatementKind;

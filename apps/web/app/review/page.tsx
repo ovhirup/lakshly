@@ -22,7 +22,7 @@ type Prefs = { reminder: boolean; weekday: number; hour: number };
 const subscribeWide = (l: () => void) => { const mq = window.matchMedia("(min-width: 900px)"); mq.addEventListener("change", l); return () => mq.removeEventListener("change", l); };
 const subscribePrefs = (l: () => void) => { window.addEventListener("storage", l); window.addEventListener("lk-review-prefs", l); return () => { window.removeEventListener("storage", l); window.removeEventListener("lk-review-prefs", l); }; };
 const readPrefs = (): Prefs => {
-  try { const p = JSON.parse(localStorage.getItem(PREFS_KEY) ?? "{}"); return { reminder: p.reminder === true, weekday: 7, hour: 19 }; } catch { return { reminder: false, weekday: 7, hour: 19 }; }
+  try { const p = JSON.parse(localStorage.getItem(PREFS_KEY) ?? "{}"); return { reminder: p.reminder !== false, weekday: 7, hour: 19 }; } catch { return { reminder: true, weekday: 7, hour: 19 }; }
 };
 
 function NwvChip({ nwv }: { nwv: Nwv | null }) {
@@ -237,6 +237,7 @@ function ReviewView() {
         <div className="review-hero-main">
           <p className="eyebrow">Only what&apos;s new since your last review</p>
           <p className="review-big">{inbox.count ? <>{countLabel(inbox.count)} <span>to review</span></> : <>Inbox zero <span>✨</span></>}</p>
+          {source === "demo" && <button className="btn ghost" type="button" onClick={() => review.resetDemo()}>Reset demo</button>}
           <p className="muted tiny">Confirm +{RULES.xp.confirm} · Change +{RULES.xp.change} · Clear the week +{RULES.xp.weekCleared} and a streak bonus. Up to {RULES.xp.weeklyCap} XP a week.</p>
         </div>
         <div className="review-hero-side">
@@ -325,7 +326,7 @@ function ReviewView() {
 
       <Glass className="card review-settings">
         <div className="toggle-row">
-          <div><b>Sunday reminder</b><p className="muted tiny">Shows a gentle banner on Sunday evenings when there&apos;s something to review. On this device only; no notifications are sent.</p></div>
+          <div><b>Sunday reminder</b><p className="muted tiny">Shows a card on Sunday when there is something to review. Not now hides it for 7 days. On this device only. Nothing is sent.</p></div>
           <Switch checked={prefs.reminder} onChange={setReminder} label="Sunday reminder" />
         </div>
         {source === "demo" && <p className="tiny muted">Demo week: the clock is set to the evening of the demo data&apos;s last day. <button className="linkish" onClick={review.resetDemo}>Reset demo review</button></p>}

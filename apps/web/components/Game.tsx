@@ -13,7 +13,8 @@ import {
 } from "@/lib/badges";
 import { buildCandidates, historyDays, roastOff } from "@/lib/nudge-facts";
 import { DEFAULT_PREFS, decide, logAction, renderNudge, whyText, type CoachPrefs, type Decision, type LogEntry, type NudgeAction } from "@/lib/nudges";
-import { loadRecord, saveRecord } from "@/lib/vault";
+import { loadRecord, saveRecord, VAULT_DELETED_EVENT } from "@/lib/vault";
+import { maskPctText, pctMasked } from "@/lib/privacy";
 import "./game.css";
 
 interface Store { ledger: Ledger; nudges: LogEntry[] }
@@ -40,6 +41,7 @@ interface GameCtx {
   prefs: CoachPrefs;
   log: LogEntry[];
   nudgeAct: (action: NudgeAction) => void;
+  markShown: () => void;
   unsnooze: (id: string, subject: string) => void;
   ackBackfill: () => void;
 }
@@ -102,8 +104,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const decision = useMemo(() => decide({ candidates, log: store.nudges, prefs, now: review.now, historyDays: historyDays(facts), premium: roastAllowed, roastOff: roastOff(facts) }),
     [candidates, store.nudges, prefs, review.now, facts, roastAllowed]);
 
-  // Log "shown" once per day for the chosen nudge.
-  useEffect(() => {
+  // Log "shown" once per day, called by the matching NudgeCard only when it is actually on screen.
+  const markShown = useCallback(() => {
     const s = decision.shown;
     if (!stores || !s) return;
     const today = facts.today;
@@ -111,6 +113,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     if (already) return;
     persist(source, { ...storeRef.current, nudges: logAction(storeRef.current.nudges, { id: s.id, subject: s.subject, at: `${today}T${review.now.toTimeString().slice(0, 8)}`, action: "shown", polarity: s.def.polarity }) });
   }, [decision.shown, stores, facts.today, persist, source, review.now]);
+
+  // "Delete all my data" removes the vault; drop the in-memory copy too so deleted badges/nudges can't come back.
+  useEffect(() => {
+    const onDeleted = () => { setStores({ demo: fresh(), mine: fresh() }); setUnlocks([]); };
+    window.addEventListener(VAULT_DELETED_EVENT, onDeleted);
+    return () => window.removeEventListener(VAULT_DELETED_EVENT, onDeleted);
+  }, []);
 
   const nudgeAct = useCallback((action: NudgeAction) => {
     const s = decision.shown;
@@ -122,7 +131,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, [persist, source]);
   const ackBackfill = useCallback(() => persist(source, { ...storeRef.current, ledger: { ...storeRef.current.ledger, backfillAck: true } }), [persist, source]);
 
-  const value: GameCtx = { ready: !!stores, facts, evals, ledger: store.ledger, xp, totalXP: review.state.xp + xp.total, decision, prefs, log: store.nudges, nudgeAct, unsnooze, ackBackfill };
+  const value: GameCtx = { ready: !!stores, facts, evals, ledger: store.ledger, xp, totalXP: review.state.xp + xp.total, decision, prefs, log: store.nudges, nudgeAct, markShown, unsnooze, ackBackfill };
   return (
     <Ctx.Provider value={value}>
       {children}
@@ -165,8 +174,8 @@ export function NextUpStrip() {
         const b = badgeById(p.id)!;
         return (
           <Link key={`${p.id}${p.tier}${p.entity ?? ""}`} href={`/badges/#${p.id}`} className="nextup-chip">
-            <span className="mini-ring" style={{ "--p": `${Math.round(p.pct * 100)}%` } as React.CSSProperties} role="img" aria-label={`${Math.round(p.pct * 100)} percent`}><span aria-hidden="true">{b.emoji}</span></span>
-            <span><b>{b.name}{isSingleTier(b) ? "" : ` ${TIER_META[p.tier].label.toLowerCase()}`}</b><small>{p.hint}</small></span>
+            <span className="mini-ring" style={{ "--p": `${Math.round(p.pct * 100)}%` } as React.CSSProperties} role="img" aria-label={pctMasked() ? "Progress hidden" : `${Math.round(p.pct * 100)} percent`}><span aria-hidden="true">{b.emoji}</span></span>
+            <span><b>{b.name}{isSingleTier(b) ? "" : ` ${TIER_META[p.tier].label.toLowerCase()}`}</b><small>{maskPctText(p.hint)}</small></span>
           </Link>
         );
       })}
@@ -195,12 +204,14 @@ export function LevelLine() {
 }
 
 export function NudgeCard({ screen }: { screen: "overview" | "spend" }) {
-  const { decision, nudgeAct, facts } = useGame();
+  const { decision, nudgeAct, markShown, facts } = useGame();
   const { masked } = usePrivacy();
   const [why, setWhy] = useState(false);
   const [gone, setGone] = useState<string | null>(null);
   const s = decision.shown;
-  if (!s || s.def.screen !== screen || gone === `${s.id}:${s.subject}`) return null;
+  const visible = !!s && s.def.screen === screen && gone !== `${s.id}:${s.subject}`;
+  useEffect(() => { if (visible) markShown(); }, [visible, markShown]);
+  if (!s || !visible) return null;
   const money = (p: number) => formatINR(p);
   const text = renderNudge(s.def, s, decision.tone, masked, money);
   const icon = s.def.polarity === "negative" ? "🧭" : s.def.polarity === "positive" ? "🌟" : "💡";

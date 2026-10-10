@@ -4,6 +4,8 @@ import { Icon } from "./Icon";
 import { useTier } from "./useTier";
 import { Amount } from "./Privacy";
 import { PRICE_TEXT, type FeatureId } from "@/lib/entitlements";
+import { IS_BETA } from "@/lib/edition";
+import { pctMasked } from "@/lib/privacy";
 
 export function Glass({ children, className = "", as: Tag = "section", style }: {
   children: React.ReactNode; className?: string; as?: "section" | "div" | "article"; style?: React.CSSProperties;
@@ -37,7 +39,9 @@ export function Progress({ pct, color }: { pct: number; color?: string }) {
   const clamped = Math.min(100, Math.max(0, pct));
   const over = pct > 100;
   return (
-    <div className="progress" role="progressbar" aria-label="Progress" aria-valuetext={`${Math.round(pct)}%`} aria-valuenow={Math.round(clamped)} aria-valuemin={0} aria-valuemax={100}>
+    <div className="progress" role="progressbar" aria-label="Progress" {...(pctMasked()
+      ? { "aria-valuetext": "Percentage hidden" }
+      : { "aria-valuetext": `${Math.round(pct)}%`, "aria-valuenow": Math.round(clamped), "aria-valuemin": 0, "aria-valuemax": 100 })}>
       <span style={{ width: `${clamped}%`, background: over ? "var(--danger)" : color ?? "var(--accent-grad)" }} />
     </div>
   );
@@ -76,8 +80,8 @@ export function PremiumGate({ children, feature, id }: { children: React.ReactNo
           <h3>{feature} is part of Premium</h3>
           <p className="muted">Unlock the full picture: debt planner, credit, investments, rewards, unlimited budgets and history.</p>
           <p className="price" data-lk-price><strong>{PRICE_TEXT.yearly}</strong>/year <span className="muted">(≈{PRICE_TEXT.yearlyPerMonth}/month)</span> · or <strong>{PRICE_TEXT.monthly}</strong>/month</p>
-          <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
-          <p className="tiny muted">Demo only. No payment is taken in this preview.</p>
+          {IS_BETA && <button className="btn primary" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>}
+          <p className="tiny muted">{IS_BETA ? "Demo only. No payment is taken in this preview." : "Payments aren’t live yet."}</p>
         </Glass>
       </div>
     </div>

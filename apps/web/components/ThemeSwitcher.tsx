@@ -6,6 +6,8 @@ import { Icon } from "./Icon";
 import { isPremiumTheme, themes } from "@/lib/themes";
 import { useTier } from "./useTier";
 import { formatINR } from "@/lib/format";
+import { IS_BETA } from "@/lib/edition";
+import { MoodGrid } from "./ThemeV2";
 
 const APPEARANCES: { value: AppearancePref; label: string }[] = [
   { value: "system", label: "System" },
@@ -155,10 +157,10 @@ export function ThemeSwitcher() {
         tabIndex={-1}
       >
         <div className="theme-popover-head">
-          <h2 id={titleId}>Theme and appearance</h2>
+          <h2 id={titleId}>{IS_BETA ? "Look and appearance" : "Theme and appearance"}</h2>
           <button type="button" className="icon-btn" onClick={() => setOpen(false)} aria-label="Close theme and appearance">×</button>
         </div>
-        <div className="theme-grid">
+        {IS_BETA ? <MoodGrid /> : <div className="theme-grid">
           {themes.map((item) => {
             const locked = item.premium && !premiumThemes;
             const sw = item.swatches[resolved];
@@ -194,7 +196,7 @@ export function ThemeSwitcher() {
               </button>
             );
           })}
-        </div>
+        </div>}
         <div className="theme-appearance" role="radiogroup" aria-label="Appearance" onKeyDown={onAppearanceKey}>
           {APPEARANCES.map((item) => (
             <button
@@ -231,20 +233,22 @@ export function ThemeSwitcher() {
           <li>Payoff planner</li>
           <li>Priority requests</li>
         </ul>
-        <button
-          type="button"
-          className="btn primary"
-          onClick={() => {
-            const next = upsell;
-            setPlan("premium");
-            setTheme(next);
-            setUpsell(null);
-          }}
-        >
-          Preview Premium (demo)
-        </button>
+        {IS_BETA ? (
+          <button
+            type="button"
+            className="btn primary"
+            onClick={() => {
+              const next = upsell;
+              setPlan("premium");
+              setTheme(next);
+              setUpsell(null);
+            }}
+          >
+            Preview Premium (demo)
+          </button>
+        ) : null}
         <button type="button" className="btn ghost" onClick={() => setUpsell(null)}>Not now</button>
-        <p className="tiny muted">Demo only. No payment is taken.</p>
+        <p className="tiny muted">{IS_BETA ? "Demo only. No payment is taken." : "Payments aren’t live yet. This theme stays locked."}</p>
       </div>
     </div>,
     document.body,

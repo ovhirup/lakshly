@@ -23,7 +23,7 @@ function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: 
   return <div className="glass chart-tooltip"><p>{label ?? "Breakdown"}</p>{payload.map((entry, i) => <div key={`${entry.name}-${i}`}><span className="dot" style={{ background: colors[String(entry.dataKey)] ?? entry.color }} /><span>{entry.name}</span><strong>{formatINR(Number(entry.value))}</strong></div>)}</div>;
 }
 
-export function Donut({ data, height = 220, totalLabel = "Total" }: { data: { name: string; value: number; color: string }[]; height?: number; totalLabel?: string }) {
+export function Donut({ data, height = 220, totalLabel = "Total", centerValue }: { data: { name: string; value: number; color: string }[]; height?: number; totalLabel?: string; centerValue?: string }) {
   const animate = useChartMotion();
   const total = data.reduce((sum, item) => sum + item.value, 0);
   return (
@@ -37,7 +37,7 @@ export function Donut({ data, height = 220, totalLabel = "Total" }: { data: { na
           <Tooltip content={<ChartTooltip />} isAnimationActive={animate} animationDuration={700} animationEasing="ease-out" />
         </PieChart>
       </ResponsiveContainer>
-      <div className="donut-total"><span>{totalLabel}</span><strong aria-label={formatINR(total)}>{formatINRCompact(total)}</strong></div>
+      <div className="donut-total"><span>{totalLabel}</span><strong aria-label={centerValue ?? formatINR(total)}>{centerValue ?? formatINRCompact(total)}</strong></div>
     </div>
   );
 }
