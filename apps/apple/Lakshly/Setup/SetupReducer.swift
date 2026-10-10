@@ -43,7 +43,7 @@ func checklist(_ state: SetupState, _ dataset: SetupDataset, _ platform: SetupPl
   }
   let month = String(today.prefix(7))
   let rows: [(String, Bool, Bool)] = [
-    ("profile", true, !state.profile.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !state.profile.currency.isEmpty),
+    ("profile", true, !state.profile.currency.isEmpty),
     ("myData", true, state.mode == .mine),
     ("email", true, !state.email.primary.isEmpty || state.email.skipped || (state.mailboxes?.contains { $0.status == .ok } ?? false)),
     ("sources", true, !picked.isEmpty),
@@ -127,7 +127,7 @@ func setupReducer(
   case .start:
     s.dismissedAt = nil
   case .setProfile(let patch):
-    let name = prefixUTF16(patch.name ?? s.profile.name, 40)
+    let name = prefixUTF16((patch.name ?? s.profile.name).trimmingCharacters(in: .whitespacesAndNewlines), 40)
     s.profile = SetupProfile(name: name, currency: patch.currency ?? s.profile.currency)
   case .chooseMode(let mode):
     s.dismissedAt = nil

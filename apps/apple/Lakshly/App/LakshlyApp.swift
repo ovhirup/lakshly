@@ -308,6 +308,9 @@ struct RootView: View {
             tabLabel("Import", systemImage: "square.and.arrow.down", identifier: "tab.import")
           }
         }.tabViewStyle(.sidebarAdaptable)
+          #if os(macOS)
+          .tabViewSidebarBottomBar { ProfileChip(store: store).padding(12) }
+          #endif
           .environment(\.openImport) { selected = "import" }
           .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
       }
