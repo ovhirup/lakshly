@@ -259,6 +259,8 @@ targets:
       - path: Lakshly/Components/Theme.swift
       - path: Lakshly/Components/ThemeDefinitions.swift
       - path: Lakshly/Components/Money.swift
+      - path: Lakshly/Components/Currency.swift
+      - path: Lakshly/Components/Currencies.gen.swift
       - path: Lakshly/Models/Dataset.swift
       - path: Lakshly/Setup/SetupState.swift
       - path: Lakshly/Setup/SetupLinks.swift
@@ -297,6 +299,8 @@ targets:
       - path: Lakshly/Components/Theme.swift
       - path: Lakshly/Components/ThemeDefinitions.swift
       - path: Lakshly/Components/Money.swift
+      - path: Lakshly/Components/Currency.swift
+      - path: Lakshly/Components/Currencies.gen.swift
       - path: Lakshly/Models/Dataset.swift
       - path: Lakshly/Setup/SetupState.swift
       - path: Lakshly/Setup/SetupLinks.swift
