@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		009C8A5F49078C74A8F4AFCA /* hdfc-bank-locked.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2992B645E3AF5C02BAB36FDB /* hdfc-bank-locked.synthetic.pdf */; };
+		00AC1D7809844AE1C3EDC122 /* MoneyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */; };
 		012B08523F7C94524B122A7F /* Parsers in Resources */ = {isa = PBXBuildFile; fileRef = 82A3B9ED2BCBAEF8F924FB4F /* Parsers */; };
 		028F81D9B0E4C6779EF7E82E /* __fixtures__ in Resources */ = {isa = PBXBuildFile; fileRef = DEF1A41544C5C872996D8BFB /* __fixtures__ */; };
 		0294CF1357998E690AC5CEF0 /* Lakshly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 4F17FA443322997C13606406 /* Lakshly.storekit */; };
@@ -18,6 +19,7 @@
 		060FA7F84DE7FA23AB08A340 /* GlanceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701646DBB486D7E5A96188A9 /* GlanceLinks.swift */; };
 		06DDCA1AC8847337DFBB7ABE /* state.midway.json in Resources */ = {isa = PBXBuildFile; fileRef = 9D51A22CC96B96BFCDBEA27C /* state.midway.json */; };
 		071AA0DF4CEABEF54CF00AEE /* SetupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41934EE78C187EA7A23F69A7 /* SetupModel.swift */; };
+		0738C31B9D1E6E5D1BE8FEEF /* format-parity.json in Resources */ = {isa = PBXBuildFile; fileRef = F1352ECC80DFE774ACA92DA0 /* format-parity.json */; };
 		08334A0E63C49A5328D7EFD9 /* StoreKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958223EAAA07FB46C1C3D745 /* StoreKitTests.swift */; };
 		0847608D78A0862D08FC3507 /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */; };
 		090D7BCFEDC6D2EDC4B83BB0 /* SetupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02B9663BF2EFB0E60A5F2D9 /* SetupState.swift */; };
@@ -25,6 +27,7 @@
 		0AABF8ABE1438A20D6B91C2B /* GlanceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7C047934458E69157FD001 /* GlanceSnapshot.swift */; };
 		0B4F489F80E99D0B6C41AB88 /* LiveActivityPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C0DE6681509A9790D2B63 /* LiveActivityPlanner.swift */; };
 		0B71D21A30E99ED43E3DE5CE /* SetupSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027C7F670782DAA42B66C148 /* SetupSuggest.swift */; };
+		0C5528DF90CEC6E8BD956C8F /* format-parity.json in Resources */ = {isa = PBXBuildFile; fileRef = F1352ECC80DFE774ACA92DA0 /* format-parity.json */; };
 		0CCAC6679EBE4DAD688AAB70 /* GlanceRevealSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE937192E32C4441BE5EBF2 /* GlanceRevealSession.swift */; };
 		0DA20D32A0936564A02BB9F3 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E9BAF895BA80DCE3D5015E /* KeyManager.swift */; };
 		0DA71AF97C629EF17170EED8 /* Amounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FE03F0B1A9EF46808A2E3C /* Amounts.swift */; };
@@ -40,9 +43,11 @@
 		15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
 		1609E6A108A673EB3D9164F8 /* Lakshly-US.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 7D0E1E79DC6576739D2F5272 /* Lakshly-US.storekit */; };
 		188B58323D8A8D7E43BA1DEA /* Mask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E7F17A3B420C09D69AA682 /* Mask.swift */; };
+		1A27DC5283D5F47450F60322 /* MoneyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */; };
 		1EEA416FBCEA29DF7716DF22 /* DepositoryCAS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47ADF63C3850DCC00E947334 /* DepositoryCAS.swift */; };
 		1EF89D89FA08E0488F6FB54E /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09196754EE8047DADE4A2DD3 /* HistoryView.swift */; };
 		21B5A37E5BDEB015FB1A2C6D /* DebtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89A7295D48190C72FBC6A0D /* DebtView.swift */; };
+		21C5E0B41838F4BD840B1FB4 /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AED3879FE393C01AAF900C /* Currency.swift */; };
 		21FFF62C9848B791E38A2076 /* GlanceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701646DBB486D7E5A96188A9 /* GlanceLinks.swift */; };
 		22D27F652CD49E0D4073FC3C /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33139522A92ACF23DB08309D /* BudgetView.swift */; };
 		247ED100DA40E48C359491D9 /* cas-locked.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 54C52E317367CF2550EA4FA6 /* cas-locked.synthetic.pdf */; };
@@ -77,6 +82,7 @@
 		3D508658750E3B14468DF264 /* AppIconController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C29A5CC7C7B613ACB9225925 /* AppIconController.swift */; };
 		416603FA711AF5FB5D0490D2 /* GlanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF34161F31DBA254BA5B4D6 /* GlanceStore.swift */; };
 		4182A3ACAF38E9887D3BD4A6 /* Adapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DF5DFD35C93699E099BC806 /* Adapters.swift */; };
+		425EB3B5EA05C9C63DFF21B3 /* CurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF6B23641C05276C8CFF4B /* CurrencyTests.swift */; };
 		446C47404DDAD759C0F8E5A0 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B9F77425187C4185625AFF /* Table.swift */; };
 		44EBEDC2781D9E5CC78E6285 /* Lakshly.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 4F17FA443322997C13606406 /* Lakshly.storekit */; };
 		458DD9DE2836670F1806D8ED /* SetupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6488B918EC8CAED938BE9ACA /* SetupSession.swift */; };
@@ -108,6 +114,7 @@
 		5F1AF5032A75A59D45431346 /* GlanceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDF34161F31DBA254BA5B4D6 /* GlanceStore.swift */; };
 		623BEDF4BC156E2E3AB6DD62 /* LiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE95C855F94CA727C2DA167 /* LiveActivityManager.swift */; };
 		62612883FAE65AA4D1EF4128 /* GlanceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5980DE50F5BBC37C0EE1E56D /* GlanceBuilder.swift */; };
+		62878E555C56CC31ABD35059 /* CurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF6B23641C05276C8CFF4B /* CurrencyTests.swift */; };
 		62F713711451FF0862CD08F6 /* LakshlyWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AEDB1BD27242990DF407CC5 /* LakshlyWidgetsBundle.swift */; };
 		6545376684AB1F3B066A99BF /* GitHubIssueLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321BBBF9ADBA4AABE6C80A2F /* GitHubIssueLink.swift */; };
 		659DD4A91FD8586EC5290400 /* SetupSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027C7F670782DAA42B66C148 /* SetupSuggest.swift */; };
@@ -117,6 +124,7 @@
 		692BEB41527001F12ADD0B94 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B9F77425187C4185625AFF /* Table.swift */; };
 		694905EC602F5A17B540BB75 /* Registry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547BE2C4156E14E07A534A83 /* Registry.swift */; };
 		6A00A2F0532E70392D381613 /* Hash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4413307D726DB4AA063551A0 /* Hash.swift */; };
+		6AA856344C76F6533FFB1F06 /* Currencies.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A249764BB3A598F0D0C8B /* Currencies.gen.swift */; };
 		6C552DFDADD516D344F7328C /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E70F932DD22164B5A2197F /* GlassCard.swift */; };
 		6D393275E68A027EB18BA536 /* PremiumGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325AA735767E52909FF4FCEF /* PremiumGate.swift */; };
 		6E9AFB16358B92D1B3E5A8CA /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AE531D64E0D77981F4E98D /* ImportView.swift */; };
@@ -135,6 +143,7 @@
 		7C05A31E8022097040011DCA /* dataset.after-import.json in Resources */ = {isa = PBXBuildFile; fileRef = E818F2A9B3C999E373D6FC82 /* dataset.after-import.json */; };
 		7E84095320A0DD7E97440829 /* SourcesCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F262A490CFA9F5DEC7C0F50 /* SourcesCatalog.swift */; };
 		7F2E57D0910B2EA686606F8B /* SettingsPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901C6448E13AEC4FFBF89FEE /* SettingsPreferences.swift */; };
+		811FE09F490D6B2A126C97C0 /* Currencies.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A249764BB3A598F0D0C8B /* Currencies.gen.swift */; };
 		822B3FE321B289AF407099B4 /* ThemeAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B5A2D1A980D9058420A06 /* ThemeAppIcon.swift */; };
 		82A9C1C34B0E48A2D0B15179 /* Hash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4413307D726DB4AA063551A0 /* Hash.swift */; };
 		8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */; };
@@ -243,6 +252,7 @@
 		EAD1D0B776F246A89FA36222 /* SyntheticSmokeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3BBD23FBF277D902586A2 /* SyntheticSmokeUITests.swift */; };
 		EB87FB86F6BBCF67F2188D67 /* SyntheticSmokeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3BBD23FBF277D902586A2 /* SyntheticSmokeUITests.swift */; };
 		EBAE14E003D25F63DEEA3928 /* Dataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418C5B9471DC924BC9FA776A /* Dataset.swift */; };
+		EE642F79C9FBFD96AFD1A2AC /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AED3879FE393C01AAF900C /* Currency.swift */; };
 		EE8A2A76A4DC667983AF98AC /* GlancePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4498503F9C90BA58BF0AD38 /* GlancePublisher.swift */; };
 		EEB0333EB164E76657C13B82 /* LiveActivityPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C0DE6681509A9790D2B63 /* LiveActivityPlanner.swift */; };
 		EF087CB25FB46ECD9B297071 /* cas-locked.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 54C52E317367CF2550EA4FA6 /* cas-locked.synthetic.pdf */; };
@@ -372,6 +382,7 @@
 		325AA735767E52909FF4FCEF /* PremiumGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumGate.swift; sourceTree = "<group>"; };
 		33139522A92ACF23DB08309D /* BudgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetView.swift; sourceTree = "<group>"; };
 		379DCC9C3D1B54CBF3F10CEA /* GlanceRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceRenderTests.swift; sourceTree = "<group>"; };
+		3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneyParityTests.swift; sourceTree = "<group>"; };
 		3C51C3236E764B0BBDB6ADF5 /* nsdl-cas.synthetic.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "nsdl-cas.synthetic.pdf"; sourceTree = "<group>"; };
 		3D69907BE567998C075350B4 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsView.swift; sourceTree = "<group>"; };
@@ -397,9 +408,11 @@
 		5D8A729E90B838C9435D55F9 /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
 		5DE937192E32C4441BE5EBF2 /* GlanceRevealSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceRevealSession.swift; sourceTree = "<group>"; };
 		5EFA11B115500DB0B0664603 /* StoreKitTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKitTest.framework; path = System/Library/Frameworks/StoreKitTest.framework; sourceTree = SDKROOT; };
+		60AED3879FE393C01AAF900C /* Currency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Currency.swift; sourceTree = "<group>"; };
 		60E70F932DD22164B5A2197F /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		6488B918EC8CAED938BE9ACA /* SetupSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupSession.swift; sourceTree = "<group>"; };
 		6C6D1F870CCB6D7D4AB9C387 /* CSV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSV.swift; sourceTree = "<group>"; };
+		6F7A249764BB3A598F0D0C8B /* Currencies.gen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Currencies.gen.swift; sourceTree = "<group>"; };
 		701646DBB486D7E5A96188A9 /* GlanceLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceLinks.swift; sourceTree = "<group>"; };
 		7380D31D1CE0F85E5B522C5D /* hdfc-bank.synthetic.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "hdfc-bank.synthetic.pdf"; sourceTree = "<group>"; };
 		77A6BF384F50C43D1EC10E50 /* LakshlyActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakshlyActivityAttributes.swift; sourceTree = "<group>"; };
@@ -410,6 +423,7 @@
 		82A3B9ED2BCBAEF8F924FB4F /* Parsers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Parsers; path = LakshlyTests/Fixtures/Parsers; sourceTree = SOURCE_ROOT; };
 		847E16FAD3DDEBADE4116595 /* MenuBarPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarPanel.swift; sourceTree = "<group>"; };
 		84953A55098AE165AB074C74 /* Merge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Merge.swift; sourceTree = "<group>"; };
+		85FF6B23641C05276C8CFF4B /* CurrencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTests.swift; sourceTree = "<group>"; };
 		8A5B1AEE84382BAB7ED43C58 /* DataSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceTests.swift; sourceTree = "<group>"; };
 		8B34595B30F2E1F765833567 /* LakshlyWidgets-macOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "LakshlyWidgets-macOS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BC93836F5D851C23D6397B4 /* themes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = themes.json; sourceTree = "<group>"; };
@@ -455,6 +469,7 @@
 		EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubIssueLinkTests.swift; sourceTree = "<group>"; };
 		EFE95C855F94CA727C2DA167 /* LiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManager.swift; sourceTree = "<group>"; };
 		F09DBDB7CE6050917F3757B1 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		F1352ECC80DFE774ACA92DA0 /* format-parity.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "format-parity.json"; sourceTree = "<group>"; };
 		F4627BEF8AC1B21D856D7BF9 /* GlanceViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceViews.swift; sourceTree = "<group>"; };
 		F5B04B63F7C68B8DAB9F3B6A /* AppLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLock.swift; sourceTree = "<group>"; };
 		F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -539,11 +554,10 @@
 		0F7F959E109D880D3CD4D28A /* __fixtures__ */ = {
 			isa = PBXGroup;
 			children = (
-				E818F2A9B3C999E373D6FC82 /* dataset.after-import.json */,
-				9D51A22CC96B96BFCDBEA27C /* state.midway.json */,
+				F1352ECC80DFE774ACA92DA0 /* format-parity.json */,
 			);
 			name = __fixtures__;
-			path = ../../packages/shared/setup/__fixtures__;
+			path = ../../packages/shared/money/__fixtures__;
 			sourceTree = "<group>";
 		};
 		0FACC6B24B93199E53EBCE90 /* Investments */ = {
@@ -552,6 +566,16 @@
 				3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */,
 			);
 			path = Investments;
+			sourceTree = "<group>";
+		};
+		1BB45317D5B8722283156351 /* __fixtures__ */ = {
+			isa = PBXGroup;
+			children = (
+				E818F2A9B3C999E373D6FC82 /* dataset.after-import.json */,
+				9D51A22CC96B96BFCDBEA27C /* state.midway.json */,
+			);
+			name = __fixtures__;
+			path = ../../packages/shared/setup/__fixtures__;
 			sourceTree = "<group>";
 		};
 		1DDAE8B1007048332745A18D /* Parsers */ = {
@@ -598,6 +622,7 @@
 				DEF1A41544C5C872996D8BFB /* __fixtures__ */,
 				82A3B9ED2BCBAEF8F924FB4F /* Parsers */,
 				0F7F959E109D880D3CD4D28A /* __fixtures__ */,
+				1BB45317D5B8722283156351 /* __fixtures__ */,
 				011204229F841061855641A2 /* demo-data */,
 				E0DA5BA87B54176E673A822A /* docs */,
 				EB18B57ECF7CC76209D8A365 /* Lakshly */,
@@ -807,6 +832,8 @@
 			children = (
 				C29A5CC7C7B613ACB9225925 /* AppIconController.swift */,
 				2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */,
+				6F7A249764BB3A598F0D0C8B /* Currencies.gen.swift */,
+				60AED3879FE393C01AAF900C /* Currency.swift */,
 				B797213272B358002AD5B13F /* DataState.swift */,
 				60E70F932DD22164B5A2197F /* GlassCard.swift */,
 				9FA26CFA53316EC8CD45CB55 /* Layout.swift */,
@@ -854,11 +881,13 @@
 		D276F4EE5A6FD4CF4938F62C /* LakshlyTests */ = {
 			isa = PBXGroup;
 			children = (
+				85FF6B23641C05276C8CFF4B /* CurrencyTests.swift */,
 				8A5B1AEE84382BAB7ED43C58 /* DataSourceTests.swift */,
 				EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */,
 				379DCC9C3D1B54CBF3F10CEA /* GlanceRenderTests.swift */,
 				A296E05D13D8E69E92F24C52 /* GlanceTests.swift */,
 				D4A6EB4062AC5692A5BE01D5 /* LakshlyTests.swift */,
+				3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */,
 				5796053083CD3E0031D2B848 /* ParserFixtureTests.swift */,
 				19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */,
 				BEEBE3EE720257A408CCE67E /* SetupEntitlementsTests.swift */,
@@ -1203,6 +1232,7 @@
 				44EBEDC2781D9E5CC78E6285 /* Lakshly.storekit in Resources */,
 				012B08523F7C94524B122A7F /* Parsers in Resources */,
 				5D1B2C9ABC6027B720B9C2FD /* __fixtures__ in Resources */,
+				0738C31B9D1E6E5D1BE8FEEF /* format-parity.json in Resources */,
 				AA9A3FDB46A12D85AECF1EA4 /* themes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1262,6 +1292,7 @@
 				3C6F8313749DF5C027164EC4 /* Lakshly.storekit in Resources */,
 				72965C37FC925F615127AD1F /* Parsers in Resources */,
 				028F81D9B0E4C6779EF7E82E /* __fixtures__ in Resources */,
+				0C5528DF90CEC6E8BD956C8F /* format-parity.json in Resources */,
 				931F0540CDEB98EC510CE7B8 /* themes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1374,11 +1405,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62878E555C56CC31ABD35059 /* CurrencyTests.swift in Sources */,
 				A33B7A1CB3776883451FF44F /* DataSourceTests.swift in Sources */,
 				AC59AEBB0C915B77534D6C2D /* GitHubIssueLinkTests.swift in Sources */,
 				D179EBF207631D20AB46FD3A /* GlanceRenderTests.swift in Sources */,
 				C7FD5B8068ADE02F35793D74 /* GlanceTests.swift in Sources */,
 				2E613728918B30F78B5E7F37 /* LakshlyTests.swift in Sources */,
+				00AC1D7809844AE1C3EDC122 /* MoneyParityTests.swift in Sources */,
 				4B1A69D5D36E085868F958D0 /* ParserFixtureTests.swift in Sources */,
 				5C8485DA814CED83A76BE8DC /* SecurityTests.swift in Sources */,
 				2F6423FD2044B3D9464725B8 /* SetupEntitlementsTests.swift in Sources */,
@@ -1401,11 +1434,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				425EB3B5EA05C9C63DFF21B3 /* CurrencyTests.swift in Sources */,
 				D6B84E1AAE76BD218845C859 /* DataSourceTests.swift in Sources */,
 				D7508065396FD082002C7803 /* GitHubIssueLinkTests.swift in Sources */,
 				C064F524A2573B8D5AEAA0D6 /* GlanceRenderTests.swift in Sources */,
 				7B33F1302387E76587328537 /* GlanceTests.swift in Sources */,
 				541D6B919B187F6447F84773 /* LakshlyTests.swift in Sources */,
+				1A27DC5283D5F47450F60322 /* MoneyParityTests.swift in Sources */,
 				B187FDAA13F3C6BEBC36211B /* ParserFixtureTests.swift in Sources */,
 				C3FC0FA1D90FE6268D75F843 /* SecurityTests.swift in Sources */,
 				15191387FA7F87D969E2A560 /* SetupEntitlementsTests.swift in Sources */,
@@ -1429,6 +1464,8 @@
 				88118E87EB44369EE879EF2E /* Categorise.swift in Sources */,
 				E2DE1AD3A7C0B7A690D2CBA3 /* ChartHelpers.swift in Sources */,
 				DB22EED984F46B0C63559719 /* CreditView.swift in Sources */,
+				811FE09F490D6B2A126C97C0 /* Currencies.gen.swift in Sources */,
+				21C5E0B41838F4BD840B1FB4 /* Currency.swift in Sources */,
 				DD8C5F0F914E91766C95EA7C /* DataState.swift in Sources */,
 				C0C3EEBE95E47175483DA7A7 /* DataStore.swift in Sources */,
 				EBAE14E003D25F63DEEA3928 /* Dataset.swift in Sources */,
@@ -1508,6 +1545,8 @@
 				9054FC3C0E403CF31940FBDB /* Categorise.swift in Sources */,
 				FB5D35EF600CDB9DB3C75E7C /* ChartHelpers.swift in Sources */,
 				C1F7624690A6B5BC8C3D9B0A /* CreditView.swift in Sources */,
+				6AA856344C76F6533FFB1F06 /* Currencies.gen.swift in Sources */,
+				EE642F79C9FBFD96AFD1A2AC /* Currency.swift in Sources */,
 				99ACCCA2C5170EA7120D3DDD /* DataState.swift in Sources */,
 				79EAB566141178ADB3F43674 /* DataStore.swift in Sources */,
 				572DECB907083C9521607413 /* Dataset.swift in Sources */,
