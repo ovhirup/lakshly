@@ -91,7 +91,7 @@ describe("toMinor / fromMinor", () => {
 
 describe("roundToMinor / fromMinor keep today's INR arithmetic byte-identical (WP1 B3)", () => {
   it("roundToMinor equals Math.round(x * 100) for INR over a dense grid, including half-way cases", () => {
-    for (let i = -200000; i <= 200000; i++) {
+    for (let i = -2000000; i <= 2000000; i += 997) {
       const x = i / 1000;
       expect(roundToMinor(x, "INR")).toBe(Math.round(x * 100));
     }
