@@ -7,15 +7,30 @@ extra_file="$(mktemp)"
 strings_file="$(mktemp)"
 trap 'rm -f "$extra_file" "$strings_file"' EXIT
 
-# StoreKit is the only network-capable framework in the app sources.
+# Narrow exception: only explicit feedback taps may use HTTP, in FeedbackTransport.swift,
+# to the fixed feedback relay. StoreKit retains its entitlement/subscription networking.
 source_hits="$(mktemp)"
 trap 'rm -f "$extra_file" "$strings_file" "$source_hits"' EXIT
-if grep -R -n -E 'URLSession|URLRequest|NWConnection|import Network|WKWebView|import StoreKitTest|SKTestSession' \
-  "$apple_dir/Lakshly" --include='*.swift' > "$source_hits"; then
-  echo "FAIL: app sources use a network API other than StoreKit" >&2
-  cat "$source_hits" >&2
-  exit 1
-fi
+python3 - "$apple_dir" <<'CHECK'
+import pathlib, plistlib, re, sys
+root = pathlib.Path(sys.argv[1])
+transport = root / "Lakshly/Features/Feedback/FeedbackTransport.swift"
+for path in (root / "Lakshly").rglob("*.swift"):
+    text = path.read_text()
+    forbidden = r"NWConnection|import Network|WKWebView|StoreKitTest|SKTestSession"
+    if re.search(forbidden, text) or (path != transport and re.search(r"URLSession|URLRequest", text)):
+        sys.exit(f"FAIL: forbidden network/test API in {path}")
+text = transport.read_text()
+urls = re.findall(r'https://[^"\s]+', text)
+if urls != ["https://feedback.lakshly.com"] or "http://" in text:
+    sys.exit("FAIL: feedback transport must contain exactly the approved HTTPS literal")
+for path in list((root / "Lakshly/Resources").glob("*.entitlements")) + list((root / "LakshlyWidgets").glob("*.entitlements")):
+    values = plistlib.loads(path.read_bytes())
+    if "com.apple.security.network.server" in values:
+        sys.exit(f"FAIL: network.server entitlement in {path}")
+    if path != root / "Lakshly/Resources/Lakshly.entitlements" and "com.apple.security.network.client" in values:
+        sys.exit(f"FAIL: network.client entitlement outside macOS app in {path}")
+CHECK
 if ! grep -R -q -E 'import StoreKit$' "$apple_dir/Lakshly" --include='*.swift'; then
   echo "FAIL: app sources do not import StoreKit" >&2
   exit 1
@@ -118,4 +133,4 @@ for binary in \
   fi
 done
 
-echo 'PASS: Release binaries contain no DEBUG launch controls, synthetic statement PDFs, StoreKit test configuration, or SKTestSession. Both apps embed LakshlyWidgets.appex. iOS supports Live Activities and macOS does not. App sources use StoreKit as the only network framework.'
+echo 'PASS: Release binaries contain no DEBUG launch controls, synthetic statement PDFs, StoreKit test configuration, or SKTestSession. Both apps embed LakshlyWidgets.appex. iOS supports Live Activities and macOS does not. Network APIs are confined to the approved feedback transport/host and StoreKit; app-only client entitlement checked.'
