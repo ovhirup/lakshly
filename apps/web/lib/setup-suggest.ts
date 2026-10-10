@@ -46,8 +46,6 @@ export function completeMonths(txns: Transaction[], today: string, max = 3): str
 export interface BudgetLine { category: Category; median: number; suggested: number }
 export interface BudgetSuggestion { mode: "history" | "starter"; months: string[]; confidence: "low" | "ok"; lines: BudgetLine[] }
 
-/** Starter amounts when there is no complete month yet (round, editable placeholders). */
-
 export function suggestBudget(txns: Transaction[], today: string, opts: { maxLines?: number | null; preset?: Preset; currency?: CurrencyCode } = {}): BudgetSuggestion {
   const currency = opts.currency ?? "INR";
   const m = mag(currency);

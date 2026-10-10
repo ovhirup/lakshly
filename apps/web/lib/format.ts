@@ -1,5 +1,6 @@
 // INR formatting helpers. All amounts in Lakshly are integers in paise.
 // Privacy mode: when masked, money renders as a fixed-width "₹ •••••" so the DOM never holds the digits.
+import { fromMinor } from "./currency";
 import { MASK, moneyMasked, PCT_MASK, pctMasked } from "./privacy";
 
 const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -7,7 +8,7 @@ const inr2 = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR"
 
 /** ₹1,23,456 (Indian digit grouping), from paise. */
 export function formatINR(paise: number, opts: { decimals?: boolean; signed?: boolean } = {}): string {
-  const rupees = paise / 100;
+  const rupees = fromMinor(paise, "INR");
   const body = moneyMasked() ? MASK : (opts.decimals ? inr2 : inr).format(Math.abs(rupees));
   if (rupees < 0) return `−${body}`;
   return opts.signed && rupees > 0 ? `+${body}` : body;
@@ -15,7 +16,7 @@ export function formatINR(paise: number, opts: { decimals?: boolean; signed?: bo
 
 /** Compact Indian units: ₹950, ₹12.5K, ₹3.2L, ₹1.1Cr. */
 export function formatINRCompact(paise: number): string {
-  const r = Math.abs(paise / 100);
+  const r = Math.abs(fromMinor(paise, "INR"));
   const sign = paise < 0 ? "−" : "";
   if (moneyMasked()) return `${sign}${MASK}`;
   const trim = (n: number) => (Math.round(n * 10) / 10).toString().replace(/\.0$/, "");

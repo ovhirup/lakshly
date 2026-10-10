@@ -1,4 +1,5 @@
 // Refunds owed to you, and family loans you owe. Pure helpers: no storage, no network.
+import { fromMinor } from "./currency";
 import type { Debt, Transaction } from "./schema.gen";
 
 /**
@@ -57,7 +58,7 @@ export interface ComplaintInput {
 }
 
 function rupees(paise: number): string {
-  const body = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(Math.abs(paise) / 100);
+  const body = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(fromMinor(Math.abs(paise), "INR"));
   return paise < 0 ? `−${body}` : body;
 }
 

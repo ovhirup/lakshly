@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { CURRENCIES } from "@/lib/currencies.gen";
 import { goalFacts, roundBudget, suggestBudget, suggestGoal } from "@/lib/setup-suggest";
@@ -39,5 +40,16 @@ describe("setup thresholds follow the currency", () => {
     // $300 qualifies in USD (threshold $250) but is far below the INR threshold of ₹5,000 in paise terms (30000 < 500000).
     expect(goalFacts([txn(-30000)], [], "2026-09-15", "USD").annual).toBeDefined();
     expect(goalFacts([txn(-30000)], [], "2026-09-15", "INR").annual).toBeUndefined();
+  });
+
+  it("USD history path keeps a $30 median that INR would drop as under ₹500", () => {
+    const txns = ["2026-06-10", "2026-07-10", "2026-08-10"].map((date, i) => ({ id: `t${i}`, date, accountId: "a", amount: -3000, category: "groceries", merchant: "Shop" }) as never);
+    expect(suggestBudget(txns, "2026-09-15", { currency: "USD" }).lines.map((l) => l.category)).toEqual(["groceries"]);
+    expect(suggestBudget(txns, "2026-09-15", { currency: "INR" }).lines).toEqual([]);
+  });
+
+  it("every starter budget category is a real schema category", () => {
+    const real = new Set(readFileSync(new URL("../lib/schema.gen.ts", import.meta.url), "utf8").match(/"([a-z_]+)"/g)?.map((x) => x.slice(1, -1)));
+    for (const c of Object.values(CURRENCIES)) for (const [cat] of c.magnitude.starterBudgets) expect(real.has(cat), cat).toBe(true);
   });
 });

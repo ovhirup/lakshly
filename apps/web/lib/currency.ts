@@ -46,6 +46,15 @@ export function tryToMinor(text: string, code: CurrencyCode): number | null {
   }
 }
 
+/**
+ * A number a user typed or a float calculation produced, rounded to minor units: Math.round(major * factor).
+ * This is the deliberately lenient counterpart to toMinor (which is strict, text-only and exact). It keeps today's
+ * behaviour for free-typed amount fields (e.g. 12.345 and 19.999 round) while following the currency's exponent.
+ */
+export function roundToMinor(major: number, code: CurrencyCode): number {
+  return Math.round(major * minorFactor(code));
+}
+
 /** Minor units to a major-unit number. For display maths only; keep stored money in minor units. */
 export function fromMinor(minor: number, code: CurrencyCode): number {
   return minor / minorFactor(code);
