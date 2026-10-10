@@ -19,6 +19,7 @@ import Observation
   var requestSettings = false
   var importPresented = false
   var importPreset: ImportPreset?
+  var batchFiles: [BulkImportFile] = []
   var forcedCatalogId: String?
   var wantsImporter = false
   var draftName = ""
@@ -39,6 +40,7 @@ import Observation
     self.defaults = defaults
     self.seenEpoch = store.setupEpoch
     self.state = store.setup ?? initialSetup(now: isoTimestamp())
+    self.state.profile.name = store.profile.name ?? ""
     syncDrafts()
   }
 
@@ -97,6 +99,7 @@ import Observation
     if suppressAuto { return }
     if store.setup == nil && store.source != .mine {
       state = initialSetup(now: isoTimestamp())
+      state.profile.name = store.profile.name ?? ""
       dispatch(.start)
       health = false
       presented = true
@@ -105,6 +108,7 @@ import Observation
 
   func requestOpen(health wantHealth: Bool, step: String?) {
     if !ephemeral, let saved = store.setup { state = saved }
+    state.profile.name = store.profile.name ?? ""
     syncDrafts()
     reconcile()
     self.health = false
@@ -201,7 +205,19 @@ import Observation
     go(setupCheckStep(id), done: false)
   }
 
+  func beginBatch(_ files: [BulkImportFile], catalogId: String? = nil) {
+    guard !files.isEmpty else { return }
+    if files.count == 1, let file = files.first {
+      beginImport(data: file.data, fileName: file.name, catalogId: catalogId)
+    } else {
+      batchFiles = files
+      forcedCatalogId = catalogId
+    }
+  }
+
   func updateProfile(name: String, currency: String) {
+    let name = ProfileRecord.clean(name) ?? ""
+    if !ephemeral { store.saveProfile(name) }
     draftName = name
     draftCurrency = currency
     dispatch(.setProfile(SetupProfilePatch(name: name, currency: currency)))

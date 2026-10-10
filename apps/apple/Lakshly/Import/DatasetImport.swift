@@ -28,7 +28,11 @@ func datasetByMerging(_ existing: Dataset?, _ result: ParseResult, now: Date = D
 
 extension DataStore {
   @discardableResult
-  func importParsed(_ result: ParseResult, fileName: String = "statement", now: Date = Date()) -> MergeReport {
+  func importParsed(_ result: ParseResult, fileName: String = "statement", contentHash: String? = nil, fileSize: Int? = nil, now: Date = Date()) -> MergeReport {
+    let oldDataset = userDataset
+    let oldImports = imports
+    let oldSource = source
+    let oldMonth = selectedMonth
     let merged = datasetByMerging(userDataset, result, now: now)
     let trimmed = fileName.trimmingCharacters(in: .whitespacesAndNewlines)
     let file = String((trimmed.isEmpty ? "statement" : trimmed).prefix(120))
@@ -41,8 +45,9 @@ extension DataStore {
         accountIds: result.accounts.map(\.id),
         added: merged.report.added,
         duplicates: merged.report.duplicates,
-        confidence: result.confidence))
+        confidence: result.confidence, contentHash: contentHash, fileSize: fileSize))
     adoptUserDataset(merged.dataset)
+    if error != nil { restoreImportState(dataset: oldDataset, imports: oldImports, source: oldSource, month: oldMonth) }
     return merged.report
   }
 }

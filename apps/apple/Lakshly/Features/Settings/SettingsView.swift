@@ -34,6 +34,7 @@ struct SettingsView: View {
     NavigationStack {
       ScrollViewReader { scroll in
         Form {
+          Section { SettingsProfileCard(store: store) }.listRowBackground(theme.surface)
           setupSection
           Section("Theme") {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {

@@ -8,6 +8,7 @@ import Observation
   var demoDataset: Dataset?
   var userDataset: Dataset?
   var requests: [CommunityRequest] = []
+  var profile = ProfileRecord()
   var setup: SetupState?
   var goals: [Goal]?
   var imports: [ImportLogEntry] = []
@@ -71,11 +72,13 @@ import Observation
         userDataset = migrated.userDataset
         source = migrated.source ?? .demo
         requests = migrated.requests
+        profile = ProfileRecord.migrate(record: migrated.profile, legacyName: migrated.setup?.profile.name)
         setup = migrated.setup
+        setup?.profile.name = profile.name ?? ""
         goals = migrated.goals
         imports = migrated.imports ?? []
         persistSourceHint()
-        if saved.source == nil { save() }
+        if saved.source == nil || saved.profile != profile { save() }
       } else {
         source = .demo
         persistSourceHint()
@@ -108,11 +111,30 @@ import Observation
       try backing.save(
         StoredData(
           dataset: demoDataset, requests: requests, source: source, userDataset: userDataset, setup: setup,
-          goals: goals, imports: imports))
+          goals: goals, imports: imports, profile: profile))
       error = nil
     } catch { self.error = "Could not save locally: \(error.localizedDescription)" }
     GlancePublisher.publish(dataset: dataset)
   }
+
+  func restoreImportState(dataset: Dataset?, imports: [ImportLogEntry], source: DataSource, month: String) {
+    userDataset = dataset
+    self.imports = imports
+    self.source = source
+    selectedMonth = month
+    persistSourceHint()
+  }
+
+  func saveProfile(_ name: String) {
+    let previous = profile
+    let previousSetup = setup
+    profile.save(name)
+    setup?.profile.name = profile.name ?? ""
+    save()
+    if error != nil { profile = previous; setup = previousSetup }
+  }
+
+  func clearProfile() { saveProfile("") }
 
   func submit(title: String, details: String, type: String, premium: Bool) -> Bool {
     requests.append(
