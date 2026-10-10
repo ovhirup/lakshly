@@ -91,7 +91,7 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
                 tabIndex={0}
                 aria-label="Choose a statement file to import"
                 data-testid="drop-target"
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.current?.click(); } }}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openFilePicker(input.current); } }}
                 onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
                 onDragLeave={() => setDrag(false)}
                 onDrop={(e) => { e.preventDefault(); setDrag(false); onFiles(e.dataTransfer.files); }}
@@ -101,8 +101,9 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
                 <span className="muted tiny">{phase.step === "reading" ? "Extracting text and detecting the layout" : "or click to browse · PDF (password-protected is fine), CSV"}</span>
                 {phase.step === "reading" && <span className="spinner" aria-hidden="true" />}
               </label>
-              {cta && phase.step !== "reading" && (
-                <div className="drop-cta"><button type="button" className="btn primary" onClick={() => input.current?.click()} data-testid="manual-import-cta">{cta}</button></div>
+              {phase.step !== "reading" && (
+                // Explicit button as well as the label: showPicker() with a click() fallback.
+                <div className="drop-cta"><button type="button" className={`btn ${cta ? "primary" : "ghost"}`} onClick={() => openFilePicker(input.current)} data-testid={cta ? "manual-import-cta" : "browse-files"}>{cta ?? "Browse files…"}</button></div>
               )}
               <input ref={input} id={inputId} type="file" accept=".pdf,.csv,.tsv,application/pdf,text/csv" className="file-input-hidden" tabIndex={-1} aria-hidden="true" data-testid="file-input"
                 onChange={(e) => { onFiles(e.target.files); e.target.value = ""; }} />
@@ -149,6 +150,15 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
           )}
     </>
   );
+}
+
+/** Open the native file chooser from a user gesture: showPicker() where supported, else click(). */
+export function openFilePicker(el: HTMLInputElement | null) {
+  if (!el) return;
+  try {
+    if (typeof el.showPicker === "function") { el.showPicker(); return; }
+  } catch { /* NotAllowedError / InvalidStateError: fall back */ }
+  el.click();
 }
 
 function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip, onShowAll, onCancel, onConfirm, base }: {

@@ -372,16 +372,25 @@ html[data-clear-glass="true"] .hero { border: 1px solid var(--lk-border); box-sh
 .merge-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .merge-list .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* Vault opening: never flash demo numbers for someone with real data (html[data-vault=pending] set before paint). */
+/* Vault opening: never flash demo numbers. html[data-vault=pending] is set by an inline head script before first
+   paint; the skeleton below is in the static HTML and shown purely by CSS until the data context resolves. */
 .vault-skeleton { display: none; }
 html[data-vault="pending"] .vault-skeleton { display: grid; gap: 16px; padding: 8px 0; }
 html[data-vault="pending"] #main-content > :not(.vault-skeleton) { display: none !important; }
-.vault-skeleton .sk { border-radius: var(--lk-radius, 16px); background: color-mix(in srgb, var(--lk-text) 7%, transparent); animation: lk-sk 1.2s ease-in-out infinite alternate; }
+html[data-vault="pending"] [data-source-hint] { visibility: hidden; }
+.vault-skeleton-label { display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 600; color: var(--lk-text-2, var(--lk-text)); }
+.vault-skeleton-label .spinner { width: 18px; height: 18px; border-width: 2.5px; }
+.vault-skeleton-slow { display: none; margin: -8px 0 0; }
+html[data-vault-slow="1"] .vault-skeleton-slow { display: block; }
+.vault-skeleton .sk { position: relative; overflow: hidden; border-radius: var(--lk-radius, 16px);
+  background: color-mix(in srgb, var(--lk-text) 13%, var(--lk-surface)); border: 1px solid var(--lk-border); }
+.vault-skeleton .sk::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--lk-surface) 70%, transparent), transparent);
+  animation: lk-sk 1.3s ease-in-out infinite; }
 .vault-skeleton .sk-title { height: 34px; width: min(280px, 60%); }
 .vault-skeleton .sk-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
 .vault-skeleton .sk-card { height: 110px; }
 .vault-skeleton .sk-wide { height: 180px; }
 .vault-skeleton .sk-wide.short { height: 90px; }
-@keyframes lk-sk { from { opacity: .55; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .vault-skeleton .sk { animation: none; } }
-html[data-vault="pending"] [data-source-hint] { visibility: hidden; }
+@keyframes lk-sk { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .vault-skeleton .sk::after { animation: none; display: none; } }

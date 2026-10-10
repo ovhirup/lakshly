@@ -13,7 +13,7 @@ export function ReviewCountBadge({ className = "" }: { className?: string }) {
   const { review } = useData();
   const n = review.inbox.count;
   if (!n) return null;
-  return <span className={`review-count ${className}`} aria-label={`${n} to review`}>{countLabel(n)}</span>;
+  return <span className={`review-count ${className}`} data-source-hint="" aria-label={`${n} to review`}>{countLabel(n)}</span>;
 }
 
 export function ReviewChip() {

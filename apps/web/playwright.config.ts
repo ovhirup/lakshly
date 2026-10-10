@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const port = 4175;
-const baseURL = `http://127.0.0.1:${port}`;
+const baseURL = process.env.LK_BASE ?? `http://127.0.0.1:${port}`;
 
 export default defineConfig({
   testDir: "./e2e",

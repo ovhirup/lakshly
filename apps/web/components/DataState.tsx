@@ -32,6 +32,8 @@ const readSource = (): Source => { const v = localStorage.getItem(SOURCE_KEY); r
 interface DataCtx {
   source: Source;
   setSource: (s: Source) => void;
+  /** True while someone with real data waits for the vault: render a skeleton, never the demo. */
+  loading: boolean;
   /** True once the encrypted vault has been read (or there is none). */
   ready: boolean;
   /** True when a passphrase is set and this tab has not unlocked it. */
@@ -67,6 +69,7 @@ const DISMISSED_MERGES = "lk-merge-dismissed";
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const source = useSyncExternalStore(subscribe, readSource, () => "demo" as Source);
+  const hasData = useSyncExternalStore(subscribe, hasDataFlag, () => false);
   const [user, setUserState] = useState<UserData | null>(null);
   // Latest saved data, updated synchronously so back-to-back saves (bulk Gmail import) never overwrite each other.
   const userRef = useRef<UserData | null>(null);
@@ -173,7 +176,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   }, [setUser]);
 
 
-  const active: LakshlyDataset = useMemo(() => (source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo), [source, user]);
+  // Someone with real data is "loading" (never demo) until the vault has been read.
+  const loading = !ready && (hasData || source === "mine");
+  const active: LakshlyDataset = useMemo(
+    () => (loading ? (emptyDataset() as LakshlyDataset) : source === "mine" || hasData && source !== "demo" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo),
+    [loading, source, hasData, user],
+  );
   const review = useReviewStore(source, active.transactions as ReviewTxn[], demo, user?.importedAt);
   const transactions = useMemo(() => overlayDecisions(active.transactions, review.state), [active, review.state]);
   const { forgetAll } = review;
@@ -189,7 +197,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     window.dispatchEvent(new Event(VAULT_DELETED_EVENT));
   }, [forgetAll, setUser]);
   const value: DataCtx = {
-    source, setSource, ready, vaultLocked, user, saveImport, mergeOffers, mergeAccounts, dismissMergeOffer, saveBudgets, saveGoal, deleteAll, masked, review,
+    source, setSource, ready, loading, vaultLocked, user, saveImport, mergeOffers, mergeAccounts, dismissMergeOffer, saveBudgets, saveGoal, deleteAll, masked, review,
     dataset: active,
     accounts: active.accounts,
     rawTransactions: active.transactions,

@@ -58,3 +58,7 @@
 label.drop-target { cursor: pointer; }
 .match-note { margin: 0 0 6px; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--lk-success, #2e7d32) 12%, var(--lk-surface)); border: 1px solid color-mix(in srgb, var(--lk-success, #2e7d32) 35%, transparent); }
 .lookalike-note { margin: 0 0 6px; padding: 8px 12px; border-radius: 12px; background: var(--lk-ambient-gold); border: 1px solid color-mix(in srgb, var(--lk-gold-text) 40%, transparent); color: var(--lk-text); }
+/* Clicks always land on the label itself: its contents and any decoration never take pointer events. */
+label.drop-target { position: relative; z-index: 1; }
+label.drop-target > *, label.drop-target::before, label.drop-target::after { pointer-events: none; }
+.mood-canvas, .mood-canvas *, svg[class^="art-"] { pointer-events: none; }

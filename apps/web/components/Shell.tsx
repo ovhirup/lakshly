@@ -101,7 +101,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <main id="main-content" className="content" key={path}>
           {/* Shown only while html[data-vault=pending]: real data exists and the encrypted vault is still opening. */}
           <div className="vault-skeleton" role="status" aria-live="polite" data-testid="vault-skeleton">
-            <span className="sr-only">Opening your encrypted data…</span>
+            <p className="vault-skeleton-label"><span className="spinner" aria-hidden="true" /> <span>Opening your data on this device…</span></p>
+            <p className="vault-skeleton-slow tiny muted">Still opening. <a href="">Reload</a> if this takes much longer.</p>
             <div className="sk sk-title" /><div className="sk-row"><div className="sk sk-card" /><div className="sk sk-card" /><div className="sk sk-card" /></div><div className="sk sk-wide" /><div className="sk sk-wide short" />
           </div>
           {children}
@@ -133,7 +134,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 function BetaNote() {
   const { user } = useData();
   const real = (user?.imports.length ?? 0) > 0;
-  return <p className="beta-note" data-testid="beta-note"><Icon name="sparkle" size={12} /> Premium unlocked for beta testers.{real ? "" : " Sample data only."}</p>;
+  return <p className="beta-note" data-testid="beta-note" data-source-hint=""><Icon name="sparkle" size={12} /> Premium unlocked for beta testers.{real ? "" : " Sample data only."}</p>;
 }
 
 function PremiumDot() {
