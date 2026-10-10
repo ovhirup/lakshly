@@ -1,4 +1,7 @@
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 struct SettingsView: View {
   let store: DataStore
@@ -19,6 +22,9 @@ struct SettingsView: View {
   #endif
   #if os(macOS)
   @AppStorage(GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences) private var menuBarExtra = true
+  @AppStorage(GlancePreferences.notchPanelKey, store: GlanceStore.preferences) private var notchEnabled = false
+  @Environment(\.notchPanel) private var notchController
+  @State private var displayHasNotch = NotchScreens.hasNotch
   #endif
   @State private var reset = false
   @State private var deleteMine = false
@@ -158,6 +164,11 @@ struct SettingsView: View {
           #if os(iOS)
           .onChange(of: liveActivities) { _, _ in LiveActivityManager.shared.sync() }
           #endif
+          #if os(macOS)
+          .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
+            displayHasNotch = NotchScreens.hasNotch
+          }
+          #endif
           .onChange(of: entitlements.isPremium) { _, isPremium in
             guard isPremium, case .theme(let id) = paywall else { return }
             if pendingIcon == id {
@@ -190,6 +201,15 @@ struct SettingsView: View {
       #if os(macOS)
       Toggle("Show in menu bar", isOn: $menuBarExtra)
         .accessibilityIdentifier("settings.menuBar")
+      NotchGlanceSettingsBlock(
+        isOn: notchEnabled,
+        entitled: entitlements.can(.notchPanel),
+        hasNotch: displayHasNotch,
+        setOn: { enabled in
+          notchEnabled = enabled
+          notchController?.refreshFromPreferences()
+        },
+        onLockedTap: { paywall = .feature(.notchPanel) })
       #endif
       glanceKind("Budget pace", feature: .basicWidgets)
       glanceKind("Upcoming bill", feature: .basicWidgets)

@@ -24,6 +24,7 @@ export const FEATURE_IDS = [
   "data.delete",
   "data.export",
   "debt.planner",
+  "glance.notchPanel",
   "history.full",
   "import.statements",
   "investments.insights",
@@ -114,6 +115,10 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
   "debt.planner": {
     "minTier": "premium",
     "label": "Debt planner and payoff what-ifs"
+  },
+  "glance.notchPanel": {
+    "minTier": "premium",
+    "label": "Mac notch glance panel"
   },
   "history.full": {
     "minTier": "premium",

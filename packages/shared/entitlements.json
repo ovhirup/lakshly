@@ -36,6 +36,7 @@
     "privacy.shake": { "minTier": "free", "label": "Shake to hide" },
     "privacy.autoHide": { "minTier": "free", "label": "Hide when switching away" },
     "privacy.widgetMask": { "minTier": "free", "label": "Widgets without amounts" },
+    "glance.notchPanel": { "minTier": "premium", "label": "Mac notch glance panel" },
     "review.inbox": { "minTier": "free", "label": "Weekly review inbox" },
     "review.merchantRules": { "minTier": "free", "label": "Remember a category for a merchant", "limits": { "free": null } },
     "review.reminder": { "minTier": "free", "label": "Sunday review reminder" },
