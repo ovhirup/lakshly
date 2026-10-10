@@ -310,13 +310,20 @@ private struct PaywallFeature: Identifiable {
   let title: String
   let symbol: String
   var id: String { feature.rawValue }
-  static let rows: [PaywallFeature] = [
-    PaywallFeature(feature: .premiumThemes, title: "Ocean, Forest and Rose Quartz themes", symbol: "paintpalette"),
-    PaywallFeature(feature: .debtPlanner, title: "Debt payoff planner", symbol: "chart.line.downtrend.xyaxis"),
-    PaywallFeature(feature: .creditInsights, title: "Credit insights", symbol: "creditcard"),
-    PaywallFeature(feature: .investmentInsights, title: "Investment projections", symbol: "chart.line.uptrend.xyaxis"),
-    PaywallFeature(feature: .rewardsInsights, title: "Rewards value & expiry tracking", symbol: "gift"),
-    PaywallFeature(feature: .priorityFeedback, title: "Priority feature requests", symbol: "star.fill"),
-    PaywallFeature(feature: .extraWidgets, title: "Net worth and debt widgets", symbol: "rectangle.3.group"),
-  ]
+  static var rows: [PaywallFeature] {
+    var rows = [
+      PaywallFeature(feature: .premiumThemes, title: "Ocean, Forest and Rose Quartz themes", symbol: "paintpalette"),
+      PaywallFeature(feature: .debtPlanner, title: "Debt payoff planner", symbol: "chart.line.downtrend.xyaxis"),
+      PaywallFeature(feature: .creditInsights, title: "Credit insights", symbol: "creditcard"),
+      PaywallFeature(feature: .investmentInsights, title: "Investment projections", symbol: "chart.line.uptrend.xyaxis"),
+      PaywallFeature(feature: .rewardsInsights, title: "Rewards value & expiry tracking", symbol: "gift"),
+      PaywallFeature(feature: .priorityFeedback, title: "Priority feature requests", symbol: "star.fill"),
+      PaywallFeature(feature: .extraWidgets, title: "Net worth and debt widgets", symbol: "rectangle.3.group"),
+    ]
+    #if os(macOS)
+    rows.append(PaywallFeature(
+      feature: .notchPanel, title: "Notch glance on Mac", symbol: "rectangle.topthird.inset.filled"))
+    #endif
+    return rows
+  }
 }

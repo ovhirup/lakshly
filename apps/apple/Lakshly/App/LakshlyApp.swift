@@ -11,6 +11,7 @@ import SwiftUI
   @State private var launchTheme: String?
   #if os(macOS)
   @AppStorage private var menuBarExtra: Bool
+  @State private var notchPanel = NotchPanelController()
   #endif
 
   init() {
@@ -144,6 +145,9 @@ import SwiftUI
         .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
         .foregroundStyle(palette.text).tint(palette.gold)
         .preferredColorScheme(appearance)
+        #if os(macOS)
+        .environment(\.notchPanel, notchPanel)
+        #endif
         .task {
           await appIcons.start(isPremium: entitlements.isPremium, hasResolved: entitlements.hasResolved)
           // A UI-test launch must not wait on the App Store before the window is usable.
@@ -172,6 +176,7 @@ struct RootView: View {
   @Environment(SetupSession.self) private var session
   #if os(macOS)
   @Environment(\.openWindow) private var openWindow
+  @Environment(\.notchPanel) private var notchController
   #endif
   @AppStorage("settings.appLock") private var lockEnabled = true
   @State private var settings = false
@@ -320,6 +325,10 @@ struct RootView: View {
       .modifier(LaunchPaywallModifier(locked: lock.locked))
       .onAppear {
         if !lockEnabled && !lock.forced { lock.locked = false }
+        #if os(macOS)
+        notchController?.start { try GlanceVault.dataset(from: store) }
+        syncNotch()
+        #endif
         publishGlance()
         #if DEBUG
         let options = LaunchOptions.current
@@ -340,6 +349,9 @@ struct RootView: View {
         }
       }
       .onChange(of: lock.locked) { _, locked in
+        #if os(macOS)
+        if locked { notchController?.noteAppLocked() }
+        #endif
         guard !locked else { return }
         if let pendingTab {
           selected = pendingTab
@@ -366,6 +378,9 @@ struct RootView: View {
       .onChange(of: themeSelection) { _, _ in publishGlance() }
       .onChange(of: entitlements.tier) { _, _ in publishGlance() }
       .onChange(of: entitlements.hasResolved) { _, _ in publishGlance() }
+      #if os(macOS)
+      .onChange(of: notchSnapshotKey) { _, _ in syncNotch() }
+      #endif
       .onChange(of: phase) { _, value in
         if value == .background || value == .active { publishGlance() }
         if value == .background || (value == .inactive && !lock.authenticating) {
@@ -380,7 +395,33 @@ struct RootView: View {
       appearance: LaunchOptions.current.appearance ?? appearanceStored,
       tier: entitlements.tier)
     GlancePublisher.publish(dataset: store.dataset)
+    #if os(macOS)
+    syncNotch()
+    #endif
   }
+  #if os(macOS)
+  private func syncNotch() {
+    notchController?.update(
+      entitled: entitlements.can(.notchPanel),
+      showsNetWorth: entitlements.can(.extraWidgets),
+      tier: entitlements.tier,
+      theme: theme,
+      appearance: LaunchOptions.current.appearance ?? appearanceStored)
+  }
+
+  private var notchSnapshotKey: String {
+    let data = store.dataset
+    return [
+      String(describing: store.source),
+      data?.generatedAt ?? "",
+      String(data?.transactions.count ?? 0),
+      String(data?.budgets?.count ?? 0),
+      String(data?.accounts.count ?? 0),
+      String(data?.debts?.count ?? 0),
+      String(data?.sips?.count ?? 0),
+    ].joined(separator: "|")
+  }
+  #endif
   private func screen<Content: View>(_ identifier: String, @ViewBuilder content: () -> Content) -> some View {
     NavigationStack {
       content().toolbar {

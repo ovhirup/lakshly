@@ -5,6 +5,7 @@ enum GlancePreferences {
   static let lockScreenAmountsKey = "glance.lockScreenAmounts"
   static let liveActivitiesKey = "glance.liveActivities"
   static let menuBarExtraKey = "glance.menuBarExtra"
+  static let notchPanelKey = "glance.notchPanel"
   static let budgetAlertMonthKey = "glance.budgetAlertMonth"
 
   static func showAmounts(in defaults: UserDefaults) -> Bool {
@@ -21,6 +22,10 @@ enum GlancePreferences {
 
   static func menuBarExtra(in defaults: UserDefaults) -> Bool {
     bool(menuBarExtraKey, default: true, in: defaults)
+  }
+
+  static func notchPanel(in defaults: UserDefaults) -> Bool {
+    bool(notchPanelKey, default: false, in: defaults)
   }
 
   /// Missing keys use the product default. `bool(forKey:)` would treat them as false.
