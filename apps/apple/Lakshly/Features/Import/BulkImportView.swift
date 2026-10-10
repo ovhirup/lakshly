@@ -108,6 +108,9 @@ struct BulkResultsCard: View {
       Button("Import selected (\(runner.selectedCount))") { start(nil) }
         .buttonStyle(ThemedSubmitStyle()).disabled(isRunning || runner.selectedCount == 0)
         .accessibilityIdentifier("bulk.importSelected")
+      Button("Import all (\(eligible.count))") { start(Set(eligible.map(\.id))) }
+        .buttonStyle(SetupGhostStyle()).disabled(isRunning || eligible.isEmpty)
+        .accessibilityIdentifier("bulk.importAll")
       if isRunning {
         Button(runner.stopRequested ? "Stopping after this one…" : "Stop after this one") { runner.stopRequested = true }
           .disabled(runner.stopRequested).frame(minHeight: 44).accessibilityIdentifier("bulk.stop")

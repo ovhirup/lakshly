@@ -15,8 +15,10 @@ enum ParityShotRenderer {
     defer { SetupSources.testingCatalog = nil }
     #if os(iOS)
     let platform = "ios", size = CGSize(width: 390, height: 844), scale: CGFloat = 3
+    let extraBatchHeight: CGFloat = 80
     #else
     let platform = "macos", size = CGSize(width: 760, height: 700), scale: CGFloat = 2
+    let extraBatchHeight: CGFloat = 320
     #endif
     for (id, scheme) in SetupShotRenderer.themes {
       let theme = ThemePalette(id, scheme: scheme)
@@ -26,12 +28,13 @@ enum ParityShotRenderer {
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         for screen in category == "name" ? nameScreens : batchScreens {
           let content = category == "name" ? nameView(screen, dataset: dataset, themeID: id.rawValue) : batchView(screen)
-          let view = content.environment(\.theme, theme).environment(\.colorScheme, scheme)
-            .preferredColorScheme(scheme).frame(width: size.width, height: size.height, alignment: .top)
+          let height = category == "gmail-tidy" ? size.height + extraBatchHeight : size.height
+          let view = content.foregroundStyle(theme.text).tint(theme.gold).environment(\.setupRendering, true).environment(\.theme, theme).environment(\.colorScheme, scheme)
+            .preferredColorScheme(scheme).frame(width: size.width, height: height, alignment: .top)
             .background(theme.bg).clipped()
           let renderer = ImageRenderer(content: view)
           renderer.scale = scale; renderer.isOpaque = true
-          renderer.proposedSize = ProposedViewSize(width: size.width, height: size.height)
+          renderer.proposedSize = ProposedViewSize(width: size.width, height: height)
           #if os(iOS)
           guard let data = renderer.uiImage?.pngData() else { throw CocoaError(.coderReadCorrupt) }
           #else

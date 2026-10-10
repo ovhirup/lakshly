@@ -249,9 +249,8 @@ struct SetupWelcomeStep: View {
 
   var body: some View {
     Card(title: "About you") {
-      Text("What should we call you?").font(.subheadline.weight(.semibold))
-      Text("Optional · on this device only").font(.caption).foregroundStyle(theme.secondaryText)
-      Text("What should we call you? (optional)").font(.subheadline)
+      Text("What should we call you? (optional)").font(.subheadline.weight(.semibold))
+      Text("On this device only, encrypted").font(.caption).foregroundStyle(theme.secondaryText)
       SetupEntry(prompt: "Your name", text: $name, rendering: model.rendering)
         .accessibilityLabel("What should we call you? Optional")
         .accessibilityIdentifier("profile.name")
