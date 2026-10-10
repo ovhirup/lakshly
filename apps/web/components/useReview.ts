@@ -70,7 +70,10 @@ export function useReviewStore(source: "demo" | "mine", raw: readonly ReviewTxn[
   useEffect(() => {
     let alive = true;
     Promise.all([loadRecord<unknown>("review.demo").catch(() => null), loadRecord<unknown>("review.state").catch(() => null)])
-      .then(([d, m]) => { if (alive) setLoaded({ demo: d ? normaliseState(d) : seed, mine: normaliseState(m) }); });
+      // Never overwrite state committed meanwhile (actions are gated on ready, but be safe).
+      .then(([d, m]) => { if (alive) setLoaded((l) => l ?? { demo: d ? normaliseState(d) : seed, mine: normaliseState(m) }); });
+    // Legacy plaintext snoozes: drop them (they now live in the encrypted record).
+    try { localStorage.removeItem("lk-worth-snooze"); } catch { /* blocked */ }
     const t = window.setInterval(() => setRealNow(new Date()), 60_000);
     return () => { alive = false; window.clearInterval(t); };
   }, [seed]);
@@ -80,6 +83,8 @@ export function useReviewStore(source: "demo" | "mine", raw: readonly ReviewTxn[
   const opts = useMemo(() => ({ importedAt: source === "mine" ? importedAt : undefined }), [source, importedAt]);
   const inbox = useMemo(() => buildInbox(raw, state, now, opts), [raw, state, now, opts]);
 
+  const loadedRef = useRef(false);
+  useEffect(() => { loadedRef.current = !!loaded; }, [loaded]);
   const latest = useRef({ state, raw, now, opts, source });
   useEffect(() => { latest.current = { state, raw, now, opts, source }; });
 
@@ -90,10 +95,12 @@ export function useReviewStore(source: "demo" | "mine", raw: readonly ReviewTxn[
 
   const dispatch = useCallback((a: ReviewAction) => {
     const { state: s, raw: txns, now: n, opts: o, source: src } = latest.current;
+    // Block actions until the stored state has loaded, so a late load can't wipe them.
+    if (!loadedRef.current) return { state: s, xpGained: 0, cleared: false, streakBonus: 0, message: "Still loading, try again in a moment." };
     const r = applyAction(s, a, { txns, now: n, opts: o });
     latest.current = { ...latest.current, state: r.state };
     commit(src, r.state);
-    if (a.type !== "skip") setUndo({ prev: s, at: Date.now(), message: r.message });
+    if (a.type !== "skip" && a.type !== "snooze") setUndo({ prev: s, at: Date.now(), message: r.message });
     return r;
   }, [commit]);
 

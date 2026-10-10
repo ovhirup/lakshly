@@ -5,7 +5,7 @@ struct BudgetView: View {
   let store: DataStore
   var body: some View {
     Page(title: "Budget", subtitle: "A gentle plan for your month.") {
-      MonthPicker(store: store)
+      MonthPicker(store: store, identifier: "budget.month")
       ForEach((store.dataset?.budgets ?? []).filter { $0.month == store.selectedMonth }) { budget in
         let actual = -store.transactions.filter { $0.category == budget.category && $0.amount < 0 }
           .reduce(Int64(0)) { $0 + $1.amount }

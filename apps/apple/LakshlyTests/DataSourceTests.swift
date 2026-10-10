@@ -155,6 +155,40 @@ final class DataSourceTests: XCTestCase {
     XCTAssertEqual(defaults.string(forKey: DataStore.sourceHintKey), "mine")
   }
 
+  func testNonDebugIgnoresUITestingSyntheticData() {
+    let yes = ["Lakshly", "-uiTestingSyntheticData", "YES"]
+    let bare = ["Lakshly", "-uiTestingSyntheticData"]
+    XCTAssertFalse(LaunchOptions.loadsUITestingSyntheticData(arguments: yes, debugControlsEnabled: false))
+    XCTAssertFalse(LaunchOptions.loadsUITestingSyntheticData(arguments: bare, debugControlsEnabled: false))
+    #if DEBUG
+    XCTAssertTrue(LaunchOptions.loadsUITestingSyntheticData(arguments: yes, debugControlsEnabled: true))
+    XCTAssertTrue(LaunchOptions.loadsUITestingSyntheticData(arguments: bare, debugControlsEnabled: true))
+    XCTAssertEqual(LaunchOptions.parse(arguments: ["Lakshly", "-uiTestingSyntheticData", "NO"]).uiTestingSyntheticData, false)
+    XCTAssertFalse(LaunchOptions.loadsUITestingSyntheticData(
+      arguments: ["Lakshly", "-uiTestingSyntheticData", "NO"], debugControlsEnabled: true))
+    XCTAssertNil(LaunchOptions.parse(arguments: ["Lakshly"]).uiTestingSyntheticData)
+    #else
+    // A Release test build still ignores the argument when debug controls are requested.
+    XCTAssertFalse(LaunchOptions.loadsUITestingSyntheticData(arguments: yes, debugControlsEnabled: true))
+    XCTAssertFalse(LaunchOptions.loadsUITestingSyntheticData(arguments: bare, debugControlsEnabled: true))
+    #endif
+  }
+
+  func testLoadSyntheticDemoShowsBundledSeedAndKeepsImportedRows() throws {
+    let memory = MemoryStoredData()
+    let first = DataStore(backing: memory, defaults: defaults)
+    first.importParsed(Self.sampleResult())
+    XCTAssertEqual(first.source, .mine)
+    let seed = try DataStore.loadSeed()
+
+    let shown = DataStore(backing: memory, defaults: defaults, loadSyntheticDemo: true)
+    XCTAssertEqual(shown.source, .demo)
+    XCTAssertEqual(shown.dataset?.synthetic, true)
+    XCTAssertEqual(shown.dataset?.accounts.map(\.id), seed.accounts.map(\.id))
+    XCTAssertEqual(shown.userDataset?.transactions.map(\.id), ["txn_imported_1"])
+    XCTAssertFalse(try XCTUnwrap(shown.dataset).transactions.contains { $0.id == "txn_imported_1" })
+  }
+
   private static func sampleResult() -> ParseResult {
     ParseResult(
       adapter: "test",

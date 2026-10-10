@@ -7,9 +7,11 @@ import { Icon } from "./Icon";
 import { useData } from "./DataState";
 import { formatDate, formatINR, titleCase } from "@/lib/format";
 import { parseFile } from "@/lib/import/client";
-import { confirmImportLabel, importCounts } from "@/lib/import/review";
+import { confirmImportLabel, importCounts, importToast, wrongPasswordMessage } from "@/lib/import/review";
 import { MASK, moneyMasked } from "@/lib/privacy";
 import "@/app/import/import.css";
+
+export { importToast };
 
 type Phase =
   | { step: "idle" }
@@ -18,11 +20,7 @@ type Phase =
   | { step: "review"; file: File; result: ParseResult }
   | { step: "error"; file?: File; message: string };
 
-export function importToast(report: MergeReport): string {
-  return `Imported ${report.added} new transaction${report.added === 1 ? "" : "s"}${report.duplicates ? `, skipped ${report.duplicates} already imported` : ""}. Thank you for trusting Lakshly 💛`;
-}
-
-export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints }: {
+export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a statement PDF or CSV here", passwordHints, incoming, importRef }: {
   onImported?: (r: ParseResult, report: MergeReport, fileName: string) => void;
   onPhase?: (step: Phase["step"]) => void;
   /** Setup source this import belongs to (recorded in the import log). */
@@ -30,6 +28,10 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
   prompt?: string;
   /** Format hints for this source's password (never values). */
   passwordHints?: string[];
+  /** A file handed in by another flow (e.g. a Gmail attachment fetched in this browser); read like a dropped file. */
+  incoming?: File | null;
+  /** Where the incoming file came from (e.g. "gmail:<id>"), recorded in the import log. */
+  importRef?: string;
 }) {
   const { setSource, saveImport } = useData();
   const [phase, setPhase] = useState<Phase>({ step: "idle" });
@@ -52,6 +54,10 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
     else setPhase({ step: "review", file, result: out.result });
   }
 
+  const runRef = useRef(run);
+  useEffect(() => { runRef.current = run; });
+  useEffect(() => { if (incoming) void runRef.current(incoming); }, [incoming]);
+
   function onFiles(files: FileList | null) {
     const f = files?.[0];
     if (f) void run(f);
@@ -63,7 +69,7 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
       .filter((t) => !skip[t.id])
       .map((t) => (edits[t.id] && edits[t.id] !== t.category ? { ...t, category: edits[t.id], categorisedBy: "user" as const } : t));
     const final = { ...result, transactions };
-    const report = await saveImport(final, fileName, sourceId);
+    const report = await saveImport(final, fileName, sourceId, incoming && fileName === incoming.name ? importRef : undefined);
     setSaving(false);
     setSource("mine");
     setPhase({ step: "idle" });
@@ -100,11 +106,11 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
               <form onSubmit={(e) => { e.preventDefault(); if (password) void run(phase.file, password); }}>
                 <div className="card-head"><h2><Icon name="lock" size={18} /> {phase.file.name} is password-protected</h2></div>
                 <p className="muted">Banks usually lock statements with something like your customer ID or date of birth; a CAS is usually locked with your PAN. Lakshly uses it once to open the file here and never stores it.</p>
-                {passwordHints && passwordHints.length > 0 && <ul className="pw-hints tiny muted">{passwordHints.map((h) => <li key={h}>{h}</li>)}</ul>}
+                {passwordHints && passwordHints.length > 0 && <><p className="pw-hints-label">Usually one of these:</p><ul className="pw-hints">{passwordHints.map((h) => <li key={h}>{h}</li>)}</ul></>}
                 <label className="field">Statement password
-                  <input type="password" autoComplete="off" autoFocus value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={phase.incorrect} />
+                  <input type="password" autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} autoFocus value={password} onChange={(e) => setPassword(e.target.value)} aria-invalid={phase.incorrect} />
                 </label>
-                {phase.incorrect && <p className="down tiny" role="alert">That password didn&apos;t work. Please try again.</p>}
+                {phase.incorrect && <p className="down tiny" role="alert">{wrongPasswordMessage(!!passwordHints?.length)}</p>}
                 <div className="row-actions">
                   <button className="btn primary" type="submit" disabled={!password}>Unlock on this device</button>
                   <button className="btn ghost" type="button" onClick={() => { setPassword(""); setPhase({ step: "idle" }); }}>Cancel</button>
@@ -181,8 +187,8 @@ function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip
         <div className="table-wrap">
           <table className="review-table">
             <thead><tr><th>Scheme</th><th>Folio</th><th className="num">Units</th><th className="num">NAV</th><th className="num">Value</th></tr></thead>
-            <tbody>{result.holdings.map((h) => (
-              <tr key={h.accountId}><td>{h.scheme}<div className="muted tiny">{h.amc} · {h.registrar}</div></td><td>•• {h.folioMask}</td><td className="num">{h.units.toFixed(3)}</td><td className="num">{moneyMasked() ? MASK : `₹${h.nav.toFixed(2)}`}</td><td className="num">{formatINR(h.marketValue)}</td></tr>
+            <tbody>{result.holdings.map((h, index) => (
+              <tr key={`${h.accountId}:${index}`}><td>{h.scheme}<div className="muted tiny">{h.amc} · {h.registrar}</div></td><td>•• {h.folioMask}</td><td className="num">{h.units.toFixed(3)}</td><td className="num">{moneyMasked() ? MASK : `₹${h.nav.toFixed(2)}`}</td><td className="num">{formatINR(h.marketValue)}</td></tr>
             ))}</tbody>
           </table>
         </div>

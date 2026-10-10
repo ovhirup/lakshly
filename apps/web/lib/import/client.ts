@@ -24,7 +24,32 @@ export async function parseFile(file: File, password?: string): Promise<Outcome>
   if (!(name.endsWith(".pdf") || file.type === "application/pdf")) {
     return { kind: "error", message: "Please choose a PDF statement, a CAS PDF, or a CSV export. (XLS/XLSX: save as CSV first.)" };
   }
-  const bytes = await file.arrayBuffer();
+  // Exactly what was typed first. Only if that is reported incorrect, retry common invisible slips
+  // (leading/trailing spaces from paste/autofill, Unicode compatibility forms). Never changes letter case.
+  return withPasswordAttempts((pw) => parsePdfOnce(file, pw), password);
+}
+
+/** Runs one parse per password candidate (exact first) until one isn't "incorrect". */
+export async function withPasswordAttempts<O extends { kind: string; incorrect?: boolean }>(once: (pw: string | undefined) => Promise<O>, password: string | undefined): Promise<O> {
+  let out!: O;
+  for (const pw of passwordAttempts(password)) {
+    out = await once(pw);
+    if (!(out.kind === "password" && out.incorrect)) return out;
+  }
+  return out;
+}
+
+/** Password candidates, exact first. Internal characters and case are never altered. */
+export function passwordAttempts(password: string | undefined): (string | undefined)[] {
+  if (password === undefined || password === "") return [password];
+  const list = [password, password.trim(), password.normalize("NFKC"), password.normalize("NFKC").trim()];
+  return list.filter((p, i) => p && list.indexOf(p) === i);
+}
+
+async function parsePdfOnce(file: File, password: string | undefined): Promise<Outcome> {
+  // A fresh copy of the bytes for every attempt: the buffer is transferred to the worker and pdf.js
+  // detaches it, so a retry must never reuse the bytes of a failed attempt.
+  const bytes = (await file.arrayBuffer()).slice(0);
   const id = ++seq;
   const w = getWorker();
   return new Promise<Outcome>((resolve) => {

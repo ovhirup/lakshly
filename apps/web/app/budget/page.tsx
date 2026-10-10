@@ -7,6 +7,7 @@ import { Glass, PageHeader, PremiumBadge, Progress, Stat } from "@/components/ui
 import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { budgetProgress, CATEGORY_COLORS, defaultMonth, months, planFor } from "@/lib/selectors";
+import { IS_BETA } from "@/lib/edition";
 
 function BudgetView() {
   const { budgets, transactions } = useData();
@@ -63,7 +64,8 @@ function BudgetView() {
               ))}
             </ul>
             <p className="muted tiny">Free covers one monthly budget with up to {max} category lines. Premium adds unlimited lines and budgets, rollovers and smart nudges.</p>
-            <button className="btn ghost" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>
+            {IS_BETA && <button className="btn ghost" onClick={() => setPlan("premium")}>Preview Premium (demo)</button>}
+            {!IS_BETA && <p className="tiny muted">Payments aren’t live yet.</p>}
           </Glass>
         )}
       </div>

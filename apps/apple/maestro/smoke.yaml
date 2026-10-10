@@ -1,0 +1,36 @@
+appId: app.lakshly.Lakshly
+---
+# Debug-only. Release ignores these arguments. Synthetic demo, no setup sheet.
+- launchApp:
+    clearState: true
+    arguments:
+      uiTestingSyntheticData: "YES"
+      demoUnlocked: "YES"
+- extendedWaitUntil:
+    visible:
+      id: screen.overview
+    timeout: 20000
+- assertVisible:
+    id: data.demo
+- assertVisible:
+    id: overview.netWorth
+- assertVisible: "Every rupee on target."
+- assertNotVisible: "NaN"
+- assertNotVisible: "undefined"
+- tapOn:
+    id: nav.settings
+- assertVisible:
+    id: screen.settings
+- tapOn:
+    id: theme.graphite
+- runFlow:
+    when:
+      visible:
+        id: appIcon.offer.keep
+    commands:
+      - tapOn:
+          id: appIcon.offer.keep
+- tapOn:
+    id: settings.done
+- assertVisible:
+    id: screen.overview

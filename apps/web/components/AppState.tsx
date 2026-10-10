@@ -1,4 +1,5 @@
 "use client";
+import { IS_BETA, resolveStoredPlan } from "@/lib/edition";
 import { createContext, useCallback, useContext, useEffect, useSyncExternalStore, type ReactNode } from "react";
 import {
   APPEARANCE_KEY, applyDocumentTheme, isPremiumTheme, isThemeId, LEGACY_THEME_KEY, PLAN_KEY,
@@ -29,16 +30,14 @@ const AppCtx = createContext<Ctx | null>(null);
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((listener) => listener());
 
-const SERVER: Snapshot = { plan: "free", theme: "lakshmi", appearance: "system", resolved: "light" };
+const SERVER: Snapshot = { plan: IS_BETA ? "premium" : "free", theme: "lakshmi", appearance: "system", resolved: "light" };
 let current: Snapshot = SERVER;
 let migrated = false;
 
 function readPlan(): Plan {
-  try {
-    return localStorage.getItem(PLAN_KEY) === "premium" ? "premium" : "free";
-  } catch {
-    return "free";
-  }
+  let stored: string | null = null;
+  try { stored = localStorage.getItem(PLAN_KEY); } catch { /* ignore */ }
+  return resolveStoredPlan(IS_BETA, stored);
 }
 
 function migrateAppearance() {

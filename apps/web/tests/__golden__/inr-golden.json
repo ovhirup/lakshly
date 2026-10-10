@@ -1,0 +1,119 @@
+{
+ "month": "2026-09",
+ "netWorth": {
+  "raw": {
+   "assets": 75639700,
+   "liabilities": 20485900,
+   "net": 55153800
+  },
+  "net": "₹5,51,538",
+  "netCompact": "₹5.5L",
+  "assets": "₹7,56,397",
+  "liabilities": "₹2,04,859"
+ },
+ "history": [
+  {
+   "month": "2026-04",
+   "assets": 58448500,
+   "liabilities": 20904300,
+   "net": 37544200,
+   "netText": "₹3,75,442",
+   "compact": "₹3.8L"
+  },
+  {
+   "month": "2026-05",
+   "assets": 60136500,
+   "liabilities": 19192600,
+   "net": 40943900,
+   "netText": "₹4,09,439",
+   "compact": "₹4.1L"
+  },
+  {
+   "month": "2026-06",
+   "assets": 64394200,
+   "liabilities": 19609900,
+   "net": 44784300,
+   "netText": "₹4,47,843",
+   "compact": "₹4.5L"
+  },
+  {
+   "month": "2026-07",
+   "assets": 68637500,
+   "liabilities": 20050900,
+   "net": 48586600,
+   "netText": "₹4,85,866",
+   "compact": "₹4.9L"
+  },
+  {
+   "month": "2026-08",
+   "assets": 73479000,
+   "liabilities": 20848500,
+   "net": 52630500,
+   "netText": "₹5,26,305",
+   "compact": "₹5.3L"
+  },
+  {
+   "month": "2026-09",
+   "assets": 75639700,
+   "liabilities": 19485900,
+   "net": 56153800,
+   "netText": "₹5,61,538",
+   "compact": "₹5.6L"
+  }
+ ],
+ "budgets": [
+  {
+   "id": "bud_b8b94ptk",
+   "month": "2026-09",
+   "category": "groceries",
+   "limit": 900000,
+   "rollover": false,
+   "spent": 1719300,
+   "pct": 191.03333333333333,
+   "left": -819300,
+   "spentText": "₹17,193",
+   "limitText": "₹9,000",
+   "leftText": "−₹8,193"
+  },
+  {
+   "id": "bud_xzt3qqzp",
+   "month": "2026-09",
+   "category": "dining",
+   "limit": 600000,
+   "rollover": true,
+   "spent": 678900,
+   "pct": 113.14999999999999,
+   "left": -78900,
+   "spentText": "₹6,789",
+   "limitText": "₹6,000",
+   "leftText": "−₹789"
+  },
+  {
+   "id": "bud_cxuuwejc",
+   "month": "2026-09",
+   "category": "transport",
+   "limit": 350000,
+   "rollover": false,
+   "spent": 377500,
+   "pct": 107.85714285714285,
+   "left": -27500,
+   "spentText": "₹3,775",
+   "limitText": "₹3,500",
+   "leftText": "−₹275"
+  },
+  {
+   "id": "bud_kct8g4eu",
+   "month": "2026-09",
+   "category": "shopping",
+   "limit": 800000,
+   "rollover": false,
+   "spent": 2343400,
+   "pct": 292.925,
+   "left": -1543400,
+   "spentText": "₹23,434",
+   "limitText": "₹8,000",
+   "leftText": "−₹15,434"
+  }
+ ],
+ "complaint": "I am writing about a failed UPI payment that has not been reversed.\nPayee: Synthetic Store\nDate: 2026-09-01\nAmount: ₹1,235\nRBI's 20 September 2019 circular (RBI/2019-20/67, 20 September 2019) says a failed UPI payment should be reversed within 1 calendar day (T+1). 9 calendar days have passed. Please reverse the amount to my account.\nThis note was written in Lakshly on this device. It was not sent anywhere."
+}

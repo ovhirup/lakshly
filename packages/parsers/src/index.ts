@@ -1,5 +1,5 @@
 export * from "./types.ts";
-export { extractPdfText, itemsToLines, textDocFromLines, PasswordRequiredError, type PdfJsLike } from "./pdf.ts";
+export { extractPdfText, itemsToLines, mapPdfOpenError, pdfErrorMessage, textDocFromLines, PasswordRequiredError, type PdfJsLike } from "./pdf.ts";
 export { parseDocument, rankAdapters, listAdapters, registerAdapter, SPECIFIC_THRESHOLD } from "./registry.ts";
 export { parseCsv, splitCsv, csvToTextDoc } from "./csv.ts";
 export { mergeResult, emptyDataset, type MergeReport } from "./merge.ts";

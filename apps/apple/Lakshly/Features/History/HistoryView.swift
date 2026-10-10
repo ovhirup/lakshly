@@ -21,13 +21,16 @@ struct HistoryView: View {
   var body: some View {
     Page(title: "History", subtitle: "Every transaction has a story.") {
       TextField("Search merchants or transactions", text: $search).textFieldStyle(ThemedFieldStyle())
+        .accessibilityIdentifier("history.search")
       HStack {
         Picker("Category", selection: $category) {
           ForEach(categories, id: \.self) { Text($0.capitalized).tag($0) }
         }.pickerStyle(.menu)
+          .accessibilityIdentifier("history.category")
         Picker("Flow", selection: $flow) {
           ForEach(["All", "Income", "Outflow"], id: \.self) { Text($0).tag($0) }
         }.pickerStyle(.menu)
+          .accessibilityIdentifier("history.flow")
       }
       if filtered.isEmpty {
         ContentUnavailableView(

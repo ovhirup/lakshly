@@ -20,16 +20,24 @@ const TOASTED = "lk-privacy-toasted";
 const listeners = new Set<() => void>();
 let cacheRaw: string | null | undefined;
 let cache = DEFAULT_PRIVACY;
+// In-memory fallback: if storage is blocked or a write fails, the last setting still applies for this page.
+let memRaw: string | null = null;
+let storageOk = true;
 function read(): PrivacySettings {
-  let raw: string | null = null;
-  try { raw = localStorage.getItem(PRIVACY_KEY); } catch { /* blocked */ }
+  let raw: string | null = memRaw;
+  if (storageOk) {
+    try { raw = localStorage.getItem(PRIVACY_KEY); } catch { storageOk = false; }
+  }
   if (raw !== cacheRaw) { cacheRaw = raw; cache = parsePrivacy(raw); }
   return cache;
 }
 function write(next: PrivacySettings) {
-  try { localStorage.setItem(PRIVACY_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+  memRaw = JSON.stringify(next);
+  try { localStorage.setItem(PRIVACY_KEY, memRaw); } catch { storageOk = false; }
   listeners.forEach((l) => l());
 }
+/** Test hook: simulate blocked storage / reset module state. */
+export const __privacyStore = { read, write, reset: () => { memRaw = null; storageOk = true; cacheRaw = undefined; cache = DEFAULT_PRIVACY; } };
 function subscribe(l: () => void) {
   listeners.add(l);
   window.addEventListener("storage", l);
@@ -96,13 +104,15 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
     window.addEventListener("blur", hide);
     window.addEventListener("focus", show);
     document.addEventListener("visibilitychange", onVis);
+    // A tab opened in the background never fires blur/visibilitychange; check the current state now.
+    if (document.visibilityState === "hidden" || !document.hasFocus()) hide();
     return () => { window.removeEventListener("blur", hide); window.removeEventListener("focus", show); document.removeEventListener("visibilitychange", onVis); };
   }, [settings.hideOnBlur]);
 
-  // Opt-in shake to hide (phones).
+  // Opt-in shake to hide (phones). Shake only ever hides; it never reveals.
   useEffect(() => {
     if (!settings.shake || typeof window === "undefined" || !("DeviceMotionEvent" in window)) return;
-    const detect = createShakeDetector(() => toggle("shake"));
+    const detect = createShakeDetector(() => setPrivacy(true, "shake"));
     const onMotion = (e: DeviceMotionEvent) => {
       if (isTyping(document.activeElement)) return;
       const a = e.acceleration;
@@ -113,7 +123,7 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
     };
     window.addEventListener("devicemotion", onMotion);
     return () => window.removeEventListener("devicemotion", onMotion);
-  }, [settings.shake, toggle]);
+  }, [settings.shake, setPrivacy]);
 
   const value = useMemo(() => ({ settings, masked, setPrivacy, toggle, update }), [settings, masked, setPrivacy, toggle, update]);
   return (

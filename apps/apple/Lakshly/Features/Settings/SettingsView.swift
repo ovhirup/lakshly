@@ -68,6 +68,7 @@ struct SettingsView: View {
               Text("Light").tag("light")
               Text("Dark").tag("dark")
             }.pickerStyle(.segmented)
+              .accessibilityIdentifier("settings.appearance")
           }.listRowBackground(theme.surface)
           glanceSection
           Section("Lakshly Premium") {
@@ -110,6 +111,7 @@ struct SettingsView: View {
                 }
               }
             )).disabled(lock.authenticating)
+              .accessibilityIdentifier("settings.appLock")
             if let message = lock.message { Text(message).font(.caption).foregroundStyle(theme.danger) }
           }.listRowBackground(theme.surface)
           Section("Private by design") {
@@ -123,18 +125,23 @@ struct SettingsView: View {
           }.listRowBackground(theme.surface)
           Section("Data") {
             Button("Reset demo data", role: .destructive) { reset = true }
+              .accessibilityIdentifier("settings.resetDemo")
             if store.hasUserData {
               Button("Delete my data", role: .destructive) { deleteMine = true }
+                .accessibilityIdentifier("settings.deleteMine")
             }
           }.listRowBackground(theme.surface)
         }.scrollContentBackground(.hidden).background { ThemeBackground() }
           .foregroundStyle(theme.text).tint(theme.gold).navigationTitle("Settings")
-          .toolbar { Button("Done") { dismiss() } }
+          .toolbar { Button("Done") { dismiss() }.accessibilityIdentifier("settings.done") }
+          .accessibilityIdentifier("screen.settings")
           .confirmationDialog("Reset demo data and local requests? Imported data is kept.", isPresented: $reset) {
             Button("Reset demo data", role: .destructive) { store.reset() }
+              .accessibilityIdentifier("settings.resetDemo.confirm")
           }
           .confirmationDialog("Delete all imported data from this device? This cannot be undone.", isPresented: $deleteMine) {
             Button("Delete my data", role: .destructive) { store.deleteMyData() }
+              .accessibilityIdentifier("settings.deleteMine.confirm")
           }
           .confirmationDialog("Use the \(offeredIcon?.definition.name ?? "Lakshmi") app icon too?",
                               isPresented: $showIconOffer, titleVisibility: .visible) {
@@ -182,14 +189,18 @@ struct SettingsView: View {
   private var glanceSection: some View {
     Section {
       Toggle("Show amounts in widgets", isOn: $showAmounts)
+        .accessibilityIdentifier("settings.showAmounts")
       Toggle("Show amounts on Lock Screen", isOn: $lockScreenAmounts)
+        .accessibilityIdentifier("settings.lockScreenAmounts")
       Text("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
         .font(.caption).foregroundStyle(theme.secondaryText)
       #if os(iOS)
       Toggle("Live Activities", isOn: $liveActivities)
+        .accessibilityIdentifier("settings.liveActivities")
       #endif
       #if os(macOS)
       Toggle("Show in menu bar", isOn: $menuBarExtra)
+        .accessibilityIdentifier("settings.menuBar")
       NotchGlanceSettingsBlock(
         isOn: notchEnabled,
         entitled: entitlements.can(.notchPanel),

@@ -8,22 +8,28 @@ import { useTier } from "@/components/useTier";
 import { Glass, PageHeader } from "@/components/ui";
 import { SetupProfileRow } from "@/components/SetupParts";
 import { PrivacySettingsCard } from "@/components/PrivacySettings";
+import { VaultLockCard } from "@/components/VaultLock";
 import { CoachSettings } from "@/components/CoachSettings";
+import { useData } from "@/components/DataState";
+import { datasetJson, exportFilename, transactionsCsv } from "@/lib/export";
 import { FEATURES, FREE_BILL_OF_RIGHTS, PRICE_TEXT, premiumFeatures } from "@/lib/entitlements";
 import { formatDate } from "@/lib/format";
 import { renewsOn, saveProfile, useProfile } from "@/lib/profile";
 import { loadUpsell, markShown, mayShow, snooze, storeUpsell } from "@/lib/upsell";
+import { IS_BETA } from "@/lib/edition";
 
 const UPSELL_ID = "profile.card";
 
 export default function ProfilePage() {
   const profile = useProfile();
-  const { tier } = useTier();
+  const { tier, can } = useTier();
+  const { dataset, deleteAll } = useData();
   const { setPlan } = useAppState();
   const [draft, setDraft] = useState<string | null>(null);
   const [showUpsell, setShowUpsell] = useState(false);
   const [paywall, setPaywall] = useState(false);
   const [note, setNote] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (tier !== "free") return;
@@ -46,6 +52,20 @@ export default function ProfilePage() {
     setPaywall(false);
   }
   function flash(text: string) { setNote(text); setTimeout(() => setNote(null), 4000); }
+  function todayIso() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+  function saveFile(filename: string, text: string, type: string) {
+    const blob = new Blob([text], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+    flash("Saved on this device. Nothing was sent.");
+  }
 
   return (
     <>
@@ -58,7 +78,7 @@ export default function ProfilePage() {
             {editing ? (
               <form className="profile-name-form" onSubmit={(e) => { e.preventDefault(); saveProfile({ name: draft ?? "" }); setDraft(null); }}>
                 <label className="field">What should we call you?
-                  <input value={draft ?? name} onChange={(e) => setDraft(e.target.value)} maxLength={40} autoComplete="given-name" placeholder="Your first name" />
+                  <input value={draft ?? name} onChange={(e) => setDraft(e.target.value)} maxLength={40} autoComplete="given-name" placeholder="Your name" />
                 </label>
                 <button className="btn primary" type="submit" disabled={!(draft ?? name).trim()}>Save</button>
                 {name && <button className="btn ghost" type="button" onClick={() => setDraft(null)}>Cancel</button>}
@@ -113,10 +133,12 @@ export default function ProfilePage() {
                 <div className="price-main" data-lk-price>{PRICE_TEXT.yearly}/year<small>≈{PRICE_TEXT.yearlyPerMonth}/month</small></div>
                 <div className="muted" data-lk-price>or {PRICE_TEXT.monthly}/month. Renews automatically; cancel anytime in your store settings.</div>
               </div>
-              <div className="row-actions">
-                <button className="btn primary" onClick={startPremium}>Preview Premium (demo)</button>
-              </div>
-              <p className="tiny muted">Payments aren’t live yet. This preview unlocks Premium on this device only, and no payment is taken.</p>
+              {IS_BETA && (
+                <div className="row-actions">
+                  <button className="btn primary" onClick={startPremium}>Preview Premium (demo)</button>
+                </div>
+              )}
+              <p className="tiny muted">{IS_BETA ? "Payments aren’t live yet. This preview unlocks Premium on this device only, and no payment is taken." : "Payments aren’t live yet. Premium stays locked on this site."}</p>
               <div className="legal"><a href="https://lakshly.com/privacy.html" rel="noopener">Privacy</a><span className="muted">Terms: coming with payments</span><span className="muted">Family Sharing: planned on Apple</span></div>
             </div>
           )}
@@ -124,6 +146,32 @@ export default function ProfilePage() {
       )}
 
       <PrivacySettingsCard />
+      <VaultLockCard />
+      {can("data.export") && (
+        <Glass className="card">
+          <div className="card-head"><h2>Your data</h2><span className="muted tiny">Free · stays on this device</span></div>
+          <p className="muted">Download a copy of the books open right now. Lakshly does not upload it.</p>
+          <div className="row-actions">
+            <button className="btn primary" type="button" onClick={() => saveFile(exportFilename("json", todayIso()), datasetJson(dataset), "application/json")}>Download JSON</button>
+            <button className="btn ghost" type="button" onClick={() => saveFile(exportFilename("csv", todayIso()), transactionsCsv(dataset.transactions), "text/csv")}>Download transactions CSV</button>
+          </div>
+          {can("data.delete") && (
+            confirmDelete ? (
+              <div className="danger-zone" role="alertdialog" aria-label="Confirm delete">
+                <p className="tiny">Delete imported statements and the encryption key from this browser? The demo stays available. This can&apos;t be undone.</p>
+                <div className="row-actions">
+                  <button className="btn danger" type="button" onClick={() => { void deleteAll().then(() => { setConfirmDelete(false); flash("All your data was deleted from this device."); }); }}>Delete everything</button>
+                  <button className="btn ghost" type="button" onClick={() => setConfirmDelete(false)}>Keep</button>
+                </div>
+              </div>
+            ) : (
+              <div className="row-actions">
+                <button className="btn ghost" type="button" onClick={() => setConfirmDelete(true)}>Delete all my data</button>
+              </div>
+            )
+          )}
+        </Glass>
+      )}
       <CoachSettings />
 
       <div className="grid g2">

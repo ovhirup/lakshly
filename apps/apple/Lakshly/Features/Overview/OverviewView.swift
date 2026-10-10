@@ -20,10 +20,13 @@ struct OverviewView: View {
           Spacer()
         }.frame(maxWidth: .infinity).modifier(GlassCard())
       }.buttonStyle(.plain)
+        .accessibilityIdentifier("overview.feedback")
       Card(title: "Net worth") {
         Text(Money.format(assets - liabilities)).font(
           .system(size: 38, weight: .bold, design: .rounded)
         ).foregroundStyle(theme.gold).minimumScaleFactor(0.5)
+          .accessibilityIdentifier("overview.netWorth")
+          .accessibilityLabel("Net worth")
         DataPill(source: store.source)
         MetricRow(title: "Assets", value: Money.format(assets))
         MetricRow(title: "Liabilities", value: Money.format(liabilities))
@@ -50,7 +53,7 @@ struct OverviewView: View {
           .foregroundStyle(theme.secondaryText)
       }
       Card(title: "Top categories · \(store.selectedMonth)") {
-        MonthPicker(store: store)
+        MonthPicker(store: store, identifier: "overview.month")
         ForEach(Array(store.categoryTotals.prefix(5))) { group in
           MetricRow(title: group.name.capitalized, value: Money.format(group.amount), semantic: group.name == "investments" ? .invest : .spend)
         }
@@ -61,7 +64,7 @@ struct OverviewView: View {
             title: "\(account.name) · \(nextMonthlyDate(day: account.dueDay ?? 1))",
             value: Money.format(abs(account.balance)))
         }
-        ForEach(store.dataset?.debts ?? []) { debt in
+        ForEach((store.dataset?.debts ?? []).filter { $0.emi > 0 }) { debt in
           MetricRow(
             title: "\(debt.name) EMI · \(nextMonthlyDate(day: Int(debt.startDate.suffix(2)) ?? 1))",
             value: Money.format(debt.emi), semantic: .spend)
@@ -93,7 +96,9 @@ struct OverviewView: View {
             else { session.requestOpen(health: false, step: nil) }
           }
           .buttonStyle(ThemedSubmitStyle())
+          .accessibilityIdentifier("overview.continueSetup")
           Button("Hide") { session.dismissCard() }.buttonStyle(.plain).frame(minHeight: 44)
+            .accessibilityIdentifier("overview.hideSetup")
         }
       }
     }
@@ -103,6 +108,7 @@ struct OverviewView: View {
       }
       .buttonStyle(.plain)
       .frame(minHeight: 44)
+      .accessibilityIdentifier("overview.refresh")
     }
   }
 }

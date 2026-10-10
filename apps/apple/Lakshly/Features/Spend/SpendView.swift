@@ -22,7 +22,7 @@ struct SpendView: View {
   }
   var body: some View {
     Page(title: "Spend", subtitle: "Make room for what matters.") {
-      MonthPicker(store: store)
+      MonthPicker(store: store, identifier: "spend.month")
       Card(title: "Where it went") {
         SemanticAmount(value: Money.format(-outflows.reduce(0) { $0 + $1.amount }), semantic: .spend,
                        prominent: true)

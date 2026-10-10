@@ -3,6 +3,112 @@ import XCTest
 @testable import Lakshly
 
 final class ParserFixtureTests: XCTestCase {
+  private func pairedCas() -> [ParseResult] {
+    [parseDocument(textDocFromLines([
+      "Consolidated Account Statement", "01-Aug-2026 To 31-Aug-2026", "Demo Mutual Fund",
+      "Folio No: 70001234 / 12   PAN: OK",
+      "Demo Fund   ISIN: INF000K01AB2   Registrar : CAMS",
+      "Closing Unit Balance: 125.125   NAV on 31-Aug-2026: INR 80.2200   Total Cost Value: 9,000.00   Market Value on 31-Aug-2026: INR 10,037.53",
+    ])), parseDocument(textDocFromLines([
+      "NSDL Consolidated Account Statement", "01-Aug-2026 To 31-Aug-2026", "Demat Account",
+      "Mutual Fund Units held with RTAs (MF Folios)",
+      "Demo Fund INF000K01AB2 70001234 / 12 125.125 80.22 9000.00 10037.53 -",
+    ]))]
+  }
+
+  func testSharedFolioIdentityBothOrdersAndRepeat() throws {
+    let pair = pairedCas()
+    XCTAssertEqual(pair[0].accounts.first?.id, pair[1].accounts.first?.id)
+    XCTAssertEqual(pair[0].accountAliases, pair[1].accountAliases)
+    for order in [pair, Array(pair.reversed())] {
+      var dataset = emptyDataset()
+      for result in order + order { dataset = mergeResult(dataset, result).dataset }
+      XCTAssertEqual(dataset.accounts.count, 1)
+      XCTAssertEqual(dataset.accounts.first?.balance, 1003753)
+      for result in order {
+        let json = String(data: try JSONEncoder().encode(result), encoding: .utf8) ?? ""
+        XCTAssertFalse(json.contains("70001234"))
+      }
+    }
+    XCTAssertNil(casFolioIdentity("7000XXXX / 12", "INF000K01AB2"))
+    XCTAssertNil(casFolioIdentity("70001234 / 12", nil))
+  }
+
+  func testLegacyFolioMigrationNewestSnapshotAndReferences() throws {
+    for result in pairedCas() {
+      let canonical = try XCTUnwrap(result.accounts.first)
+      let legacy = try XCTUnwrap(result.accountAliases.keys.first)
+      var old = canonical
+      old.id = legacy
+      var base = emptyDataset()
+      base.accounts = [old]
+      base.transactions = [ParseTransaction(id: "txn_demo", accountId: legacy, date: "2026-08-01", amount: 100,
+        description: "Demo", merchant: "Demo", category: "investments", method: "other", recurring: false, tags: ["demo"], categorisedBy: "rule")]
+      base.sips = [ParseSip(id: "sip_demo", scheme: "Demo", platform: "Demo", amount: 100, dayOfMonth: 1,
+        startDate: "2026-08-01", stepUpPctYearly: 1, status: "active", accountId: legacy)]
+      var incoming = result
+      incoming.transactions = base.transactions.map { var t = $0; t.id = "txn_incoming"; return t }
+      incoming.sips = base.sips.map { var t = $0; t.id = "sip_incoming"; return t }
+      let merged = mergeResult(base, incoming)
+      XCTAssertEqual(merged.report.accountsAdded, 0)
+      XCTAssertEqual(merged.dataset.accounts.map(\.id), [canonical.id])
+      XCTAssertEqual(merged.dataset.transactions.map(\.accountId), [canonical.id, canonical.id])
+      XCTAssertEqual(merged.dataset.transactions.map(\.id), ["txn_demo", "txn_incoming"])
+      XCTAssertEqual(merged.dataset.transactions.first?.tags, ["demo"])
+      XCTAssertEqual(merged.dataset.sips.map(\.accountId), [canonical.id, canonical.id])
+      XCTAssertEqual(base.accounts.first?.id, legacy)
+      for legacyNewer in [false, true] {
+        var newerCanonical = canonical
+        newerCanonical.asOf = legacyNewer ? "2026-08-31" : "2026-10-01"
+        newerCanonical.balance = 2000000
+        newerCanonical.invested = nil
+        old.asOf = legacyNewer ? "2026-10-01" : "2026-08-31"
+        old.balance = 3000000
+        base.accounts = [old, newerCanonical]
+        let saved = mergeResult(base, result).dataset.accounts
+        XCTAssertEqual(saved.count, 1)
+        XCTAssertEqual(saved.first?.balance, legacyNewer ? 3000000 : 2000000)
+        XCTAssertEqual(saved.first?.invested, 900000)
+      }
+      old.asOf = "2026-10-01"
+      var current = canonical
+      current.asOf = old.asOf
+      for accounts in [[old, current], [current, old]] {
+        base.accounts = accounts
+        XCTAssertEqual(mergeResult(base, result).dataset.accounts.first?.balance, canonical.balance)
+      }
+      old.type = "stocks"
+      base.accounts = [old]
+      XCTAssertTrue(mergeResult(base, result).accountAliases.isEmpty)
+    }
+  }
+
+  func testLegacyReferencesInAppDatasetPreserveDebtsAndRewards() throws {
+    let result = pairedCas()[1]
+    let canonical = try XCTUnwrap(result.accounts.first)
+    let legacy = try XCTUnwrap(result.accountAliases.keys.first)
+    let account = Account(id: legacy, name: canonical.name, type: canonical.type, institution: canonical.institution,
+      mask: canonical.mask, currency: canonical.currency, balance: Int64(canonical.balance), invested: 900000,
+      creditLimit: nil, statementDay: nil, dueDay: nil, asOf: canonical.asOf, source: canonical.source)
+    let debt = Debt(id: "debt_demo", name: "Demo", kind: "personal_loan", lender: "Demo", principal: 100,
+      outstanding: 90, annualRatePct: 1, emi: 10, startDate: "2026-08-01", tenureMonths: 10, accountId: legacy)
+    let reward = Reward(id: "reward_demo", program: "Demo", kind: "points", balance: 100, valuePerUnitPaise: 2,
+      expiresOn: "2027-01-01", accountId: legacy, asOf: "2026-08-01")
+    let base = Dataset(schemaVersion: "0.1.0", generatedAt: "2026-08-01", synthetic: false, notice: "Demo", currency: "INR",
+      accounts: [account], transactions: [], budgets: [], debts: [debt], sips: [], rewards: [reward])
+    let merged = datasetByMerging(base, result).dataset
+    let expectedDebt = Debt(id: debt.id, name: debt.name, kind: debt.kind, lender: debt.lender, principal: debt.principal,
+      outstanding: debt.outstanding, annualRatePct: debt.annualRatePct, emi: debt.emi, startDate: debt.startDate,
+      tenureMonths: debt.tenureMonths, accountId: canonical.id)
+    let expectedReward = Reward(id: reward.id, program: reward.program, kind: reward.kind, balance: reward.balance,
+      valuePerUnitPaise: reward.valuePerUnitPaise, expiresOn: reward.expiresOn, accountId: canonical.id, asOf: reward.asOf)
+    try assertJSONEqual(JSONEncoder().encode(merged.debts), JSONEncoder().encode([expectedDebt]), label: "remapped debts")
+    try assertJSONEqual(JSONEncoder().encode(merged.rewards), JSONEncoder().encode([expectedReward]), label: "remapped rewards")
+    XCTAssertEqual(base.debts?.first?.accountId, legacy)
+    XCTAssertEqual(merged.notice, base.notice)
+    XCTAssertEqual(merged.budgets?.count, 0)
+  }
+
   private struct Manifest: Decodable {
     var password: String
     var fixtures: [Fixture]

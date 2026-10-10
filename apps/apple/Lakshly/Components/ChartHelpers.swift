@@ -3,10 +3,12 @@ import SwiftUI
 
 struct MonthPicker: View {
   @Bindable var store: DataStore
+  var identifier = "month.picker"
   var body: some View {
     Picker("Month", selection: $store.selectedMonth) {
       ForEach(store.months, id: \.self) { Text($0).tag($0) }
     }.pickerStyle(.menu)
+      .accessibilityIdentifier(identifier)
   }
 }
 struct MoneyChartAxis: ViewModifier {

@@ -102,6 +102,10 @@ Until the app ships, please use [GitHub Issues](../../issues/new/choose). See [F
 
 Contributions are welcome, especially parsers, tests against **synthetic** fixtures, and design. Please read [CONTRIBUTING.md](CONTRIBUTING.md). **Never commit real financial data.**
 
+## Testing
+
+This project is tested with BrowserStack.
+
 ## 📄 License
 
 - App code: **AGPL-3.0-or-later** ([LICENSE](LICENSE)). Open and auditable, so the privacy claims can be verified, and protected against closed hosted forks.

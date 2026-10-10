@@ -9,10 +9,10 @@ describe("profile (on-device name)", () => {
     expect(cleanName("x".repeat(60))).toHaveLength(40);
   });
   it("parses stored profiles defensively", () => {
-    expect(parseProfile(null)).toEqual({ v: 1, name: "" });
-    expect(parseProfile("not json")).toEqual({ v: 1, name: "" });
-    expect(parseProfile('{"name":"  Ravi ","premiumSince":"2026-10-03"}')).toEqual({ v: 1, name: "Ravi", premiumSince: "2026-10-03" });
-    expect(parseProfile('{"name":42,"premiumSince":"soon"}')).toEqual({ v: 1, name: "" });
+    expect(parseProfile(null)).toEqual({ v: 2, name: "" });
+    expect(parseProfile("not json")).toEqual({ v: 2, name: "" });
+    expect(parseProfile('{"name":"  Ravi ","premiumSince":"2026-10-03"}')).toEqual({ v: 2, name: "Ravi", premiumSince: "2026-10-03" });
+    expect(parseProfile('{"name":42,"premiumSince":"soon"}')).toEqual({ v: 2, name: "" });
   });
   it("initial uses the first grapheme", () => {
     expect(initial("priya sharma")).toBe("P");

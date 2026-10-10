@@ -4,7 +4,7 @@ import addFormats from "ajv-formats";
 import { readFileSync } from "node:fs";
 import * as F from "./fixtures/synthetic.ts";
 import { extract } from "./helpers.ts";
-import { emptyDataset, mergeResult, parseCsv, parseDocument, PasswordRequiredError, rankAdapters, textDocFromLines, type ParseResult } from "../src/index.ts";
+import { emptyDataset, mergeResult, parseCsv, parseDocument, PasswordRequiredError, mapPdfOpenError, pdfErrorMessage, rankAdapters, textDocFromLines, type ParseResult } from "../src/index.ts";
 
 const schema = JSON.parse(readFileSync(new URL("../../schema/lakshly.schema.json", import.meta.url), "utf8"));
 type AjvCtor = new (o: object) => { compile: (s: object) => ((d: unknown) => boolean) & { errors?: unknown } };
@@ -282,5 +282,126 @@ describe("CSV export", () => {
       ["2026-09-01", 12500000, "income"], ["2026-09-03", -45000, "dining"], ["2026-09-05", -234550, "groceries"],
     ]);
     expectSchemaValid(r);
+  });
+});
+
+describe("password errors are mapped precisely (regression: Gmail CAS reported as wrong password)", () => {
+  it("pdf.js detaches the bytes it is given, so every attempt needs its own copy", async () => {
+    const bytes = await F.casPdf(F.PASSWORD);
+    const shared = bytes.slice();
+    await expect(extract(shared)).rejects.toMatchObject({ name: "PasswordRequiredError", incorrect: false });
+    expect(shared.byteLength).toBe(0); // detached: reusing it would fail even with the right password
+    const r = parseDocument(await extract(bytes.slice(), F.PASSWORD)); // a fresh copy works
+    expect(r.accounts).toHaveLength(3);
+  });
+  it("wrong then right password on fresh copies opens the CAS", async () => {
+    const bytes = await F.casPdf(F.PASSWORD);
+    await expect(extract(bytes.slice(), "nope")).rejects.toMatchObject({ incorrect: true });
+    await expect(extract(bytes.slice(), F.PASSWORD.toLowerCase())).rejects.toMatchObject({ incorrect: true }); // case-sensitive, never altered
+    expect(parseDocument(await extract(bytes.slice(), F.PASSWORD)).accounts).toHaveLength(3);
+  });
+  it("a damaged/truncated PDF is never reported as a wrong password", async () => {
+    const bytes = await F.casPdf(F.PASSWORD);
+    const err = await extract(bytes.slice(0, 40), F.PASSWORD).catch((e) => e);
+    expect(err).not.toBeInstanceOf(PasswordRequiredError);
+    expect(pdfErrorMessage(err)).toMatch(/valid PDF|Couldn't read/);
+  });
+  it("maps only code 2 to incorrect and code 1 to needs-password", () => {
+    expect(mapPdfOpenError({ name: "PasswordException", code: 2 })).toMatchObject({ name: "PasswordRequiredError", incorrect: true });
+    expect(mapPdfOpenError({ name: "PasswordException", code: 1 })).toMatchObject({ name: "PasswordRequiredError", incorrect: false });
+    const other = mapPdfOpenError(Object.assign(new Error("Invalid PDF structure."), { name: "InvalidPDFException" }));
+    expect(other).not.toBeInstanceOf(PasswordRequiredError);
+    expect(pdfErrorMessage(other)).toMatch(/isn't a valid PDF/);
+  });
+});
+
+describe("shared CAS folio identity and saved legacy migration", () => {
+  const cams = () => parseDocument(textDocFromLines([
+    "Consolidated Account Statement", "01-Aug-2026 To 31-Aug-2026", "Demo Mutual Fund",
+    "Folio No: 70001234 / 12   PAN: OK",
+    "Demo Fund   ISIN: INF000K01AB2   Registrar : CAMS",
+    "Closing Unit Balance: 125.125   NAV on 31-Aug-2026: INR 80.2200   Total Cost Value: 9,000.00   Market Value on 31-Aug-2026: INR 10,037.53",
+  ]));
+  const depos = () => parseDocument(textDocFromLines([
+    "NSDL Consolidated Account Statement", "01-Aug-2026 To 31-Aug-2026", "Demat Account",
+    "Mutual Fund Units held with RTAs (MF Folios)",
+    "Demo Fund INF000K01AB2 70001234 / 12 125.125 80.22 9000.00 10037.53 -",
+  ]));
+  it("merges either adapter order and repeats without doubling a folio", () => {
+    for (const results of [[cams(), depos()], [depos(), cams()]]) {
+      let dataset = emptyDataset();
+      for (const result of [...results, ...results]) dataset = mergeResult(dataset, result).dataset;
+      expect(dataset.accounts).toHaveLength(1);
+      expect(dataset.accounts[0].balance).toBe(1003753);
+      expect(results[0].accounts[0].id).toBe(results[1].accounts[0].id);
+      expect(results[0].accountAliases).toEqual(results[1].accountAliases);
+      expect(JSON.stringify(results)).not.toContain("70001234");
+    }
+  });
+  it("migrates a legacy-only account through either adapter without counting an addition", () => {
+    for (const result of [cams(), depos()]) {
+      const [legacy] = Object.keys(result.accountAliases!);
+      const base = { ...emptyDataset(), accounts: [{ ...result.accounts[0], id: legacy }] };
+      const merged = mergeResult(base, result);
+      expect(merged.dataset.accounts.map((a) => a.id)).toEqual([result.accounts[0].id]);
+      expect(merged.report.accountsAdded).toBe(0);
+      expect(base.accounts[0].id).toBe(legacy);
+    }
+  });
+  it("collapses already saved copies using the newest snapshot in either direction and preserves invested", () => {
+    const result = depos(), [legacy] = Object.keys(result.accountAliases!);
+    for (const legacyNewer of [false, true]) {
+      const canonical = { ...result.accounts[0], invested: undefined, asOf: legacyNewer ? "2026-08-31" : "2026-10-01", balance: 2000000 };
+      const old = { ...result.accounts[0], id: legacy, asOf: legacyNewer ? "2026-10-01" : "2026-08-31", balance: 3000000 };
+      const merged = mergeResult({ ...emptyDataset(), accounts: [old, canonical] }, result);
+      expect(merged.dataset.accounts).toHaveLength(1);
+      expect(merged.dataset.accounts[0]).toMatchObject({ balance: legacyNewer ? 3000000 : 2000000, invested: 900000, asOf: "2026-10-01" });
+    }
+  });
+  it("prefers the original canonical copy on equal dates regardless of order", () => {
+    const result = depos(), [legacy] = Object.keys(result.accountAliases!);
+    const canonical = { ...result.accounts[0], asOf: "2026-10-01", balance: 2000000 };
+    const old = { ...canonical, id: legacy, balance: 3000000 };
+    for (const accounts of [[old, canonical], [canonical, old]]) expect(mergeResult({ ...emptyDataset(), accounts }, result).dataset.accounts[0].balance).toBe(2000000);
+  });
+  it("remaps all saved and incoming references without changing IDs or other fields or mutating inputs", () => {
+    const result = depos(), [legacy] = Object.keys(result.accountAliases!), canonical = result.accounts[0].id;
+    const txn = { id: "txn_demo1234", accountId: legacy, date: "2026-08-01", amount: 100, description: "Demo", category: "investments" as const };
+    const sip = { id: "sip_demo1234", scheme: "Demo", amount: 100, dayOfMonth: 1, startDate: "2026-08-01", status: "active" as const, accountId: legacy };
+    const debt = { id: "debt_demo1234", name: "Demo", kind: "personal_loan" as const, principal: 100, outstanding: 100, annualRatePct: 1, emi: 1, startDate: "2026-08-01", tenureMonths: 1, accountId: legacy };
+    const reward = { id: "reward_demo1234", program: "Demo", kind: "points" as const, balance: 100, accountId: legacy, asOf: "2026-08-01" };
+    const base = { ...emptyDataset(), accounts: [{ ...result.accounts[0], id: legacy }], transactions: [txn], sips: [sip], debts: [debt], rewards: [reward] };
+    const incoming = { ...result, transactions: [{ ...txn, id: "txn_incoming" }], sips: [{ ...sip, id: "sip_incoming" }] };
+    const before = JSON.stringify({ base, incoming });
+    const merged = mergeResult(base, incoming).dataset;
+    expect(merged.transactions).toEqual([txn, incoming.transactions[0]].map((x) => ({ ...x, accountId: canonical })));
+    expect(merged.sips).toEqual([sip, incoming.sips[0]].map((x) => ({ ...x, accountId: canonical })));
+    expect(merged.debts).toEqual([{ ...debt, accountId: canonical }]);
+    expect(merged.rewards).toEqual([{ ...reward, accountId: canonical }]);
+    expect(JSON.stringify({ base, incoming })).toBe(before);
+    const withoutOptional = emptyDataset();
+    delete withoutOptional.debts; delete withoutOptional.rewards;
+    const mergedWithout = mergeResult(withoutOptional, result).dataset;
+    expect(mergedWithout).not.toHaveProperty("debts");
+    expect(mergedWithout).not.toHaveProperty("rewards");
+  });
+  it("does not alias masked folios or a scheme with no ISIN", () => {
+    for (const [folio, isin] of [["7000XXXX / 12", "ISIN: INF000K01AB2"], ["70001234 / 12", ""]]) {
+      const parsed = parseDocument(textDocFromLines([
+        "Consolidated Account Statement", "01-Aug-2026 To 31-Aug-2026", "Demo Mutual Fund",
+        `Folio No: ${folio}   PAN: OK`, `Demo Fund   ${isin}   Registrar : CAMS`,
+        "Closing Unit Balance: 125.125   NAV on 31-Aug-2026: INR 80.2200   Market Value on 31-Aug-2026: INR 10,037.53",
+      ]));
+      expect(parsed.accounts).toHaveLength(1);
+      expect(parsed.accountAliases).toBeUndefined();
+    }
+  });
+  it("rejects non-MF sources and alias chains or cycles", () => {
+    const result = depos(), [legacy] = Object.keys(result.accountAliases!), canonical = result.accounts[0].id;
+    const base = { ...emptyDataset(), accounts: [{ ...result.accounts[0], id: legacy, type: "stocks" as const }] };
+    expect(mergeResult(base, result).accountAliases).toEqual({});
+    for (const accountAliases of [{ [legacy]: canonical, [canonical]: legacy }, { [legacy]: canonical, other: legacy }]) {
+      expect(mergeResult(emptyDataset(), { ...result, accountAliases }).accountAliases).toEqual({});
+    }
   });
 });

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { CATALOG } from "../lib/sources.gen";
 import {
-  attribute, checklist, currentStep, detectProvider, EMPTY_FLAGS, findSource, freshness, gmailQuery, gmailUrl, initialSetup, isFirstRun,
+  attribute, checklist, currentStep, detectProvider, dueStatements, EMPTY_FLAGS, findSource, freshness, freshnessNotice, gmailQuery, gmailUrl, initialSetup, isFirstRun,
   markCompletion, outlookOpenUrl, outlookQuery, parseFlags, progressOf, serialiseFlags, setupReducer, type SetupAction, type SetupState,
 } from "../lib/setup";
 import { budgetId, completeMonths, goalFacts, median, roundBudget, suggestBudget, suggestGoal } from "../lib/setup-suggest";
@@ -198,6 +198,31 @@ describe("freshness", () => {
     expect(freshness(p, monthly, "2026-12-10")).toBe("stale");
     expect(freshness(undefined, monthly, "2026-10-03")).toBe("todo");
     expect(freshness({ status: "imported", periodTo: "2026-01-31" }, { every: "year", graceDays: 30 }, "2026-10-03")).toBe("fresh");
+  });
+  it("lists stale statements before due ones and skips skipped sources", () => {
+    const monthly = { every: "month" as const, graceDays: 10 };
+    const targets = [
+      { id: "hdfc-bank", name: "HDFC Bank", source: { cadence: monthly } as never },
+      { id: "sbi-bank", name: "SBI", source: { cadence: monthly } as never },
+      { id: "cams", name: "CAMS", source: { cadence: monthly } as never },
+    ];
+    const progress = {
+      "hdfc-bank": { status: "imported" as const, periodTo: "2026-09-30" },
+      "sbi-bank": { status: "imported" as const, periodTo: "2026-08-31" },
+      cams: { status: "skipped" as const, periodTo: "2026-01-31" },
+    };
+    expect(dueStatements(targets, progress, "2026-11-15").map((d) => [d.id, d.freshness])).toEqual([["sbi-bank", "stale"], ["hdfc-bank", "due"]]);
+    expect(dueStatements(targets, progress, "2026-10-03")).toEqual([]);
+  });
+  it("names the saved mailbox and only offers a Gmail check when this tab is connected", () => {
+    const due = { id: "hdfc-bank", name: "HDFC Bank", freshness: "due" as const };
+    expect(freshnessNotice(due, "statements@gmail.com", true).canCheck).toBe(true);
+    expect(freshnessNotice(due, "statements@gmail.com", true).detail).toContain("statements@gmail.com");
+    expect(freshnessNotice(due, "statements@gmail.com", true).detail).toContain("statement cycle");
+    expect(freshnessNotice(due, "statements@gmail.com", false).canCheck).toBe(false);
+    expect(freshnessNotice(due, "owner@outlook.com", true).canCheck).toBe(false);
+    expect(freshnessNotice(due, null, false).detail).toContain("Add the email");
+    expect(freshnessNotice(due, "statements@gmail.com", true).detail).not.toMatch(/₹|https?:/i);
   });
 });
 
