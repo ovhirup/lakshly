@@ -1,0 +1,487 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lakshly.app/schemas/feature-policy-v1",
+  "$ref": "#/$defs/fixtureDocument",
+  "$defs": {
+    "availability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "suite",
+        "channel",
+        "platform"
+      ],
+      "properties": {
+        "suite": {
+          "type": "string",
+          "enum": [
+            "public",
+            "private"
+          ]
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "beta",
+            "stable",
+            "experimental"
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "web",
+            "macos",
+            "iphone"
+          ]
+        }
+      }
+    },
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "audience",
+        "implemented",
+        "enabled",
+        "supportedPlatforms",
+        "availableIn",
+        "minimumPublicTier",
+        "quota"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z][A-Za-z0-9._-]*$"
+        },
+        "audience": {
+          "type": "string",
+          "enum": [
+            "public",
+            "private"
+          ]
+        },
+        "implemented": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "supportedPlatforms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "web",
+              "macos",
+              "iphone"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "availableIn": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/availability"
+          },
+          "uniqueItems": true
+        },
+        "minimumPublicTier": {
+          "type": "string",
+          "enum": [
+            "free",
+            "premium"
+          ]
+        },
+        "quota": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "free",
+                "premium"
+              ],
+              "properties": {
+                "free": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "premium": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyVersion",
+        "policyRevision",
+        "features"
+      ],
+      "properties": {
+        "policyVersion": {
+          "const": 1,
+          "type": "integer"
+        },
+        "policyRevision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z][A-Za-z0-9._-]*$"
+        },
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/feature"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "entitlement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "provenance",
+        "state",
+        "startsAtEpochSeconds",
+        "endsAtEpochSeconds"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "none",
+            "premium",
+            "superUser"
+          ]
+        },
+        "provenance": {
+          "type": "string",
+          "enum": [
+            "none",
+            "verifiedEntitlement",
+            "betaSimulation",
+            "verifiedPrivateAuthorization"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "none",
+            "active",
+            "revoked",
+            "refunded"
+          ]
+        },
+        "startsAtEpochSeconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 253402300799
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "endsAtEpochSeconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 253402300799
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyVersion",
+        "suite",
+        "channel",
+        "platform",
+        "asOfEpochSeconds",
+        "entitlement"
+      ],
+      "properties": {
+        "policyVersion": {
+          "const": 1,
+          "type": "integer"
+        },
+        "suite": {
+          "type": "string",
+          "enum": [
+            "public",
+            "private"
+          ]
+        },
+        "channel": {
+          "type": "string",
+          "enum": [
+            "beta",
+            "stable",
+            "experimental"
+          ]
+        },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "web",
+            "macos",
+            "iphone"
+          ]
+        },
+        "asOfEpochSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 253402300799
+        },
+        "entitlement": {
+          "$ref": "#/$defs/entitlement"
+        }
+      }
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "featureId",
+        "usage"
+      ],
+      "properties": {
+        "featureId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z][A-Za-z0-9._-]*$"
+        },
+        "usage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "used",
+            "requested"
+          ],
+          "properties": {
+            "used": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "requested": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyVersion",
+        "policyRevision",
+        "featureId",
+        "allowed",
+        "reason",
+        "effectiveTier",
+        "accessBasis",
+        "limit"
+      ],
+      "properties": {
+        "policyVersion": {
+          "const": 1,
+          "type": "integer"
+        },
+        "policyRevision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[a-z][A-Za-z0-9._-]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "featureId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[a-z][A-Za-z0-9._-]*$"
+            },
+            {
+              "const": "",
+              "type": "string"
+            }
+          ]
+        },
+        "allowed": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "invalid_catalog",
+            "invalid_context",
+            "invalid_request",
+            "unknown_feature",
+            "private_feature",
+            "not_implemented",
+            "disabled",
+            "unsupported_platform",
+            "channel_unavailable",
+            "private_authorization_required",
+            "tier_required",
+            "quota_exhausted",
+            "allowed"
+          ]
+        },
+        "effectiveTier": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "free",
+                "premium",
+                "superUser"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "accessBasis": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "free",
+                "verifiedPremium",
+                "simulatedPremium",
+                "privateSuperUser"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "fixtureCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "context",
+        "request",
+        "expected"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-z][A-Za-z0-9._-]*$"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "request": {
+          "$ref": "#/$defs/request"
+        },
+        "expected": {
+          "$ref": "#/$defs/decision"
+        }
+      }
+    },
+    "fixtureDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyVersion",
+        "marker",
+        "catalog",
+        "cases"
+      ],
+      "properties": {
+        "policyVersion": {
+          "const": 1,
+          "type": "integer"
+        },
+        "marker": {
+          "const": "SYNTHETIC",
+          "type": "string"
+        },
+        "catalog": {
+          "$ref": "#/$defs/catalog"
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fixtureCase"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}
