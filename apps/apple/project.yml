@@ -20,6 +20,8 @@ targets:
     sources:
       - path: Lakshly
         excludes: [Resources/Info.plist, Resources/Lakshly.entitlements, Resources/Lakshly-iOS.entitlements]
+      - path: ../web/content/roadmap.json
+        buildPhase: resources
       - path: ../../demo-data/sample.synthetic.json
         buildPhase: resources
       - path: ../../packages/shared/setup/sources.catalog.json
@@ -80,6 +82,8 @@ targets:
     sources:
       - path: Lakshly
         excludes: [Resources/Info.plist, Resources/Lakshly.entitlements, Resources/Lakshly-iOS.entitlements]
+      - path: ../web/content/roadmap.json
+        buildPhase: resources
       - path: ../../demo-data/sample.synthetic.json
         buildPhase: resources
       - path: ../../packages/shared/setup/sources.catalog.json

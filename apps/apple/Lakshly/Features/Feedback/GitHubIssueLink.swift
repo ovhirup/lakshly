@@ -147,3 +147,16 @@ enum GitHubIssueLink {
     return String(decoding: encoded, as: UTF8.self)
   }
 }
+
+extension GitHubIssueLink {
+  /// Feedback relay fallback: only the fields already shown in the payload preview.
+  static func url(payload: FeedbackPayload) -> URL {
+    let kind = payload.kind.githubKind
+    let text = [payload.detail, "", "Area: \(payload.area)", "Plan: \(payload.plan)",
+      payload.credit.map { "Credit me as: " + $0 } ?? "", payload.replyEmail.map { "Reply email: " + $0 } ?? "",
+      payload.diagnostics.map { "App: \($0.appVersion) · \($0.platform)" } ?? ""].filter { !$0.isEmpty }.joined(separator: "\n")
+    let parameters = [("template", kind.template), ("title", title(kind: kind, title: payload.title, text: payload.detail)),
+      ("body", text), ("labels", labels(kind: kind, priority: payload.plan == "premium")), (kind.fieldID, text)]
+    return URL(string: "https://github.com/ovhirup/lakshly/issues/new?" + parameters.map { "\($0.0)=\(percentEncode($0.1))" }.joined(separator: "&"))!
+  }
+}
