@@ -3,6 +3,7 @@ export { extractPdfText, itemsToLines, mapPdfOpenError, pdfErrorMessage, textDoc
 export { parseDocument, rankAdapters, listAdapters, registerAdapter, SPECIFIC_THRESHOLD } from "./registry.ts";
 export { parseCsv, splitCsv, csvToTextDoc } from "./csv.ts";
 export { mergeResult, emptyDataset, type MergeReport } from "./merge.ts";
+export { combineAccounts, findDuplicateAccounts, isGenericInstitution, matchAccounts, mergeAccounts, sameDescription, type AccountMatch, type AmbiguousAccount, type DuplicateAccountPair } from "./match.ts";
 export { categorise, detectMethod, guessMerchant } from "./categorise.ts";
 export { parseAmount } from "./util/money.ts";
 export { parseDate } from "./util/dates.ts";

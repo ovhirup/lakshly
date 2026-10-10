@@ -53,6 +53,24 @@ export function useGoogle(): GState { return useSyncExternalStore((l) => { subs.
 const logNow = () => client ? [...client.log] : st.log;
 
 /* ───────── Sign in with Google ───────── */
+// google.accounts.id.initialize() must run once per page (GIS warns and misbehaves when called again on
+// every mount). One module-level init; the active button's handler is swapped in through a ref.
+let gsiInitFor: string | null = null;
+let gsiHandler: ((r: { credential?: string }) => void) | null = null;
+export function initGsiOnce(gis: Gis, clientId: string): boolean {
+  if (gsiInitFor === clientId) return false;
+  gis.accounts.id.initialize({
+    client_id: clientId, auto_select: false, ux_mode: "popup", context: "signin", itp_support: true,
+    // The popup button flow: a cancelled FedCM sheet otherwise logs NetworkError/AbortError noise.
+    use_fedcm_for_button: false,
+    callback: (r: { credential?: string }) => gsiHandler?.(r),
+  });
+  gsiInitFor = clientId;
+  return true;
+}
+/** Test hook: forget the one-time init. */
+export function resetGsiForTests() { gsiInitFor = null; gsiHandler = null; }
+
 export function SignInWithGoogle({ onIdentity }: { onIdentity?: (id: GoogleIdentity) => void }) {
   const g = useGoogle();
   const ref = useRef<HTMLDivElement>(null);
@@ -64,14 +82,14 @@ export function SignInWithGoogle({ onIdentity }: { onIdentity?: (id: GoogleIdent
     let alive = true;
     loadGis().then((gis) => {
       if (!alive || !ref.current) return;
-      gis.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID, auto_select: false, ux_mode: "popup", context: "signin", itp_support: true, use_fedcm_for_button: true,
-        callback: (r: { credential?: string }) => {
-          const id = r.credential ? decodeIdToken(r.credential, GOOGLE_CLIENT_ID) : null; // decoded here, never sent anywhere
-          if (!id) { setErr("Google sign-in didn't return a valid account."); return; }
-          set({ identity: id }); cb.current?.(id);
-        },
-      });
+      gsiHandler = (r) => {
+        // No credential = the person closed or cancelled Google's window: stay quiet, the button is still there.
+        if (!r.credential) return;
+        const id = decodeIdToken(r.credential, GOOGLE_CLIENT_ID); // decoded here, never sent anywhere
+        if (!id) { setErr("Google sign-in didn't return a valid account."); return; }
+        set({ identity: id }); cb.current?.(id);
+      };
+      try { initGsiOnce(gis, GOOGLE_CLIENT_ID); } catch { /* GIS throws only on a bad config; the button below then shows its own state */ }
       const dark = document.documentElement.dataset.appearance === "dark";
       gis.accounts.id.renderButton(ref.current, { type: "standard", theme: dark ? "filled_black" : "outline", size: "large", text: "continue_with", shape: "pill", logo_alignment: "left", width: 280 });
     }).catch((e: Error) => alive && setErr(e.message));

@@ -299,3 +299,15 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-gl
     }
   }
 }
+
+/* ── Mobile "More" sheet: always a solid surface (every mood, incl. Lotus) ──
+   A translucent glass sheet that scrolls (overflow) can't keep its backdrop blur while it opens,
+   so page text showed through. Same opaque brand surface as the public edition. */
+html[data-edition="beta"][data-mood] .mobile-menu.glass {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--lk-gold) 8%, var(--lk-surface)) 0%, var(--lk-surface) 48%, color-mix(in srgb, var(--lk-surface-2) 60%, var(--lk-surface)) 100%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  isolation: isolate;
+}
+html[data-edition="beta"][data-mood] .mobile-menu.glass::before,
+html[data-edition="beta"][data-mood] .mobile-menu.glass::after { display: none; }

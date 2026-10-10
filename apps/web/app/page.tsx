@@ -10,6 +10,7 @@ import { ReviewEntryCard, WorthItCard } from "@/components/ReviewParts";
 import { BackfillCard, NextUpStrip, NudgeCard } from "@/components/Game";
 import { TodayCard } from "@/components/TodayCard";
 import { TesterStartCard } from "@/components/Beta";
+import { MergeOffers } from "@/components/MergeOffers";
 import { IS_BETA } from "@/lib/edition";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, monthlyCashflow, netWorth, spendByCategory } from "@/lib/selectors";
@@ -37,6 +38,7 @@ function OverviewView() {
       <PageHeader title="Overview" subtitle={`${source === "mine" ? "Your data" : "Synthetic demo data"} · as of ${formatDate(asOf)}`} />
 
       {IS_BETA && <TesterStartCard />}
+      <MergeOffers />
       <SetupCard />
       <TodayCard />
 

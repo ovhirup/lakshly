@@ -1,6 +1,6 @@
 "use client";
 // The statement importer (drop → unlock → review → confirm), shared by /import and the setup wizard.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CATEGORIES, type Category, type MergeReport, type ParseResult } from "@lakshly/parsers";
 import { Glass, Stat } from "./ui";
 import { Icon } from "./Icon";
@@ -44,6 +44,7 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
   const [showAll, setShowAll] = useState(false);
   const [saving, setSaving] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const inputId = `stmt-file-${useId().replace(/:/g, "")}`;
   useEffect(() => { onPhase?.(phase.step); }, [phase.step, onPhase]);
 
   async function run(file: File, pw?: string) {
@@ -82,12 +83,15 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
     <>
           {phase.step !== "review" && (
             <Glass className={`card dropzone ${drag ? "drag" : ""}`}>
-              <div
+              {/* A real <label for> opens the picker natively on click/tap (no scripted click needed);
+                  Enter/Space call input.click() inside the same user gesture. */}
+              <label
+                htmlFor={inputId}
                 className="drop-target"
                 role="button"
                 tabIndex={0}
                 aria-label="Choose a statement file to import"
-                onClick={() => input.current?.click()}
+                data-testid="drop-target"
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.current?.click(); } }}
                 onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
                 onDragLeave={() => setDrag(false)}
@@ -97,11 +101,11 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
                 <strong>{phase.step === "reading" ? `Reading ${phase.file.name} on-device…` : prompt}</strong>
                 <span className="muted tiny">{phase.step === "reading" ? "Extracting text and detecting the layout" : "or click to browse · PDF (password-protected is fine), CSV"}</span>
                 {phase.step === "reading" && <span className="spinner" aria-hidden="true" />}
-              </div>
+              </label>
               {cta && phase.step !== "reading" && (
                 <div className="drop-cta"><button type="button" className="btn primary" onClick={() => input.current?.click()} data-testid="manual-import-cta">{cta}</button></div>
               )}
-              <input ref={input} type="file" accept=".pdf,.csv,.tsv,application/pdf,text/csv" hidden data-testid="file-input"
+              <input ref={input} id={inputId} type="file" accept=".pdf,.csv,.tsv,application/pdf,text/csv" className="file-input-hidden" tabIndex={-1} aria-hidden="true" data-testid="file-input"
                 onChange={(e) => { onFiles(e.target.files); e.target.value = ""; }} />
             </Glass>
           )}
@@ -179,6 +183,7 @@ function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip
           <Stat label="Invested" value={formatINR(result.holdings.reduce((s, h) => s + h.costValue, 0))} />
           <Stat label="SIPs found" value={String(result.sips.length)} />
         </>) : (<>
+          <Stat label="Opening balance" value={meta?.openingBalance !== undefined ? formatINR(meta.openingBalance) : "—"} />
           <Stat label="Money in" value={formatINR(inflow)} tone="up" />
           <Stat label="Money out" value={formatINR(outflow)} tone="down" />
           <Stat label="Closing balance" value={acc ? formatINR(acc.balance) : "—"} />

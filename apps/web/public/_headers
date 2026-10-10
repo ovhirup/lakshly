@@ -1,0 +1,12 @@
+# Cloudflare Pages response headers (beta.lakshly.com / app.lakshly.com static export).
+# CSP allows only this origin, Google Identity Services + Gmail API (beta Gmail connect, in-browser only)
+# and the feedback relay. 'unsafe-inline' scripts: Next's static export inlines its hydration payload
+# and the theme/privacy boot script. 'wasm-unsafe-eval': pdf.js image decoders.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; img-src 'self' data: blob: https://*.googleusercontent.com https://*.gstatic.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://feedback.lakshly.com https://accounts.google.com/gsi/ https://gmail.googleapis.com https://www.googleapis.com https://oauth2.googleapis.com https://play.google.com/log; frame-src https://accounts.google.com/gsi/ https://accounts.google.com/o/oauth2/; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups

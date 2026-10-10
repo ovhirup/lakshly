@@ -1,7 +1,7 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { emptyDataset, mergeResult, type MergeReport, type ParseResult } from "@lakshly/parsers";
+import { emptyDataset, findDuplicateAccounts, mergeAccounts as foldAccounts, mergeResult, type MergeReport, type ParseResult } from "@lakshly/parsers";
 import { mergeImportDetails } from "@/lib/import/merge";
 import { dataset as demo } from "@/lib/data";
 import type { Budget, LakshlyDataset } from "@/lib/schema.gen";
@@ -45,6 +45,11 @@ interface DataCtx {
   sips: NonNullable<LakshlyDataset["sips"]>;
   rewards: NonNullable<LakshlyDataset["rewards"]>;
   saveImport: (r: ParseResult, fileName: string, sourceId?: string, ref?: string) => Promise<MergeReport>;
+  /** Pairs of saved accounts that look like the same account (CSV + PDF, or an import the matcher could not decide). */
+  mergeOffers: MergeOffer[];
+  /** Fold one saved account into another (duplicate rows are dropped). Returns the number removed. */
+  mergeAccounts: (dropId: string, keepId: string) => Promise<number>;
+  dismissMergeOffer: (dropId: string, keepId: string) => void;
   /** Replace one month's budget lines in the user's own data (creates an empty dataset if needed). */
   saveBudgets: (month: string, lines: { category: Budget["category"]; limit: number }[]) => Promise<void>;
   saveGoal: (goal: SetupGoal) => Promise<void>;
@@ -55,7 +60,9 @@ interface DataCtx {
   rawTransactions: LakshlyDataset["transactions"];
   review: ReviewApi;
 }
+export interface MergeOffer { keepId: string; dropId: string; keepName: string; dropName: string; overlap: number }
 const Ctx = createContext<DataCtx | null>(null);
+const DISMISSED_MERGES = "lk-merge-dismissed";
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const source = useSyncExternalStore(subscribe, readSource, () => "demo" as Source);
@@ -92,6 +99,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const setSource = useCallback((s: Source) => { localStorage.setItem(SOURCE_KEY, s); emit(); }, []);
 
+  const [ambiguous, setAmbiguous] = useState<{ dropId: string; keepId: string }[]>([]);
   const saveImport = useCallback(async (r: ParseResult, fileName: string, sourceId?: string, ref?: string) => {
     const base: UserData = userRef.current ?? { version: 1, dataset: emptyDataset(), holdings: [], statements: [], imports: [] };
     const { dataset, report, accountAliases } = mergeResult(base.dataset, r);
@@ -110,7 +118,37 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     };
     await saveUserData(next);
     setUser(next);
+    if (report.ambiguous?.length) setAmbiguous((prev) => [...prev, ...report.ambiguous!.flatMap((x) => x.candidateIds.map((c) => ({ dropId: x.incomingId, keepId: c })))]);
     return report;
+  }, [setUser]);
+
+  const [dismissed, setDismissed] = useState<string[]>(() => { try { return JSON.parse(sessionStorage.getItem(DISMISSED_MERGES) ?? "[]"); } catch { return []; } });
+  const mergeOffers = useMemo<MergeOffer[]>(() => {
+    const ds = user?.dataset;
+    if (!ds) return [];
+    const name = (id: string) => ds.accounts.find((a) => a.id === id)?.name;
+    const pairs = [...findDuplicateAccounts(ds).map((p) => ({ keepId: p.keepId, dropId: p.dropId, overlap: p.overlap })), ...ambiguous.map((p) => ({ ...p, overlap: 0 }))];
+    const seen = new Set<string>();
+    return pairs.flatMap((p) => {
+      const k = `${p.dropId}>${p.keepId}`;
+      const keepName = name(p.keepId), dropName = name(p.dropId);
+      if (seen.has(k) || dismissed.includes(k) || !keepName || !dropName) return [];
+      seen.add(k);
+      return [{ ...p, keepName, dropName }];
+    });
+  }, [user, ambiguous, dismissed]);
+  const dismissMergeOffer = useCallback((dropId: string, keepId: string) => {
+    setDismissed((d) => { const n = [...d, `${dropId}>${keepId}`]; try { sessionStorage.setItem(DISMISSED_MERGES, JSON.stringify(n)); } catch { /* private mode */ } return n; });
+  }, []);
+  const mergeAccounts = useCallback(async (dropId: string, keepId: string) => {
+    const base = userRef.current;
+    if (!base) return 0;
+    const { dataset, removed } = foldAccounts(base.dataset, dropId, keepId);
+    const next: UserData = { ...base, dataset, statements: base.statements.map((m) => (m.accountId === dropId ? { ...m, accountId: keepId } : m)), holdings: base.holdings.map((h) => (h.accountId === dropId ? { ...h, accountId: keepId } : h)) };
+    await saveUserData(next);
+    setUser(next);
+    setAmbiguous((prev) => prev.filter((p) => p.dropId !== dropId && p.keepId !== dropId));
+    return removed;
   }, [setUser]);
 
   const saveBudgets = useCallback(async (month: string, lines: { category: Budget["category"]; limit: number }[]) => {
@@ -145,7 +183,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     window.dispatchEvent(new Event(VAULT_DELETED_EVENT));
   }, [forgetAll, setUser]);
   const value: DataCtx = {
-    source, setSource, ready, vaultLocked, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,
+    source, setSource, ready, vaultLocked, user, saveImport, mergeOffers, mergeAccounts, dismissMergeOffer, saveBudgets, saveGoal, deleteAll, masked, review,
     dataset: active,
     accounts: active.accounts,
     rawTransactions: active.transactions,

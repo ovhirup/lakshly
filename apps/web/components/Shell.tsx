@@ -9,7 +9,7 @@ import { IdentityChip } from "./Identity";
 import { PrivacyToggle } from "./Privacy";
 import { useTier } from "./useTier";
 import type { FeatureId } from "@/lib/entitlements";
-import { DataNote, DataPill } from "./DataState";
+import { DataNote, DataPill, useData } from "./DataState";
 import { SetupAutoOpen, SetupNavLink } from "./SetupParts";
 import { ReviewCountBadge } from "./ReviewParts";
 import "./review.css";
@@ -124,7 +124,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
 }
 
 function BetaNote() {
-  return <p className="beta-note"><Icon name="sparkle" size={12} /> Premium unlocked for beta testers. Sample data only.</p>;
+  const { user } = useData();
+  const real = (user?.imports.length ?? 0) > 0;
+  return <p className="beta-note" data-testid="beta-note"><Icon name="sparkle" size={12} /> Premium unlocked for beta testers.{real ? "" : " Sample data only."}</p>;
 }
 
 function PremiumDot() {

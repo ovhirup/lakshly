@@ -87,7 +87,10 @@ export function parseBank(doc: TextDoc, o: BankOpts): Body {
     if (Math.abs(opening + sum - closing) > 100) warnings.push("Totals don't reconcile with the closing balance; please review amounts.");
   }
   const transactions = toTransactions(accountId, signed.map((s) => ({ date: s.row.date, amount: s.amount, narration: s.row.narration })), null);
-  const meta: StatementMeta = { adapter: o.adapter, kind: "bank", institution: o.institution, accountId, periodFrom: period.from, periodTo: period.to, openingBalance: opening, closingBalance: closing };
+  // No printed opening balance (typical CSV export): derive it from the first row's running balance.
+  const first = signed[0];
+  const openingBalance = opening ?? (first && first.row.balance !== undefined ? first.row.balance - first.amount : undefined);
+  const meta: StatementMeta = { adapter: o.adapter, kind: "bank", institution: o.institution, accountId, periodFrom: period.from ?? signed[0]?.row.date, periodTo: period.to ?? signed.at(-1)?.row.date, openingBalance, closingBalance: closing };
   return { accounts: [account], transactions, sips: [], holdings: [], meta: [meta], warnings };
 }
 

@@ -271,7 +271,7 @@ export function interpretTokenResponse(resp: TokenResponseLike, hasGrantedAllSco
 
 /** GIS error_callback (popup closed/blocked) is not a denial: the user can simply try again. */
 export function interpretPopupError(e: { type?: string; message?: string }): TokenOutcome {
-  if (e.type === "popup_closed") return { ok: false, kind: "closed", message: "The Google window was closed before Gmail access was given." };
+  if (e.type === "popup_closed") return { ok: false, kind: "closed", message: "Google's window was closed. Nothing was read. Gmail connect is invite-only for now — use manual import above." };
   if (e.type === "popup_failed_to_open") return { ok: false, kind: "closed", message: "Your browser blocked Google's window. Allow pop-ups for this site and try again." };
   return { ok: false, kind: "error", message: e.message || "Google didn't connect." };
 }

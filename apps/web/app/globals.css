@@ -363,3 +363,9 @@ html[data-clear-glass="true"] .hero { border: 1px solid var(--lk-border); box-sh
     max-height: min(78dvh, 720px); border-radius: 28px;
   }
 }
+
+/* Same account twice: merge offer */
+.merge-offers { display: grid; gap: 8px; border: 1.5px solid color-mix(in srgb, var(--lk-gold) 50%, var(--lk-border)); }
+.merge-offers h3 { margin: 0; }
+.merge-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.merge-list .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }

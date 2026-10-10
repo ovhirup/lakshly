@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Glass, PageHeader, } from "@/components/ui";
 import { Importer, importToast } from "@/components/Importer";
 import { Icon } from "@/components/Icon";
+import { MergeOffers } from "@/components/MergeOffers";
 import { useData } from "@/components/DataState";
 import { useSetup } from "@/components/SetupState";
 import { formatDate } from "@/lib/format";
@@ -66,6 +67,7 @@ export default function ImportPage() {
             onPhase={(next) => { setStep(next); if (next === "reading" || next === "review") setJustImported(false); }}
             onImported={(_r, report) => { setJustImported(true); setToast(importToast(report)); setTimeout(() => setToast(null), 5000); }}
           />
+          {step === "idle" && <MergeOffers onMerged={(t) => { setToast(t); setTimeout(() => setToast(null), 5000); }} />}
           {justImported && step === "idle" && (
             <Glass className="card">
               <h2>Saved on this device</h2>

@@ -23,7 +23,9 @@ function cycleLabel(day: number | undefined, today: string) {
 }
 
 function CreditView() {
-  const { accounts } = useData();
+  const { accounts, user, source } = useData();
+  // Latest imported statement per card (minimum due and due date are printed on the statement).
+  const lastStatement = (id: string) => source === "mine" ? (user?.statements ?? []).filter((m) => m.accountId === id && m.kind === "card").sort((a, b) => (a.periodTo ?? a.dueDate ?? "").localeCompare(b.periodTo ?? b.dueDate ?? "")).pop() : undefined;
   const today = useSyncExternalStore(() => () => {}, readDay, () => dayCache);
   const cards = creditCards(accounts);
   return (
@@ -32,6 +34,7 @@ function CreditView() {
       <PremiumGate feature="Credit insights" id="credit.insights">
         {cards.map((c) => {
           const tone = c.utilisation < 30 ? "up" : "down";
+          const st = lastStatement(c.id);
           return (
             <div className="grid g3" key={c.id}>
               <Glass className="card">
@@ -52,7 +55,10 @@ function CreditView() {
                 <Progress pct={c.utilisation} color={c.utilisation < 30 ? "var(--lk-income)" : undefined} />
                 <div className="list">
                   <div className="row"><div className="grow"><div className="title">Next statement</div><div className="sub">Day {c.statementDay} of each month</div></div><div className="amt">{cycleLabel(c.statementDay, today)}</div></div>
-                  <div className="row"><div className="grow"><div className="title">Payment due</div><div className="sub">Pay in full to avoid interest</div></div><div className="amt">{cycleLabel(c.dueDay, today)}</div></div>
+                  <div className="row"><div className="grow"><div className="title">Payment due</div><div className="sub">Pay in full to avoid interest</div></div><div className="amt">{st?.dueDate ? formatDate(st.dueDate) : cycleLabel(c.dueDay, today)}</div></div>
+                  {st && (st.totalDue !== undefined || st.minDue !== undefined) && (
+                    <div className="row" data-testid="credit-min-due"><div className="grow"><div className="title">Last statement</div><div className="sub">Total due{st.totalDue !== undefined ? ` ${formatINR(st.totalDue)}` : ""}. Pay at least the minimum by the due date to avoid a late fee.</div></div><div className="amt">Minimum due {st.minDue !== undefined ? formatINR(st.minDue) : "—"}</div></div>
+                  )}
                 </div>
                 <p className="muted tiny">💡 Keeping utilisation under 30% is generally kinder to your credit score.</p>
               </Glass>

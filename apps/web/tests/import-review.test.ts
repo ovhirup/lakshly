@@ -48,3 +48,10 @@ describe("wrong statement password", () => {
     expect(wrongPasswordMessage(false)).toBe("That password didn't work. Try again.");
   });
 });
+
+describe("cross-format import toast", () => {
+  it("says the statement was matched to an existing account", () => {
+    const r = { added: 0, duplicates: 12, accountsAdded: 0, accountsUpdated: 1, sipsUpserted: 0, matched: [{ incomingId: "a", baseId: "b", reason: "institution" as const, overlap: 12 }] };
+    expect(importToast(r)).toBe("Updated 1 account, skipped 12 already imported. Matched to an account you already imported, so nothing is counted twice. Thank you for trusting Lakshly 💛");
+  });
+});

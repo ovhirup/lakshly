@@ -24,7 +24,7 @@ function hideTesterStart() {
 }
 
 export function BetaRibbon() {
-  return <div className="beta-ribbon" role="note" aria-label="Lakshly beta: sample data, nothing is real"><span>Beta</span></div>;
+  return <div className="beta-ribbon" role="note" aria-label="Lakshly beta"><span>Beta</span></div>;
 }
 
 export function BetaTesterPill({ size = "sm" }: { size?: "sm" | "lg" }) {

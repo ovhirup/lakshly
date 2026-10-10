@@ -17,6 +17,7 @@ vi.mock("@/components/SetupParts", () => ({ SetupCard: () => null }));
 vi.mock("@/components/ReviewParts", () => ({ ReviewEntryCard: () => null, WorthItCard: () => null }));
 vi.mock("@/components/Game", () => ({ BackfillCard: () => null, NextUpStrip: () => null, NudgeCard: () => null }));
 vi.mock("@/components/TodayCard", () => ({ TodayCard: () => null }));
+vi.mock("@/components/MergeOffers", () => ({ MergeOffers: () => null }));
 vi.mock("@/components/charts", () => ({
   CashflowBars: () => createElement("div", null, "Cash flow chart"),
   Donut: () => createElement("div", null, "Spending chart"),

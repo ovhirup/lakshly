@@ -35,7 +35,9 @@ export function importToast(report: MergeReport): string {
     : report.accountsUpdated
       ? `Updated ${plural(report.accountsUpdated, "account")}`
       : "Nothing new to import";
-  return `${lead}${skipped ? `, ${skipped}` : ""}. Thank you for trusting Lakshly 💛`;
+  const matched = report.matched?.length ? ` Matched to ${report.matched.length === 1 ? "an account you already imported" : `${report.matched.length} accounts you already imported`}, so nothing is counted twice.` : "";
+  const ask = report.ambiguous?.length ? " This may be an account you already have: check \u201cSame account twice?\u201d on Import." : "";
+  return `${lead}${skipped ? `, ${skipped}` : ""}.${matched}${ask} Thank you for trusting Lakshly 💛`;
 }
 
 /** Shown after a statement password is rejected. Points at the bank pattern when one is listed. */

@@ -1,6 +1,7 @@
 import type { Adapter, TextDoc } from "../types.ts";
 import { docText, findText } from "../table.ts";
 import { parseBank, parseCard } from "../engines.ts";
+import type { HeaderSpec } from "../table.ts";
 
 const CARD_SIGNALS = [/Min(imum)?\.? (Amount )?Due/i, /Total (Amount )?Due|Total Dues|Total Outstanding/i, /(Payment )?Due Date/i, /Credit Limit|Card (No|Number)/i];
 
@@ -8,6 +9,18 @@ function institutionGuess(doc: TextDoc, fallback: string): string {
   const m = findText(doc, /\b([A-Z][A-Za-z&]+(?: [A-Z][A-Za-z&]+){0,3} (?:Bank|Card|Cards))\b/);
   return m ? m[1].slice(0, 60) : fallback;
 }
+
+/** Column names seen across Indian bank exports (PDF tables and CSV downloads). */
+export const GENERIC_BANK_SPEC: HeaderSpec = {
+      date: /^(Date|Txn\.? Date|Tran(saction)? Date|Posting Date)$/i,
+      valueDate: /^Value (Date|Dt)$/i,
+      narration: /^(Narration|Description|Particulars|Remarks|Transaction (Details|Remarks|Description)|Details)$/i,
+      ref: /^(Chq|Cheque|Ref)/i,
+      debit: /^(Withdrawals?( Amt\.?| Amount.*)?|Debits?( Amount.*)?|Dr\.?)$/i,
+      credit: /^(Deposits?( Amt\.?| Amount.*)?|Credits?( Amount.*)?|Cr\.?)$/i,
+      amount: /^Amount( \(.*\))?$/i,
+      balance: /^(Closing )?Balance( \(.*\))?$/i,
+    };
 
 /** Generic table heuristic: header keywords + column positions, sign from Dr/Cr columns or balance movement. */
 export const genericBank: Adapter = {
@@ -24,16 +37,7 @@ export const genericBank: Adapter = {
   parse: (doc) => parseBank(doc, {
     adapter: "bank.generic",
     institution: institutionGuess(doc, "Bank"),
-    spec: {
-      date: /^(Date|Txn\.? Date|Tran(saction)? Date|Posting Date)$/i,
-      valueDate: /^Value (Date|Dt)$/i,
-      narration: /^(Narration|Description|Particulars|Remarks|Transaction (Details|Remarks|Description)|Details)$/i,
-      ref: /^(Chq|Cheque|Ref)/i,
-      debit: /^(Withdrawals?( Amt\.?| Amount.*)?|Debits?( Amount.*)?|Dr\.?)$/i,
-      credit: /^(Deposits?( Amt\.?| Amount.*)?|Credits?( Amount.*)?|Cr\.?)$/i,
-      amount: /^Amount( \(.*\))?$/i,
-      balance: /^(Closing )?Balance( \(.*\))?$/i,
-    },
+    spec: GENERIC_BANK_SPEC,
     minHits: 3,
   }),
 };
