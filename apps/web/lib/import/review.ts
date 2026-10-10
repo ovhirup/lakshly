@@ -13,9 +13,10 @@ export function importCounts(result: Pick<ParseResult, "transactions" | "holding
 }
 
 /** "Confirm import (12 transactions, 3 holdings)". No count when nothing is countable. */
-export function confirmImportLabel(counts: ReturnType<typeof importCounts>): string {
+export function confirmImportLabel(counts: ReturnType<typeof importCounts> & { onlyNew?: boolean }): string {
+  if (counts.onlyNew && !counts.transactions && !counts.holdings && !counts.sips) return "Confirm import (no new transactions)";
   const parts = [
-    counts.transactions ? plural(counts.transactions, "transaction") : "",
+    counts.transactions ? plural(counts.transactions, counts.onlyNew ? "new transaction" : "transaction") : "",
     counts.holdings ? plural(counts.holdings, "holding") : "",
     counts.sips ? plural(counts.sips, "SIP") : "",
   ].filter(Boolean);

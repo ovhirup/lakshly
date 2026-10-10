@@ -4,7 +4,7 @@
 import { describe, expect, it } from "vitest";
 import * as F from "./fixtures/synthetic.ts";
 import { extract } from "./helpers.ts";
-import { emptyDataset, findDuplicateAccounts, mergeAccounts, mergeResult, parseCsv, parseDocument, sameDescription, type LakshlyDataset, type ParseResult } from "../src/index.ts";
+import { emptyDataset, findDuplicateAccounts, mergeAccounts, mergeResult, previewImport, parseCsv, parseDocument, sameDescription, type LakshlyDataset, type ParseResult } from "../src/index.ts";
 import { detectCsvBank } from "../src/csv.ts";
 
 const dd = (d: number) => String(d).padStart(2, "0");
@@ -136,5 +136,26 @@ describe("description matching tolerates format differences", () => {
     expect(sameDescription("UPI-SWIGGY-swiggy@demo-123456789012-Food order", "UPI-SWIGGY-SWIGGY@DEMO-XXXX9012-FOOD ORDER")).toBe(true);
     expect(sameDescription("NEFT CR-DEMO EMPLOYER PVT LTD-SALARY SEP 2026", "NEFT CR DEMO EMPLOYER PVT LTD")).toBe(true);
     expect(sameDescription("UPI-SWIGGY Food order", "ATM WDL DEMO ATM BLR")).toBe(false);
+  });
+});
+
+describe("review-screen preview", () => {
+  it("before confirming the PDF: matches the HDFC account and counts only new rows", async () => {
+    const { ds } = run(csv("bank-hdfc-format.qa.csv"));
+    const pv = previewImport(ds, await pdf("bank-hdfc-locked.qa.pdf", "DEMO1234"));
+    expect(pv).toMatchObject({ added: 0, duplicates: F.BANK_TXNS.length, lookalikes: [] });
+    expect(pv.matched).toHaveLength(1);
+    expect(pv.matched[0].institution).toBe("HDFC Bank");
+    expect(pv.matched[0].mask).toMatch(/^\d{4}$/); // CSV had no number; the PDF's last 4 are shown
+    expect(ds.transactions).toHaveLength(F.BANK_TXNS.length); // preview saved nothing
+  });
+  it("identical rows from a different bank: soft lookalike warning, still a separate account", async () => {
+    const { ds } = run(await pdf("bank-hdfc.qa.pdf"));
+    const sbi = csv("bank-sbi-format.qa.csv");
+    const pv = previewImport(ds, sbi);
+    expect(pv.matched).toEqual([]);
+    expect(pv.lookalikes).toEqual([{ incomingId: sbi.accounts[0].id, baseId: ds.accounts[0].id, name: ds.accounts[0].name, overlap: F.BANK_TXNS.length }]);
+    expect(pv.added).toBe(F.BANK_TXNS.length);
+    expect(run(await pdf("bank-hdfc.qa.pdf"), sbi).ds.accounts).toHaveLength(2);
   });
 });

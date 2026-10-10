@@ -5,12 +5,17 @@ import { DataProvider } from "@/components/DataState";
 import { SetupProvider } from "@/components/SetupState";
 import { themeBootScript } from "@/lib/themes";
 import { privacyBootScript } from "@/lib/privacy";
+import { vaultBootScript } from "@/lib/vault-boot";
 import { PrivacyProvider } from "@/components/Privacy";
 import { GameProvider } from "@/components/Game";
 import "./themes.gen.css";
 import "./globals.css";
 import "./themes-v2.css";
 import "./beta-glass.css";
+// Route styles load with the app: as route-only chunks, Next's link prefetch preloaded them on every page
+// (feedback button, nav links) and Chrome warned "preloaded but not used within a few seconds".
+import "./feedback/feedback.css";
+import "./import/import.css";
 import { IS_BETA } from "@/lib/edition";
 import { themeV2BootScript } from "@/lib/themes-v2";
 
@@ -38,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {IS_BETA && <script dangerouslySetInnerHTML={{ __html: themeV2BootScript }} />}
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <script dangerouslySetInnerHTML={{ __html: privacyBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: vaultBootScript }} />
       </head>
       <body>
         <AppStateProvider>

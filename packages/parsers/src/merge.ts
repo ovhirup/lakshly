@@ -1,5 +1,5 @@
 import type { Account, LakshlyDataset, ParseResult } from "./types.ts";
-import { combineAccounts, matchAccounts, takeDuplicate, txnIndex, type AccountMatch, type AmbiguousAccount } from "./match.ts";
+import { combineAccounts, findLookalikes, matchAccounts, takeDuplicate, txnIndex, type AccountMatch, type AmbiguousAccount, type Lookalike } from "./match.ts";
 
 export function emptyDataset(now = new Date()): LakshlyDataset {
   return { schemaVersion: "0.1.0", generatedAt: now.toISOString(), synthetic: false, currency: "INR", accounts: [], transactions: [], budgets: [], debts: [], sips: [], rewards: [] };
@@ -86,4 +86,30 @@ export function mergeResult(base: LakshlyDataset, input: Pick<ParseResult, "acco
     report.sipsUpserted++;
   }
   return { dataset: { ...base, generatedAt: now.toISOString(), synthetic: false, accounts, transactions, sips, ...(base.debts ? { debts: base.debts.map(remap) } : {}), ...(base.rewards ? { rewards: base.rewards.map(remap) } : {}) }, report, accountAliases };
+}
+
+export interface ImportPreview {
+  /** Transactions this import would actually add (after duplicates are skipped). */
+  added: number;
+  duplicates: number;
+  /** Saved accounts this statement folds into (CSV/PDF of the same account). */
+  matched: { incomingId: string; baseId: string; name: string; institution: string; mask?: string }[];
+  /** Different saved accounts whose rows look identical (soft warning, never merged). */
+  lookalikes: { incomingId: string; baseId: string; name: string; overlap: number }[];
+  ambiguous: AmbiguousAccount[];
+}
+
+/** What confirming this import would do, without saving anything (shown on the review screen). */
+export function previewImport(base: LakshlyDataset, result: Pick<ParseResult, "accounts" | "transactions" | "sips" | "accountAliases">): ImportPreview {
+  const { report } = mergeResult(base, result);
+  const byId = (id: string) => base.accounts.find((a) => a.id === id);
+  const matched = (report.matched ?? []).flatMap((m) => {
+    const a = byId(m.baseId);
+    if (!a) return [];
+    const mask = a.mask ?? result.accounts.find((x) => x.id === m.incomingId)?.mask; // a CSV has no number; the PDF does
+    return [{ incomingId: m.incomingId, baseId: m.baseId, name: a.name, institution: a.institution, ...(mask ? { mask } : {}) }];
+  });
+  const skip = new Set([...(report.matched ?? []).map((m) => m.incomingId), ...(report.ambiguous ?? []).map((m) => m.incomingId)]);
+  const lookalikes = findLookalikes(base, result, skip).flatMap((l: Lookalike) => { const a = byId(l.baseId); return a ? [{ incomingId: l.incomingId, baseId: l.baseId, name: a.name, overlap: l.overlap }] : []; });
+  return { added: report.added, duplicates: report.duplicates, matched, lookalikes, ambiguous: report.ambiguous ?? [] };
 }

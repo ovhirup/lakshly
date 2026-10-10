@@ -98,7 +98,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <ThemeSwitcher />
           </div>
         </div>
-        <main id="main-content" className="content" key={path}>{children}</main>
+        <main id="main-content" className="content" key={path}>
+          {/* Shown only while html[data-vault=pending]: real data exists and the encrypted vault is still opening. */}
+          <div className="vault-skeleton" role="status" aria-live="polite" data-testid="vault-skeleton">
+            <span className="sr-only">Opening your encrypted data…</span>
+            <div className="sk sk-title" /><div className="sk-row"><div className="sk sk-card" /><div className="sk sk-card" /><div className="sk sk-card" /></div><div className="sk sk-wide" /><div className="sk sk-wide short" />
+          </div>
+          {children}
+        </main>
       </div>
 
       {menuOpen && <div className="mobile-menu-scrim" aria-hidden="true" onClick={closeMenu} />}

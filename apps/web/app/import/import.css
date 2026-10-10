@@ -56,3 +56,5 @@
 /* Visually hidden but focus-free file input: a <label for> opens it natively (display:none inputs are flaky on some browsers). */
 .file-input-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); border: 0; opacity: 0; }
 label.drop-target { cursor: pointer; }
+.match-note { margin: 0 0 6px; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--lk-success, #2e7d32) 12%, var(--lk-surface)); border: 1px solid color-mix(in srgb, var(--lk-success, #2e7d32) 35%, transparent); }
+.lookalike-note { margin: 0 0 6px; padding: 8px 12px; border-radius: 12px; background: var(--lk-ambient-gold); border: 1px solid color-mix(in srgb, var(--lk-gold-text) 40%, transparent); color: var(--lk-text); }

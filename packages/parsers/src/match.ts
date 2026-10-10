@@ -191,3 +191,25 @@ export function mergeAccounts<D extends LakshlyDataset>(ds: D, dropId: string, k
     removed,
   };
 }
+
+export interface Lookalike { incomingId: string; baseId: string; overlap: number }
+
+/**
+ * Rows that look identical to a *different* saved account (e.g. an SBI CSV whose rows equal the HDFC
+ * account's). Never merged automatically: shown as a soft warning on the review screen.
+ */
+export function findLookalikes(base: Pick<LakshlyDataset, "accounts" | "transactions">, incoming: { accounts: readonly Account[]; transactions: readonly Transaction[] }, exclude: ReadonlySet<string> = new Set()): Lookalike[] {
+  const out: Lookalike[] = [];
+  for (const a of incoming.accounts) {
+    if (exclude.has(a.id) || family(a.type) === null || base.accounts.some((x) => x.id === a.id)) continue;
+    const aTx = incoming.transactions.filter((t) => t.accountId === a.id);
+    if (aTx.length < 3) continue;
+    for (const b of base.accounts) {
+      if (family(b.type) !== family(a.type)) continue;
+      const bTx = base.transactions.filter((t) => t.accountId === b.id);
+      const o = overlap(aTx, bTx, a.id);
+      if (o >= 3 && o / Math.min(aTx.length, bTx.length) >= 0.8) out.push({ incomingId: a.id, baseId: b.id, overlap: o });
+    }
+  }
+  return out;
+}

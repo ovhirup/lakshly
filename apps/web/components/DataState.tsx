@@ -16,7 +16,7 @@ import { overlayDecisions, type ReviewTxn } from "@/lib/review";
 import "./data-state.css";
 
 export type Source = "demo" | "mine";
-const SOURCE_KEY = "lakshly.source";
+import { clearVaultPending, hasDataFlag, SOURCE_KEY, setHasData } from "@/lib/vault-boot";
 const SETUP_FLAGS_KEY = "lk-setup-flags";
 
 const listeners = new Set<() => void>();
@@ -26,7 +26,8 @@ function subscribe(l: () => void) {
   window.addEventListener("storage", l);
   return () => { listeners.delete(l); window.removeEventListener("storage", l); };
 }
-const readSource = (): Source => (localStorage.getItem(SOURCE_KEY) === "mine" ? "mine" : "demo");
+// A browser that has real data shows it (unless the person explicitly picked the demo).
+const readSource = (): Source => { const v = localStorage.getItem(SOURCE_KEY); return v === "mine" || (v !== "demo" && hasDataFlag()) ? "mine" : "demo"; };
 
 interface DataCtx {
   source: Source;
@@ -80,7 +81,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       .then((state) => {
         if (!alive) return;
         if (state === "locked") { setVaultLocked(true); setReady(true); return; }
-        return loadUserData().then((u) => { if (alive) { setUser(u); setReady(true); } });
+        return loadUserData().then((u) => { if (alive) { setUser(u); setReady(true); setHasData(!!u && (u.imports.length > 0 || u.dataset.transactions.length > 0)); } });
       })
       .catch(() => { if (alive) setReady(true); });
     const onLock = () => { setUser(null); setVaultLocked(true); };
@@ -96,6 +97,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener(VAULT_UNLOCKED_EVENT, onUnlock);
     };
   }, [setUser]);
+
+  // The vault has been read (or is locked): lift the boot-time "hide demo numbers" gate.
+  useEffect(() => { if (ready) clearVaultPending(); }, [ready]);
 
   const setSource = useCallback((s: Source) => { localStorage.setItem(SOURCE_KEY, s); emit(); }, []);
 
@@ -118,6 +122,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     };
     await saveUserData(next);
     setUser(next);
+    setHasData(true);
     if (report.ambiguous?.length) setAmbiguous((prev) => [...prev, ...report.ambiguous!.flatMap((x) => x.candidateIds.map((c) => ({ dropId: x.incomingId, keepId: c })))]);
     return report;
   }, [setUser]);
@@ -174,6 +179,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const { forgetAll } = review;
   const deleteAll = useCallback(async () => {
     await deleteVault();
+    setHasData(false);
     localStorage.removeItem(SOURCE_KEY);
     localStorage.removeItem(SETUP_FLAGS_KEY);
     localStorage.removeItem("lk-worth-snooze"); // legacy plaintext snoozes (now kept in the encrypted review record)
@@ -250,10 +256,10 @@ export function DataGate({ title, need = ["transactions"], children }: { title: 
 /** Small label used in the shell: which dataset is on screen. */
 export function DataPill() {
   const { source } = useData();
-  return <span className={`demo-pill ${source === "mine" ? "mine" : ""}`}>{source === "mine" ? "My data" : "Demo data"}</span>;
+  return <span className={`demo-pill ${source === "mine" ? "mine" : ""}`} data-source-hint="">{source === "mine" ? "My data" : "Demo data"}</span>;
 }
 
 export function DataNote() {
   const { source } = useData();
-  return <p className="tiny muted">{source === "mine" ? "Your data · encrypted, stored only on this device" : "Synthetic demo data · stored only on this device"}</p>;
+  return <p className="tiny muted" data-source-hint="">{source === "mine" ? "Your data · encrypted, stored only on this device" : "Synthetic demo data · stored only on this device"}</p>;
 }

@@ -55,3 +55,11 @@ describe("cross-format import toast", () => {
     expect(importToast(r)).toBe("Updated 1 account, skipped 12 already imported. Matched to an account you already imported, so nothing is counted twice. Thank you for trusting Lakshly 💛");
   });
 });
+
+describe("confirm button counts only new rows when some are duplicates", () => {
+  it("new-only wording", () => {
+    expect(confirmImportLabel({ transactions: 0, holdings: 0, sips: 0, onlyNew: true })).toBe("Confirm import (no new transactions)");
+    expect(confirmImportLabel({ transactions: 3, holdings: 0, sips: 0, onlyNew: true })).toBe("Confirm import (3 new transactions)");
+    expect(confirmImportLabel({ transactions: 3, holdings: 0, sips: 0 })).toBe("Confirm import (3 transactions)");
+  });
+});

@@ -1,7 +1,7 @@
 "use client";
 // The statement importer (drop → unlock → review → confirm), shared by /import and the setup wizard.
-import { useEffect, useId, useRef, useState } from "react";
-import { CATEGORIES, type Category, type MergeReport, type ParseResult } from "@lakshly/parsers";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { CATEGORIES, emptyDataset, previewImport, type Category, type ImportPreview, type MergeReport, type ParseResult } from "@lakshly/parsers";
 import { Glass, Stat } from "./ui";
 import { Icon } from "./Icon";
 import { useData } from "./DataState";
@@ -9,7 +9,6 @@ import { formatDate, formatINR, titleCase } from "@/lib/format";
 import { parseFile } from "@/lib/import/client";
 import { confirmImportLabel, importCounts, importToast, wrongPasswordMessage } from "@/lib/import/review";
 import { MASK, moneyMasked } from "@/lib/privacy";
-import "@/app/import/import.css";
 
 export { importToast };
 
@@ -35,7 +34,7 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
   /** Where the incoming file came from (e.g. "gmail:<id>"), recorded in the import log. */
   importRef?: string;
 }) {
-  const { setSource, saveImport } = useData();
+  const { setSource, saveImport, user } = useData();
   const [phase, setPhase] = useState<Phase>({ step: "idle" });
   const [password, setPassword] = useState("");
   const [drag, setDrag] = useState(false);
@@ -145,16 +144,20 @@ export function Importer({ onImported, onPhase, sourceId, prompt = "Drop a state
               onShowAll={() => setShowAll(true)}
               onCancel={() => setPhase({ step: "idle" })}
               onConfirm={() => void confirm(phase.result, phase.file.name)}
+              base={user?.dataset ?? null}
             />
           )}
     </>
   );
 }
 
-function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip, onShowAll, onCancel, onConfirm }: {
+function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip, onShowAll, onCancel, onConfirm, base }: {
   result: ParseResult; fileName: string; edits: Record<string, Category>; skip: Record<string, boolean>; showAll: boolean; saving: boolean;
   onEdit: (id: string, c: Category) => void; onSkip: (id: string, v: boolean) => void; onShowAll: () => void; onCancel: () => void; onConfirm: () => void;
+  base: import("@lakshly/parsers").LakshlyDataset | null;
 }) {
+  // Dry run against the saved data: which account it matches and how many rows are actually new.
+  const preview: ImportPreview = useMemo(() => previewImport(base ?? emptyDataset(), { ...result, transactions: result.transactions.filter((t) => !skip[t.id]) }), [base, result, skip]);
   const meta = result.meta[0];
   const included = result.transactions.filter((t) => !skip[t.id]);
   const rows = showAll ? result.transactions : result.transactions.slice(0, 25);
@@ -227,11 +230,22 @@ function Review({ result, fileName, edits, skip, showAll, saving, onEdit, onSkip
       {!showAll && result.transactions.length > rows.length && <button className="btn ghost" onClick={onShowAll}>Show all {result.transactions.length} rows</button>}
 
       <div className="review-actions">
+        {preview.matched.map((m) => (
+          <p className="tiny match-note" role="status" key={m.baseId} data-testid="review-match">
+            Matches your existing {m.institution}{m.mask ? ` ••${m.mask}` : ""} account; {preview.duplicates} duplicate{preview.duplicates === 1 ? "" : "s"} will be skipped.
+          </p>
+        ))}
+        {!preview.matched.length && preview.duplicates > 0 && <p className="tiny match-note" role="status" data-testid="review-dupes">{preview.duplicates} row{preview.duplicates === 1 ? " was" : "s were"} already imported and will be skipped.</p>}
+        {preview.lookalikes.map((l) => (
+          <p className="tiny lookalike-note" role="note" key={l.baseId} data-testid="review-lookalike">
+            Heads up: these transactions look identical to your {l.name} account ({l.overlap} matching rows). It will be saved as a separate account. If this is the same account, cancel and check you picked the right file.
+          </p>
+        ))}
         <p className="muted tiny">Already-imported rows are skipped automatically, so re-importing a statement is safe.</p>
         <div className="row-actions">
           <button className="btn ghost" onClick={onCancel}>Cancel</button>
           <button className="btn primary" disabled={saving || (!included.length && !result.accounts.length)} onClick={onConfirm}>
-            {saving ? "Encrypting…" : confirmImportLabel(importCounts(result, skip))}
+            {saving ? "Encrypting…" : confirmImportLabel({ ...importCounts(result, skip), ...(preview.duplicates ? { transactions: preview.added, onlyNew: true } : {}) })}
           </button>
         </div>
       </div>

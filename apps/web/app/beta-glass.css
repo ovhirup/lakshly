@@ -304,10 +304,16 @@ html[data-edition="beta"][data-mood]:not([data-mood="lotusGlass"])[data-clear-gl
    A translucent glass sheet that scrolls (overflow) can't keep its backdrop blur while it opens,
    so page text showed through. Same opaque brand surface as the public edition. */
 html[data-edition="beta"][data-mood] .mobile-menu.glass {
-  background: linear-gradient(160deg, color-mix(in srgb, var(--lk-gold) 8%, var(--lk-surface)) 0%, var(--lk-surface) 48%, color-mix(in srgb, var(--lk-surface-2) 60%, var(--lk-surface)) 100%);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  /* !important: the per-mood glass rules use :not(...) selectors with higher specificity. */
+  background-color: var(--lk-surface) !important;
+  background-image: linear-gradient(160deg, color-mix(in srgb, var(--lk-gold) 8%, var(--lk-surface)) 0%, var(--lk-surface) 55%) !important;
+  opacity: 1 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  transition: none !important;
   isolation: isolate;
 }
+/* The feedback button sat on top of the open sheet; the sheet has its own Feedback link. */
+html[data-edition="beta"] body:has(.mobile-menu-scrim) .feedback-fab { display: none; }
 html[data-edition="beta"][data-mood] .mobile-menu.glass::before,
 html[data-edition="beta"][data-mood] .mobile-menu.glass::after { display: none; }

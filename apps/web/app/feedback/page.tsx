@@ -16,7 +16,6 @@ import {
 import {
   buildPayload, FEEDBACK_EMAIL, FEEDBACK_ENDPOINT, fetchStatus, looksSensitive, mailtoHref, send, SendError, type Draft, type Payload,
 } from "@/lib/feedback-transport";
-import "./feedback.css";
 
 // Views are hash-addressable so screens are linkable: #new, #new-bug, #new-praise, #sent, #mine, #roadmap.
 type View = "hub" | "new" | "sent" | "mine" | "roadmap";

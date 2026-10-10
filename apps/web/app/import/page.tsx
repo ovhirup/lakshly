@@ -9,7 +9,6 @@ import { useData } from "@/components/DataState";
 import { useSetup } from "@/components/SetupState";
 import { formatDate } from "@/lib/format";
 import { sampleBankFile } from "@/lib/import/sample-statement";
-import "./import.css";
 
 function subscribeSampleQuery() {
   return () => {};
