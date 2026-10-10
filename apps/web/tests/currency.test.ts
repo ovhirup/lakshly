@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { CURRENCIES } from "@/lib/currencies.gen";
-import { currencyInfo, fromMinor, isCurrencyCode, minorFactor, toMinor, tryToMinor, type CurrencyCode } from "@/lib/currency";
+import { currencyInfo, fromMinor, isCurrencyCode, minorFactor, roundToMinor, toMinor, tryToMinor, type CurrencyCode } from "@/lib/currency";
 
 const bad = (code: string) => code as unknown as CurrencyCode;
 import { MASK } from "@/lib/privacy";
@@ -86,6 +86,19 @@ describe("toMinor / fromMinor", () => {
     expect(minorFactor("INR")).toBe(100);
     expect(fromMinor(1999, "USD")).toBe(19.99);
     for (const minor of [0, 1, 99, 100, 123456789, -5]) expect(toMinor(fromMinor(minor, "USD").toFixed(2), "USD")).toBe(minor);
+  });
+});
+
+describe("roundToMinor / fromMinor keep today's INR arithmetic byte-identical (WP1 B3)", () => {
+  it("roundToMinor equals Math.round(x * 100) for INR over a dense grid, including half-way cases", () => {
+    for (let i = -200000; i <= 200000; i++) {
+      const x = i / 1000;
+      expect(roundToMinor(x, "INR")).toBe(Math.round(x * 100));
+    }
+    for (const x of [12.345, 19.999, 1.005, 0.1 + 0.2, 99.995, -99.995, 1e9 + 0.005]) expect(roundToMinor(x, "INR")).toBe(Math.round(x * 100));
+  });
+  it("fromMinor equals paise / 100 for INR", () => {
+    for (const p of [0, 1, 49, 50, 99999, -5, 12345678900, -12345678901]) expect(fromMinor(p, "INR")).toBe(p / 100);
   });
 });
 

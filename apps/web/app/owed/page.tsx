@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Glass, PageHeader, Stat } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
 import { Amount } from "@/components/Privacy";
+import { fromMinor, roundToMinor } from "@/lib/currency";
 import { formatDate, formatINR } from "@/lib/format";
 import { familyLoans, namedRefunds, TAT, tatStatus, complaintText, copyComplaint, type TatId } from "@/lib/owed";
 
@@ -23,7 +24,7 @@ function OwedView() {
   const [reference, setReference] = useState("DEMO-UPI-1001");
   const [notice, setNotice] = useState("");
 
-  const amountPaise = Math.round(Number(rupeeText || "0") * 100);
+  const amountPaise = roundToMinor(Number(rupeeText || "0"), "INR");
   const draft = complaintText({ channel, merchant, amountPaise: Number.isFinite(amountPaise) ? amountPaise : 0, date, reference, today });
   const status = tatStatus(channel, date, today);
 
@@ -53,7 +54,7 @@ function OwedView() {
               <button className="row pick" key={t.id} type="button" onClick={() => {
                 setMerchant(t.merchant || t.description || "the payee");
                 setDate(t.date);
-                setRupeeText(String(Math.round(t.amount / 100)));
+                setRupeeText(String(Math.round(fromMinor(t.amount, "INR"))));
                 setReference(t.id);
                 setNotice("");
               }}>
