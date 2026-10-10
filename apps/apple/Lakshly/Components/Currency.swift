@@ -39,6 +39,15 @@ extension CurrencyCode {
     try toMinor(NSDecimalNumber(decimal: major).stringValue)
   }
 
+  /// A typed or computed Double rounded to minor units (half away from zero), following the currency's exponent.
+  /// The lenient counterpart to `toMinor`: it keeps today's behaviour for free-typed amount fields (12.345 rounds)
+  /// and never throws. Non-finite or out-of-range input gives 0 instead of trapping. Mirrors apps/web/lib/currency.ts `roundToMinor`.
+  func roundToMinor(_ major: Double) -> Int64 {
+    let scaled = (major * Double(minorFactor)).rounded()
+    guard scaled.isFinite, abs(scaled) < 9.0e18 else { return 0 }
+    return Int64(scaled)
+  }
+
   /// Minor units to a Decimal major amount.
   func fromMinor(_ minor: Int64) -> Decimal {
     Decimal(minor) / Decimal(minorFactor)
