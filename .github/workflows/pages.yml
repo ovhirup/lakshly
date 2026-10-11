@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check site has no third-party resources
         run: |
-          if grep -RInE '(src|href)="(https?:)?//' site --include='*.html' | grep -vE 'href="https://github.com/'; then
+          if grep -RIohE '(src|href)="(https?:)?//[^"]*"' site --include='*.html' | grep -vE '^href="https://github.com/[^"]*"$|^href="https://developers.google.com/terms/api-services-user-data-policy"$'; then
             echo "Third-party resource found in site/"; exit 1
           fi
       - name: Check site has no inline styles (CSP is style-src 'self')
