@@ -14,6 +14,7 @@ swiftc -target arm64-apple-macos26.0 -sdk "$sdk" -parse-as-library -D DEBUG -D F
   "$root/Lakshly/Components/GlassCard.swift" \
   "$root/Lakshly/Components/Layout.swift" \
   "$root/Lakshly/Store/Entitlements.swift" \
+  "$root/Lakshly/Store/Entitlements.gen.swift" \
   "$root/Lakshly/Features/Feedback/GitHubIssueLink.swift" \
   "$root/Lakshly/Features/Feedback/FeedbackHelpers.swift" \
   "$root/Lakshly/Features/Feedback/FeedbackTransport.swift" \

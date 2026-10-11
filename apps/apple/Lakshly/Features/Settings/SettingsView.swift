@@ -5,6 +5,7 @@ import AppKit
 
 struct SettingsView: View {
   let store: DataStore
+  var intentionalVisit = true
   let lock: AppLock
   @Binding var themeSelection: String
   @Environment(\.theme) private var theme
@@ -40,7 +41,7 @@ struct SettingsView: View {
     NavigationStack {
       ScrollViewReader { scroll in
         Form {
-          Section { SettingsProfileCard(store: store) }.listRowBackground(theme.surface)
+          Section { SettingsProfileCard(store: store, intentionalVisit: intentionalVisit) }.listRowBackground(theme.surface)
           setupSection
           Section("Theme") {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
@@ -72,26 +73,7 @@ struct SettingsView: View {
               .accessibilityIdentifier("settings.appearance")
           }.listRowBackground(theme.surface)
           glanceSection
-          Section("Lakshly Premium") {
-            if premium {
-              Text("Premium ✦")
-                .font(.headline)
-                .accessibilityIdentifier("settings.premiumStatus")
-              Text("Thank you for supporting Lakshly")
-              if !planLine.isEmpty {
-                Text(planLine).foregroundStyle(theme.secondaryText)
-                  .accessibilityIdentifier("settings.plan")
-              }
-            } else {
-              Text("Free")
-                .font(.headline)
-                .accessibilityIdentifier("settings.premiumStatus")
-              Text("Lakshly Free · security and import are always free")
-                .foregroundStyle(theme.secondaryText)
-              Button("See Premium") { paywall = .general }
-                .accessibilityIdentifier("settings.seePremium")
-                .accessibilityHint("Opens Lakshly Premium")
-            }
+          Section("Purchases") {
             Button("Restore Purchases") { Task { await entitlements.restore() } }
               .accessibilityIdentifier("settings.restore")
               .accessibilityHint("Checks this Apple ID for an existing Lakshly Premium subscription")

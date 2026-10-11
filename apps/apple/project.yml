@@ -142,6 +142,8 @@ targets:
         buildPhase: resources
       - path: ../../packages/shared/money/__fixtures__/format-parity.json
         buildPhase: resources
+      - path: ../../packages/shared/entitlements.json
+        buildPhase: resources
       - path: ../../docs/themes.json
         buildPhase: resources
       - path: StoreKit/Lakshly.storekit
@@ -175,6 +177,8 @@ targets:
         type: folder
         buildPhase: resources
       - path: ../../packages/shared/money/__fixtures__/format-parity.json
+        buildPhase: resources
+      - path: ../../packages/shared/entitlements.json
         buildPhase: resources
       - path: ../../docs/themes.json
         buildPhase: resources
@@ -267,6 +271,7 @@ targets:
       - path: Lakshly/Setup/SetupLinks.swift
       - path: Lakshly/Setup/SourcesCatalog.swift
       - path: Lakshly/Setup/SetupSuggest.swift
+      - path: Lakshly/Store/Entitlements.gen.swift
       - path: Lakshly/Store/Entitlements.swift
     dependencies:
       - target: LakshlyGlance
@@ -308,6 +313,7 @@ targets:
       - path: Lakshly/Setup/SetupLinks.swift
       - path: Lakshly/Setup/SourcesCatalog.swift
       - path: Lakshly/Setup/SetupSuggest.swift
+      - path: Lakshly/Store/Entitlements.gen.swift
       - path: Lakshly/Store/Entitlements.swift
     settings:
       base:
