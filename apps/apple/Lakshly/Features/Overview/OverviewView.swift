@@ -17,7 +17,7 @@ struct OverviewView: View {
       setupCard
       Button(action: showFeedback) {
         HStack {
-          MoneyText("Have an idea? Tell us →").font(.subheadline.weight(.semibold))
+          Text("Have an idea? Tell us →").font(.subheadline.weight(.semibold))
           Spacer()
         }.frame(maxWidth: .infinity).modifier(GlassCard())
       }.buttonStyle(.plain)
@@ -51,7 +51,7 @@ struct OverviewView: View {
         }.chartForegroundStyleScale(["Income": theme.income, "Spend": theme.spend]).modifier(
           MoneyChartAxis()
         ).frame(height: 220)
-        MoneyText("All inflows and outflows, including investments and EMI.").font(.caption)
+        Text("All inflows and outflows, including investments and EMI.").font(.caption)
           .foregroundStyle(theme.secondaryText)
       }
       Card(title: "Top categories · \(store.selectedMonth)") {
@@ -89,7 +89,7 @@ struct OverviewView: View {
       Card(title: store.setup?.mode == .demo ? "Use your own data · continue setup" : "Finish setting up · \(score.done) of \(score.applicable)") {
         HStack(alignment: .center, spacing: 12) {
           SetupRing(percent: score.percent).frame(width: 44, height: 44)
-          MoneyText("Your data stays on this device. Continue at your pace.")
+          Text("Your data stays on this device. Continue at your pace.")
             .font(.subheadline).foregroundStyle(theme.secondaryText)
         }
         HStack(spacing: 8) {

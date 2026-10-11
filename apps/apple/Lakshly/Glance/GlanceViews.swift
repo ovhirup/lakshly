@@ -392,6 +392,9 @@ struct MenuBarGlanceBody: View {
   var onQuit: () -> Void = {}
   var setupLine: String? = nil
   var onSetup: () -> Void = {}
+  /// App-wide privacy mode. nil hides the row (shots and previews).
+  var privacyHidden: Bool? = nil
+  var onPrivacy: () -> Void = {}
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
@@ -424,8 +427,18 @@ struct MenuBarGlanceBody: View {
           .accessibilityIdentifier("glance.setup")
       }
       Divider().overlay(theme.secondaryText.opacity(0.2))
+      if let privacyHidden {
+        Button(action: onPrivacy) {
+          Label("Hide amounts", systemImage: privacyHidden ? "checkmark" : "eye.slash")
+        }
+        .buttonStyle(.plain)
+        .font(.caption.weight(.semibold))
+        .accessibilityIdentifier("glance.privacy")
+        .accessibilityAddTraits(privacyHidden ? [.isToggle, .isSelected] : .isToggle)
+      }
       HStack {
         Button(revealed ? "Hide amounts" : "Reveal amounts", action: onReveal)
+          .disabled(privacyHidden == true)
           .accessibilityIdentifier("glance.reveal")
         Spacer()
         Button("Open Lakshly", action: onOpen)

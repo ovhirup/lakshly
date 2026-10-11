@@ -72,7 +72,7 @@ struct SetupRail: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      MoneyText("Setup steps").font(.caption.weight(.semibold)).foregroundStyle(theme.secondaryText)
+      Text("Setup steps").font(.caption.weight(.semibold)).foregroundStyle(theme.secondaryText)
         .accessibilityAddTraits(.isHeader)
       ForEach(Array(stepOrder.enumerated()), id: \.element) { index, step in
         let done = model.state.stepsDone.contains(step)
@@ -92,7 +92,7 @@ struct SetupRail: View {
         .accessibilityAddTraits(model.step == step ? .isSelected : [])
       }
       Spacer(minLength: 0)
-      MoneyText("On your device. At your pace.").font(.caption).foregroundStyle(theme.secondaryText)
+      Text("On your device. At your pace.").font(.caption).foregroundStyle(theme.secondaryText)
     }
     .padding(16)
     .frame(maxHeight: .infinity, alignment: .top)
@@ -131,7 +131,7 @@ struct SetupPage: View {
         .font(.system(.largeTitle, design: .rounded, weight: .bold))
         .accessibilityAddTraits(.isHeader)
       if step == .welcome {
-        MoneyText("Your own data, a first budget and a first goal. About five minutes, at your pace.")
+        Text("Your own data, a first budget and a first goal. About five minutes, at your pace.")
           .foregroundStyle(.secondary)
       }
       stepBody
@@ -200,15 +200,21 @@ struct SetupEntry: View {
   @Binding var text: String
   var rendering: Bool
   var email = false
+  /// Privacy mode: the value stays editable but is drawn as dots, never digits.
+  var amountHidden = false
 
   var body: some View {
     if rendering {
-      Text(text.isEmpty ? prompt : text)
+      Text(text.isEmpty ? prompt : (amountHidden ? Money.mask : text))
         .foregroundStyle(text.isEmpty ? .secondary : .primary)
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .padding(.horizontal, 12)
         .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .accessibilityLabel(prompt)
+    } else if amountHidden {
+      SecureField(prompt, text: $text)
+        .textFieldStyle(ThemedFieldStyle())
+        .accessibilityValue(Money.hiddenLabel)
     } else {
       TextField(prompt, text: $text)
         .textFieldStyle(ThemedFieldStyle())
@@ -249,8 +255,8 @@ struct SetupWelcomeStep: View {
 
   var body: some View {
     Card(title: "About you") {
-      MoneyText("What should we call you? (optional)").font(.subheadline.weight(.semibold))
-      MoneyText("On this device only, encrypted").font(.caption).foregroundStyle(theme.secondaryText)
+      Text("What should we call you? (optional)").font(.subheadline.weight(.semibold))
+      Text("On this device only, encrypted").font(.caption).foregroundStyle(theme.secondaryText)
       SetupEntry(prompt: "Your name", text: $name, rendering: model.rendering)
         .accessibilityLabel("What should we call you? Optional")
         .accessibilityIdentifier("profile.name")
@@ -259,7 +265,7 @@ struct SetupWelcomeStep: View {
           if limited != name { name = limited }
           actions.setProfile(limited, currency)
         }
-      MoneyText("Currency").font(.subheadline.weight(.semibold))
+      Text("Currency").font(.subheadline.weight(.semibold))
       SetupEntry(prompt: "INR", text: $currency, rendering: model.rendering)
         .onChange(of: currency) { _, value in
           let code = String(value.uppercased().prefix(3))
@@ -268,10 +274,10 @@ struct SetupWelcomeStep: View {
         }
         .accessibilityLabel("Currency, search ISO codes")
       if model.state.profile.currency != "INR" {
-        MoneyText("Statement importers are built for Indian banks today; you can still add data by CSV.")
+        Text("Statement importers are built for Indian banks today; you can still add data by CSV.")
           .font(.subheadline).foregroundStyle(theme.secondaryText)
       }
-      MoneyText("Make it yours").font(.system(.title3, design: .rounded, weight: .bold)).accessibilityAddTraits(.isHeader)
+      Text("Make it yours").font(.system(.title3, design: .rounded, weight: .bold)).accessibilityAddTraits(.isHeader)
       HStack(spacing: 8) {
         ForEach(ThemeID.allCases.filter { !$0.definition.premium }) { id in
           let palette = ThemePalette(id, scheme: nil)
@@ -279,7 +285,7 @@ struct SetupWelcomeStep: View {
             actions.selectTheme(id.rawValue)
           } label: {
             VStack(spacing: 6) {
-              MoneyText("🪷").frame(width: 44, height: 44).background(palette.bg, in: Circle())
+              Text("🪷").frame(width: 44, height: 44).background(palette.bg, in: Circle())
               Text(id.definition.name).font(.caption).lineLimit(2).multilineTextAlignment(.center).minimumScaleFactor(0.85)
             }
             .frame(minWidth: 88, minHeight: 44)
@@ -293,11 +299,11 @@ struct SetupWelcomeStep: View {
       }
     }
     Card(title: "Private by design") {
-      MoneyText("Your money data stays on this device. No bank logins. If you connect your email, Lakshly reads only finance emails, read-only, on this device. No Lakshly servers ever see your data.")
-      MoneyText("Statements are read here and stored encrypted (Keychain/Secure Enclave key).")
-      MoneyText("We never store statement passwords.")
+      Text("Your money data stays on this device. No bank logins. If you connect your email, Lakshly reads only finance emails, read-only, on this device. No Lakshly servers ever see your data.")
+      Text("Statements are read here and stored encrypted (Keychain/Secure Enclave key).")
+      Text("We never store statement passwords.")
       DisclosureGroup("Privacy notice") {
-        MoneyText("Files are parsed on this device. Parsed data is encrypted on this device until you delete it from Import. Search links open your mail provider outside Lakshly. Automatic sync is not switched on in this build.")
+        Text("Files are parsed on this device. Parsed data is encrypted on this device until you delete it from Import. Search links open your mail provider outside Lakshly. Automatic sync is not switched on in this build.")
           .font(.subheadline).foregroundStyle(theme.secondaryText)
       }
     }
@@ -334,7 +340,7 @@ struct SetupEmailStep: View {
 
   var body: some View {
     Card(title: "Mailbox") {
-      MoneyText("Which email do your bank alerts, statements and receipts go to?")
+      Text("Which email do your bank alerts, statements and receipts go to?")
         .font(.subheadline.weight(.semibold))
       SetupEntry(prompt: "demo.user@example.com", text: $email, rendering: model.rendering, email: true)
         .onChange(of: email) { _, value in
@@ -342,10 +348,10 @@ struct SetupEmailStep: View {
           actions.setEmail(value, provider)
         }
       if !valid {
-        MoneyText("Enter a complete email address, like demo.user@example.com.")
+        Text("Enter a complete email address, like demo.user@example.com.")
           .font(.caption).foregroundStyle(theme.danger).accessibilityAddTraits(.isStaticText)
       }
-      MoneyText("Stored only on this device, encrypted.").font(.caption).foregroundStyle(theme.secondaryText)
+      Text("Stored only on this device, encrypted.").font(.caption).foregroundStyle(theme.secondaryText)
       if model.rendering {
         MoneyText("Provider: \(setupProviders.first { $0.0 == provider }?.1 ?? "Other")")
           .frame(minHeight: 44, alignment: .leading)
@@ -372,7 +378,7 @@ struct SetupEmailStep: View {
           .disabled(email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !valid)
       }
       if model.betaNotice {
-        MoneyText("Automatic sync is in a closed beta and isn't switched on in this build yet. Your email is saved on this device for one-tap searches below.")
+        Text("Automatic sync is in a closed beta and isn't switched on in this build yet. Your email is saved on this device for one-tap searches below.")
           .font(.subheadline)
           .accessibilityAddTraits(.updatesFrequently)
       }
@@ -401,7 +407,7 @@ struct SetupEmailStep: View {
     }
     Card(title: "Prefer not to connect? Find the emails yourself") {
       if model.state.sources.isEmpty {
-        MoneyText("Here are a few common searches. Pick your accounts next to tailor this guide.")
+        Text("Here are a few common searches. Pick your accounts next to tailor this guide.")
           .foregroundStyle(theme.secondaryText)
       }
       ForEach(manualSources, id: \.id) { source in
@@ -520,7 +526,7 @@ struct SetupAccountsStep: View {
         VStack(alignment: .leading, spacing: 2) {
           Text(source.name)
           if !source.importer.supported {
-            MoneyText("add manually").font(.caption).foregroundStyle(theme.secondaryText)
+            Text("add manually").font(.caption).foregroundStyle(theme.secondaryText)
           }
         }
         Spacer(minLength: 0)
@@ -546,7 +552,7 @@ struct SetupImportStep: View {
       .foregroundStyle(theme.secondaryText)
     if model.state.sources.isEmpty {
       Card(title: "Accounts") {
-        MoneyText("Pick your accounts for tailored download steps and password hints, or import a file below.")
+        Text("Pick your accounts for tailored download steps and password hints, or import a file below.")
         Button("Pick accounts") { actions.go(.accounts) }.buttonStyle(SetupGhostStyle())
       }
     }
@@ -571,7 +577,7 @@ struct SetupImportStep: View {
     Button("Import a statement") { actions.chooseImportFile() }.buttonStyle(ThemedSubmitStyle())
     if model.showsFolderWatch {
       HStack {
-        MoneyText("Watch a folder")
+        Text("Watch a folder")
         Spacer()
         Pill(text: "✦ Premium", color: theme.gold)
       }
@@ -601,10 +607,10 @@ struct SetupImportStep: View {
         SetupSourceGuide(source: source, model: model, actions: actions, catalogId: picked.catalogId)
       }
       if model.rendering {
-        MoneyText("Skip this source…").font(.caption).foregroundStyle(theme.secondaryText).frame(minHeight: 44, alignment: .leading)
+        Text("Skip this source…").font(.caption).foregroundStyle(theme.secondaryText).frame(minHeight: 44, alignment: .leading)
       } else {
         Picker("Skip reason", selection: skipBinding(picked)) {
-          MoneyText("Skip this source…").tag("")
+          Text("Skip this source…").tag("")
           ForEach(setupSkipReasons, id: \.0) { reason in Text(reason.1).tag(reason.0) }
         }
       }
@@ -705,17 +711,17 @@ struct SetupSourceGuide: View {
         Text(note).foregroundStyle(theme.secondaryText)
       }
       if source.kinds.contains("subscription") {
-        MoneyText("Your charges already come in through your bank/card statement. Receipt import is coming.")
+        Text("Your charges already come in through your bank/card statement. Receipt import is coming.")
           .foregroundStyle(theme.secondaryText)
       }
       let hints = source.passwordHints.compactMap { SetupSources.catalog.passwordHintFormats[$0] }
       if !hints.isEmpty {
         MoneyText("Statements from \(source.name) are usually protected with one of:")
         ForEach(hints, id: \.self) { hint in MoneyText("• \(hint)") }
-        MoneyText("The email that carried the statement says which. Lakshly asks for it once, on this device, and never saves it.")
+        Text("The email that carried the statement says which. Lakshly asks for it once, on this device, and never saves it.")
       }
       DisclosureGroup("Export guides") {
-        MoneyText("Download the PDF attachment for this build. Email files (.eml and .mbox) are not supported yet.")
+        Text("Download the PDF attachment for this build. Email files (.eml and .mbox) are not supported yet.")
           .foregroundStyle(theme.secondaryText)
         guideBlock("Gmail", SetupSources.catalog.guides.gmail)
         guideBlock("Outlook", SetupSources.catalog.guides.outlook)
@@ -763,7 +769,7 @@ struct SetupPlanStep: View {
         : "Based on \(suggestion.months.map { setupFormatMonth($0, short: true) }.joined(separator: "–")), here's a calm starting budget for \(setupFormatMonth(month, short: true)).")
         .foregroundStyle(theme.secondaryText)
       if suggestion.mode == "history" && suggestion.confidence == "low" {
-        MoneyText("Based on one month; we'll refine it.").font(.caption).foregroundStyle(theme.secondaryText)
+        Text("Based on one month; we'll refine it.").font(.caption).foregroundStyle(theme.secondaryText)
       }
       if starterMode {
         chipRow(variableCategories, selected: { starter.contains($0) }, label: setupTitleCase) { category in
@@ -781,7 +787,7 @@ struct SetupPlanStep: View {
       }
       ForEach(lines, id: \.category) { line in budgetRow(line) }
       HStack {
-        MoneyText("Total").font(.headline)
+        Text("Total").font(.headline)
         Spacer()
         MoneyText(setupMask(Money.format(lines.reduce(Int64(0)) { $0 + $1.limit }), hidden: model.hideAmounts))
           .font(.headline)
@@ -902,7 +908,7 @@ struct SetupPlanStep: View {
         MoneyText("A little breathing room: \(shown(goalSavedPaise)) already saved towards \(shown(goalTargetPaise)), with \(shown(goalMonthlyPaise))/month until \(setupFormatDate(goalDue)).")
           .foregroundStyle(theme.secondaryText)
       } else if goalSuggestion.kind == .custom {
-        MoneyText("Choose something that matters to you, and give it a target.").foregroundStyle(theme.secondaryText)
+        Text("Choose something that matters to you, and give it a target.").foregroundStyle(theme.secondaryText)
       }
       if editGoal || goalSuggestion.kind == .custom {
         SetupEntry(prompt: "Goal name", text: $goalName, rendering: model.rendering)
@@ -987,9 +993,9 @@ struct SetupDoneStep: View {
           HStack {
             Text(item.done ? "✓" : "○").frame(width: 24)
             Text(setupCheckLabel(item.id))
-            if item.required { MoneyText("Required").font(.caption).foregroundStyle(theme.secondaryText) }
+            if item.required { Text("Required").font(.caption).foregroundStyle(theme.secondaryText) }
             Spacer()
-            MoneyText("›").foregroundStyle(theme.secondaryText)
+            Text("›").foregroundStyle(theme.secondaryText)
           }
           .frame(minHeight: 44)
         }
@@ -1053,16 +1059,16 @@ struct SetupConsentCard: View {
 
   private var consentColumn: some View {
     VStack(alignment: .leading, spacing: 12) {
-      MoneyText("Connect your money email (read-only)")
+      Text("Connect your money email (read-only)")
         .font(.system(.title2, design: .rounded, weight: .bold))
         .accessibilityAddTraits(.isHeader)
-      MoneyText("Lakshly will search this mailbox only for emails from the financial senders listed below (banks, cards, investment and insurance companies, and subscriptions you picked).")
-      MoneyText("What is read: matching emails and their PDF statements. Never read: any other email.")
-      MoneyText("Why: to create your transactions, statements and holdings in Lakshly.")
-      MoneyText("Where it goes: it stays on this device, encrypted. Lakshly's servers never receive your emails, passwords or sign-in tokens.")
-      MoneyText("Kept for: a log of emails read, 90 days. Parsed data stays until you delete it.")
-      MoneyText("Your choices: see every email read in the Read log. Disconnect anytime (Settings ▸ Setup & data sources ▸ Disconnect), which is as easy as connecting. Delete all data anytime.")
-      MoneyText("Questions or complaints: hello@lakshly.com; you can also approach the Data Protection Board of India.")
+      Text("Lakshly will search this mailbox only for emails from the financial senders listed below (banks, cards, investment and insurance companies, and subscriptions you picked).")
+      Text("What is read: matching emails and their PDF statements. Never read: any other email.")
+      Text("Why: to create your transactions, statements and holdings in Lakshly.")
+      Text("Where it goes: it stays on this device, encrypted. Lakshly's servers never receive your emails, passwords or sign-in tokens.")
+      Text("Kept for: a log of emails read, 90 days. Parsed data stays until you delete it.")
+      Text("Your choices: see every email read in the Read log. Disconnect anytime (Settings ▸ Setup & data sources ▸ Disconnect), which is as easy as connecting. Delete all data anytime.")
+      Text("Questions or complaints: hello@lakshly.com; you can also approach the Data Protection Board of India.")
       DisclosureGroup("Only these finance senders (\(senders.count))") {
         ForEach(senders, id: \.self) { sender in Text(sender).font(.caption) }
       }

@@ -37,7 +37,7 @@ struct InvestmentsView: View {
                 "\(Money.format(account.balance - invested)) · \(String(format: "%.1f", Double(account.balance - invested) / Double(max(1, invested)) * 100))%"
             )
           } else {
-            MoneyText("Invested amount not provided").foregroundStyle(theme.secondaryText)
+            Text("Invested amount not provided").foregroundStyle(theme.secondaryText)
           }
         }
       }

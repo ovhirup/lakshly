@@ -66,9 +66,9 @@ struct SettingsView: View {
             .id("appIcon")
           Section("Appearance") {
             Picker("Appearance", selection: $appearance) {
-              MoneyText("System").tag("system")
-              MoneyText("Light").tag("light")
-              MoneyText("Dark").tag("dark")
+              Text("System").tag("system")
+              Text("Light").tag("light")
+              Text("Dark").tag("dark")
             }.pickerStyle(.segmented)
               .accessibilityIdentifier("settings.appearance")
           }.listRowBackground(theme.surface)
@@ -174,7 +174,7 @@ struct SettingsView: View {
     Section {
       Toggle("Show amounts on Lock Screen", isOn: $lockScreenAmounts)
         .accessibilityIdentifier("settings.lockScreenAmounts")
-      MoneyText("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
+      Text("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
         .font(.caption).foregroundStyle(theme.secondaryText)
       #if os(iOS)
       Toggle("Live Activities", isOn: $liveActivities)
@@ -198,7 +198,7 @@ struct SettingsView: View {
       glanceKind("Net worth", feature: .extraWidgets)
       glanceKind("Debt", feature: .extraWidgets)
     } header: {
-      MoneyText("Widgets & glance")
+      Text("Widgets & glance")
     }
     .listRowBackground(theme.surface)
   }
@@ -211,7 +211,7 @@ struct SettingsView: View {
         Pill(text: "✦ Premium", color: theme.gold)
           .accessibilityLabel("\(title), Premium")
       } else {
-        MoneyText("Included").font(.caption).foregroundStyle(theme.secondaryText)
+        Text("Included").font(.caption).foregroundStyle(theme.secondaryText)
       }
     }
   }
@@ -238,11 +238,11 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 4) {
           Text(email)
           Text(mailboxDetail).font(.caption).foregroundStyle(theme.secondaryText)
-          MoneyText("Automatic sync is not switched on in this build. This address is used for one-tap searches.")
+          Text("Automatic sync is not switched on in this build. This address is used for one-tap searches.")
             .font(.caption).foregroundStyle(theme.secondaryText)
         }
       } else if session.state.email.skipped {
-        MoneyText("Email step skipped. You can add an address from setup.")
+        Text("Email step skipped. You can add an address from setup.")
           .font(.caption).foregroundStyle(theme.secondaryText)
       }
     }
@@ -324,12 +324,12 @@ struct SettingsView: View {
         Text(error).font(.caption).foregroundStyle(theme.danger)
       }
     } header: {
-      MoneyText("App icon")
+      Text("App icon")
     } footer: {
       #if os(iOS)
-      MoneyText("Your Home Screen icon. iOS confirms the change.")
+      Text("Your Home Screen icon. iOS confirms the change.")
       #else
-      MoneyText("Changes the Dock icon while Lakshly runs. The Finder icon stays the default.")
+      Text("Changes the Dock icon while Lakshly runs. The Finder icon stays the default.")
       #endif
     }.listRowBackground(theme.surface)
   }

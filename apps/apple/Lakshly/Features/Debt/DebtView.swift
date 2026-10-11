@@ -45,7 +45,7 @@ struct DebtView: View {
             "Illustrative reducing-balance amortisation at the current rate and EMI; excludes fees and rate changes. Horizontal axis: months from now."
           ).font(.caption).foregroundStyle(theme.secondaryText)
           if projection(debt).count == 1 {
-            MoneyText("The EMI does not cover monthly interest.").foregroundStyle(theme.danger)
+            Text("The EMI does not cover monthly interest.").foregroundStyle(theme.danger)
           }
         }
       }

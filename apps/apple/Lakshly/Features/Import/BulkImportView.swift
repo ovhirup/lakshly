@@ -131,13 +131,13 @@ struct BulkPasswordCard: View {
     Card(title: "Password") {
       MoneyText("\(file) is locked.")
       if rendering {
-        MoneyText("Password").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        Text("Password").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
           .padding(.horizontal, 12).background(.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
       } else {
         SecureField("Password", text: $password).textFieldStyle(ThemedFieldStyle())
           .accessibilityIdentifier("bulk.password")
       }
-      if incorrect { MoneyText("Incorrect password. Try again.") }
+      if incorrect { Text("Incorrect password. Try again.") }
       if rendering {
         Label("Use the same password for the rest of this batch", systemImage: "square").frame(minHeight: 44)
       } else {
@@ -149,7 +149,7 @@ struct BulkPasswordCard: View {
         password = ""; submit(answer)
       }.buttonStyle(ThemedSubmitStyle()).disabled(password.isEmpty)
       Button("Skip this file") { password = ""; submit(nil) }.frame(minHeight: 44)
-      MoneyText("Passwords stay in memory for this run and are never saved.").font(.caption).foregroundStyle(.secondary)
+      Text("Passwords stay in memory for this run and are never saved.").font(.caption).foregroundStyle(.secondary)
     }.onDisappear { password = ""; reuse = false }
   }
 }

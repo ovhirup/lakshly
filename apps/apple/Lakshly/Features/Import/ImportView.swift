@@ -156,8 +156,8 @@ struct ImportView: View {
           get: { store.source },
           set: { store.setSource($0) }
         )) {
-          MoneyText("Demo data").tag(DataSource.demo)
-          MoneyText("My data").tag(DataSource.mine)
+          Text("Demo data").tag(DataSource.demo)
+          Text("My data").tag(DataSource.mine)
         }.pickerStyle(.segmented)
           .accessibilityIdentifier("import.source")
         if store.hasUserData {
@@ -167,7 +167,7 @@ struct ImportView: View {
           )
           .font(.caption).foregroundStyle(theme.secondaryText)
         } else {
-          MoneyText("No imported data yet.").font(.caption).foregroundStyle(theme.secondaryText)
+          Text("No imported data yet.").font(.caption).foregroundStyle(theme.secondaryText)
         }
       }
       }
@@ -230,7 +230,7 @@ struct ImportView: View {
     Card(title: "Statement") {
       Button("Choose PDF or CSV statements") { picking = true }.buttonStyle(ThemedSubmitStyle())
         .accessibilityIdentifier("import.choose")
-      MoneyText("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
+      Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
       if let error = model.error { Text(error).foregroundStyle(theme.danger) }
     }.setupFileDrop(enabled: true) { files in
       if files.count == 1, let file = files.first {
@@ -241,10 +241,10 @@ struct ImportView: View {
 
   private var passwordPrompt: some View {
     Card(title: "Password") {
-      MoneyText("This statement is locked.").foregroundStyle(theme.secondaryText)
+      Text("This statement is locked.").foregroundStyle(theme.secondaryText)
       SecureField("Password", text: $password).textFieldStyle(ThemedFieldStyle())
         .accessibilityIdentifier("import.password")
-      if model.incorrect { MoneyText("Incorrect password").foregroundStyle(theme.danger) }
+      if model.incorrect { Text("Incorrect password").foregroundStyle(theme.danger) }
       Button("Unlock") {
         let attempt = password
         password = ""
@@ -256,7 +256,7 @@ struct ImportView: View {
         model.cancelPassword()
       }
       .accessibilityIdentifier("import.cancel")
-      MoneyText("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
+      Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
     }
   }
 
@@ -305,7 +305,7 @@ struct ImportView: View {
       }
       Card(title: "Transactions") {
         if result.transactions.isEmpty {
-          MoneyText("No transactions in this file.").foregroundStyle(theme.secondaryText)
+          Text("No transactions in this file.").foregroundStyle(theme.secondaryText)
         }
         ForEach(result.transactions, id: \.id) { row in
           HStack(alignment: .firstTextBaseline) {

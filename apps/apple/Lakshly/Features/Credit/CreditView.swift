@@ -10,7 +10,7 @@ struct CreditView: View {
         let utilisation = Double(abs(account.balance)) / Double(max(1, account.creditLimit ?? 0))
         Card(title: account.name) {
           Gauge(value: min(utilisation, 1)) {
-            MoneyText("Utilisation")
+            Text("Utilisation")
           } currentValueLabel: {
             MoneyText("\(Int(utilisation * 100))%")
           }.gaugeStyle(.accessoryCircular).tint(utilisation > 0.3 ? theme.danger : theme.invest).scaleEffect(
