@@ -1,6 +1,7 @@
 import SwiftUI
 
 @main struct LakshlyApp: App {
+  @State private var privacy = PrivacyStore.shared
   @State private var store: DataStore
   @State private var session: SetupSession
   @State private var lock: AppLock
@@ -82,6 +83,10 @@ import SwiftUI
         CommandGroup(after: .appSettings) {
           Button("Set Up Lakshly…") { session.requestOpen(health: false, step: nil) }
         }
+        CommandGroup(after: .toolbar) {
+          Toggle("Hide Amounts", isOn: Binding(get: { privacy.masked }, set: { privacy.setPrivacy($0, source: "key") }))
+            .keyboardShortcut("h", modifiers: [.command, .shift])
+        }
         CommandGroup(after: .windowArrangement) {
           Button("Data Sources Health") { session.requestOpen(health: true, step: nil) }
         }
@@ -90,7 +95,7 @@ import SwiftUI
     Window("Set up Lakshly", id: "setup") {
       let palette = ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance)
       SetupHost(store: store)
-        .environment(\.theme, palette).environment(store).environment(session).environment(entitlements)
+        .environment(\.privacy, privacy).environment(\.theme, palette).environment(store).environment(session).environment(entitlements)
         .environment(\.selectTheme) { themeID = $0; launchTheme = nil }
         .foregroundStyle(palette.text).tint(palette.gold)
         .preferredColorScheme(appearance)
@@ -100,6 +105,7 @@ import SwiftUI
     MenuBarExtra("Lakshly", systemImage: "indianrupeesign.circle", isInserted: menuBarInserted) {
       MenuBarPanel()
         .environment(\.theme, ThemePalette(ThemeID.resolve(effectiveThemeID), scheme: appearance))
+        .environment(\.privacy, privacy)
         .environment(store)
         .environment(session)
         .environment(entitlements)
@@ -109,7 +115,12 @@ import SwiftUI
     #endif
     #endif
     #else
-    mainScene
+    mainScene.commands {
+      CommandMenu("View") {
+        Toggle("Hide Amounts", isOn: Binding(get: { privacy.masked }, set: { privacy.setPrivacy($0, source: "key") }))
+          .keyboardShortcut("h", modifiers: [.command, .shift])
+      }
+    }
     #endif
   }
 
@@ -140,7 +151,7 @@ import SwiftUI
         get: { effectiveThemeID },
         set: { themeID = $0; launchTheme = nil }
       ))
-        .environment(\.theme, palette).environment(entitlements).environment(appIcons).environment(session)
+        .environment(\.privacy, privacy).environment(\.theme, palette).environment(entitlements).environment(appIcons).environment(session)
         .environment(\.selectTheme) { themeID = $0; launchTheme = nil }
         .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
         .foregroundStyle(palette.text).tint(palette.gold)
@@ -168,6 +179,7 @@ import SwiftUI
 
 struct RootView: View {
   @Environment(\.theme) private var theme
+  @Environment(\.privacy) private var privacy
   @Environment(EntitlementStore.self) private var entitlements
   let store: DataStore
   let lock: AppLock
@@ -310,12 +322,12 @@ struct RootView: View {
           }
         }.tabViewStyle(.sidebarAdaptable)
           #if os(macOS)
-          .tabViewSidebarBottomBar { ProfileChip(store: store).padding(12) }
+          .tabViewSidebarBottomBar { HStack { ProfileChip(store: store); PrivacyToggle() }.padding(12) }
           #endif
           .environment(\.openImport) { selected = "import" }
           .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
       }
-    }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, intentionalVisit: intentionalSettingsVisit, lock: lock, themeSelection: $themeSelection) }
+    }.modifier(PrivacyLifecycle()).tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, intentionalVisit: intentionalSettingsVisit, lock: lock, themeSelection: $themeSelection) }
       #if os(iOS)
       .fullScreenCover(isPresented: Bindable(session).presented) {
         SetupHost(store: store)
@@ -349,7 +361,9 @@ struct RootView: View {
         case .deferSetup(let step): deferredSetup = .some(step)
         }
       }
+      .onChange(of: privacy.masked) { _, _ in publishGlance() }
       .onChange(of: lock.locked) { _, locked in
+        if locked { privacy.noteLocked() }
         #if os(macOS)
         if locked { notchController?.noteAppLocked() }
         #endif
@@ -429,7 +443,10 @@ struct RootView: View {
     NavigationStack {
       content().toolbar {
         #if os(iOS)
-        ToolbarItem(placement: .topBarLeading) { ProfileChip(store: store) }
+        ToolbarItem(placement: .topBarLeading) { HStack { ProfileChip(store: store); PrivacyToggle() } }
+        #endif
+        #if os(macOS)
+        ToolbarItem(placement: .primaryAction) { PrivacyToggle() }
         #endif
         ToolbarItem(placement: .primaryAction) {
           Button("Settings", systemImage: "gearshape") { intentionalSettingsVisit = true; settings = true }

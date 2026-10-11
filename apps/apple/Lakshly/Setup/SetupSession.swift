@@ -9,7 +9,6 @@ import Observation
   var health = false
   var showConsent = false
   var betaNotice = false
-  var hideAmounts = false
   var toast: String?
   var pending: SetupPendingImport?
   var celebrate = false

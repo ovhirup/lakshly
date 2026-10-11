@@ -8,7 +8,7 @@ struct RewardsView: View {
     Page(title: "Rewards", subtitle: "Don't leave the little wins behind.", showsPremiumLock: !entitlements.isPremium) {
       ForEach(store.dataset?.rewards ?? []) { reward in
         Card(title: reward.program) {
-          Text("\(reward.balance.formatted()) \(reward.kind)").font(.title.bold())
+          MoneyText("\(reward.balance.formatted()) \(reward.kind)").font(.title.bold())
         }
         PremiumGate(
           feature: .rewardsInsights,

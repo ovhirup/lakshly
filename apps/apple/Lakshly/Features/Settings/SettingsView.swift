@@ -16,7 +16,7 @@ struct SettingsView: View {
   @Environment(\.openSetup) private var openSetup
   @AppStorage("settings.appearance") private var appearance = "system"
   @AppStorage("settings.appLock") private var appLock = true
-  @AppStorage(GlancePreferences.showAmountsKey, store: GlanceStore.preferences) private var showAmounts = true
+  @Environment(\.privacy) private var privacy
   @AppStorage(GlancePreferences.lockScreenAmountsKey, store: GlanceStore.preferences) private var lockScreenAmounts = false
   #if os(iOS)
   @AppStorage(GlancePreferences.liveActivitiesKey, store: GlanceStore.preferences) private var liveActivities = true
@@ -72,6 +72,7 @@ struct SettingsView: View {
             }.pickerStyle(.segmented)
               .accessibilityIdentifier("settings.appearance")
           }.listRowBackground(theme.surface)
+          PrivacySettingsSection()
           glanceSection
           Section("Purchases") {
             Button("Restore Purchases") { Task { await entitlements.restore() } }
@@ -142,7 +143,7 @@ struct SettingsView: View {
           }) { context in
             PaywallView(context: context)
           }
-          .onChange(of: showAmounts) { _, _ in publishGlance() }
+          .onChange(of: privacy.widgetAmounts) { _, _ in publishGlance() }
           .onChange(of: lockScreenAmounts) { _, _ in publishGlance() }
           #if os(iOS)
           .onChange(of: liveActivities) { _, _ in LiveActivityManager.shared.sync() }
@@ -171,8 +172,6 @@ struct SettingsView: View {
   }
   private var glanceSection: some View {
     Section {
-      Toggle("Show amounts in widgets", isOn: $showAmounts)
-        .accessibilityIdentifier("settings.showAmounts")
       Toggle("Show amounts on Lock Screen", isOn: $lockScreenAmounts)
         .accessibilityIdentifier("settings.lockScreenAmounts")
       Text("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
@@ -363,7 +362,7 @@ struct ThemeCard: View {
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text("₹24,800").font(.headline).foregroundStyle(Color(hex: mode.tokens["gold"]!))
+          MoneyText("₹24,800").font(.headline).foregroundStyle(Color(hex: mode.tokens["gold"]!))
           Spacer(minLength: 2)
           Image(systemName: "sparkle").foregroundStyle(Color(hex: mode.tokens["lotus"]!))
         }

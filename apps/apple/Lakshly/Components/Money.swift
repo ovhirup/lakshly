@@ -1,6 +1,17 @@
 import Foundation
 
 enum Money {
+  static let mask = "₹ •••••"
+  static let hiddenLabel = "Amount hidden"
+  static func display(_ paise: Int64, masked: Bool) -> String { masked ? mask : format(paise) }
+  static func redact(_ text: String, masked: Bool, hidePercent: Bool = false) -> String {
+    guard masked else { return text }
+    var result = text.replacingOccurrences(of: "[−+]?₹\\s?[0-9][0-9,]*(?:\\.[0-9]+)?(?:Cr|[KLM])?", with: mask, options: .regularExpression)
+    if hidePercent {
+      result = result.replacingOccurrences(of: "[0-9]+(?:\\.[0-9]+)?\\s?%", with: "••%", options: .regularExpression)
+    }
+    return result
+  }
   /// Integer arithmetic preserves every paisa, including Int64.min.
   static func format(_ paise: Int64, dropZero: Bool = true) -> String {
     let magnitude = paise.magnitude

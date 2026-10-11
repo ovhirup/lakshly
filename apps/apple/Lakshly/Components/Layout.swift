@@ -17,8 +17,16 @@ struct Page<Content: View>: View {
     self.showsPremiumLock = showsPremiumLock
     self.content = content()
   }
+  @Environment(\.setupRendering) private var rendering
   var body: some View {
-    ScrollView {
+    // Offscreen renders (DEBUG shots) draw the page without a scroll view so every row is captured.
+    if rendering { page.background { ThemeBackground() } } else {
+      ScrollView { page }
+        .scrollContentBackground(.hidden)
+        .background { ThemeBackground() }
+    }
+  }
+  private var page: some View {
       GlassEffectContainer(spacing: theme.spacious ? 32 : 24) {
         VStack(alignment: .leading, spacing: theme.spacious ? 32 : 24) {
           VStack(alignment: .leading, spacing: 8) {
@@ -37,9 +45,6 @@ struct Page<Content: View>: View {
           content
         }.frame(maxWidth: 900).padding(theme.spacious ? 32 : 24).frame(maxWidth: .infinity)
       }
-    }
-    .scrollContentBackground(.hidden)
-    .background { ThemeBackground() }
   }
 }
 struct Card<Content: View>: View {
@@ -129,7 +134,7 @@ struct SemanticAmount: View {
           .font(prominent ? .system(size: prominentIconSize, weight: .semibold) : .caption)
           .accessibilityHidden(true)
       }
-      Text(value)
+      MoneyText(value)
     }.foregroundStyle(semantic?.color(in: theme) ?? theme.text)
   }
 }

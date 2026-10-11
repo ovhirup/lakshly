@@ -17,7 +17,7 @@ struct MoneyChartAxis: ViewModifier {
       AxisMarks { value in
         AxisGridLine()
         AxisValueLabel {
-          if let amount = value.as(Double.self) { Text(Money.compact(Int64(amount))) }
+          if let amount = value.as(Double.self) { MoneyText(Money.compact(Int64(amount))) }
         }
       }
     }

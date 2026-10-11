@@ -270,7 +270,8 @@ enum NotchScreens {
   }
 
   private func currentModel() -> NotchGlanceContent {
-    let revealed = session.isRevealed && revealState.panelEnabled
+    // App-wide privacy mode wins over a Touch ID reveal.
+    let revealed = session.isRevealed && revealState.panelEnabled && !PrivacyStore.shared.masked
     let source = (revealed ? session.snapshot : nil) ?? builtSnapshot()
     guard let source else {
       return NotchGlanceContent(
@@ -299,7 +300,7 @@ enum NotchScreens {
       refit()
       return
     }
-    guard revealState.panelEnabled else { return }
+    guard revealState.panelEnabled, !PrivacyStore.shared.masked else { return }
     authenticating = true
     let tier = self.tier
     let themeID = theme.id.rawValue

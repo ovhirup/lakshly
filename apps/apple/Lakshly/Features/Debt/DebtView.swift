@@ -24,13 +24,13 @@ struct DebtView: View {
     Page(title: "Debt", subtitle: "One payment closer to freedom.", showsPremiumLock: !entitlements.isPremium) {
       ForEach(store.dataset?.debts ?? []) { debt in
         Card(title: debt.name) {
-          Text(Money.format(debt.outstanding)).font(.largeTitle.bold())
+          MoneyText(Money.format(debt.outstanding)).font(.largeTitle.bold())
           MetricRow(title: "Monthly EMI", value: Money.format(debt.emi), semantic: .spend)
           MetricRow(title: "Annual interest", value: String(format: "%.2f%%", debt.annualRatePct))
           ProgressView(
             value: max(0, min(1, 1 - Double(debt.outstanding) / Double(max(1, debt.principal))))
           ).tint(theme.spend)
-          Text(
+          MoneyText(
             "Repaid \(Money.format(max(0, debt.principal - debt.outstanding))) of \(Money.format(debt.principal))"
           ).font(.caption).foregroundStyle(theme.secondaryText)
           Chart(projection(debt)) { point in
@@ -41,7 +41,7 @@ struct DebtView: View {
               x: .value("Months from now", point.month), y: .value("Outstanding", point.amount)
             ).foregroundStyle(theme.spend)
           }.modifier(MoneyChartAxis()).frame(height: 190)
-          Text(
+          MoneyText(
             "Illustrative reducing-balance amortisation at the current rate and EMI; excludes fees and rate changes. Horizontal axis: months from now."
           ).font(.caption).foregroundStyle(theme.secondaryText)
           if projection(debt).count == 1 {
@@ -51,11 +51,11 @@ struct DebtView: View {
       }
       Card(title: "Payoff planner", access: premium ? .unlocked : .locked) {
         if premium {
-          Text(
+          MoneyText(
             "Avalanche puts extra money on the highest rate. Snowball puts it on the smallest balance. This demo has one loan, so both start there."
           ).foregroundStyle(theme.secondaryText)
         } else {
-          Text(
+          MoneyText(
             "See how avalanche and snowball would order repayments, with the highest rate or the smallest balance first."
           ).foregroundStyle(theme.secondaryText)
           Button("See Premium") { paywallPresented = true }

@@ -2,6 +2,7 @@ import Charts
 import SwiftUI
 
 struct OverviewView: View {
+  @Environment(\.privacy) private var privacy
   @Environment(\.theme) private var theme
   @Environment(SetupSession.self) private var session
   let store: DataStore
@@ -22,11 +23,12 @@ struct OverviewView: View {
       }.buttonStyle(.plain)
         .accessibilityIdentifier("overview.feedback")
       Card(title: "Net worth") {
-        Text(Money.format(assets - liabilities)).font(
+        MoneyText(Money.format(assets - liabilities)).font(
           .system(size: 38, weight: .bold, design: .rounded)
         ).foregroundStyle(theme.gold).minimumScaleFactor(0.5)
           .accessibilityIdentifier("overview.netWorth")
-          .accessibilityLabel("Net worth")
+          .accessibilityLabel(privacy.masked ? "Amount hidden" : "Net worth")
+          .onTapGesture(count: 2) { privacy.setPrivacy(!privacy.masked, source: "hero") }
         DataPill(source: store.source)
         MetricRow(title: "Assets", value: Money.format(assets))
         MetricRow(title: "Liabilities", value: Money.format(liabilities))

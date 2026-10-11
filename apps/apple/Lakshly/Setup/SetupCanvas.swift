@@ -12,7 +12,7 @@ struct SetupRing: View {
         .trim(from: 0, to: CGFloat(min(max(percent, 0), 100)) / 100)
         .stroke(theme.gold, style: StrokeStyle(lineWidth: line, lineCap: .round))
         .rotationEffect(.degrees(-90))
-      Text("\(percent)%").font(.caption.weight(.bold)).minimumScaleFactor(0.6)
+      MoneyText("\(percent)%").font(.caption.weight(.bold)).minimumScaleFactor(0.6)
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel("Setup progress")
@@ -124,7 +124,7 @@ struct SetupPage: View {
 
   private var stepColumn: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text("Step \(setupStepIndex(step)) of 6, \(setupVisibleTitle(step, health: model.health && step == .done))")
+      MoneyText("Step \(setupStepIndex(step)) of 6, \(setupVisibleTitle(step, health: model.health && step == .done))")
         .font(.caption)
         .foregroundStyle(.secondary)
       Text(setupVisibleTitle(step, health: model.health && step == .done))
@@ -200,15 +200,21 @@ struct SetupEntry: View {
   @Binding var text: String
   var rendering: Bool
   var email = false
+  /// Privacy mode: the value stays editable but is drawn as dots, never digits.
+  var amountHidden = false
 
   var body: some View {
     if rendering {
-      Text(text.isEmpty ? prompt : text)
+      Text(text.isEmpty ? prompt : (amountHidden ? Money.mask : text))
         .foregroundStyle(text.isEmpty ? .secondary : .primary)
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .padding(.horizontal, 12)
         .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .accessibilityLabel(prompt)
+    } else if amountHidden {
+      SecureField(prompt, text: $text)
+        .textFieldStyle(ThemedFieldStyle())
+        .accessibilityValue(Money.hiddenLabel)
     } else {
       TextField(prompt, text: $text)
         .textFieldStyle(ThemedFieldStyle())
@@ -347,7 +353,7 @@ struct SetupEmailStep: View {
       }
       Text("Stored only on this device, encrypted.").font(.caption).foregroundStyle(theme.secondaryText)
       if model.rendering {
-        Text("Provider: \(setupProviders.first { $0.0 == provider }?.1 ?? "Other")")
+        MoneyText("Provider: \(setupProviders.first { $0.0 == provider }?.1 ?? "Other")")
           .frame(minHeight: 44, alignment: .leading)
       } else {
         Picker("Provider", selection: $provider) {
@@ -395,7 +401,7 @@ struct SetupEmailStep: View {
         .buttonStyle(SetupGhostStyle())
         .disabled(!isSetupEmail(extra.trimmingCharacters(in: .whitespacesAndNewlines)))
       }
-      Text("Up to \(model.emailLimit) addresses for one-tap manual searches.")
+      MoneyText("Up to \(model.emailLimit) addresses for one-tap manual searches.")
         .font(.caption).foregroundStyle(theme.secondaryText)
       Button("Skip: I don't use email for this") { actions.skipEmail() }.buttonStyle(SetupGhostStyle())
     }
@@ -485,7 +491,7 @@ struct SetupAccountsStep: View {
     return Group {
       if !names.isEmpty && !hasCAS {
         Card(title: "Consolidated statement") {
-          Text("Your \(names.joined(separator: " and ")) funds are in your CAS: add it?")
+          MoneyText("Your \(names.joined(separator: " and ")) funds are in your CAS: add it?")
           Button("Add a CAMS / KFintech CAS") { actions.toggleSource("cams-cas") }.buttonStyle(SetupGhostStyle())
         }
       }
@@ -555,7 +561,7 @@ struct SetupImportStep: View {
     }
     if let pending = model.pending {
       Card(title: "Which account is this?") {
-        Text("\(pending.file) · \(pending.adapter). Pick a source to remember it for this account.")
+        MoneyText("\(pending.file) · \(pending.adapter). Pick a source to remember it for this account.")
           .foregroundStyle(theme.secondaryText)
         if pending.candidates.isEmpty {
           Button("Pick a source first") { actions.go(.accounts) }.buttonStyle(SetupGhostStyle())
@@ -591,7 +597,7 @@ struct SetupImportStep: View {
       }
       .accessibilityLabel("\(source.name), \(setupStatusLabel(picked.status))")
       if let last = picked.lastDataDate, !last.isEmpty {
-        Text("Up to \(setupFormatDate(last)) · \(added) transactions")
+        MoneyText("Up to \(setupFormatDate(last)) · \(added) transactions")
           .font(.caption).foregroundStyle(theme.secondaryText)
       }
       if let reason = picked.skipReason, !reason.isEmpty {
@@ -710,8 +716,8 @@ struct SetupSourceGuide: View {
       }
       let hints = source.passwordHints.compactMap { SetupSources.catalog.passwordHintFormats[$0] }
       if !hints.isEmpty {
-        Text("Statements from \(source.name) are usually protected with one of:")
-        ForEach(hints, id: \.self) { hint in Text("• \(hint)") }
+        MoneyText("Statements from \(source.name) are usually protected with one of:")
+        ForEach(hints, id: \.self) { hint in MoneyText("• \(hint)") }
         Text("The email that carried the statement says which. Lakshly asks for it once, on this device, and never saves it.")
       }
       DisclosureGroup("Export guides") {
@@ -754,7 +760,7 @@ struct SetupPlanStep: View {
 
   var body: some View {
     if model.budgetCurrency != model.state.profile.currency {
-      Text("Amounts stay in INR because the imported accounts are not all in \(model.state.profile.currency). There is no currency conversion.")
+      MoneyText("Amounts stay in INR because the imported accounts are not all in \(model.state.profile.currency). There is no currency conversion.")
         .foregroundStyle(theme.secondaryText)
     }
     Card(title: "First budget") {
@@ -783,11 +789,11 @@ struct SetupPlanStep: View {
       HStack {
         Text("Total").font(.headline)
         Spacer()
-        Text(setupMask(Money.format(lines.reduce(Int64(0)) { $0 + $1.limit }), hidden: model.hideAmounts))
+        MoneyText(setupMask(Money.format(lines.reduce(Int64(0)) { $0 + $1.limit }), hidden: model.hideAmounts))
           .font(.headline)
       }
       if budgetSaved {
-        Text("✓ Budget saved for \(setupFormatMonth(month))").foregroundStyle(theme.income)
+        MoneyText("✓ Budget saved for \(setupFormatMonth(month))").foregroundStyle(theme.income)
       }
       HStack(spacing: 8) {
         Button(budgetSaved ? "Update budget" : "Save budget") { actions.saveBudget(lines, factor) }
@@ -803,8 +809,8 @@ struct SetupPlanStep: View {
     }
     Card(title: "One Laksh goal") {
       if let existing = model.goals.first {
-        Text("✓ \(existing.name)").foregroundStyle(theme.income)
-        Text("\(shown(existing.saved)) saved towards \(shown(existing.target)). Your first goal is already set.")
+        MoneyText("✓ \(existing.name)").foregroundStyle(theme.income)
+        MoneyText("\(shown(existing.saved)) saved towards \(shown(existing.target)). Your first goal is already set.")
           .foregroundStyle(theme.secondaryText)
       } else {
         goalCard
@@ -853,15 +859,15 @@ struct SetupPlanStep: View {
     return VStack(alignment: .leading, spacing: 6) {
       Text(setupTitleCase(line.category)).font(.headline)
       if let median, !starterMode {
-        Text("You usually spend \(shown(median))").font(.caption).foregroundStyle(theme.secondaryText)
+        MoneyText("You usually spend \(shown(median))").font(.caption).foregroundStyle(theme.secondaryText)
       }
       HStack(spacing: 6) {
         stepper("−100", delta: -stepSmall, line: line, words: "Reduce \(line.category) by ₹100")
         stepper("−500", delta: -stepLarge, line: line, words: "Reduce \(line.category) by ₹500")
-        Text(model.hideAmounts ? "••••" : "₹" + rupeeField(line.limit))
+        MoneyText(model.hideAmounts ? Money.mask : "₹" + rupeeField(line.limit))
           .lineLimit(1).minimumScaleFactor(0.8)
           .frame(minWidth: 64, minHeight: 44)
-          .accessibilityLabel("\(setupTitleCase(line.category)) budget limit")
+          .accessibilityLabel(model.hideAmounts ? Money.hiddenLabel : "\(setupTitleCase(line.category)) budget limit")
         stepper("+100", delta: stepSmall, line: line, words: "Increase \(line.category) by ₹100")
         stepper("+500", delta: stepLarge, line: line, words: "Increase \(line.category) by ₹500")
       }
@@ -872,11 +878,11 @@ struct SetupPlanStep: View {
     Button { edits[line.category] = max(0, line.limit + delta) } label: {
       // One line that shrinks to fit narrow iPhones rather than wrapping mid-number.
       // The rupee sign lives on the limit; VoiceOver still hears "by ₹100".
-      Text(title).lineLimit(1).minimumScaleFactor(0.8).monospacedDigit()
+      Text(model.hideAmounts ? "•••" : title).lineLimit(1).minimumScaleFactor(0.8).monospacedDigit()
         .padding(.horizontal, -4)
     }
       .buttonStyle(SetupGhostStyle())
-      .accessibilityLabel(words)
+      .accessibilityLabel(Money.redact(words, masked: model.hideAmounts))
   }
 
   /// ± step sizes from the currency table (INR until the profile currency lands with WP3). Labels stay rupee text for now.
@@ -893,25 +899,22 @@ struct SetupPlanStep: View {
     VStack(alignment: .leading, spacing: 8) {
       Text(goalName.isEmpty ? goalSuggestion.name : goalName).font(.headline)
       if let covered = goalSuggestion.monthsCovered {
-        Text("You have about \(covered) months of spending in cash.").foregroundStyle(theme.secondaryText)
+        MoneyText("You have about \(covered) months of spending in cash.").foregroundStyle(theme.secondaryText)
       }
       if goalSuggestion.rule == "annualPayment" {
-        Text("This payment looks yearly. Put aside \(shown(goalMonthlyPaise))/month to have \(shown(goalTargetPaise)) by \(setupFormatDate(goalDue)).")
+        MoneyText("This payment looks yearly. Put aside \(shown(goalMonthlyPaise))/month to have \(shown(goalTargetPaise)) by \(setupFormatDate(goalDue)).")
           .foregroundStyle(theme.secondaryText)
       } else if goalSuggestion.kind == .emergency {
-        Text("A little breathing room: \(shown(goalSavedPaise)) already saved towards \(shown(goalTargetPaise)), with \(shown(goalMonthlyPaise))/month until \(setupFormatDate(goalDue)).")
+        MoneyText("A little breathing room: \(shown(goalSavedPaise)) already saved towards \(shown(goalTargetPaise)), with \(shown(goalMonthlyPaise))/month until \(setupFormatDate(goalDue)).")
           .foregroundStyle(theme.secondaryText)
       } else if goalSuggestion.kind == .custom {
         Text("Choose something that matters to you, and give it a target.").foregroundStyle(theme.secondaryText)
       }
       if editGoal || goalSuggestion.kind == .custom {
         SetupEntry(prompt: "Goal name", text: $goalName, rendering: model.rendering)
-        SetupEntry(prompt: "Target (\(model.budgetCurrency))", text: $goalTarget, rendering: model.rendering)
-          .disabled(model.hideAmounts)
-        SetupEntry(prompt: "Saved (\(model.budgetCurrency))", text: $goalSaved, rendering: model.rendering)
-          .disabled(model.hideAmounts)
-        SetupEntry(prompt: "Monthly (\(model.budgetCurrency))", text: $goalMonthly, rendering: model.rendering)
-          .disabled(model.hideAmounts)
+        SetupEntry(prompt: "Target (\(model.budgetCurrency))", text: $goalTarget, rendering: model.rendering, amountHidden: model.hideAmounts)
+        SetupEntry(prompt: "Saved (\(model.budgetCurrency))", text: $goalSaved, rendering: model.rendering, amountHidden: model.hideAmounts)
+        SetupEntry(prompt: "Monthly (\(model.budgetCurrency))", text: $goalMonthly, rendering: model.rendering, amountHidden: model.hideAmounts)
         SetupEntry(prompt: "Due date", text: $goalDue, rendering: model.rendering)
       }
       HStack(spacing: 8) {
@@ -980,7 +983,7 @@ struct SetupDoneStep: View {
       ? "Lakshly is up and running, \(greeting) 🪷"
       : "A little more, at your pace") {
       SetupRing(percent: model.checklist.percent).frame(width: 88, height: 88)
-      Text("\(model.checklist.done) of \(model.checklist.applicable) complete. Every step is yours to skip or come back to.")
+      MoneyText("\(model.checklist.done) of \(model.checklist.applicable) complete. Every step is yours to skip or come back to.")
         .foregroundStyle(theme.secondaryText)
       ForEach(model.checklist.items, id: \.id) { item in
         Button {
@@ -1019,7 +1022,7 @@ struct SetupDoneStep: View {
         Text(setupFreshLabel(status)).font(.caption.weight(.semibold))
           .accessibilityLabel("\(source.name), \(setupFreshLabel(status))")
         if let next = freshnessNextDate(picked) {
-          Text("Statement due ~\(setupFreshDate(next)) · search mail")
+          MoneyText("Statement due ~\(setupFreshDate(next)) · search mail")
             .font(.subheadline).foregroundStyle(theme.secondaryText)
         }
         DisclosureGroup("Search mail / how to get it") {

@@ -8,8 +8,16 @@ enum GlancePreferences {
   static let notchPanelKey = "glance.notchPanel"
   static let budgetAlertMonthKey = "glance.budgetAlertMonth"
 
+  static func migrateWidgetAmounts(in defaults: UserDefaults) {
+    guard defaults.object(forKey: "privacy.widgetAmounts") == nil else { return }
+    let shown = defaults.object(forKey: showAmountsKey) != nil && defaults.bool(forKey: showAmountsKey)
+    defaults.set(shown ? "shown" : "hidden", forKey: "privacy.widgetAmounts")
+  }
+
   static func showAmounts(in defaults: UserDefaults) -> Bool {
-    bool(showAmountsKey, default: true, in: defaults)
+    migrateWidgetAmounts(in: defaults)
+    return defaults.string(forKey: "privacy.widgetAmounts") == "shown"
+      && !defaults.bool(forKey: "privacy.on") && !defaults.bool(forKey: "privacy.effective")
   }
 
   static func lockScreenAmounts(in defaults: UserDefaults) -> Bool {

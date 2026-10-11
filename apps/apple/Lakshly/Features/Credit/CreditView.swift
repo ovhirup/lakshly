@@ -12,7 +12,7 @@ struct CreditView: View {
           Gauge(value: min(utilisation, 1)) {
             Text("Utilisation")
           } currentValueLabel: {
-            Text("\(Int(utilisation * 100))%")
+            MoneyText("\(Int(utilisation * 100))%")
           }.gaugeStyle(.accessoryCircular).tint(utilisation > 0.3 ? theme.danger : theme.invest).scaleEffect(
             1.3
           ).padding(12)
@@ -26,7 +26,7 @@ struct CreditView: View {
         ) {
           MetricRow(title: "Statement day", value: "\(account.statementDay ?? 1) of each month")
           MetricRow(title: "Next due", value: nextMonthlyDate(day: account.dueDay ?? 1))
-          Text(
+          MoneyText(
             "Aim to keep utilisation below 30% and pay the statement balance in full. This demo is a snapshot, not a credit score."
           ).font(.subheadline).foregroundStyle(theme.secondaryText)
         }

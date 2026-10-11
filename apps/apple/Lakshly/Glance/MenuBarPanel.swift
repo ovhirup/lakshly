@@ -20,21 +20,25 @@ struct MenuBarPanel: View {
   @Environment(EntitlementStore.self) private var entitlements
   @Environment(\.openWindow) private var openWindow
   @Environment(\.theme) private var theme
+  @Environment(\.privacy) private var privacy
   @AppStorage("settings.appearance") private var appearance = "system"
   @State private var session = GlanceRevealSession(authenticator: DeviceOwnerAuthenticator())
 
   var body: some View {
     MenuBarGlanceBody(
       snapshot: session.snapshot ?? storedGlance(),
-      revealed: session.isRevealed,
+      revealed: session.isRevealed && !privacy.masked,
       premium: entitlements.can(.extraWidgets),
-      message: session.message,
+      message: privacy.masked ? "Privacy mode is on. Amounts stay hidden." : session.message,
       onReveal: toggleReveal,
       onOpen: openLakshly,
       onQuit: { NSApplication.shared.terminate(nil) },
       setupLine: setupLine,
-      onSetup: openSetup)
+      onSetup: openSetup,
+      privacyHidden: privacy.masked,
+      onPrivacy: { privacy.setPrivacy(!privacy.masked, source: "menuBar") })
       .onDisappear { session.noteClosed() }
+      .onChange(of: privacy.masked) { _, masked in if masked { session.hide() } }
       .background(MenuBarLockMonitor { session.noteLocked() })
       .task(id: session.isRevealed) {
         while session.isRevealed {
@@ -62,6 +66,7 @@ struct MenuBarPanel: View {
       session.hide()
       return
     }
+    guard !privacy.masked else { return }
     let tier = entitlements.tier
     let themeID = theme.id.rawValue
     let appearance = LaunchOptions.current.appearance ?? appearance

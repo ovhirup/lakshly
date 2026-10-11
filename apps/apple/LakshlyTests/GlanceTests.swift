@@ -141,14 +141,14 @@ final class GlanceTests: XCTestCase {
       preferences.removePersistentDomain(forName: domain)
       try? FileManager.default.removeItem(at: directory)
     }
-    XCTAssertTrue(GlancePreferences.showAmounts(in: preferences))
+    XCTAssertFalse(GlancePreferences.showAmounts(in: preferences), "Widget amounts default to hidden")
     XCTAssertFalse(GlancePreferences.lockScreenAmounts(in: preferences))
     XCTAssertTrue(GlancePreferences.liveActivities(in: preferences))
     XCTAssertTrue(GlancePreferences.menuBarExtra(in: preferences))
 
     let snapshot = GlanceBuilder.build(
       dataset: try sample(), now: date(2026, 9, 10), includeAmounts: true, tier: .premium, calendar: utc)
-    preferences.set(false, forKey: GlancePreferences.showAmountsKey)
+    preferences.set("hidden", forKey: "privacy.widgetAmounts")
     try GlanceStore.write(snapshot, directory: directory, preferences: preferences)
     let stored = try Data(contentsOf: directory.appendingPathComponent(GlanceStore.fileName))
     let json = try XCTUnwrap(try JSONSerialization.jsonObject(with: stored) as? [String: Any])
@@ -158,7 +158,7 @@ final class GlanceTests: XCTestCase {
     XCTAssertNil(readBack.netWorth)
     XCTAssertNil(readBack.budget.safeToSpendPerDay)
 
-    preferences.set(true, forKey: GlancePreferences.showAmountsKey)
+    preferences.set("shown", forKey: "privacy.widgetAmounts")
     try GlanceStore.write(snapshot, directory: directory, preferences: preferences)
     let withAmounts = try XCTUnwrap(GlanceStore.read(directory: directory, preferences: preferences))
     XCTAssertEqual(withAmounts.netWorth, snapshot.netWorth)

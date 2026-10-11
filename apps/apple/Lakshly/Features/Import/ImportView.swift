@@ -162,7 +162,7 @@ struct ImportView: View {
           .accessibilityIdentifier("import.source")
         if store.hasUserData {
           let user = store.userDataset
-          Text(
+          MoneyText(
             "\(user?.accounts.count ?? 0) accounts · \(user?.transactions.count ?? 0) transactions, encrypted on this device."
           )
           .font(.caption).foregroundStyle(theme.secondaryText)
@@ -265,7 +265,7 @@ struct ImportView: View {
       Card(title: "Summary") {
         VStack(alignment: .leading, spacing: 2) {
           Text(result.adapterLabel).font(.headline)
-          Text("\(Int(jsRound(result.confidence * 100)))% match · \(result.transactions.count) rows")
+          MoneyText("\(Int(jsRound(result.confidence * 100)))% match · \(result.transactions.count) rows")
             .font(.caption).foregroundStyle(theme.secondaryText)
         }
         ForEach(result.accounts, id: \.id) { account in
@@ -287,8 +287,8 @@ struct ImportView: View {
           ForEach(result.holdings, id: \.accountId) { holding in
             VStack(alignment: .leading, spacing: 6) {
               Text(holding.scheme).font(.headline)
-              Text("\(holding.registrar) · ••\(holding.folioMask)").font(.caption).foregroundStyle(theme.secondaryText)
-              Text("\(formatted(holding.units)) units · NAV \(formatted(holding.nav))")
+              MoneyText("\(holding.registrar) · ••\(holding.folioMask)").font(.caption).foregroundStyle(theme.secondaryText)
+              MoneyText("\(formatted(holding.units)) units · NAV \(formatted(holding.nav))")
                 .font(.caption).foregroundStyle(theme.secondaryText)
               SemanticAmount(value: Money.format(Int64(holding.marketValue)), semantic: .invest)
             }
@@ -311,7 +311,7 @@ struct ImportView: View {
           HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
               Text(row.description).font(.subheadline.weight(.semibold)).lineLimit(1).truncationMode(.middle)
-              Text("\(row.date) · \(row.category.capitalized)").font(.caption).foregroundStyle(theme.secondaryText)
+              MoneyText("\(row.date) · \(row.category.capitalized)").font(.caption).foregroundStyle(theme.secondaryText)
             }
             Spacer(minLength: 8)
             SemanticAmount(
