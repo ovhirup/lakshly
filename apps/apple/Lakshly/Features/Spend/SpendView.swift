@@ -4,6 +4,7 @@ import SwiftUI
 struct SpendView: View {
   @Environment(\.theme) private var theme
   let store: DataStore
+  var openReview: () -> Void = {}
   private var outflows: [Transaction] { store.transactions.filter { $0.amount < 0 } }
   private var merchants: [AmountGroup] {
     store.totals(outflows, by: { $0.merchant ?? $0.description })
@@ -22,7 +23,11 @@ struct SpendView: View {
   }
   var body: some View {
     Page(title: "Spend", subtitle: "Make room for what matters.") {
-      MonthPicker(store: store, identifier: "spend.month")
+      HStack {
+        MonthPicker(store: store, identifier: "spend.month")
+        Spacer(minLength: 8)
+        ReviewChip(store: store, open: openReview)
+      }
       Card(title: "Where it went") {
         SemanticAmount(value: Money.format(-outflows.reduce(0) { $0 + $1.amount }), semantic: .spend,
                        prominent: true)

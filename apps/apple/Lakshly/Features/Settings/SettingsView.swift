@@ -73,6 +73,7 @@ struct SettingsView: View {
               .accessibilityIdentifier("settings.appearance")
           }.listRowBackground(theme.surface)
           PrivacySettingsSection()
+          ReviewSettingsSection(store: store)
           glanceSection
           Section("Purchases") {
             Button("Restore Purchases") { Task { await entitlements.restore() } }

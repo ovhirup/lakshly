@@ -82,7 +82,7 @@ import AppKit
   }
 
   #if os(macOS)
-  private static func imageRender(_ view: AnyView, size: CGSize) throws -> Data {
+  static func imageRender(_ view: AnyView, size: CGSize) throws -> Data {
     let renderer = ImageRenderer(content: view)
     renderer.scale = 2; renderer.isOpaque = true
     renderer.proposedSize = ProposedViewSize(width: size.width, height: size.height)
@@ -91,7 +91,7 @@ import AppKit
     return bytes
   }
   #endif
-  private static func snapshot(_ view: AnyView, size: CGSize, dark: Bool) throws -> Data {
+  static func snapshot(_ view: AnyView, size: CGSize, dark: Bool) throws -> Data {
     #if os(iOS)
     let host = UIHostingController(rootView: view)
     host.overrideUserInterfaceStyle = dark ? .dark : .light
