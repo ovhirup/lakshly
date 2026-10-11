@@ -156,18 +156,18 @@ struct ImportView: View {
           get: { store.source },
           set: { store.setSource($0) }
         )) {
-          Text("Demo data").tag(DataSource.demo)
-          Text("My data").tag(DataSource.mine)
+          MoneyText("Demo data").tag(DataSource.demo)
+          MoneyText("My data").tag(DataSource.mine)
         }.pickerStyle(.segmented)
           .accessibilityIdentifier("import.source")
         if store.hasUserData {
           let user = store.userDataset
-          Text(
+          MoneyText(
             "\(user?.accounts.count ?? 0) accounts · \(user?.transactions.count ?? 0) transactions, encrypted on this device."
           )
           .font(.caption).foregroundStyle(theme.secondaryText)
         } else {
-          Text("No imported data yet.").font(.caption).foregroundStyle(theme.secondaryText)
+          MoneyText("No imported data yet.").font(.caption).foregroundStyle(theme.secondaryText)
         }
       }
       }
@@ -230,7 +230,7 @@ struct ImportView: View {
     Card(title: "Statement") {
       Button("Choose PDF or CSV statements") { picking = true }.buttonStyle(ThemedSubmitStyle())
         .accessibilityIdentifier("import.choose")
-      Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
+      MoneyText("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
       if let error = model.error { Text(error).foregroundStyle(theme.danger) }
     }.setupFileDrop(enabled: true) { files in
       if files.count == 1, let file = files.first {
@@ -241,10 +241,10 @@ struct ImportView: View {
 
   private var passwordPrompt: some View {
     Card(title: "Password") {
-      Text("This statement is locked.").foregroundStyle(theme.secondaryText)
+      MoneyText("This statement is locked.").foregroundStyle(theme.secondaryText)
       SecureField("Password", text: $password).textFieldStyle(ThemedFieldStyle())
         .accessibilityIdentifier("import.password")
-      if model.incorrect { Text("Incorrect password").foregroundStyle(theme.danger) }
+      if model.incorrect { MoneyText("Incorrect password").foregroundStyle(theme.danger) }
       Button("Unlock") {
         let attempt = password
         password = ""
@@ -256,7 +256,7 @@ struct ImportView: View {
         model.cancelPassword()
       }
       .accessibilityIdentifier("import.cancel")
-      Text("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
+      MoneyText("Parsed on this device. Nothing is uploaded.").font(.subheadline).foregroundStyle(theme.secondaryText)
     }
   }
 
@@ -265,7 +265,7 @@ struct ImportView: View {
       Card(title: "Summary") {
         VStack(alignment: .leading, spacing: 2) {
           Text(result.adapterLabel).font(.headline)
-          Text("\(Int(jsRound(result.confidence * 100)))% match · \(result.transactions.count) rows")
+          MoneyText("\(Int(jsRound(result.confidence * 100)))% match · \(result.transactions.count) rows")
             .font(.caption).foregroundStyle(theme.secondaryText)
         }
         ForEach(result.accounts, id: \.id) { account in
@@ -287,8 +287,8 @@ struct ImportView: View {
           ForEach(result.holdings, id: \.accountId) { holding in
             VStack(alignment: .leading, spacing: 6) {
               Text(holding.scheme).font(.headline)
-              Text("\(holding.registrar) · ••\(holding.folioMask)").font(.caption).foregroundStyle(theme.secondaryText)
-              Text("\(formatted(holding.units)) units · NAV \(formatted(holding.nav))")
+              MoneyText("\(holding.registrar) · ••\(holding.folioMask)").font(.caption).foregroundStyle(theme.secondaryText)
+              MoneyText("\(formatted(holding.units)) units · NAV \(formatted(holding.nav))")
                 .font(.caption).foregroundStyle(theme.secondaryText)
               SemanticAmount(value: Money.format(Int64(holding.marketValue)), semantic: .invest)
             }
@@ -305,13 +305,13 @@ struct ImportView: View {
       }
       Card(title: "Transactions") {
         if result.transactions.isEmpty {
-          Text("No transactions in this file.").foregroundStyle(theme.secondaryText)
+          MoneyText("No transactions in this file.").foregroundStyle(theme.secondaryText)
         }
         ForEach(result.transactions, id: \.id) { row in
           HStack(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 2) {
               Text(row.description).font(.subheadline.weight(.semibold)).lineLimit(1).truncationMode(.middle)
-              Text("\(row.date) · \(row.category.capitalized)").font(.caption).foregroundStyle(theme.secondaryText)
+              MoneyText("\(row.date) · \(row.category.capitalized)").font(.caption).foregroundStyle(theme.secondaryText)
             }
             Spacer(minLength: 8)
             SemanticAmount(

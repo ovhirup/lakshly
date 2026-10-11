@@ -187,7 +187,7 @@ func setupFreshDate(_ day: String) -> String {
 }
 
 func setupMask(_ text: String, hidden: Bool) -> String {
-  hidden ? "••••" : text
+  Money.redact(text, masked: hidden)
 }
 
 let setupProviders: [(MailProvider, String)] = [

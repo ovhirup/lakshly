@@ -16,13 +16,13 @@ struct BudgetView: View {
           ProgressView(value: min(Double(actual) / Double(max(1, budget.limit)), 1)).tint(
             actual > budget.limit ? theme.danger : theme.success)
           if actual > budget.limit {
-            Text("\(Money.format(actual - budget.limit)) over budget").foregroundStyle(theme.danger).font(
+            MoneyText("\(Money.format(actual - budget.limit)) over budget").foregroundStyle(theme.danger).font(
               .subheadline.bold())
           } else {
-            Text("\(Money.format(budget.limit - actual)) remaining").foregroundStyle(theme.success)
+            MoneyText("\(Money.format(budget.limit - actual)) remaining").foregroundStyle(theme.success)
           }
           if budget.rollover == true {
-            Text(
+            MoneyText(
               "Rollover enabled. Unused amounts may carry forward; this view shows the base monthly limit."
             ).font(.caption).foregroundStyle(theme.secondaryText)
           }

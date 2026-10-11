@@ -78,7 +78,7 @@ struct BulkResultsCard: View {
         Toggle("Select all", isOn: Binding(get: { allSelected }, set: { runner.selectAll($0) }))
           .disabled(isRunning).frame(minHeight: 44).accessibilityIdentifier("bulk.selectAll")
       }
-      Text("\(runner.selectedCount) selected").font(.subheadline).accessibilityIdentifier("bulk.selectedCount")
+      MoneyText("\(runner.selectedCount) selected").font(.subheadline).accessibilityIdentifier("bulk.selectedCount")
       ForEach(runner.rows.indices, id: \.self) { i in
         VStack(alignment: .leading, spacing: 4) {
           HStack {
@@ -90,7 +90,7 @@ struct BulkResultsCard: View {
                 .disabled(isRunning || !runner.rows[i].selectable || runner.rows[i].status == .imported)
                 .frame(minHeight: 44).accessibilityLabel("Select \(runner.rows[i].file.name)")
             }
-            if runner.rows[i].copies > 1 { Text("\(runner.rows[i].copies) copies").font(.caption) }
+            if runner.rows[i].copies > 1 { MoneyText("\(runner.rows[i].copies) copies").font(.caption) }
           }
           HStack {
             Text(runner.rows[i].status.rawValue).font(.caption.weight(.semibold))
@@ -129,15 +129,15 @@ struct BulkPasswordCard: View {
   @State private var reuse = false
   var body: some View {
     Card(title: "Password") {
-      Text("\(file) is locked.")
+      MoneyText("\(file) is locked.")
       if rendering {
-        Text("Password").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        MoneyText("Password").frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
           .padding(.horizontal, 12).background(.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
       } else {
         SecureField("Password", text: $password).textFieldStyle(ThemedFieldStyle())
           .accessibilityIdentifier("bulk.password")
       }
-      if incorrect { Text("Incorrect password. Try again.") }
+      if incorrect { MoneyText("Incorrect password. Try again.") }
       if rendering {
         Label("Use the same password for the rest of this batch", systemImage: "square").frame(minHeight: 44)
       } else {
@@ -149,7 +149,7 @@ struct BulkPasswordCard: View {
         password = ""; submit(answer)
       }.buttonStyle(ThemedSubmitStyle()).disabled(password.isEmpty)
       Button("Skip this file") { password = ""; submit(nil) }.frame(minHeight: 44)
-      Text("Passwords stay in memory for this run and are never saved.").font(.caption).foregroundStyle(.secondary)
+      MoneyText("Passwords stay in memory for this run and are never saved.").font(.caption).foregroundStyle(.secondary)
     }.onDisappear { password = ""; reuse = false }
   }
 }

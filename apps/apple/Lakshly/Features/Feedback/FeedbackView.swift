@@ -56,8 +56,8 @@ struct FeedbackCanvas: View {
     Group {
       #if FEEDBACK_SHOTS
       VStack(alignment: .leading, spacing: 24) {
-        Text("Feedback & Requests").font(.largeTitle.bold())
-        Text("Built with you").foregroundStyle(theme.secondaryText)
+        MoneyText("Feedback & Requests").font(.largeTitle.bold())
+        MoneyText("Built with you").foregroundStyle(theme.secondaryText)
         screenContent
       }.padding(24).frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background { ThemeBackground() }
@@ -70,7 +70,7 @@ struct FeedbackCanvas: View {
     .alert("Check for sensitive information", isPresented: $confirmSensitive) {
       Button("Review message", role: .cancel) {}
       Button("Send anyway") { Task { await send() } }
-    } message: { Text("Your message looks like it contains an account, card, phone number, PAN or IFSC. Remove personal information before sending.") }
+    } message: { MoneyText("Your message looks like it contains an account, card, phone number, PAN or IFSC. Remove personal information before sending.") }
   }
   @ViewBuilder private var screenContent: some View {
     if screen != .hub { Button("Back to feedback") { screen = .hub; message = nil } }
@@ -85,10 +85,10 @@ struct FeedbackCanvas: View {
   private var hub: some View {
     Group {
       Card(title: "Thank you for helping shape Lakshly 💛") {
-        Text("Every idea, bug and kind word is read by a human. Thank you.")
-        if premium { Text("⭐ Priority queue · human reply within 1 business day (Mon–Fri, IST)") }
+        MoneyText("Every idea, bug and kind word is read by a human. Thank you.")
+        if premium { MoneyText("⭐ Priority queue · human reply within 1 business day (Mon–Fri, IST)") }
         else {
-          Text("Every message is read by a human. We aim to reply within 5 business days.")
+          MoneyText("Every message is read by a human. We aim to reply within 5 business days.")
           Button(action: showPremium) { Pill(text: "✦ Premium", color: theme.gold) }
             .buttonStyle(.plain).accessibilityHint("Opens Lakshly Premium")
         }
@@ -99,22 +99,22 @@ struct FeedbackCanvas: View {
         action("Send praise", .praise)
       }
       Card(title: "My requests") {
-        Text("\(requests.requests.count) requests on this device")
+        MoneyText("\(requests.requests.count) requests on this device")
         Button("View my requests") { screen = .mine }
       }
       Card(title: "Public roadmap") {
-        Text("Updated \(roadmap.updated)").font(.caption).foregroundStyle(theme.secondaryText)
+        MoneyText("Updated \(roadmap.updated)").font(.caption).foregroundStyle(theme.secondaryText)
         ForEach(roadmap.items) { item in
           VStack(alignment: .leading, spacing: 6) {
             Text(item.title).font(.headline).fixedSize(horizontal: false, vertical: true)
-            Text("\(item.status.label) · \(item.area) · \(item.votes) votes").font(.caption)
+            MoneyText("\(item.status.label) · \(item.area) · \(item.votes) votes").font(.caption)
             if let reason = item.reason { Text(reason).foregroundStyle(theme.secondaryText) }
           }.padding(.vertical, 6)
         }
       }
       Card(title: "Built with you") {
         ForEach(roadmap.items.filter { !($0.credits ?? []).isEmpty }) { item in
-          Text("\((item.credits ?? []).joined(separator: ", ")) · \(item.title)\(item.shippedIn.map { " · " + $0 } ?? "")")
+          MoneyText("\((item.credits ?? []).joined(separator: ", ")) · \(item.title)\(item.shippedIn.map { " · " + $0 } ?? "")")
             .fixedSize(horizontal: false, vertical: true)
         }
       }
@@ -138,17 +138,17 @@ struct FeedbackCanvas: View {
         formField("Reply email (optional)", text: $draft.replyEmail)
         Toggle("Include app version and platform diagnostics", isOn: $draft.includeDiagnostics)
         if sensitive {
-          Text("⚠️ This looks like sensitive information. Remove account, card, phone numbers, PAN or IFSC. Sending requires confirmation.")
+          MoneyText("⚠️ This looks like sensitive information. Remove account, card, phone numbers, PAN or IFSC. Sending requires confirmation.")
             .foregroundStyle(theme.danger).fixedSize(horizontal: false, vertical: true)
         }
       }
       Card(title: "Exactly what will be sent") {
-        Text("X-Lakshly-Client: \(header)").font(.system(.caption, design: .monospaced))
+        MoneyText("X-Lakshly-Client: \(header)").font(.system(.caption, design: .monospaced))
           .fixedSize(horizontal: false, vertical: true)
         Text((try? String(decoding: payload.encoded(), as: UTF8.self)) ?? "Unable to encode preview")
           .font(.system(.caption, design: .monospaced)).textSelection(.enabled)
           .fixedSize(horizontal: false, vertical: true)
-        Text("Only this message goes to the Lakshly feedback relay when you tap Send.").font(.caption)
+        MoneyText("Only this message goes to the Lakshly feedback relay when you tap Send.").font(.caption)
         Button(busy ? "Sending…" : "Send") {
           if sensitive { confirmSensitive = true } else { Task { await send() } }
         }.buttonStyle(ThemedSubmitStyle()).disabled(busy || payload.title.utf16.count < 3)
@@ -177,11 +177,11 @@ struct FeedbackCanvas: View {
           if !reduceMotion { withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) { heartbeat = true } }
         }
       if let sent {
-        Text("Reference: \(sent.id)").textSelection(.enabled)
-        Text("Reply by \(FeedbackHelpers.dateLabel(FeedbackHelpers.replyBy(from: sent.createdAt, businessDays: sent.premium ? 1 : 5))) · Mon–Fri, IST")
-        Text("What happens next").font(.headline)
-        Text("1. Received — your message is in the queue.\n2. A human reads it and replies.\n3. Track planned work, progress and shipped updates in My requests.")
-        if sent.kind == .idea { Text("If we build your idea, we'll credit you in Built with you when you opt in to a credit name.") }
+        MoneyText("Reference: \(sent.id)").textSelection(.enabled)
+        MoneyText("Reply by \(FeedbackHelpers.dateLabel(FeedbackHelpers.replyBy(from: sent.createdAt, businessDays: sent.premium ? 1 : 5))) · Mon–Fri, IST")
+        MoneyText("What happens next").font(.headline)
+        MoneyText("1. Received — your message is in the queue.\n2. A human reads it and replies.\n3. Track planned work, progress and shipped updates in My requests.")
+        if sent.kind == .idea { MoneyText("If we build your idea, we'll credit you in Built with you when you opt in to a credit name.") }
       }
       if let message { Text(message) }
       Button("My requests") { screen = .mine }
@@ -190,22 +190,22 @@ struct FeedbackCanvas: View {
   }
   private var mine: some View {
     Group {
-      if requests.requests.isEmpty { Card(title: "My requests") { Text("Your next idea could ship next. Send a message to start a thread.") } }
+      if requests.requests.isEmpty { Card(title: "My requests") { MoneyText("Your next idea could ship next. Send a message to start a thread.") } }
       ForEach(requests.requests) { request in
         Card(title: request.title) {
-          Text("\(request.id) · \(request.kind.label) · \(request.area)").font(.caption)
+          MoneyText("\(request.id) · \(request.kind.label) · \(request.area)").font(.caption)
           Text(request.status.label).font(.headline)
           if request.status != .notNow {
             VStack(alignment: .leading, spacing: 5) {
               ForEach([FeedbackStatus.received, .planned, .inProgress, .shipped], id: \.rawValue) { status in
-                Text("\(status == request.status ? "●" : "○") \(status.label)")
+                MoneyText("\(status == request.status ? "●" : "○") \(status.label)")
                   .foregroundStyle(status == request.status ? theme.gold : theme.secondaryText)
               }
             }
           }
           ForEach(Array(request.replies.enumerated()), id: \.offset) { _, reply in
             VStack(alignment: .leading, spacing: 4) {
-              Text("\(reply.name ?? "Lakshly") · \(reply.at)").font(.caption)
+              MoneyText("\(reply.name ?? "Lakshly") · \(reply.at)").font(.caption)
               Text(reply.text).fixedSize(horizontal: false, vertical: true)
             }
           }
@@ -218,15 +218,15 @@ struct FeedbackCanvas: View {
   private var failure: some View {
     Card(title: "Your message couldn't be sent yet") {
       Text(message ?? "The feedback service may not be ready, or you're offline. Please try again later.")
-      if let retryAt { Text("Try again after \(retryAt.formatted(date: .omitted, time: .standard)).") }
+      if let retryAt { MoneyText("Try again after \(retryAt.formatted(date: .omitted, time: .standard)).") }
       Button("Try again") { if sensitive { confirmSensitive = true } else { Task { await send() } } }.disabled(busy || (retryAt.map { $0 > Date() } ?? false))
       Button("Open as GitHub issue instead") {
         openURL(fallbackURL)
       }.accessibilityIdentifier("feedback.openGitHub")
-      Text("GitHub opens a public draft with only the fields in your preview. Review it before submitting.")
+      MoneyText("GitHub opens a public draft with only the fields in your preview. Review it before submitting.")
         .font(.caption).fixedSize(horizontal: false, vertical: true)
       #if FEEDBACK_SHOTS
-      Text("Prefer email? hello@lakshly.com").foregroundStyle(theme.gold).underline()
+      MoneyText("Prefer email? hello@lakshly.com").foregroundStyle(theme.gold).underline()
       #else
       Link("Prefer email? hello@lakshly.com", destination: URL(string: "mailto:hello@lakshly.com")!)
       #endif

@@ -35,7 +35,7 @@ struct HistoryView: View {
       if filtered.isEmpty {
         ContentUnavailableView(
           "No transactions", systemImage: "magnifyingglass",
-          description: Text("Try another search or filter."))
+          description: MoneyText("Try another search or filter."))
       }
       ForEach(months, id: \.self) { month in
         Card(title: month) {

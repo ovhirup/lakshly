@@ -2,6 +2,7 @@ import Charts
 import SwiftUI
 
 struct OverviewView: View {
+  @Environment(\.privacy) private var privacy
   @Environment(\.theme) private var theme
   @Environment(SetupSession.self) private var session
   let store: DataStore
@@ -16,17 +17,18 @@ struct OverviewView: View {
       setupCard
       Button(action: showFeedback) {
         HStack {
-          Text("Have an idea? Tell us →").font(.subheadline.weight(.semibold))
+          MoneyText("Have an idea? Tell us →").font(.subheadline.weight(.semibold))
           Spacer()
         }.frame(maxWidth: .infinity).modifier(GlassCard())
       }.buttonStyle(.plain)
         .accessibilityIdentifier("overview.feedback")
       Card(title: "Net worth") {
-        Text(Money.format(assets - liabilities)).font(
+        MoneyText(Money.format(assets - liabilities)).font(
           .system(size: 38, weight: .bold, design: .rounded)
         ).foregroundStyle(theme.gold).minimumScaleFactor(0.5)
           .accessibilityIdentifier("overview.netWorth")
-          .accessibilityLabel("Net worth")
+          .accessibilityLabel(privacy.masked ? "Amount hidden" : "Net worth")
+          .onTapGesture(count: 2) { privacy.setPrivacy(!privacy.masked, source: "hero") }
         DataPill(source: store.source)
         MetricRow(title: "Assets", value: Money.format(assets))
         MetricRow(title: "Liabilities", value: Money.format(liabilities))
@@ -49,7 +51,7 @@ struct OverviewView: View {
         }.chartForegroundStyleScale(["Income": theme.income, "Spend": theme.spend]).modifier(
           MoneyChartAxis()
         ).frame(height: 220)
-        Text("All inflows and outflows, including investments and EMI.").font(.caption)
+        MoneyText("All inflows and outflows, including investments and EMI.").font(.caption)
           .foregroundStyle(theme.secondaryText)
       }
       Card(title: "Top categories · \(store.selectedMonth)") {
@@ -87,7 +89,7 @@ struct OverviewView: View {
       Card(title: store.setup?.mode == .demo ? "Use your own data · continue setup" : "Finish setting up · \(score.done) of \(score.applicable)") {
         HStack(alignment: .center, spacing: 12) {
           SetupRing(percent: score.percent).frame(width: 44, height: 44)
-          Text("Your data stays on this device. Continue at your pace.")
+          MoneyText("Your data stays on this device. Continue at your pace.")
             .font(.subheadline).foregroundStyle(theme.secondaryText)
         }
         HStack(spacing: 8) {

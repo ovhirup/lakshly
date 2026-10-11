@@ -93,11 +93,11 @@ struct PaywallView: View {
           .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
       }
-      Text("Every rupee on target, in more depth.")
+      MoneyText("Every rupee on target, in more depth.")
         .foregroundStyle(theme.secondaryText)
         .fixedSize(horizontal: false, vertical: true)
       VStack(alignment: .leading, spacing: 8) {
-        Text("What you get")
+        MoneyText("What you get")
           .font(.headline)
           .accessibilityAddTraits(.isHeader)
         ForEach(PaywallFeature.rows) { row in
@@ -122,7 +122,7 @@ struct PaywallView: View {
       Button("Restore Purchases") { Task { await entitlements.restore() } }
         .accessibilityIdentifier("paywall.restore")
         .accessibilityHint("Checks this Apple ID for an existing Lakshly Premium subscription")
-      Text(
+      MoneyText(
         "Renews automatically until cancelled. Cancel any time in Settings › Apple ID › Subscriptions at least 24 hours before renewal. Family Sharing supported. Sandbox testing build: no real charges."
       )
       .font(.caption)
@@ -134,7 +134,7 @@ struct PaywallView: View {
       HStack(spacing: 12) {
         Link("Terms", destination: URL(string: "https://lakshly.app/terms")!)
           .accessibilityHint("Opens Terms in the browser")
-        Text("·").accessibilityHidden(true)
+        MoneyText("·").accessibilityHidden(true)
         Link("Privacy", destination: URL(string: "https://lakshly.app/privacy")!)
           .accessibilityHint("Opens Privacy in the browser")
       }
@@ -151,12 +151,12 @@ struct PaywallView: View {
         .font(.largeTitle)
         .foregroundStyle(theme.gold)
         .accessibilityHidden(true)
-      Text("You're Premium ✦ thank you")
+      MoneyText("You're Premium ✦ thank you")
         .font(.system(.largeTitle, design: .rounded, weight: .bold))
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityIdentifier("paywall.thanks")
         .accessibilityAddTraits(.isHeader)
-      Text("Every rupee on target, in more depth.")
+      MoneyText("Every rupee on target, in more depth.")
         .foregroundStyle(theme.secondaryText)
       #if os(iOS)
       Button("Manage Subscription") { manageSubscription = true }
@@ -217,7 +217,7 @@ struct PaywallView: View {
           }
           Spacer(minLength: 0)
         }
-        Text("\(product.displayPrice)/\(period)")
+        MoneyText("\(product.displayPrice)/\(period)")
           .font(.system(.title, design: .rounded, weight: .bold))
           .monospacedDigit()
           .fixedSize(horizontal: false, vertical: true)

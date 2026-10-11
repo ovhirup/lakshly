@@ -16,7 +16,7 @@ struct SettingsView: View {
   @Environment(\.openSetup) private var openSetup
   @AppStorage("settings.appearance") private var appearance = "system"
   @AppStorage("settings.appLock") private var appLock = true
-  @AppStorage(GlancePreferences.showAmountsKey, store: GlanceStore.preferences) private var showAmounts = true
+  @Environment(\.privacy) private var privacy
   @AppStorage(GlancePreferences.lockScreenAmountsKey, store: GlanceStore.preferences) private var lockScreenAmounts = false
   #if os(iOS)
   @AppStorage(GlancePreferences.liveActivitiesKey, store: GlanceStore.preferences) private var liveActivities = true
@@ -66,12 +66,13 @@ struct SettingsView: View {
             .id("appIcon")
           Section("Appearance") {
             Picker("Appearance", selection: $appearance) {
-              Text("System").tag("system")
-              Text("Light").tag("light")
-              Text("Dark").tag("dark")
+              MoneyText("System").tag("system")
+              MoneyText("Light").tag("light")
+              MoneyText("Dark").tag("dark")
             }.pickerStyle(.segmented)
               .accessibilityIdentifier("settings.appearance")
           }.listRowBackground(theme.surface)
+          PrivacySettingsSection()
           glanceSection
           Section("Purchases") {
             Button("Restore Purchases") { Task { await entitlements.restore() } }
@@ -142,7 +143,7 @@ struct SettingsView: View {
           }) { context in
             PaywallView(context: context)
           }
-          .onChange(of: showAmounts) { _, _ in publishGlance() }
+          .onChange(of: privacy.widgetAmounts) { _, _ in publishGlance() }
           .onChange(of: lockScreenAmounts) { _, _ in publishGlance() }
           #if os(iOS)
           .onChange(of: liveActivities) { _, _ in LiveActivityManager.shared.sync() }
@@ -171,11 +172,9 @@ struct SettingsView: View {
   }
   private var glanceSection: some View {
     Section {
-      Toggle("Show amounts in widgets", isOn: $showAmounts)
-        .accessibilityIdentifier("settings.showAmounts")
       Toggle("Show amounts on Lock Screen", isOn: $lockScreenAmounts)
         .accessibilityIdentifier("settings.lockScreenAmounts")
-      Text("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
+      MoneyText("Lock Screen and Live Activity amounts stay off until you turn this on. Home Screen and desktop widgets follow Show amounts in widgets.")
         .font(.caption).foregroundStyle(theme.secondaryText)
       #if os(iOS)
       Toggle("Live Activities", isOn: $liveActivities)
@@ -199,7 +198,7 @@ struct SettingsView: View {
       glanceKind("Net worth", feature: .extraWidgets)
       glanceKind("Debt", feature: .extraWidgets)
     } header: {
-      Text("Widgets & glance")
+      MoneyText("Widgets & glance")
     }
     .listRowBackground(theme.surface)
   }
@@ -212,7 +211,7 @@ struct SettingsView: View {
         Pill(text: "✦ Premium", color: theme.gold)
           .accessibilityLabel("\(title), Premium")
       } else {
-        Text("Included").font(.caption).foregroundStyle(theme.secondaryText)
+        MoneyText("Included").font(.caption).foregroundStyle(theme.secondaryText)
       }
     }
   }
@@ -239,11 +238,11 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 4) {
           Text(email)
           Text(mailboxDetail).font(.caption).foregroundStyle(theme.secondaryText)
-          Text("Automatic sync is not switched on in this build. This address is used for one-tap searches.")
+          MoneyText("Automatic sync is not switched on in this build. This address is used for one-tap searches.")
             .font(.caption).foregroundStyle(theme.secondaryText)
         }
       } else if session.state.email.skipped {
-        Text("Email step skipped. You can add an address from setup.")
+        MoneyText("Email step skipped. You can add an address from setup.")
           .font(.caption).foregroundStyle(theme.secondaryText)
       }
     }
@@ -325,12 +324,12 @@ struct SettingsView: View {
         Text(error).font(.caption).foregroundStyle(theme.danger)
       }
     } header: {
-      Text("App icon")
+      MoneyText("App icon")
     } footer: {
       #if os(iOS)
-      Text("Your Home Screen icon. iOS confirms the change.")
+      MoneyText("Your Home Screen icon. iOS confirms the change.")
       #else
-      Text("Changes the Dock icon while Lakshly runs. The Finder icon stays the default.")
+      MoneyText("Changes the Dock icon while Lakshly runs. The Finder icon stays the default.")
       #endif
     }.listRowBackground(theme.surface)
   }
@@ -363,7 +362,7 @@ struct ThemeCard: View {
     VStack(alignment: .leading, spacing: 8) {
       VStack(alignment: .leading, spacing: 8) {
         HStack {
-          Text("₹24,800").font(.headline).foregroundStyle(Color(hex: mode.tokens["gold"]!))
+          MoneyText("₹24,800").font(.headline).foregroundStyle(Color(hex: mode.tokens["gold"]!))
           Spacer(minLength: 2)
           Image(systemName: "sparkle").foregroundStyle(Color(hex: mode.tokens["lotus"]!))
         }

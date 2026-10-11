@@ -129,7 +129,7 @@ struct SemanticAmount: View {
           .font(prominent ? .system(size: prominentIconSize, weight: .semibold) : .caption)
           .accessibilityHidden(true)
       }
-      Text(value)
+      MoneyText(value)
     }.foregroundStyle(semantic?.color(in: theme) ?? theme.text)
   }
 }
