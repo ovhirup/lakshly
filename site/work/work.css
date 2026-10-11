@@ -50,8 +50,8 @@ a:hover { color: var(--beta); }
 .skip:focus { top: 0.8rem; }
 
 .top, main, footer {
-  width: min(40rem, calc(100% - 3.5rem));
-  margin-left: max(2.5rem, calc(50% - 20rem));
+  width: min(40rem, calc(100% - 4.5rem));
+  margin-inline: auto;
 }
 
 .top {
@@ -68,10 +68,12 @@ a:hover { color: var(--beta); }
 
 h1 {
   margin: 2.2rem 0 0.6rem;
-  font-size: clamp(3.2rem, 8vw, 5.4rem);
+  max-width: 100%;
+  font-size: clamp(2.6rem, 11vw, 5.4rem);
   font-weight: 600;
   letter-spacing: -0.035em;
-  line-height: 0.92;
+  line-height: 0.95;
+  overflow-wrap: break-word;
 }
 
 .lead {
@@ -124,8 +126,11 @@ footer {
 
 @media (max-width: 640px) {
   body::before { width: 5px; }
-  .top, main, footer { width: min(40rem, calc(100% - 2.2rem)); margin-left: 1.3rem; }
-  h1 { font-size: 3rem; }
+  .top, main, footer {
+    width: min(40rem, calc(100% - 2.4rem));
+    margin-inline: auto;
+  }
+  h1 { font-size: 2.7rem; }
   footer { flex-direction: column; }
 }
 
