@@ -267,6 +267,7 @@ targets:
       - path: Lakshly/Components/Currencies.gen.swift
       - path: Lakshly/Models/Profile.swift
       - path: Lakshly/Models/Dataset.swift
+      - path: Lakshly/Models/Review.swift
       - path: Lakshly/Setup/SetupState.swift
       - path: Lakshly/Setup/SetupLinks.swift
       - path: Lakshly/Setup/SourcesCatalog.swift
