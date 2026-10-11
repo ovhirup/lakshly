@@ -33,6 +33,11 @@ jobs:
           if grep -RInE '(src|href)="(https?:)?//' site --include='*.html' | grep -vE 'href="https://github.com/'; then
             echo "Third-party resource found in site/"; exit 1
           fi
+      - name: Check site has no inline styles (CSP is style-src 'self')
+        run: |
+          if grep -RIn 'style=' site --include='*.html' --include='*.js'; then
+            echo "Inline style found in site/: use a CSS class instead"; exit 1
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

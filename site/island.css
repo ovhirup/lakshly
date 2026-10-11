@@ -88,6 +88,14 @@
 .site-island.motion-bloom[data-phase="settle"] .lotus { opacity: 0; transition: opacity .35s ease; }
 .lotus-petal { fill: var(--island-petal); transform-box: fill-box; transform-origin: 50% 100%; opacity: 0; }
 .lotus-petal.deep { fill: var(--island-petal-deep); }
+/* Per-petal stagger index (was an inline style, which the CSP blocks). */
+.lotus-petal.petal-0 { --i: 0; }
+.lotus-petal.petal-1 { --i: 1; }
+.lotus-petal.petal-2 { --i: 2; }
+.lotus-petal.petal-3 { --i: 3; }
+.lotus-petal.petal-4 { --i: 4; }
+.lotus-petal.petal-5 { --i: 5; }
+.lotus-petal.petal-6 { --i: 6; }
 .lotus-core { fill: var(--island-core); opacity: 0; }
 .site-island.motion-bloom .lotus-petal { animation: island-petal var(--bloom-petal) cubic-bezier(.16,.84,.32,1) forwards; animation-delay: calc(var(--bloom-delay) + (var(--i) * 55ms)); }
 .site-island.motion-bloom .lotus-core { animation: island-core .45s ease calc(var(--bloom-delay) + 380ms) forwards; }

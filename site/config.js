@@ -20,8 +20,9 @@
 // and sent only with the sign-up; nothing is stored in the browser. Set to {} to turn attribution off.
 window.LAKSHLY_CONFIG = Object.freeze({
   // Buttondown (newsletter "lakshly"), double opt-in. Docs: https://docs.buttondown.com/building-your-subscriber-base
-  // embed-subscribe must be a native HTML form POST (never fetch), so we use "form" mode; it opens
-  // Buttondown's confirmation page in a new tab. Origin is allowed in index.html CSP form-action.
+  // embed-subscribe must be a native HTML form POST (never fetch), so we use "form" mode; main.js posts it
+  // into a named tab and only shows success after Buttondown's redirect back to ?waitlist=subscribed
+  // (see site/README.md). Origin is allowed in index.html CSP form-action.
   // Sent: email + embed=1, plus any utm_* tags present in the page URL. Buttondown stores utm_source,
   // utm_medium and utm_campaign as built-in subscriber fields (Subscribers > columns / subscriber page),
   // which works on the free plan. It has no built-in utm_content field, so that goes as subscriber

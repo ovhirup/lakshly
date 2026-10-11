@@ -1,4 +1,5 @@
-/* Landing-page island storyboard. No network. No rupee amounts. */
+/* Landing-page island storyboard. No network. No rupee amounts.
+   No inline styles: the page CSP is style-src 'self', so per-petal timing comes from .petal-N classes in island.css. */
 (function () {
   "use strict";
   var root = document.querySelector("[data-island]");
@@ -17,7 +18,7 @@
   var TURNS = [-78, 78, -50, 50, -24, 24, 0];
   var LOTUS = '<svg class="lotus" viewBox="-56 -64 112 78" aria-hidden="true">' +
     TURNS.map(function (deg, i) {
-      return '<g transform="rotate(' + deg + ')"><path class="lotus-petal' + (i % 2 ? "" : " deep") + '" d="' + PETAL + '" style="--i:' + i + '"></path></g>';
+      return '<g transform="rotate(' + deg + ')"><path class="lotus-petal' + (i % 2 ? "" : " deep") + ' petal-' + i + '" d="' + PETAL + '"></path></g>';
     }).join("") +
     '<circle class="lotus-core" cx="0" cy="-2" r="4.5"></circle></svg>';
   var MEDAL = '<span class="medal-wrap"><svg class="medal" viewBox="0 0 32 32" aria-hidden="true"><path d="M11 3.5h10l-1.7 7.2h-6.6L11 3.5Z" fill="currentColor"></path><circle cx="16" cy="19" r="8.2" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M16 14.2l1.35 2.7 3 .4-2.15 2.1.5 3L16 21.1l-2.7 1.3.5-3-2.15-2.1 3-.4 1.35-2.7Z" fill="currentColor"></path></svg></span>';
