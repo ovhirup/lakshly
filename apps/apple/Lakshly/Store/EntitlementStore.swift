@@ -25,8 +25,9 @@ final class EntitlementStore {
   static let pricesUnavailable = "Prices unavailable right now"
 
   private(set) var products: [Product] = []
-  private(set) var tier: Tier = .free
+  private(set) var tier: Tier = TierEdition.resolve(verifiedTier: .free)
   private(set) var activeProductID: String?
+  private(set) var purchaseDate: Date?
   private(set) var expirationDate: Date?
   private(set) var willRenew: Bool?
   /// Friendly status such as "Waiting for approval", "Premium restored", or "Nothing to restore".
@@ -69,6 +70,8 @@ final class EntitlementStore {
     EntitlementRule.allows(feature, tier: tier)
   }
 
+  func limit(_ feature: Feature) -> Int { LakshlyLimit.value(feature, tier: tier) }
+
   func loadProducts() async {
     isLoadingProducts = true
     productsUnavailable = false
@@ -106,7 +109,8 @@ final class EntitlementStore {
         expirationDate: transaction.expirationDate,
         revocationDate: transaction.revocationDate,
         isUpgraded: transaction.isUpgraded,
-        verified: verified
+        verified: verified,
+        purchaseDate: transaction.purchaseDate
       ))
       if verified, Self.productIDs.contains(transaction.productID) {
         await transaction.finish()
@@ -166,7 +170,8 @@ final class EntitlementStore {
 
   private func apply(_ resolved: ResolvedEntitlement) {
     hasResolved = true
-    tier = resolved.tier
+    tier = TierEdition.resolve(verifiedTier: resolved.tier)
+    purchaseDate = resolved.purchaseDate
     activeProductID = resolved.activeProductID
     expirationDate = resolved.expirationDate
     willRenew = resolved.willRenew

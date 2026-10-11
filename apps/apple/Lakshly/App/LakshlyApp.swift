@@ -180,6 +180,7 @@ struct RootView: View {
   #endif
   @AppStorage("settings.appLock") private var lockEnabled = true
   @State private var settings = false
+  @State private var intentionalSettingsVisit = false
   @State private var selected = "overview"
   @State private var pendingTab: String?
   @State private var deferredSetup: String?? = nil
@@ -314,7 +315,7 @@ struct RootView: View {
           .environment(\.openImport) { selected = "import" }
           .environment(\.openSetup) { health, step in session.requestOpen(health: health, step: step) }
       }
-    }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, lock: lock, themeSelection: $themeSelection) }
+    }.tint(theme.gold).sheet(isPresented: $settings) { SettingsView(store: store, intentionalVisit: intentionalSettingsVisit, lock: lock, themeSelection: $themeSelection) }
       #if os(iOS)
       .fullScreenCover(isPresented: Bindable(session).presented) {
         SetupHost(store: store)
@@ -363,8 +364,10 @@ struct RootView: View {
         }
         publishGlance()
       }
+      .onChange(of: settings) { _, shown in if !shown { intentionalSettingsVisit = false } }
       .onChange(of: session.requestSettings) { _, requested in
         if requested {
+          intentionalSettingsVisit = false
           settings = true
           session.requestSettings = false
         }
@@ -425,8 +428,13 @@ struct RootView: View {
   private func screen<Content: View>(_ identifier: String, @ViewBuilder content: () -> Content) -> some View {
     NavigationStack {
       content().toolbar {
-        Button("Settings", systemImage: "gearshape") { settings = true }
-          .accessibilityIdentifier("nav.settings")
+        #if os(iOS)
+        ToolbarItem(placement: .topBarLeading) { ProfileChip(store: store) }
+        #endif
+        ToolbarItem(placement: .primaryAction) {
+          Button("Settings", systemImage: "gearshape") { intentionalSettingsVisit = true; settings = true }
+            .accessibilityIdentifier("nav.settings")
+        }
       }
     }
     .accessibilityIdentifier(identifier)

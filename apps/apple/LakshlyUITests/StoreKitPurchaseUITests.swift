@@ -69,14 +69,13 @@ final class StoreKitPurchaseUITests: XCTestCase {
     app.buttons["paywall.done"].tap()
 
     app.buttons["Settings"].tap()
-    // The App icon section sits between Theme and Premium; Form rows load lazily, so scroll to Premium.
-    let thankYou = app.staticTexts["Thank you for supporting Lakshly"]
-    XCTAssertTrue(app.buttons["theme.ocean"].waitForExistence(timeout: 8))
-    for _ in 0..<4 where !thankYou.exists { app.swipeUp() }
-    XCTAssertTrue(thankYou.waitForExistence(timeout: 8))
-    XCTAssertTrue(app.staticTexts["settings.premiumStatus"].waitForExistence(timeout: 4)
-      || app.staticTexts["Premium ✦"].waitForExistence(timeout: 4))
+    // Premium identity now lives in the Profile card at the top of Settings, followed by the perks grid.
+    XCTAssertTrue(app.staticTexts["⭐ Priority requests"].waitForExistence(timeout: 8))
+    XCTAssertTrue(app.staticTexts["Your Premium perks"].waitForExistence(timeout: 4))
     shot(app, "settings-premium-unlocked")
+    // Theme sits below the perks; Form rows load lazily, so scroll down to it.
+    let oceanBelow = app.buttons["theme.ocean"]
+    for _ in 0..<4 where !(oceanBelow.exists && oceanBelow.isHittable) { app.swipeUp() }
 
     let ocean = app.buttons["theme.ocean"]
     for _ in 0..<4 where !(ocean.exists && ocean.isHittable) { app.swipeDown() }

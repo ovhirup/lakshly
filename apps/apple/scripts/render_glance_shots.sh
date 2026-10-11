@@ -22,6 +22,7 @@ swiftc -target arm64-apple-macos26.0 -sdk "$sdk" -parse-as-library -D DEBUG \
   "$root/Lakshly/Setup/SetupState.swift" \
   "$root/Lakshly/Setup/SetupSuggest.swift" \
   "$root/Lakshly/Store/Entitlements.swift" \
+  "$root/Lakshly/Store/Entitlements.gen.swift" \
   "$root/Lakshly/Glance/GlanceSnapshot.swift" \
   "$root/Lakshly/Glance/GlanceBuilder.swift" \
   "$root/Lakshly/Glance/GlanceStore.swift" \

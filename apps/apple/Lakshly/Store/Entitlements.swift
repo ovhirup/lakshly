@@ -1,30 +1,43 @@
 import Foundation
 
-/// Ordered access level.
-///
-/// Board item 8 will add `superUser` above `premium`, plus an edition flag, and
-/// will generate `EntitlementsMap` from `packages/shared/entitlements.json`.
-/// Those are intentionally not built here. Keep this a plain dictionary literal.
+/// Ordered access level. Public resolution grants only verified Premium or Free.
 enum Tier: Int, Comparable, Sendable {
-  case free
-  case premium
+  case free, premium, superUser
+  static func < (lhs: Tier, rhs: Tier) -> Bool { lhs.rawValue < rhs.rawValue }
+  var pillText: String {
+    switch self {
+    case .free: "Free Version"
+    case .premium: "✦ Premium"
+    case .superUser: "∞ SUPERUSER · Private build"
+    }
+  }
+  var accessibilityName: String { self == .premium ? "Premium" : pillText }
+}
 
-  static func < (lhs: Tier, rhs: Tier) -> Bool {
-    lhs.rawValue < rhs.rawValue
+enum TierEdition {
+  static func resolve(verifiedTier: Tier) -> Tier {
+    #if LAKSHLY_PRIVATE
+    return .superUser
+    #else
+    return verifiedTier >= .premium ? .premium : .free
+    #endif
   }
 }
 
 enum Feature: String, CaseIterable, Sendable {
-  case premiumThemes
-  case debtPlanner
-  case creditInsights
-  case investmentInsights
-  case rewardsInsights
+  case premiumThemes = "themes.premium"
+  case debtPlanner = "debt.planner"
+  case creditInsights = "credit.insights"
+  case investmentInsights = "investments.insights"
+  case rewardsInsights = "rewards.tracking"
+  case unlimitedBudgets = "budgets.unlimited"
+  case budgetLines = "budgets.lines"
+  case fullHistory = "history.full"
   case priorityFeedback
   /// Home Screen, desktop and Lock Screen widgets that ship with Lakshly Free.
-  case basicWidgets
+  case basicWidgets = "review.widget"
   /// Net worth and debt widgets.
-  case extraWidgets
+  static var extraWidgets: Feature { .debtPlanner }
   /// Mac notch glance. The menu-bar extra stays available without this.
   case notchPanel = "glance.notchPanel"
   // Import and first-run setup are always free (setup-wizard spec §10).
@@ -49,42 +62,27 @@ enum PremiumProduct {
   static let ids = [monthlyID, yearlyID]
 }
 
+enum FeatureLimit: Equatable, Sendable { case count(Int), unlimited }
+struct FeatureSpec: Equatable, Sendable {
+  let minTier: Tier
+  let limits: [Tier: FeatureLimit]
+}
 struct EntitlementsMap {
-  static let standard: [Feature: Tier] = [
-    .premiumThemes: .premium,
-    .debtPlanner: .premium,
-    .creditInsights: .premium,
-    .investmentInsights: .premium,
-    .rewardsInsights: .premium,
-    .priorityFeedback: .premium,
-    .basicWidgets: .free,
-    .extraWidgets: .premium,
-    .notchPanel: .premium,
-    .importStatements: .free,
-    .setupWizard: .free,
-    .setupEmailGuide: .free,
-    .setupExtraEmails: .free,
-    .setupSuggestions: .free,
-    .setupHealth: .free,
-    .mailSyncConnect: .free,
-    .mailSyncIMAP: .free,
-    .mailSyncStatementPasswordKeychain: .free,
-    .mailSyncBackground: .premium,
-    .setupFreshnessReminders: .premium,
-  ]
-
-  /// Per-tier quantity limits (mirrors web ENTITLEMENT_LIMITS). Features without an entry are unlimited.
-  static let limits: [Feature: [Tier: Int]] = [
-    .setupExtraEmails: [.free: 3, .premium: 10],
-    .mailSyncConnect: [.free: 1, .premium: 5],
-  ]
+  static let standard: [Feature: Tier] = Dictionary(uniqueKeysWithValues: Feature.allCases.compactMap {
+    guard let spec = GeneratedEntitlements.features[$0.rawValue] else { return nil }
+    return ($0, spec.minTier)
+  })
 }
 
-/// Quantity allowed for a feature: 0 when the tier can't use it, `Int.max` when unlimited.
-func limit(_ feature: Feature, tier: Tier) -> Int {
-  guard can(feature, tier: tier) else { return 0 }
-  guard let byTier = EntitlementsMap.limits[feature] else { return .max }
-  return byTier[tier] ?? byTier[.premium] ?? .max
+/// Int.max denotes unlimited. Explicit limits apply even when full access is gated.
+func limit(_ feature: Feature, tier: Tier) -> Int { limit(feature.rawValue, tier: tier) }
+func limit(_ feature: String, tier: Tier) -> Int {
+  if tier == .superUser { return .max }
+  let spec = GeneratedEntitlements.features[feature]
+  if let value = spec?.limits[tier] {
+    switch value { case .count(let count): return count; case .unlimited: return .max }
+  }
+  return tier >= (spec?.minTier ?? .premium) ? .max : 0
 }
 
 enum EntitlementRule {
@@ -106,6 +104,7 @@ struct EntitlementSnapshot: Equatable, Sendable {
   var revocationDate: Date?
   var isUpgraded: Bool
   var verified: Bool
+  var purchaseDate: Date? = nil
 }
 
 struct ResolvedEntitlement: Equatable, Sendable {
@@ -114,6 +113,7 @@ struct ResolvedEntitlement: Equatable, Sendable {
   var expirationDate: Date?
   /// True when the winning snapshot has not expired. RenewalInfo may override this.
   var willRenew: Bool?
+  var purchaseDate: Date? = nil
 }
 
 enum EntitlementResolver {
@@ -140,7 +140,7 @@ enum EntitlementResolver {
     }
     let willRenew = best.expirationDate.map { $0 >= now } ?? true
     return ResolvedEntitlement(
-      tier: .premium, activeProductID: best.productID, expirationDate: best.expirationDate, willRenew: willRenew)
+      tier: .premium, activeProductID: best.productID, expirationDate: best.expirationDate, willRenew: willRenew, purchaseDate: best.purchaseDate)
   }
 
   private static func rank(_ productID: String) -> Int {
@@ -149,3 +149,5 @@ enum EntitlementResolver {
     return 0
   }
 }
+
+enum LakshlyLimit { static func value(_ feature: Feature, tier: Tier) -> Int { limit(feature, tier: tier) } }

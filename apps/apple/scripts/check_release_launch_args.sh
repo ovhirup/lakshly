@@ -14,6 +14,30 @@ trap 'rm -f "$extra_file" "$strings_file" "$source_hits"' EXIT
 python3 - "$apple_dir" <<'CHECK'
 import pathlib, plistlib, re, sys
 root = pathlib.Path(sys.argv[1])
+# Public build settings must never activate the private edition.
+settings = [root / "project.yml"]
+settings += list(root.glob("**/*.xcconfig")) + list(root.glob("**/*.pbxproj"))
+for path in settings:
+    if "LAKSHLY_PRIVATE" in path.read_text():
+        sys.exit(f"FAIL: private edition condition in public build settings: {path}")
+# Only the exact private conditional can produce SuperUser. Other references
+# are restricted to UI switch cases and the unlimited-limit comparison.
+for folder in ["Lakshly", "LakshlyWidgets", "LakshlyGlance"]:
+    for path in (root / folder).rglob("*.swift"):
+        private_stack = []
+        for number, line in enumerate(path.read_text().splitlines(), 1):
+            code = line.split("//", 1)[0].strip()
+            if code.startswith("#if "):
+                private_stack.append(code == "#if LAKSHLY_PRIVATE")
+            elif code.startswith("#elseif") or code == "#else":
+                if private_stack: private_stack[-1] = False
+            elif code == "#endif":
+                if private_stack: private_stack.pop()
+            if re.search(r"Tier\s*\(\s*rawValue:|Tier\.superUser|\.superUser\b", code) and not any(private_stack):
+                allowed = code.startswith("case .superUser:") or code == "if tier == .superUser { return .max }"
+                if not allowed:
+                    sys.exit(f"FAIL: public SuperUser construction/reference at {path}:{number}")
+print("PASS: public private-edition settings and SuperUser source isolation")
 transport = root / "Lakshly/Features/Feedback/FeedbackTransport.swift"
 for path in (root / "Lakshly").rglob("*.swift"):
     text = path.read_text()
@@ -38,6 +62,11 @@ fi
 if grep -R -n -E 'settings\.premium([^A-Za-z0-9_]|$)' "$apple_dir/Lakshly" --include='*.swift' | grep -v 'SettingsPreferences.swift'; then
   echo "FAIL: settings.premium is still read outside the startup scrub" >&2
   exit 1
+fi
+
+if [[ "${1:-}" == "--source-only" ]]; then
+  echo 'PASS: source-only release checks (no builds run)'
+  exit 0
 fi
 
 # Shell-style quoting supports flags containing spaces without executing shell code.

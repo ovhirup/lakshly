@@ -34,6 +34,10 @@ swiftc -target arm64-apple-macos26.0 -sdk "$sdk" -parse-as-library -D DEBUG -D P
   "$root/Lakshly/Setup/SetupCanvas.swift" \
   "$root/Lakshly/Setup/SetupShots.swift" \
   "$root/Lakshly/Import/BulkImportRunner.swift" \
+  "$root/Lakshly/Store/Entitlements.swift" \
+  "$root/Lakshly/Store/Entitlements.gen.swift" \
+  "$root/Lakshly/Store/TierNudge.swift" \
+  "$root/Lakshly/Components/TierIdentity.swift" \
   "$root/Lakshly/Components/ProfileView.swift" \
   "$root/Lakshly/Features/Import/BulkImportView.swift" \
   "$root/Lakshly/Setup/ParityShots.swift" \

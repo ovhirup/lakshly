@@ -309,7 +309,7 @@ private struct PaywallFeature: Identifiable {
   let feature: Feature
   let title: String
   let symbol: String
-  var id: String { feature.rawValue }
+  var id: String { feature.rawValue + "." + symbol }
   static var rows: [PaywallFeature] {
     var rows = [
       PaywallFeature(feature: .premiumThemes, title: "Ocean, Forest and Rose Quartz themes", symbol: "paintpalette"),

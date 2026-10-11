@@ -20,7 +20,7 @@ enum StoreKitTestRuntime {
 final class StoreKitTests: XCTestCase {
   /// Features Lakshly Free always includes: basic widgets, import and first-run setup (setup-wizard spec §10).
   static let freeFeatures: Set<Feature> = [
-    .basicWidgets, .importStatements, .setupWizard, .setupEmailGuide, .setupExtraEmails, .setupSuggestions,
+    .budgetLines, .basicWidgets, .importStatements, .setupWizard, .setupEmailGuide, .setupExtraEmails, .setupSuggestions,
     .setupHealth, .mailSyncConnect, .mailSyncIMAP, .mailSyncStatementPasswordKeychain,
   ]
 
