@@ -17,7 +17,10 @@ struct PrivacySettingsSection: View {
       Toggle("Also hide percentages", isOn: $privacy.hidePercent)
       Toggle("Show amounts in widgets", isOn: $privacy.widgetAmounts)
         .accessibilityIdentifier("settings.showAmounts")
-      MoneyText("₹12,345 → ₹ •••••")
+      // A fixed sample (not user data): how amounts look when hidden.
+      Text(verbatim: "₹12,345 → \(Money.mask)")
+        .monospacedDigit()
+        .accessibilityLabel("Sample: amounts show as Amount hidden")
         .accessibilityIdentifier("privacy.sample")
       Text("Double-tap the net-worth total or use the eye button. Keyboard shortcut: ⌘⇧H.")
         .font(.caption)
