@@ -10,6 +10,7 @@ import WidgetKit
     UpcomingBillWidget()
     NetWorthWidget()
     DebtWidget()
+    ReviewWidget()
     LakshlyLiveActivity()
   }
   #else
@@ -18,6 +19,7 @@ import WidgetKit
     UpcomingBillWidget()
     NetWorthWidget()
     DebtWidget()
+    ReviewWidget()
   }
   #endif
 }

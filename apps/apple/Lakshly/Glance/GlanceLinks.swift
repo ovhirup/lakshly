@@ -15,7 +15,7 @@ enum SetupDeepLink: Equatable {
 enum GlanceLinks {
   static let scheme = "lakshly"
   static let tabs: Set<String> = [
-    "overview", "spend", "budget", "debt", "credit", "investments", "rewards", "history", "feedback", "import",
+    "overview", "spend", "review", "budget", "debt", "credit", "investments", "rewards", "history", "feedback", "import",
   ]
 
   static func tab(from url: URL) -> String? {

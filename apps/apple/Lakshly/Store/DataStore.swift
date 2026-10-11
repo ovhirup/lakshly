@@ -12,6 +12,11 @@ import Observation
   var setup: SetupState?
   var goals: [Goal]?
   var imports: [ImportLogEntry] = []
+  /// Weekly review state (My data) and the demo's own copy; nil means not started (demo starts from its seed).
+  var review: ReviewState?
+  var reviewDemo: ReviewState?
+  var reviewUndo: ReviewUndo?
+  @ObservationIgnored var reviewSeedCache: ReviewState?
   /// Bumps when setup, flags, and goals are cleared so an in-memory wizard drops its copy.
   var setupEpoch = 0
   var error: String?
@@ -41,7 +46,7 @@ import Observation
   }
 
   var transactions: [Transaction] {
-    (dataset?.transactions ?? []).filter { $0.date.hasPrefix(selectedMonth) }
+    reviewed((dataset?.transactions ?? []).filter { $0.date.hasPrefix(selectedMonth) })
   }
 
   var categoryTotals: [AmountGroup] {
@@ -77,6 +82,8 @@ import Observation
         setup?.profile.name = profile.name ?? ""
         goals = migrated.goals
         imports = migrated.imports ?? []
+        review = migrated.review
+        reviewDemo = migrated.reviewDemo
         persistSourceHint()
         if saved.source == nil || saved.profile != profile { save() }
       } else {
@@ -111,7 +118,7 @@ import Observation
       try backing.save(
         StoredData(
           dataset: demoDataset, requests: requests, source: source, userDataset: userDataset, setup: setup,
-          goals: goals, imports: imports, profile: profile))
+          goals: goals, imports: imports, profile: profile, review: review, reviewDemo: reviewDemo))
       error = nil
     } catch { self.error = "Could not save locally: \(error.localizedDescription)" }
     GlancePublisher.publish(dataset: dataset)
@@ -170,6 +177,8 @@ import Observation
   func deleteMyData() {
     userDataset = nil
     imports = []
+    review = nil
+    reviewUndo = nil
     source = .demo
     persistSourceHint()
     selectLatestMonth()
@@ -180,6 +189,9 @@ import Observation
   /// Reloads the bundled synthetic seed. Imported user data is kept. Setup, goals, and flags are cleared.
   func reset() {
     writable = true
+    reviewDemo = nil
+    reviewUndo = nil
+    reviewSeedCache = nil
     clearSetup(save: false)
     do {
       try applySeed(try Self.loadSeed(), persist: true)

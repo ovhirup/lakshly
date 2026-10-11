@@ -241,21 +241,13 @@ struct RootView: View {
           Tab(value: "overview") {
             screen("screen.overview") {
               DataGate(store: store, title: "Overview", need: [.accounts, .transactions]) {
-                OverviewView(store: store, showFeedback: { selected = "feedback" })
+                OverviewView(store: store, showFeedback: { selected = "feedback" }, openReview: { selected = "review" })
               }
             }
           } label: {
             tabLabel("Overview", systemImage: "square.grid.2x2", identifier: "tab.overview")
           }
-          Tab(value: "spend") {
-            screen("screen.spend") {
-              DataGate(store: store, title: "Spend", need: [.transactions]) {
-                SpendView(store: store)
-              }
-            }
-          } label: {
-            tabLabel("Spend", systemImage: "chart.pie", identifier: "tab.spend")
-          }
+          spendAndReviewTabs
           Tab(value: "budget") {
             screen("screen.budget") {
               DataGate(store: store, title: "Budget", need: [.transactions]) {
@@ -455,6 +447,33 @@ struct RootView: View {
       }
     }
     .accessibilityIdentifier(identifier)
+  }
+  /// Spend + Weekly review (Free). Grouped so the TabView stays within the builder's 10-child limit.
+  @TabContentBuilder<String> private var spendAndReviewTabs: some TabContent<String> {
+    Tab(value: "spend") {
+      screen("screen.spend") {
+        DataGate(store: store, title: "Spend", need: [.transactions]) {
+          SpendView(store: store, openReview: { selected = "review" })
+        }
+      }
+    } label: {
+      tabLabel("Spend", systemImage: "chart.pie", identifier: "tab.spend")
+    }
+    Tab(value: "review") {
+      screen("screen.review") {
+        DataGate(store: store, title: "Weekly review", need: [.transactions]) {
+          ReviewView(store: store)
+        }
+      }
+    } label: {
+      tabLabel("Review", systemImage: "checklist", identifier: "tab.review")
+    }
+    .badge(reviewBadge)
+  }
+  /// Inbox count on the Review tab, capped at "50+".
+  private var reviewBadge: Text? {
+    let n = store.reviewInbox.count
+    return n > 0 ? Text(Review.countLabel(n)) : nil
   }
   private func tabLabel(_ title: String, systemImage: String, identifier: String) -> some View {
     Label(title, systemImage: systemImage)

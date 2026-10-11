@@ -129,6 +129,9 @@ struct StoredData: Codable {
   var goals: [Goal]?
   var imports: [ImportLogEntry]?
   var profile: ProfileRecord?
+  /// Weekly review state for My data (`review.state`) and for the synthetic demo. Encrypted with the rest of this file.
+  var review: ReviewState?
+  var reviewDemo: ReviewState?
 
   init(
     dataset: Dataset,
@@ -138,7 +141,9 @@ struct StoredData: Codable {
     setup: SetupState? = nil,
     goals: [Goal]? = nil,
     imports: [ImportLogEntry]? = nil,
-    profile: ProfileRecord? = nil
+    profile: ProfileRecord? = nil,
+    review: ReviewState? = nil,
+    reviewDemo: ReviewState? = nil
   ) {
     self.dataset = dataset
     self.requests = requests
@@ -148,6 +153,8 @@ struct StoredData: Codable {
     self.goals = goals
     self.profile = profile
     self.imports = imports
+    self.review = review
+    self.reviewDemo = reviewDemo
   }
 
   /// Splits a pre-source saved file: rows whose ids are not in the bundled seed become `userDataset`.
@@ -160,14 +167,15 @@ struct StoredData: Codable {
         userDataset: userDataset,
         setup: setup,
         goals: goals,
-        imports: imports, profile: profile)
+        imports: imports, profile: profile, review: review, reviewDemo: reviewDemo)
     }
     let user = dataset.userRows(notIn: seed)
     return StoredData(
       dataset: seed,
       requests: requests,
       source: user == nil ? .demo : .mine,
-      userDataset: user, setup: setup, goals: goals, imports: imports, profile: profile)
+      userDataset: user, setup: setup, goals: goals, imports: imports, profile: profile, review: review,
+      reviewDemo: reviewDemo)
   }
 }
 
