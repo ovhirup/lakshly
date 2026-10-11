@@ -92,24 +92,25 @@ struct ReviewView: View {
 
   private var header: some View {
     let level = Review.level(for: state.xp)
-    return HStack(alignment: .center, spacing: 14) {
+    let layout = wide ? AnyLayout(HStackLayout(alignment: .center, spacing: 14)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 14))
+    return layout {
       VStack(alignment: .leading, spacing: 6) {
         Text("Week \(ReviewDates.weekNumber(inbox.week))").font(.caption.weight(.semibold)).foregroundStyle(theme.secondaryText)
         Text(Review.streakText(state, now: now)).font(.headline)
           .accessibilityIdentifier("review.streak")
         HStack(spacing: 8) {
-          Text("Level \(level.current.level) · \(level.current.name)").font(.subheadline.weight(.semibold))
+          Text("Level \(level.current.level) · \(level.current.name)").font(.subheadline.weight(.semibold)).fixedSize()
           Text("\(state.xp) XP").font(.subheadline).foregroundStyle(theme.gold).monospacedDigit()
             .accessibilityIdentifier("review.xp")
         }
-        ProgressView(value: level.progress).tint(theme.gold)
+        LevelBar(progress: level.progress)
           .accessibilityLabel(level.next.map { "\($0.minXP - state.xp) XP to \($0.name)" } ?? "Top level reached")
         Text("This week \(state.weekXP[inbox.week] ?? 0) of \(ReviewRules.weeklyCap) review XP · +1 confirm, +2 change, +15 week cleared")
-          .font(.caption).foregroundStyle(theme.secondaryText)
+          .font(.caption).foregroundStyle(theme.secondaryText).fixedSize(horizontal: false, vertical: true)
       }
-      Spacer(minLength: 0)
+      if wide { Spacer(minLength: 0) }
       if inbox.count > 0 {
-        Button("Confirm all") { askConfirmAll = true }
+        Button("Confirm all \(inbox.count)") { askConfirmAll = true }
           .buttonStyle(ThemedSubmitStyle())
           .accessibilityIdentifier("review.confirmAll")
       }
@@ -398,7 +399,7 @@ struct ReviewRow: View {
         Spacer()
         Label("Change", systemImage: "square.and.pencil").font(.subheadline.weight(.bold)).padding(.trailing, 20)
       }
-      .foregroundStyle(.black)
+      .foregroundStyle(theme.bg)
       .frame(maxWidth: .infinity, maxHeight: .infinity)
       .background(theme.gold.opacity(offset < -threshold ? 1 : 0.7), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
@@ -420,7 +421,7 @@ struct ReviewRow: View {
       }
       HStack(spacing: 8) {
         Button { act(.confirm(row.id)) } label: { Label("Confirm", systemImage: "checkmark") }
-          .buttonStyle(ReviewButtonStyle(fill: theme.gold, text: .black))
+          .buttonStyle(ReviewButtonStyle(fill: theme.gold, text: theme.bg))
           .accessibilityIdentifier("review.confirm.\(row.id)")
         if !row.refund {
           Button { edit() } label: { Label("Change", systemImage: "square.and.pencil") }
@@ -575,10 +576,21 @@ struct ReviewEditor: View {
           }
         }
         Text("Need, Want or Vice").font(.caption.weight(.semibold)).foregroundStyle(theme.secondaryText)
-        Picker("Need, Want or Vice", selection: $nwv) {
-          ForEach(Nwv.allCases, id: \.self) { n in Text("\(n.icon) \(n.label)").tag(n) }
-        }.pickerStyle(.segmented).labelsHidden()
-        Toggle("Remember for \(row.tx.name)", isOn: $remember)
+        HStack(spacing: 6) {
+          ForEach(Array(Nwv.allCases.enumerated()), id: \.element) { i, n in
+            Button { nwv = n } label: {
+              Text("\(n.icon) \(n.label)").font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .foregroundStyle(nwv == n ? theme.bg : theme.text)
+                .background(nwv == n ? theme.gold : theme.secondaryText.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(n.label)
+            .accessibilityHint("Key \(i + 1)")
+            .accessibilityAddTraits(nwv == n ? .isSelected : [])
+          }
+        }
+        Toggle(isOn: $remember) { Text("Remember for \(row.tx.name)").fixedSize(horizontal: false, vertical: true) }
         HStack(spacing: 8) {
           Button("Save · +\(ReviewRules.xpChange) XP") { onSave(category, nwv, remember) }
             .buttonStyle(ThemedSubmitStyle())
@@ -592,14 +604,15 @@ struct ReviewEditor: View {
 
 /// Celebration on inbox zero. Skipped entirely under Reduce Motion.
 struct Confetti: View {
+  @Environment(\.setupRendering) private var rendering
   @State private var fall = false
   private let pieces = ["✨", "🪷", "🎉", "✨", "🌟", "🪙", "✨", "🎊"]
   var body: some View {
     HStack(spacing: 18) {
       ForEach(Array(pieces.enumerated()), id: \.offset) { i, p in
         Text(p).font(.title2)
-          .offset(y: fall ? CGFloat((i % 3) * 10) : -20)
-          .opacity(fall ? 1 : 0)
+          .offset(y: fall || rendering ? CGFloat((i % 3) * 10) : -20)
+          .opacity(fall || rendering ? 1 : 0)
           .animation(.spring(duration: 0.8).delay(Double(i) * 0.05), value: fall)
       }
     }
@@ -716,5 +729,19 @@ struct ReviewChip: View {
     .buttonStyle(.plain)
     .accessibilityLabel(n > 0 ? "\(n) to review" : "Inbox zero")
     .accessibilityIdentifier("spend.reviewChip")
+  }
+}
+
+/// Level progress (drawn, so offscreen renders and every theme look the same).
+struct LevelBar: View {
+  @Environment(\.theme) private var theme
+  let progress: Double
+  var body: some View {
+    GeometryReader { g in
+      ZStack(alignment: .leading) {
+        Capsule().fill(theme.secondaryText.opacity(0.18))
+        Capsule().fill(theme.gold).frame(width: max(6, g.size.width * min(1, max(0, progress))))
+      }
+    }.frame(height: 6)
   }
 }
