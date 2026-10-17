@@ -107,9 +107,10 @@ function RunwayBody({ transactions, now, wow }: {
   return (
     <Glass className="card wow-fee" data-testid="wow-feeRunway-card" aria-label="Fee runway">
       <p className={toast ? "wow-fee-toast" : "sr-only"} role="status" aria-live="polite" data-testid="wow-feeRunway-toast">{toast ?? ""}</p>
-      <h2 className="wow-fee-headline" data-testid="wow-feeRunway-headline">
+      <div className="card-head"><h2>Fee runway</h2><PremiumBadge small /></div>
+      <p className="wow-fee-headline" data-testid="wow-feeRunway-headline">
         Set aside <Amount>{shownMoney(plan.monthlyNeedPaise)}</Amount> a month
-      </h2>
+      </p>
       <div className="wow-fee-funded">
         <Progress pct={plan.fundedFraction * 100} color="var(--lk-gold)" />
         <p data-testid="wow-feeRunway-funded">

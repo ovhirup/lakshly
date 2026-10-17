@@ -96,6 +96,7 @@
 }
 .wow-locked h2 { font-size: 1.05rem; }
 .wow-locked p { line-height: 1.45; }
+.wow-locked > .badge { align-self: flex-start; justify-self: start; width: fit-content; }
 .sr-only {
   position: absolute;
   width: 1px;
