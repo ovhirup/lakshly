@@ -71,6 +71,7 @@
 		21C5E0B41838F4BD840B1FB4 /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AED3879FE393C01AAF900C /* Currency.swift */; };
 		21FFF62C9848B791E38A2076 /* GlanceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701646DBB486D7E5A96188A9 /* GlanceLinks.swift */; };
 		22D27F652CD49E0D4073FC3C /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33139522A92ACF23DB08309D /* BudgetView.swift */; };
+		2360722DCF575986205D8CBF /* WowFeeRunwayViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448657C0D8D002814EA86FC /* WowFeeRunwayViewTests.swift */; };
 		247ED100DA40E48C359491D9 /* cas-locked.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 54C52E317367CF2550EA4FA6 /* cas-locked.synthetic.pdf */; };
 		24F5EC0E72C4970785DA2917 /* ThemeDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0601B2921DE123B3023E9DF8 /* ThemeDefinitions.swift */; };
 		252169BFDE0EFE764BF67A53 /* sample.synthetic.json in Resources */ = {isa = PBXBuildFile; fileRef = A157AA9C21FCDB44A3D393F0 /* sample.synthetic.json */; };
@@ -269,8 +270,10 @@
 		ACBF107A50FC5C45EBFD2808 /* GlanceShots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F273986D740F324224001 /* GlanceShots.swift */; };
 		ADB6A835BD43E52B199E45A8 /* SetupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E104650DC98490DE4268FE /* SetupStoreTests.swift */; };
 		AE3B6307558D9C550E5D1884 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D69907BE567998C075350B4 /* PaywallView.swift */; };
+		AED1D5EB8C479A09B3AF07B9 /* WowFeeRunwayViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448657C0D8D002814EA86FC /* WowFeeRunwayViewTests.swift */; };
 		AEF9EC4435A9103B4921D5EB /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74D83B4AD1381D1E54EC44F /* SpendView.swift */; };
 		AF05723EC8EEA4A429F637B8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */; };
+		B0120A92B92BCB0C0FB0AB9E /* FeeRunwayViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AFA776C83B153940AEA2C /* FeeRunwayViews.swift */; };
 		B022122FB0D361AA64F8F0E6 /* Entitlements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47E19DB10EF51035AFED0AB2 /* Entitlements.swift */; };
 		B0444E246478172AF44673AC /* BulkImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267649A29DE9D37C670881F3 /* BulkImport.swift */; };
 		B187FDAA13F3C6BEBC36211B /* ParserFixtureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5796053083CD3E0031D2B848 /* ParserFixtureTests.swift */; };
@@ -358,6 +361,7 @@
 		E386E812A2E9AD675403F29E /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461F5116A2CC07DF443BBA73 /* Models.swift */; };
 		E419F4DE2F7358AD6F7BE334 /* WowFreedomViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 878A041ED149FDBCF4E3C564 /* WowFreedomViewTests.swift */; };
 		E471E6F615BF1C31BDE7EEBB /* cdsl-cas-locked.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 0BFD45B4A7F9E21FCF9C0131 /* cdsl-cas-locked.synthetic.pdf */; };
+		E48CE4BBE409A355A66DDE58 /* FeeRunwayViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97AFA776C83B153940AEA2C /* FeeRunwayViews.swift */; };
 		E518C7D962AAC345414469BF /* LakshlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */; };
 		E5511B61EEF774F5191470A0 /* GlanceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701646DBB486D7E5A96188A9 /* GlanceLinks.swift */; };
 		E55822EA77CD2929E45A0156 /* Engines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 437FFC18871D809408051AAE /* Engines.swift */; };
@@ -538,6 +542,7 @@
 		426052D2A5746E4B5175E5A1 /* BulkImportTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkImportTests.swift; sourceTree = "<group>"; };
 		437FFC18871D809408051AAE /* Engines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engines.swift; sourceTree = "<group>"; };
 		4413307D726DB4AA063551A0 /* Hash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hash.swift; sourceTree = "<group>"; };
+		4448657C0D8D002814EA86FC /* WowFeeRunwayViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WowFeeRunwayViewTests.swift; sourceTree = "<group>"; };
 		44F38C3C3D5EC5E9F9E1606B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		45C491D5C3C62507799130BD /* CreditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditView.swift; sourceTree = "<group>"; };
 		45D386C5F87ED3704993FED3 /* TierIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TierIdentity.swift; sourceTree = "<group>"; };
@@ -639,6 +644,7 @@
 		C6E7E3872FD1CCEF4D5900B2 /* NotchPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanel.swift; sourceTree = "<group>"; };
 		C7C81D6F37564C77E89BDD5C /* WowFeeRunwayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WowFeeRunwayTests.swift; sourceTree = "<group>"; };
 		C8AE531D64E0D77981F4E98D /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
+		C97AFA776C83B153940AEA2C /* FeeRunwayViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeRunwayViews.swift; sourceTree = "<group>"; };
 		CDC16948F831FA172DB9062E /* NotchPanelContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanelContent.swift; sourceTree = "<group>"; };
 		CF3F8DA1C964792DFE732D52 /* ReviewRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRenderTests.swift; sourceTree = "<group>"; };
 		CF9ECE7504C1F36F01015DD2 /* BulkStatementParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkStatementParser.swift; sourceTree = "<group>"; };
@@ -899,6 +905,7 @@
 		4C1FB82C6B344F330115D766 /* Wow */ = {
 			isa = PBXGroup;
 			children = (
+				C97AFA776C83B153940AEA2C /* FeeRunwayViews.swift */,
 				27D4810C49BC53AA46573E2F /* FreedomViews.swift */,
 				5DE2169184DB7320326749A8 /* StoryViews.swift */,
 				E8890CE8391E49FE05995997 /* SubscriptionAuditViews.swift */,
@@ -1179,6 +1186,7 @@
 				7C6BF59A2B0842225354CD97 /* TierIdentityTests.swift */,
 				8509E0C3F347FDAFD688F05E /* TierRenderTests.swift */,
 				C7C81D6F37564C77E89BDD5C /* WowFeeRunwayTests.swift */,
+				4448657C0D8D002814EA86FC /* WowFeeRunwayViewTests.swift */,
 				5591B959E3DB0C512A50B4DD /* WowFreedomTests.swift */,
 				878A041ED149FDBCF4E3C564 /* WowFreedomViewTests.swift */,
 				4D7FFBC19713EA6C7A688C16 /* WowStateTests.swift */,
@@ -1737,6 +1745,7 @@
 				8CCEB860C1D0497AA998F502 /* TierIdentityTests.swift in Sources */,
 				27E7A5980C1ACE791040DBC6 /* TierRenderTests.swift in Sources */,
 				0E3E51BF73A4560327C74471 /* WowFeeRunwayTests.swift in Sources */,
+				2360722DCF575986205D8CBF /* WowFeeRunwayViewTests.swift in Sources */,
 				E8DC4B75D5734B5F31662A6C /* WowFreedomTests.swift in Sources */,
 				84043C82CDF1E80C8F6BC04C /* WowFreedomViewTests.swift in Sources */,
 				F40C42E24C9C022432AB2D6E /* WowStateTests.swift in Sources */,
@@ -1787,6 +1796,7 @@
 				BAC82C9E7C6119896481B041 /* TierIdentityTests.swift in Sources */,
 				838B9324141425C581E51584 /* TierRenderTests.swift in Sources */,
 				C43819798D6C7E1B8FBBEB3B /* WowFeeRunwayTests.swift in Sources */,
+				AED1D5EB8C479A09B3AF07B9 /* WowFeeRunwayViewTests.swift in Sources */,
 				6A5CAE9E71EE7CF45269011F /* WowFreedomTests.swift in Sources */,
 				E419F4DE2F7358AD6F7BE334 /* WowFreedomViewTests.swift in Sources */,
 				CF49AB56F0505A1D4E7DCB1E /* WowStateTests.swift in Sources */,
@@ -1829,6 +1839,7 @@
 				6F7D4917116828B071154D0D /* Entitlements.gen.swift in Sources */,
 				27951DFF078ED8EA9E69783B /* Entitlements.swift in Sources */,
 				864CB116048D865414378BC3 /* FeeRunway.swift in Sources */,
+				B0120A92B92BCB0C0FB0AB9E /* FeeRunwayViews.swift in Sources */,
 				74A34311EEF13059091F0403 /* FeedbackHelpers.swift in Sources */,
 				362B7DFBE35D87B8255FFC26 /* FeedbackRequestStore.swift in Sources */,
 				CDEDFF85812D5B15AABEE90D /* FeedbackTransport.swift in Sources */,
@@ -1947,6 +1958,7 @@
 				ECF93F3EFBC4FE2133C2922F /* Entitlements.gen.swift in Sources */,
 				8F817B1591A348EF0BF7CC39 /* Entitlements.swift in Sources */,
 				D28794784D7C6DEC7B6E9B9C /* FeeRunway.swift in Sources */,
+				E48CE4BBE409A355A66DDE58 /* FeeRunwayViews.swift in Sources */,
 				7F3CFE617D5FB23D07EE4380 /* FeedbackHelpers.swift in Sources */,
 				8CCD0FDC9C48CB9172989E3F /* FeedbackRequestStore.swift in Sources */,
 				D3CC69A01BB208D4471621B0 /* FeedbackTransport.swift in Sources */,

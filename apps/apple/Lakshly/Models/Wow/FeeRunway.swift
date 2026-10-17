@@ -301,3 +301,95 @@ enum FeeRunway {
     return String(format: "%04d-%02d-%02d", bits.year ?? 0, bits.month ?? 1, bits.day ?? 1)
   }
 }
+
+/// Copy and amount-field helpers for the fee runway screen. No SwiftUI.
+enum FeeRunwayFormat {
+  static let monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+  static func headline(monthlyNeedPaise: Int64) -> String {
+    "Set aside \(Money.format(monthlyNeedPaise)) a month"
+  }
+
+  static func readyLine(fundedPaise: Int64, totalPaise: Int64, fraction: Double) -> String {
+    "\(Money.format(fundedPaise)) of \(Money.format(totalPaise)) ready (\(percent(fraction))%)"
+  }
+
+  static func perMonthLine(_ paise: Int64) -> String {
+    "\(Money.format(paise)) a month"
+  }
+
+  static func dueLine(due: String, daysLeft: Int) -> String {
+    let span: String
+    if daysLeft <= 0 {
+      span = "today"
+    } else if daysLeft == 1 {
+      span = "1 day"
+    } else {
+      span = "\(daysLeft) days"
+    }
+    return "due \(dueDateLabel(due)) · \(span)"
+  }
+
+  static func dueDateLabel(_ due: String) -> String {
+    let bits = due.split(separator: "-").compactMap { Int($0) }
+    guard bits.count >= 3, (1...12).contains(bits[1]), (1...31).contains(bits[2]) else { return due }
+    return "\(bits[2]) \(monthLabels[bits[1] - 1])"
+  }
+
+  static func statusTitle(_ status: FeeRunwayStatus) -> String {
+    switch status {
+    case .funded: "Funded ✓"
+    case .onTrack: "On track"
+    case .behind: "Behind"
+    }
+  }
+
+  static func percent(_ fraction: Double) -> Int {
+    guard fraction.isFinite else { return 0 }
+    let clamped = min(1, max(0, fraction))
+    return Int((clamped * 100).rounded())
+  }
+
+  /// Whole rupees when the paisa tail is 0, otherwise two decimal places. Empty when there is nothing to log.
+  static func rupeeField(_ paise: Int64) -> String {
+    guard paise > 0 else { return "" }
+    let whole = paise / 100
+    let fraction = paise % 100
+    if fraction == 0 { return String(whole) }
+    return String(format: "%lld.%02lld", whole, fraction)
+  }
+
+  /// Rupee text ("1,500", "₹3.50") to paise. Nil when empty, zero, or not a simple amount.
+  static func paise(from raw: String) -> Int64? {
+    var text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    if text.hasPrefix("₹") { text.removeFirst() }
+    text = text.replacingOccurrences(of: ",", with: "")
+    text = text.replacingOccurrences(of: " ", with: "")
+    if text.hasPrefix("₹") { text.removeFirst() }
+    if text.isEmpty || text.hasPrefix("-") { return nil }
+    let parts = text.split(separator: ".", omittingEmptySubsequences: false)
+    if parts.count > 2 { return nil }
+    let whole = parts[0].isEmpty ? "0" : String(parts[0])
+    guard whole.allSatisfy(\.isNumber), let rupees = Int64(whole) else { return nil }
+    var fraction: Int64 = 0
+    if parts.count == 2 {
+      let tail = String(parts[1])
+      if tail.count > 2 || !tail.allSatisfy(\.isNumber) { return nil }
+      if tail.count == 1, let digit = Int64(tail) {
+        fraction = digit * 10
+      } else if tail.count == 2, let digits = Int64(tail) {
+        fraction = digits
+      }
+    }
+    let (product, overflow) = rupees.multipliedReportingOverflow(by: 100)
+    if overflow { return nil }
+    let (sum, overflowSum) = product.addingReportingOverflow(fraction)
+    if overflowSum || sum <= 0 { return nil }
+    return sum
+  }
+
+  static func dayString(_ date: Date, calendar: Calendar = .current) -> String {
+    let bits = calendar.dateComponents([.year, .month, .day], from: date)
+    return String(format: "%04d-%02d-%02d", bits.year ?? 0, bits.month ?? 1, bits.day ?? 1)
+  }
+}
