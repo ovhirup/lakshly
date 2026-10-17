@@ -30,6 +30,7 @@
 		0A113D7CDA49F0F84D6272C5 /* NotchGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88760C1B9DF66D75198CBEED /* NotchGeometry.swift */; };
 		0A22CC093A909DA58EB7CBFA /* SetupLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66369CBFECAE58D334F5086 /* SetupLinks.swift */; };
 		0AABF8ABE1438A20D6B91C2B /* GlanceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7C047934458E69157FD001 /* GlanceSnapshot.swift */; };
+		0AD8667A7E8309132E8F2C8D /* WowRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FF8089F74E55F0784C4247 /* WowRenderTests.swift */; };
 		0B4F489F80E99D0B6C41AB88 /* LiveActivityPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C0DE6681509A9790D2B63 /* LiveActivityPlanner.swift */; };
 		0B71D21A30E99ED43E3DE5CE /* SetupSuggest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027C7F670782DAA42B66C148 /* SetupSuggest.swift */; };
 		0B73E854B3DB407065A2B7B2 /* Currencies.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A249764BB3A598F0D0C8B /* Currencies.gen.swift */; };
@@ -57,6 +58,7 @@
 		188B58323D8A8D7E43BA1DEA /* Mask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E7F17A3B420C09D69AA682 /* Mask.swift */; };
 		18A33CB20D36ED1D86B478B5 /* Freedom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B98A8422B0E5DF18A1D11F6 /* Freedom.swift */; };
 		1A27DC5283D5F47450F60322 /* MoneyParityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */; };
+		1B5D30351C81918BD4CECF58 /* WowShots.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4073640A57430B7AF232E2A /* WowShots.swift */; };
 		1C9F6DE247662A99F12E7576 /* FeedbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFE3085731CDCB18B47AB98D /* FeedbackTests.swift */; };
 		1CE4EDEF74F4645ECB2A7C20 /* WowSubscriptionAuditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7464E62699B020597DF45235 /* WowSubscriptionAuditTests.swift */; };
 		1DF191DB28062F66EB54721D /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AED3879FE393C01AAF900C /* Currency.swift */; };
@@ -249,6 +251,7 @@
 		9BA75EEED35EF4E0D4202AD1 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F8B8CDFC7203FA83677173 /* Regex.swift */; };
 		9BC3AFD8AB841E3EC336D1C0 /* Merge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84953A55098AE165AB074C74 /* Merge.swift */; };
 		9BD0F7C136A5D575BB05836A /* NotchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E7E3872FD1CCEF4D5900B2 /* NotchPanel.swift */; };
+		9C7140D76A48DDC0557CC42A /* WowShots.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4073640A57430B7AF232E2A /* WowShots.swift */; };
 		9CC2ACD10E9F3E808D659637 /* SetupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41934EE78C187EA7A23F69A7 /* SetupModel.swift */; };
 		9EADD65DC30094C01D19718C /* LakshlyWidgets-macOS.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8B34595B30F2E1F765833567 /* LakshlyWidgets-macOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9EE96BB291F3D95DF54B9FF2 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
@@ -379,6 +382,7 @@
 		EC66E31A76E69870B6E4D6CB /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE42689AD46E5F2EDE113EC /* ReviewView.swift */; };
 		ECF93F3EFBC4FE2133C2922F /* Entitlements.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3801F86A6B041F1DB3CD6705 /* Entitlements.gen.swift */; };
 		ED0929F481A34ECF985051E9 /* BulkImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 267649A29DE9D37C670881F3 /* BulkImport.swift */; };
+		ED304B75F72115A2E1112FD7 /* WowRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FF8089F74E55F0784C4247 /* WowRenderTests.swift */; };
 		EE642F79C9FBFD96AFD1A2AC /* Currency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AED3879FE393C01AAF900C /* Currency.swift */; };
 		EE8A2A76A4DC667983AF98AC /* GlancePublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4498503F9C90BA58BF0AD38 /* GlancePublisher.swift */; };
 		EEB0333EB164E76657C13B82 /* LiveActivityPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0C0DE6681509A9790D2B63 /* LiveActivityPlanner.swift */; };
@@ -532,6 +536,7 @@
 		379DCC9C3D1B54CBF3F10CEA /* GlanceRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceRenderTests.swift; sourceTree = "<group>"; };
 		3801F86A6B041F1DB3CD6705 /* Entitlements.gen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entitlements.gen.swift; sourceTree = "<group>"; };
 		385858C1A4CB1618E414C441 /* NotchRevealPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchRevealPolicy.swift; sourceTree = "<group>"; };
+		39FF8089F74E55F0784C4247 /* WowRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WowRenderTests.swift; sourceTree = "<group>"; };
 		3A5C3963EE46A3A15A1956CE /* MoneyParityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneyParityTests.swift; sourceTree = "<group>"; };
 		3C51C3236E764B0BBDB6ADF5 /* nsdl-cas.synthetic.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "nsdl-cas.synthetic.pdf"; sourceTree = "<group>"; };
 		3D69907BE567998C075350B4 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
@@ -630,6 +635,7 @@
 		AA0F943CB59978CBEE181687 /* PrivacySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettings.swift; sourceTree = "<group>"; };
 		B27DC4B011E1469FCFDE4996 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		B2F69415892CB1861613A1A2 /* FeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackView.swift; sourceTree = "<group>"; };
+		B4073640A57430B7AF232E2A /* WowShots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WowShots.swift; sourceTree = "<group>"; };
 		B797213272B358002AD5B13F /* DataState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataState.swift; sourceTree = "<group>"; };
 		B98525A8284CAF7C518983B0 /* LakshlyUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LakshlyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEEBE3EE720257A408CCE67E /* SetupEntitlementsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupEntitlementsTests.swift; sourceTree = "<group>"; };
@@ -1119,6 +1125,7 @@
 				0601B2921DE123B3023E9DF8 /* ThemeDefinitions.swift */,
 				45D386C5F87ED3704993FED3 /* TierIdentity.swift */,
 				4C0C4DD7A04B1A7D199F3CE2 /* TierShots.swift */,
+				B4073640A57430B7AF232E2A /* WowShots.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1189,6 +1196,7 @@
 				4448657C0D8D002814EA86FC /* WowFeeRunwayViewTests.swift */,
 				5591B959E3DB0C512A50B4DD /* WowFreedomTests.swift */,
 				878A041ED149FDBCF4E3C564 /* WowFreedomViewTests.swift */,
+				39FF8089F74E55F0784C4247 /* WowRenderTests.swift */,
 				4D7FFBC19713EA6C7A688C16 /* WowStateTests.swift */,
 				0F462E71A8B4501B8F00EACE /* WowStoryTests.swift */,
 				8AAFB725CF10D3FBD974D8FF /* WowStoryViewTests.swift */,
@@ -1748,6 +1756,7 @@
 				2360722DCF575986205D8CBF /* WowFeeRunwayViewTests.swift in Sources */,
 				E8DC4B75D5734B5F31662A6C /* WowFreedomTests.swift in Sources */,
 				84043C82CDF1E80C8F6BC04C /* WowFreedomViewTests.swift in Sources */,
+				0AD8667A7E8309132E8F2C8D /* WowRenderTests.swift in Sources */,
 				F40C42E24C9C022432AB2D6E /* WowStateTests.swift in Sources */,
 				8787F00BC9FE2A4C1FF9DC47 /* WowStoryTests.swift in Sources */,
 				90C2C7A62A03523F54E2FCD9 /* WowStoryViewTests.swift in Sources */,
@@ -1799,6 +1808,7 @@
 				AED1D5EB8C479A09B3AF07B9 /* WowFeeRunwayViewTests.swift in Sources */,
 				6A5CAE9E71EE7CF45269011F /* WowFreedomTests.swift in Sources */,
 				E419F4DE2F7358AD6F7BE334 /* WowFreedomViewTests.swift in Sources */,
+				ED304B75F72115A2E1112FD7 /* WowRenderTests.swift in Sources */,
 				CF49AB56F0505A1D4E7DCB1E /* WowStateTests.swift in Sources */,
 				DAD7E6F924A3AF61371A6F34 /* WowStoryTests.swift in Sources */,
 				05519984E249600279B54726 /* WowStoryViewTests.swift in Sources */,
@@ -1921,6 +1931,7 @@
 				5F61A2F601098CCB78679D89 /* TierIdentity.swift in Sources */,
 				96BDE864D1EB6282F6E23521 /* TierNudge.swift in Sources */,
 				9462626542BC3A6B7A2AFCE7 /* TierShots.swift in Sources */,
+				1B5D30351C81918BD4CECF58 /* WowShots.swift in Sources */,
 				D8B4D99FCDA7EEFBCE7F8F62 /* WowState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2040,6 +2051,7 @@
 				337F5957BE496FD9DB9E9CB5 /* TierIdentity.swift in Sources */,
 				3BBDD39950E50963A93B5C3F /* TierNudge.swift in Sources */,
 				6556C089EE0860FC19F28AF5 /* TierShots.swift in Sources */,
+				9C7140D76A48DDC0557CC42A /* WowShots.swift in Sources */,
 				AB12C314F50523E6A747564B /* WowState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

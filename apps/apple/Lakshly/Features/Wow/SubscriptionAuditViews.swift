@@ -29,7 +29,7 @@ struct SubscriptionAuditCard: View {
         ForEach(audit.items) { item in
           row(item)
         }
-        if audit.items.contains(where: { planned.contains($0.id) }) {
+        if audit.plannedSavingsYearlyPaise > 0 {
           MoneyText("Cancel the planned ones and save \(Money.format(audit.plannedSavingsYearlyPaise)) a year")
             .font(.subheadline.weight(.semibold))
             .fixedSize(horizontal: false, vertical: true)

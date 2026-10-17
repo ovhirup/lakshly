@@ -68,7 +68,7 @@ struct StoryPager: View {
   let store: DataStore
   @State private var month: String
   @State private var index = 0
-  @State private var showPaywall = false
+  @State private var paywallOpen = false
   @State private var shareURL: URL?
 
   init(store: DataStore) {
@@ -117,7 +117,7 @@ struct StoryPager: View {
     .background { ThemeBackground() }
     .accessibilityIdentifier("wow.story.pager")
     .presentationDetents([.large])
-    .sheet(isPresented: $showPaywall) { PaywallView(context: .feature(.storyShare)) }
+    .sheet(isPresented: $paywallOpen) { PaywallView(context: .feature(.storyShare)) }
     .onChange(of: month) { _, _ in
       index = 0
       refreshShare()
@@ -158,7 +158,7 @@ struct StoryPager: View {
       if open {
         month = item
       } else {
-        showPaywall = true
+        paywallOpen = true
       }
     } label: {
       HStack(spacing: 4) {
@@ -240,6 +240,7 @@ struct StoryPager: View {
     HStack(spacing: 12) {
       Button("Previous") { step(-1) }
         .buttonStyle(.plain)
+        .fixedSize()
         .frame(minHeight: 44)
         .disabled(index <= 0)
         .accessibilityIdentifier("wow.story.previous")
@@ -248,6 +249,7 @@ struct StoryPager: View {
       Spacer(minLength: 8)
       Button("Next") { step(1) }
         .buttonStyle(ThemedSubmitStyle())
+        .fixedSize()
         .disabled(slides.isEmpty || index >= slides.count - 1)
         .accessibilityIdentifier("wow.story.next")
     }
