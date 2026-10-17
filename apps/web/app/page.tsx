@@ -9,6 +9,7 @@ import { Amount, useDoubleTapToggle } from "@/components/Privacy";
 import { ReviewEntryCard, WorthItCard } from "@/components/ReviewParts";
 import { BackfillCard, NextUpStrip, NudgeCard } from "@/components/Game";
 import { TodayCard } from "@/components/TodayCard";
+import { FreedomOverviewRow } from "@/components/wow/Freedom";
 import { TesterStartCard } from "@/components/Beta";
 import { IS_BETA } from "@/lib/edition";
 import { formatDate, formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
@@ -39,6 +40,7 @@ function OverviewView() {
       {IS_BETA && <TesterStartCard />}
       <SetupCard />
       <TodayCard />
+      <FreedomOverviewRow />
 
       <Glass className="hero">
         <p className="eyebrow">Net worth</p>

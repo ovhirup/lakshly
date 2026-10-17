@@ -135,7 +135,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const active: LakshlyDataset = useMemo(() => (source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo), [source, user]);
   const review = useReviewStore(source, active.transactions as ReviewTxn[], demo, user?.importedAt);
   // Fee dates in the demo seed stay on the demo clock, including while My data is showing.
-  const demoClock = useMemo(() => demoNow(demo), [demo]);
+  const demoClock = useMemo(() => demoNow(demo), []);
   const wow = useWowStore(source, demoClock);
   const transactions = useMemo(() => overlayDecisions(active.transactions, review.state), [active, review.state]);
   const { forgetAll } = review;
