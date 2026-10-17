@@ -125,7 +125,7 @@ export async function loadUserData(): Promise<UserData | null> {
 }
 
 /** Named records (setup progress, review state, …) encrypted with the same device key as the dataset. */
-export type RecordName = "profile" | "setup.state" | "review.state" | "review.demo" | "game.ledger" | "game.demo" | "game.nudges";
+export type RecordName = "profile" | "setup.state" | "review.state" | "review.demo" | "game.ledger" | "game.demo" | "game.nudges" | "wow.state" | "wow.demo";
 
 export async function saveRecord(name: RecordName, value: unknown): Promise<void> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
