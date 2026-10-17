@@ -72,6 +72,11 @@ final class EntitlementStore {
 
   func limit(_ feature: Feature) -> Int { LakshlyLimit.value(feature, tier: tier) }
 
+  #if DEBUG
+  /// Offscreen screenshot renderers only: pin the tier without StoreKit.
+  func overrideTierForShots(_ verified: Tier) { tier = TierEdition.resolve(verifiedTier: verified) }
+  #endif
+
   func loadProducts() async {
     isLoadingProducts = true
     productsUnavailable = false

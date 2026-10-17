@@ -55,7 +55,13 @@ export const FEATURE_IDS = [
   "setup.health",
   "setup.suggestions",
   "setup.wizard",
-  "themes.premium"
+  "themes.premium",
+  "wow.feeRunway",
+  "wow.freedomDate",
+  "wow.freedomWhatIf",
+  "wow.story",
+  "wow.storyShare",
+  "wow.subscriptionAudit"
 ] as const;
 export type FeatureId = (typeof FEATURE_IDS)[number];
 export type FeatureSpec = { minTier: "free" | "premium" | "superUser"; label: string; limits?: Partial<Record<"free" | "premium" | "superUser", number | null>> };
@@ -258,6 +264,30 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
   "themes.premium": {
     "minTier": "premium",
     "label": "3 extra themes"
+  },
+  "wow.feeRunway": {
+    "minTier": "premium",
+    "label": "Fee runway for yearly fees (Apple)"
+  },
+  "wow.freedomDate": {
+    "minTier": "free",
+    "label": "Freedom date countdown (Apple)"
+  },
+  "wow.freedomWhatIf": {
+    "minTier": "premium",
+    "label": "Extra-payment what-if for your freedom date (Apple)"
+  },
+  "wow.story": {
+    "minTier": "free",
+    "label": "Monthly story for the latest month (Apple)"
+  },
+  "wow.storyShare": {
+    "minTier": "premium",
+    "label": "Shareable story image and past months (Apple)"
+  },
+  "wow.subscriptionAudit": {
+    "minTier": "free",
+    "label": "Subscription audit (Apple)"
   }
 };
 export const FREE_BILL_OF_RIGHTS: readonly FeatureId[] = ["security.lock","security.encryption","import.statements","core.tabs","data.delete","data.export","setup.wizard","setup.emailGuide","mailSync.connect","privacy.mode","badges.core"];

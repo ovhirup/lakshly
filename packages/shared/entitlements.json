@@ -50,7 +50,13 @@
     "nudges.core": { "minTier": "free", "label": "Coach nudges with Not now, Why? and snooze" },
     "nudges.tone.hype": { "minTier": "free", "label": "Hype and Straight coach tones" },
     "nudges.tone.roast": { "minTier": "premium", "label": "Roast-lite coach tone" },
-    "nudges.notifications": { "minTier": "free", "label": "Nudge notifications (Apple apps)" }
+    "nudges.notifications": { "minTier": "free", "label": "Nudge notifications (Apple apps)" },
+    "wow.freedomDate": { "minTier": "free", "label": "Freedom date countdown (Apple)" },
+    "wow.freedomWhatIf": { "minTier": "premium", "label": "Extra-payment what-if for your freedom date (Apple)" },
+    "wow.story": { "minTier": "free", "label": "Monthly story for the latest month (Apple)" },
+    "wow.storyShare": { "minTier": "premium", "label": "Shareable story image and past months (Apple)" },
+    "wow.subscriptionAudit": { "minTier": "free", "label": "Subscription audit (Apple)" },
+    "wow.feeRunway": { "minTier": "premium", "label": "Fee runway for yearly fees (Apple)" }
   },
   "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect", "privacy.mode", "badges.core"]
 }
