@@ -4,6 +4,7 @@ import { MonthPicker } from "@/components/MonthPicker";
 import { useAppState } from "@/components/AppState";
 import { useTier } from "@/components/useTier";
 import { Glass, PageHeader, PremiumBadge, Progress, Stat } from "@/components/ui";
+import { FeeRunwayCard } from "@/components/wow/FeeRunway";
 import { DataGate, useData } from "@/components/DataState";
 import { formatINR, formatMonth, formatPct, titleCase } from "@/lib/format";
 import { budgetProgress, CATEGORY_COLORS, defaultMonth, months, planFor } from "@/lib/selectors";
@@ -29,6 +30,8 @@ function BudgetView() {
       <PageHeader title="Budget" subtitle={`${formatMonth(month)} · ${onTrack} of ${rows.length} budgets on target`}>
         <MonthPicker months={all} value={month} onChange={setMonth} />
       </PageHeader>
+
+      <FeeRunwayCard />
 
       <div className="grid g3 budget-summary">
         <Glass className="card"><Stat label="Budgeted" value={formatINR(totalLimit)} /></Glass>

@@ -269,6 +269,31 @@ export function dayString(date: Date): string {
   return formatYmd(ymdFromDate(date));
 }
 
+/** Why "Add fee" is waiting. Empty when the draft can be saved. */
+export function feeFormIssue(name: string, amountText: string, due: string): string {
+  const named = name.trim().length > 0;
+  const priced = paiseFromRupees(amountText) !== null;
+  const dated = isCalendarDay(due);
+  if (named && priced && dated) return "";
+  if (!named && !priced && !dated) return "Add a name, an amount above ₹0, and a due date.";
+  if (!named && !priced) return "Add a name and an amount above ₹0.";
+  if (!named && !dated) return "Add a name and a due date.";
+  if (!priced && !dated) return "Enter an amount above ₹0 and a due date.";
+  if (!named) return "Add a name for this fee.";
+  if (!priced) return "Enter an amount above ₹0.";
+  return "Pick a due date.";
+}
+
+function isCalendarDay(due: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(due);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
 function money(paise: number): string {
   return formatINR(paise, paise % 100 !== 0 ? { decimals: true } : {});
 }
