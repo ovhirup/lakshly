@@ -18,6 +18,7 @@ vi.mock("@/components/ReviewParts", () => ({ ReviewEntryCard: () => null, WorthI
 vi.mock("@/components/Game", () => ({ BackfillCard: () => null, NextUpStrip: () => null, NudgeCard: () => null }));
 vi.mock("@/components/TodayCard", () => ({ TodayCard: () => null }));
 vi.mock("@/components/wow/Freedom", () => ({ FreedomOverviewRow: () => null }));
+vi.mock("@/components/wow/Story", () => ({ StoryCard: () => null }));
 vi.mock("@/components/charts", () => ({
   CashflowBars: () => createElement("div", null, "Cash flow chart"),
   Donut: () => createElement("div", null, "Spending chart"),

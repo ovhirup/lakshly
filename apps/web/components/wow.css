@@ -107,3 +107,69 @@
   white-space: nowrap;
   border: 0;
 }
+.wow-story-card,
+.wow-story-pager { display: grid; gap: 14px; }
+.wow-story-win {
+  font-size: 1.15rem;
+  font-weight: 750;
+  letter-spacing: -.02em;
+  line-height: 1.35;
+}
+.wow-story-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.wow-story-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--muted) 12%, transparent);
+}
+.wow-story-stat span { color: var(--muted); font-size: .8rem; }
+.wow-story-stat strong { font-size: .95rem; font-weight: 700; }
+.wow-story-months { display: flex; flex-wrap: wrap; gap: 8px; }
+.wow-story-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--muted) 35%, transparent);
+  background: color-mix(in srgb, var(--muted) 10%, transparent);
+  font-weight: 650;
+}
+.wow-story-chip.on {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.wow-story-chip:disabled { color: var(--muted); opacity: .7; cursor: not-allowed; }
+.wow-story-slide {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--muted) 10%, transparent);
+}
+.wow-story-kicker { color: var(--accent); font-size: .8rem; font-weight: 700; }
+.wow-story-headline {
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 750;
+  letter-spacing: -.04em;
+  line-height: 1.12;
+}
+.wow-story-detail { color: var(--muted); font-size: 1.15rem; }
+.wow-story-controls { display: flex; align-items: center; gap: 12px; }
+.wow-story-dots { display: flex; flex: 1; gap: 6px; align-items: center; justify-content: center; }
+.wow-story-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 35%, transparent);
+}
+.wow-story-dot.on { width: 8px; height: 8px; background: var(--accent); }
+.wow-story-card .btn { justify-self: start; }

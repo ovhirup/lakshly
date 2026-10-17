@@ -334,3 +334,19 @@ function monthName(month: string): string {
   if (!parts) return month;
   return MONTHS[parts.month - 1];
 }
+
+/**
+ * Which months a tier may open. `months` is chronological; the last entry is the latest.
+ * Free opens the latest month only. Story share (Premium) opens every month in the list.
+ */
+export function openStoryMonths(months: readonly string[], share: boolean): string[] {
+  const latest = months[months.length - 1];
+  if (latest === undefined) return [];
+  if (share) return [...months];
+  return [latest];
+}
+
+/** True when `month` is in the list and this tier may open it. */
+export function storyMonthOpen(month: string, months: readonly string[], share: boolean): boolean {
+  return openStoryMonths(months, share).includes(month);
+}
