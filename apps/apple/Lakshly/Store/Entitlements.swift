@@ -54,6 +54,18 @@ enum Feature: String, CaseIterable, Sendable {
   case mailSyncBackground = "mailSync.background"
   /// Local notifications when a data source goes stale.
   case setupFreshnessReminders = "setup.freshnessReminders"
+  /// Freedom date countdown.
+  case freedomDate = "wow.freedomDate"
+  /// Extra-payment what-if for the freedom date.
+  case freedomWhatIf = "wow.freedomWhatIf"
+  /// Monthly story for the latest month.
+  case story = "wow.story"
+  /// Shareable story image and past months.
+  case storyShare = "wow.storyShare"
+  /// Subscription audit.
+  case subscriptionAudit = "wow.subscriptionAudit"
+  /// Fee runway for yearly fees.
+  case feeRunway = "wow.feeRunway"
 }
 
 enum PremiumProduct {

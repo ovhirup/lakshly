@@ -15,6 +15,9 @@ import Observation
   /// Weekly review state (My data) and the demo's own copy; nil means not started (demo starts from its seed).
   var review: ReviewState?
   var reviewDemo: ReviewState?
+  /// Wow preferences (My data) and the demo's own copy. Nil means not started.
+  var wow: WowState?
+  var wowDemo: WowState?
   var reviewUndo: ReviewUndo?
   @ObservationIgnored var reviewSeedCache: ReviewState?
   /// Bumps when setup, flags, and goals are cleared so an in-memory wizard drops its copy.
@@ -84,6 +87,8 @@ import Observation
         imports = migrated.imports ?? []
         review = migrated.review
         reviewDemo = migrated.reviewDemo
+        wow = migrated.wow
+        wowDemo = migrated.wowDemo
         persistSourceHint()
         if saved.source == nil || saved.profile != profile { save() }
       } else {
@@ -118,7 +123,8 @@ import Observation
       try backing.save(
         StoredData(
           dataset: demoDataset, requests: requests, source: source, userDataset: userDataset, setup: setup,
-          goals: goals, imports: imports, profile: profile, review: review, reviewDemo: reviewDemo))
+          goals: goals, imports: imports, profile: profile, review: review, reviewDemo: reviewDemo,
+          wow: wow, wowDemo: wowDemo))
       error = nil
     } catch { self.error = "Could not save locally: \(error.localizedDescription)" }
     GlancePublisher.publish(dataset: dataset)
@@ -179,6 +185,7 @@ import Observation
     imports = []
     review = nil
     reviewUndo = nil
+    wow = nil
     source = .demo
     persistSourceHint()
     selectLatestMonth()
@@ -192,6 +199,7 @@ import Observation
     reviewDemo = nil
     reviewUndo = nil
     reviewSeedCache = nil
+    wowDemo = nil
     clearSetup(save: false)
     do {
       try applySeed(try Self.loadSeed(), persist: true)

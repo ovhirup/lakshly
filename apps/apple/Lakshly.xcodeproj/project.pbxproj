@@ -25,6 +25,7 @@
 		08334A0E63C49A5328D7EFD9 /* StoreKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958223EAAA07FB46C1C3D745 /* StoreKitTests.swift */; };
 		0847608D78A0862D08FC3507 /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */; };
 		090D7BCFEDC6D2EDC4B83BB0 /* SetupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02B9663BF2EFB0E60A5F2D9 /* SetupState.swift */; };
+		0991E2E8BE02D2B827CB4123 /* WowState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194A4E72A3DF2E2E4BB7E290 /* WowState.swift */; };
 		0A113D7CDA49F0F84D6272C5 /* NotchGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88760C1B9DF66D75198CBEED /* NotchGeometry.swift */; };
 		0A22CC093A909DA58EB7CBFA /* SetupLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66369CBFECAE58D334F5086 /* SetupLinks.swift */; };
 		0AABF8ABE1438A20D6B91C2B /* GlanceSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7C047934458E69157FD001 /* GlanceSnapshot.swift */; };
@@ -171,7 +172,9 @@
 		6C552DFDADD516D344F7328C /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E70F932DD22164B5A2197F /* GlassCard.swift */; };
 		6D393275E68A027EB18BA536 /* PremiumGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325AA735767E52909FF4FCEF /* PremiumGate.swift */; };
 		6D9A5F9F66543708AEA43D69 /* Currencies.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7A249764BB3A598F0D0C8B /* Currencies.gen.swift */; };
+		6DF158CEFD0BD42BF0F52FEB /* WowState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194A4E72A3DF2E2E4BB7E290 /* WowState.swift */; };
 		6E9AFB16358B92D1B3E5A8CA /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AE531D64E0D77981F4E98D /* ImportView.swift */; };
+		6F6F23A7149B16D4DFE03B4B /* DataStore+Wow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EA785B2A072010CB0326E8 /* DataStore+Wow.swift */; };
 		6F7D4917116828B071154D0D /* Entitlements.gen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3801F86A6B041F1DB3CD6705 /* Entitlements.gen.swift */; };
 		71E8433CDAC32AFFCB902160 /* LiveActivityViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297476ADFC60ECE772E38A16 /* LiveActivityViews.swift */; };
 		71EF4B6A883500EF4B8191DA /* LakshlyGlance.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25D08A1BDCEE10A0A0943AE4 /* LakshlyGlance.framework */; };
@@ -242,6 +245,7 @@
 		A914C905AA4E080296FA285A /* Review.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA3D7780BFB2480D796C520 /* Review.swift */; };
 		A92028B9AB31506A6DD19ACC /* Amounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2FE03F0B1A9EF46808A2E3C /* Amounts.swift */; };
 		AA9A3FDB46A12D85AECF1EA4 /* themes.json in Resources */ = {isa = PBXBuildFile; fileRef = 8BC93836F5D851C23D6397B4 /* themes.json */; };
+		AB12C314F50523E6A747564B /* WowState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194A4E72A3DF2E2E4BB7E290 /* WowState.swift */; };
 		AB74A9FE1D144D4E06D4D1C3 /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F8B8CDFC7203FA83677173 /* Regex.swift */; };
 		AC59AEBB0C915B77534D6C2D /* GitHubIssueLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */; };
 		ACBF107A50FC5C45EBFD2808 /* GlanceShots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F273986D740F324224001 /* GlanceShots.swift */; };
@@ -298,11 +302,13 @@
 		CD8D01BB8250109FCEA225E6 /* NotchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E7E3872FD1CCEF4D5900B2 /* NotchPanel.swift */; };
 		CDE0F13E6A6733FD8B9D22B7 /* dataset.after-import.json in Resources */ = {isa = PBXBuildFile; fileRef = E818F2A9B3C999E373D6FC82 /* dataset.after-import.json */; };
 		CDEDFF85812D5B15AABEE90D /* FeedbackTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AFBE7327B132D7B2AFB670 /* FeedbackTransport.swift */; };
+		CF49AB56F0505A1D4E7DCB1E /* WowStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7FFBC19713EA6C7A688C16 /* WowStateTests.swift */; };
 		CFA008E04474AE7E09C8A4A8 /* cdsl-cas.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = C0FCF6D9CAF5FA53FC8761D3 /* cdsl-cas.synthetic.pdf */; };
 		D0B715E232F8D3A27CEB8CAF /* BulkImportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426052D2A5746E4B5175E5A1 /* BulkImportTests.swift */; };
 		D0F8B80EB638CC979A69804A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F06C6AC621EF8C1B10ACA2 /* Theme.swift */; };
 		D179EBF207631D20AB46FD3A /* GlanceRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379DCC9C3D1B54CBF3F10CEA /* GlanceRenderTests.swift */; };
 		D26627A71A5666E8FFB878E0 /* GlanceWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E95E7F16F49D38C30F8E2A3 /* GlanceWidgets.swift */; };
+		D37160FC5FF0C67C475EAAF8 /* DataStore+Wow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07EA785B2A072010CB0326E8 /* DataStore+Wow.swift */; };
 		D3CC69A01BB208D4471621B0 /* FeedbackTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83AFBE7327B132D7B2AFB670 /* FeedbackTransport.swift */; };
 		D3E5FD581E06F4F4C25FD058 /* ReviewStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4023FE45ABFA40851A2E1F72 /* ReviewStoreTests.swift */; };
 		D4A5DA8D72694B69000318A2 /* MailSyncPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE73906C755D312E8544C1 /* MailSyncPlanner.swift */; };
@@ -315,6 +321,7 @@
 		D7508065396FD082002C7803 /* GitHubIssueLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4E35F9BF92156ADD31502E /* GitHubIssueLinkTests.swift */; };
 		D88046F3883C9DE8A4AFFB10 /* StoreKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958223EAAA07FB46C1C3D745 /* StoreKitTests.swift */; };
 		D8ABDF22ED8854941A8689CA /* hdfc-bank.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 7380D31D1CE0F85E5B522C5D /* hdfc-bank.synthetic.pdf */; };
+		D8B4D99FCDA7EEFBCE7F8F62 /* WowState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194A4E72A3DF2E2E4BB7E290 /* WowState.swift */; };
 		D8C285A51B7E0EAF03B84689 /* PrivacyShots.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08E7501E1D718700AD4AC19 /* PrivacyShots.swift */; };
 		DB22EED984F46B0C63559719 /* CreditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C491D5C3C62507799130BD /* CreditView.swift */; };
 		DBC4233FB564B58ED569329A /* StoreKitPurchaseUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A5372977627F456E0B68D8E /* StoreKitPurchaseUITests.swift */; };
@@ -350,6 +357,7 @@
 		EF7FD59121B51A370E20EC8E /* Dataset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418C5B9471DC924BC9FA776A /* Dataset.swift */; };
 		F1EC5C314BFCB6C2C248A992 /* BudgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33139522A92ACF23DB08309D /* BudgetView.swift */; };
 		F402B104B33C98C151796F73 /* GlanceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701646DBB486D7E5A96188A9 /* GlanceLinks.swift */; };
+		F40C42E24C9C022432AB2D6E /* WowStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D7FFBC19713EA6C7A688C16 /* WowStateTests.swift */; };
 		F4AA7F40B5289907716FA925 /* LiveActivityViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297476ADFC60ECE772E38A16 /* LiveActivityViews.swift */; };
 		F541D47DC9718ED8B008BC71 /* ReviewRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3F8DA1C964792DFE732D52 /* ReviewRenderTests.swift */; };
 		F74CCF13F9FA0C46E74D028C /* SpendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74D83B4AD1381D1E54EC44F /* SpendView.swift */; };
@@ -458,6 +466,7 @@
 		061DFD782D8D64DED84B65A7 /* sources.catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sources.catalog.json; sourceTree = "<group>"; };
 		06AE73906C755D312E8544C1 /* MailSyncPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailSyncPlanner.swift; sourceTree = "<group>"; };
 		072063D5855428E740FF09F8 /* SetupShots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupShots.swift; sourceTree = "<group>"; };
+		07EA785B2A072010CB0326E8 /* DataStore+Wow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataStore+Wow.swift"; sourceTree = "<group>"; };
 		0841EC1C9C5BE21FC75D2CC0 /* LaunchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOptions.swift; sourceTree = "<group>"; };
 		09196754EE8047DADE4A2DD3 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		0AB77E03381CC92564026A27 /* SecureStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStore.swift; sourceTree = "<group>"; };
@@ -470,6 +479,7 @@
 		160F273986D740F324224001 /* GlanceShots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlanceShots.swift; sourceTree = "<group>"; };
 		18A4E2CF3AA51F384B9C9839 /* TierNudge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TierNudge.swift; sourceTree = "<group>"; };
 		1944FBC20B72D37E153483C4 /* ReviewShots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewShots.swift; sourceTree = "<group>"; };
+		194A4E72A3DF2E2E4BB7E290 /* WowState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WowState.swift; sourceTree = "<group>"; };
 		19DB0AC10A4A1330B21D8B6A /* SecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityTests.swift; sourceTree = "<group>"; };
 		1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LakshlyApp.swift; sourceTree = "<group>"; };
 		1CE42689AD46E5F2EDE113EC /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
@@ -506,6 +516,7 @@
 		47ADF63C3850DCC00E947334 /* DepositoryCAS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepositoryCAS.swift; sourceTree = "<group>"; };
 		47E19DB10EF51035AFED0AB2 /* Entitlements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entitlements.swift; sourceTree = "<group>"; };
 		4C0C4DD7A04B1A7D199F3CE2 /* TierShots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TierShots.swift; sourceTree = "<group>"; };
+		4D7FFBC19713EA6C7A688C16 /* WowStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WowStateTests.swift; sourceTree = "<group>"; };
 		4F17FA443322997C13606406 /* Lakshly.storekit */ = {isa = PBXFileReference; path = Lakshly.storekit; sourceTree = "<group>"; };
 		510F3761334C337C436806EC /* ReviewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewTests.swift; sourceTree = "<group>"; };
 		51E9BAF895BA80DCE3D5015E /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
@@ -678,6 +689,7 @@
 			children = (
 				F09DBDB7CE6050917F3757B1 /* DataStore.swift */,
 				8F98D19DF7DF991C37A0030B /* DataStore+Review.swift */,
+				07EA785B2A072010CB0326E8 /* DataStore+Wow.swift */,
 				3801F86A6B041F1DB3CD6705 /* Entitlements.gen.swift */,
 				47E19DB10EF51035AFED0AB2 /* Entitlements.swift */,
 				FF21C6AA51CCEBB389BF1E1B /* EntitlementStore.swift */,
@@ -840,6 +852,7 @@
 				418C5B9471DC924BC9FA776A /* Dataset.swift */,
 				EB58EE8281500126B5CA886B /* Profile.swift */,
 				0FA3D7780BFB2480D796C520 /* Review.swift */,
+				8028A1A3BC63ABB68865C446 /* Wow */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -909,6 +922,14 @@
 				8B34595B30F2E1F765833567 /* LakshlyWidgets-macOS.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8028A1A3BC63ABB68865C446 /* Wow */ = {
+			isa = PBXGroup;
+			children = (
+				194A4E72A3DF2E2E4BB7E290 /* WowState.swift */,
+			);
+			path = Wow;
 			sourceTree = "<group>";
 		};
 		8880D523AE18804474538197 /* Import */ = {
@@ -1103,6 +1124,7 @@
 				916C39C0C81D202886DC9C23 /* ThemeAppIconTests.swift */,
 				7C6BF59A2B0842225354CD97 /* TierIdentityTests.swift */,
 				8509E0C3F347FDAFD688F05E /* TierRenderTests.swift */,
+				4D7FFBC19713EA6C7A688C16 /* WowStateTests.swift */,
 			);
 			path = LakshlyTests;
 			sourceTree = "<group>";
@@ -1620,6 +1642,7 @@
 				C5871461649C175163349666 /* SourcesCatalog.swift in Sources */,
 				8FEEA24E8C0957BF40B87D1F /* Theme.swift in Sources */,
 				159FB81A3E6B2E2E02164A2E /* ThemeDefinitions.swift in Sources */,
+				0991E2E8BE02D2B827CB4123 /* WowState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1653,6 +1676,7 @@
 				D88046F3883C9DE8A4AFFB10 /* StoreKitTests.swift in Sources */,
 				8CCEB860C1D0497AA998F502 /* TierIdentityTests.swift in Sources */,
 				27E7A5980C1ACE791040DBC6 /* TierRenderTests.swift in Sources */,
+				F40C42E24C9C022432AB2D6E /* WowStateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1696,6 +1720,7 @@
 				37C20B2DCE501454699A5A86 /* ThemeAppIconTests.swift in Sources */,
 				BAC82C9E7C6119896481B041 /* TierIdentityTests.swift in Sources */,
 				838B9324141425C581E51584 /* TierRenderTests.swift in Sources */,
+				CF49AB56F0505A1D4E7DCB1E /* WowStateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1720,6 +1745,7 @@
 				21C5E0B41838F4BD840B1FB4 /* Currency.swift in Sources */,
 				DD8C5F0F914E91766C95EA7C /* DataState.swift in Sources */,
 				424DDE67E28BF927E9808030 /* DataStore+Review.swift in Sources */,
+				D37160FC5FF0C67C475EAAF8 /* DataStore+Wow.swift in Sources */,
 				C0C3EEBE95E47175483DA7A7 /* DataStore.swift in Sources */,
 				EBAE14E003D25F63DEEA3928 /* Dataset.swift in Sources */,
 				C791CEF9120175915E67ED85 /* DatasetImport.swift in Sources */,
@@ -1805,6 +1831,7 @@
 				5F61A2F601098CCB78679D89 /* TierIdentity.swift in Sources */,
 				96BDE864D1EB6282F6E23521 /* TierNudge.swift in Sources */,
 				9462626542BC3A6B7A2AFCE7 /* TierShots.swift in Sources */,
+				D8B4D99FCDA7EEFBCE7F8F62 /* WowState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1829,6 +1856,7 @@
 				EE642F79C9FBFD96AFD1A2AC /* Currency.swift in Sources */,
 				99ACCCA2C5170EA7120D3DDD /* DataState.swift in Sources */,
 				21B5C0D35E50DE628EAA0038 /* DataStore+Review.swift in Sources */,
+				6F6F23A7149B16D4DFE03B4B /* DataStore+Wow.swift in Sources */,
 				79EAB566141178ADB3F43674 /* DataStore.swift in Sources */,
 				572DECB907083C9521607413 /* Dataset.swift in Sources */,
 				B93AC3623F971FA921581BC3 /* DatasetImport.swift in Sources */,
@@ -1914,6 +1942,7 @@
 				337F5957BE496FD9DB9E9CB5 /* TierIdentity.swift in Sources */,
 				3BBDD39950E50963A93B5C3F /* TierNudge.swift in Sources */,
 				6556C089EE0860FC19F28AF5 /* TierShots.swift in Sources */,
+				AB12C314F50523E6A747564B /* WowState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1945,6 +1974,7 @@
 				7E84095320A0DD7E97440829 /* SourcesCatalog.swift in Sources */,
 				25D12E8E4B9741C2A6FEFD91 /* Theme.swift in Sources */,
 				24F5EC0E72C4970785DA2917 /* ThemeDefinitions.swift in Sources */,
+				6DF158CEFD0BD42BF0F52FEB /* WowState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

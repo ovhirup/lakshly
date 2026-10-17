@@ -22,6 +22,7 @@ final class StoreKitTests: XCTestCase {
   static let freeFeatures: Set<Feature> = [
     .budgetLines, .basicWidgets, .importStatements, .setupWizard, .setupEmailGuide, .setupExtraEmails, .setupSuggestions,
     .setupHealth, .mailSyncConnect, .mailSyncIMAP, .mailSyncStatementPasswordKeychain,
+    .freedomDate, .story, .subscriptionAudit,
   ]
 
   private var session: SKTestSession!

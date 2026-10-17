@@ -268,6 +268,7 @@ targets:
       - path: Lakshly/Models/Profile.swift
       - path: Lakshly/Models/Dataset.swift
       - path: Lakshly/Models/Review.swift
+      - path: Lakshly/Models/Wow/WowState.swift
       - path: Lakshly/Setup/SetupState.swift
       - path: Lakshly/Setup/SetupLinks.swift
       - path: Lakshly/Setup/SourcesCatalog.swift
@@ -311,6 +312,7 @@ targets:
       - path: Lakshly/Models/Profile.swift
       - path: Lakshly/Models/Dataset.swift
       - path: Lakshly/Models/Review.swift
+      - path: Lakshly/Models/Wow/WowState.swift
       - path: Lakshly/Setup/SetupState.swift
       - path: Lakshly/Setup/SetupLinks.swift
       - path: Lakshly/Setup/SourcesCatalog.swift
