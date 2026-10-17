@@ -28,6 +28,7 @@ struct SpendView: View {
         Spacer(minLength: 8)
         ReviewChip(store: store, open: openReview)
       }
+      SubscriptionAuditCard(store: store)
       Card(title: "Where it went") {
         SemanticAmount(value: Money.format(-outflows.reduce(0) { $0 + $1.amount }), semantic: .spend,
                        prominent: true)
