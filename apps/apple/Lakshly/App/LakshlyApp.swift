@@ -241,7 +241,9 @@ struct RootView: View {
           Tab(value: "overview") {
             screen("screen.overview") {
               DataGate(store: store, title: "Overview", need: [.accounts, .transactions]) {
-                OverviewView(store: store, showFeedback: { selected = "feedback" }, openReview: { selected = "review" })
+                OverviewView(
+                  store: store, showFeedback: { selected = "feedback" },
+                  openReview: { selected = "review" }, openDebt: { selected = "debt" })
               }
             }
           } label: {

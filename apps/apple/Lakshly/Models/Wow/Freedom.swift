@@ -161,6 +161,23 @@ enum Freedom {
     }
   }
 
+  /// ₹500, in paise. The what-if slider steps by this.
+  static let extraStepPaise: Int64 = 50_000
+
+  /// Slider ceiling: 2× the scheduled EMI, rounded up to a ₹500 step, and never below ₹500.
+  /// Scheduled means outstanding and EMI are both above zero.
+  static func extraSliderMaximum(debts: [Debt]) -> Int64 {
+    let step = extraStepPaise
+    let doubled = saturatingDouble(scheduledEMI(debts))
+    return max(step, ceilToStep(doubled, step: step))
+  }
+
+  /// True when a scheduled EMI is at or below one month of interest, so the balance never falls.
+  static func emiDoesNotCoverInterest(_ debt: Debt) -> Bool {
+    guard debt.outstanding > 0, debt.emi > 0 else { return false }
+    return debt.emi <= interestPaise(debt.outstanding, rate: debt.annualRatePct)
+  }
+
   private struct Slot {
     var id: String
     var name: String
@@ -198,6 +215,29 @@ enum Freedom {
   private static func add(_ lhs: Int64, _ rhs: Int64) -> Int64 {
     let (sum, overflow) = lhs.addingReportingOverflow(rhs)
     return overflow ? Int64.max : sum
+  }
+
+  private static func scheduledEMI(_ debts: [Debt]) -> Int64 {
+    debts.reduce(Int64(0)) { sum, debt in
+      guard debt.outstanding > 0, debt.emi > 0 else { return sum }
+      return add(sum, debt.emi)
+    }
+  }
+
+  private static func saturatingDouble(_ value: Int64) -> Int64 {
+    guard value > 0 else { return 0 }
+    if value > Int64.max / 2 { return Int64.max }
+    return value * 2
+  }
+
+  /// Smallest multiple of `step` that is at least `value`. Zero stays zero.
+  private static func ceilToStep(_ value: Int64, step: Int64) -> Int64 {
+    guard value > 0, step > 0 else { return 0 }
+    let remainder = value % step
+    if remainder == 0 { return value }
+    let gap = step - remainder
+    if value > Int64.max - gap { return (Int64.max / step) * step }
+    return value + gap
   }
 
   private static func parse(_ text: String) -> (year: Int, month: Int)? {

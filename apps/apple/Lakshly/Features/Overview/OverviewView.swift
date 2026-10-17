@@ -8,6 +8,7 @@ struct OverviewView: View {
   let store: DataStore
   let showFeedback: () -> Void
   var openReview: () -> Void = {}
+  var openDebt: () -> Void = {}
   private var accounts: [Account] { store.dataset?.accounts ?? [] }
   private var assets: Int64 { accounts.filter { $0.balance > 0 }.reduce(0) { $0 + $1.balance } }
   private var liabilities: Int64 {
@@ -17,6 +18,7 @@ struct OverviewView: View {
     Page(title: "Every rupee on target.", subtitle: "Your money, in a little more focus.") {
       setupCard
       ReviewEntryCard(store: store, open: openReview)
+      FreedomOverviewRow(store: store, open: openDebt)
       Button(action: showFeedback) {
         HStack {
           Text("Have an idea? Tell us →").font(.subheadline.weight(.semibold))

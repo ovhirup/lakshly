@@ -22,6 +22,8 @@ struct DebtView: View {
   }
   var body: some View {
     Page(title: "Debt", subtitle: "One payment closer to freedom.", showsPremiumLock: !entitlements.isPremium) {
+      FreedomCard(store: store)
+      FreedomWhatIfCard(store: store)
       ForEach(store.dataset?.debts ?? []) { debt in
         Card(title: debt.name) {
           MoneyText(Money.format(debt.outstanding)).font(.largeTitle.bold())

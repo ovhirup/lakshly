@@ -47,6 +47,7 @@
 		11B4FD36D526D662386AE3EF /* Dates.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD413F4C464C3D6FEA7B738F /* Dates.swift */; };
 		15191387FA7F87D969E2A560 /* SetupEntitlementsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEBE3EE720257A408CCE67E /* SetupEntitlementsTests.swift */; };
 		152085EF69ACD979CCA9988E /* GlanceViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4627BEF8AC1B21D856D7BF9 /* GlanceViews.swift */; };
+		15556297F3296268E6C269A3 /* FreedomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D4810C49BC53AA46573E2F /* FreedomViews.swift */; };
 		159FB81A3E6B2E2E02164A2E /* ThemeDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0601B2921DE123B3023E9DF8 /* ThemeDefinitions.swift */; };
 		15BFDA7BAE7460D08B167DE7 /* InvestmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5674277650FE9BFA4D1561 /* InvestmentsView.swift */; };
 		15DC5504B6B77CFFFE890B91 /* SecureStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB77E03381CC92564026A27 /* SecureStore.swift */; };
@@ -205,6 +206,7 @@
 		822B3FE321B289AF407099B4 /* ThemeAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68B5A2D1A980D9058420A06 /* ThemeAppIcon.swift */; };
 		82A9C1C34B0E48A2D0B15179 /* Hash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4413307D726DB4AA063551A0 /* Hash.swift */; };
 		838B9324141425C581E51584 /* TierRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8509E0C3F347FDAFD688F05E /* TierRenderTests.swift */; };
+		84043C82CDF1E80C8F6BC04C /* WowFreedomViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 878A041ED149FDBCF4E3C564 /* WowFreedomViewTests.swift */; };
 		8459F37CA872C9B3D93ABE0C /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D16146E3C7FA70C5880F5E1 /* OverviewView.swift */; };
 		84B0AE4439A8B572ECDD465B /* PrivacyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8FE2A8AE007E7B858E227B5 /* PrivacyStore.swift */; };
 		8687DD3181B825B4170ED12D /* SetupReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D95757B606617DB47EB47 /* SetupReducer.swift */; };
@@ -336,6 +338,7 @@
 		E2AC0FA375B1D56A01E25E82 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = C561213C16F83EF1708313DD /* Money.swift */; };
 		E2DE1AD3A7C0B7A690D2CBA3 /* ChartHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D756A513EA41F1AA42B6CEB /* ChartHelpers.swift */; };
 		E386E812A2E9AD675403F29E /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461F5116A2CC07DF443BBA73 /* Models.swift */; };
+		E419F4DE2F7358AD6F7BE334 /* WowFreedomViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 878A041ED149FDBCF4E3C564 /* WowFreedomViewTests.swift */; };
 		E471E6F615BF1C31BDE7EEBB /* cdsl-cas-locked.synthetic.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 0BFD45B4A7F9E21FCF9C0131 /* cdsl-cas-locked.synthetic.pdf */; };
 		E518C7D962AAC345414469BF /* LakshlyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA6D7E2CAAA19806E21501D /* LakshlyApp.swift */; };
 		E5511B61EEF774F5191470A0 /* GlanceLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701646DBB486D7E5A96188A9 /* GlanceLinks.swift */; };
@@ -375,6 +378,7 @@
 		FB6CB1442E8AF9C862AE3C25 /* MailSyncPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE73906C755D312E8544C1 /* MailSyncPlanner.swift */; };
 		FC9ED1B66D6CF2270E144816 /* SetupCurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5393B446AB6E32C50278A9EC /* SetupCurrencyTests.swift */; };
 		FDDD6F043ADFDB2CC693B099 /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AE531D64E0D77981F4E98D /* ImportView.swift */; };
+		FE511548FA036EFC439EC9D2 /* FreedomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27D4810C49BC53AA46573E2F /* FreedomViews.swift */; };
 		FFAC5F209A71C441911C0734 /* PrivacySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0F943CB59978CBEE181687 /* PrivacySettings.swift */; };
 		FFEB8B9B1EDAAED268A57AFC /* CSV.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C6D1F870CCB6D7D4AB9C387 /* CSV.swift */; };
 /* End PBXBuildFile section */
@@ -491,6 +495,7 @@
 		2102936D55116F24E626F2CD /* LakshlyMacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LakshlyMacUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		25D08A1BDCEE10A0A0943AE4 /* LakshlyGlance.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LakshlyGlance.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		267649A29DE9D37C670881F3 /* BulkImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkImport.swift; sourceTree = "<group>"; };
+		27D4810C49BC53AA46573E2F /* FreedomViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreedomViews.swift; sourceTree = "<group>"; };
 		27F8B8CDFC7203FA83677173 /* Regex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
 		297476ADFC60ECE772E38A16 /* LiveActivityViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityViews.swift; sourceTree = "<group>"; };
 		2992B645E3AF5C02BAB36FDB /* hdfc-bank-locked.synthetic.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "hdfc-bank-locked.synthetic.pdf"; sourceTree = "<group>"; };
@@ -562,6 +567,7 @@
 		84953A55098AE165AB074C74 /* Merge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Merge.swift; sourceTree = "<group>"; };
 		8509E0C3F347FDAFD688F05E /* TierRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TierRenderTests.swift; sourceTree = "<group>"; };
 		85FF6B23641C05276C8CFF4B /* CurrencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTests.swift; sourceTree = "<group>"; };
+		878A041ED149FDBCF4E3C564 /* WowFreedomViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WowFreedomViewTests.swift; sourceTree = "<group>"; };
 		88760C1B9DF66D75198CBEED /* NotchGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchGeometry.swift; sourceTree = "<group>"; };
 		8A5B1AEE84382BAB7ED43C58 /* DataSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSourceTests.swift; sourceTree = "<group>"; };
 		8B2961876FB7435671B01549 /* ReviewReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewReminder.swift; sourceTree = "<group>"; };
@@ -863,6 +869,14 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		4C1FB82C6B344F330115D766 /* Wow */ = {
+			isa = PBXGroup;
+			children = (
+				27D4810C49BC53AA46573E2F /* FreedomViews.swift */,
+			);
+			path = Wow;
+			sourceTree = "<group>";
+		};
 		4CACB035F646B43093EB822F /* shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -976,6 +990,7 @@
 				DCBC624DBB3D48D1FF2E9A38 /* Settings */,
 				AAB2C896A6F6F095EE72F07A /* Setup */,
 				29AA9E4CC3E2A474741924C0 /* Spend */,
+				4C1FB82C6B344F330115D766 /* Wow */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -1132,6 +1147,7 @@
 				7C6BF59A2B0842225354CD97 /* TierIdentityTests.swift */,
 				8509E0C3F347FDAFD688F05E /* TierRenderTests.swift */,
 				5591B959E3DB0C512A50B4DD /* WowFreedomTests.swift */,
+				878A041ED149FDBCF4E3C564 /* WowFreedomViewTests.swift */,
 				4D7FFBC19713EA6C7A688C16 /* WowStateTests.swift */,
 			);
 			path = LakshlyTests;
@@ -1685,6 +1701,7 @@
 				8CCEB860C1D0497AA998F502 /* TierIdentityTests.swift in Sources */,
 				27E7A5980C1ACE791040DBC6 /* TierRenderTests.swift in Sources */,
 				E8DC4B75D5734B5F31662A6C /* WowFreedomTests.swift in Sources */,
+				84043C82CDF1E80C8F6BC04C /* WowFreedomViewTests.swift in Sources */,
 				F40C42E24C9C022432AB2D6E /* WowStateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1730,6 +1747,7 @@
 				BAC82C9E7C6119896481B041 /* TierIdentityTests.swift in Sources */,
 				838B9324141425C581E51584 /* TierRenderTests.swift in Sources */,
 				6A5CAE9E71EE7CF45269011F /* WowFreedomTests.swift in Sources */,
+				E419F4DE2F7358AD6F7BE334 /* WowFreedomViewTests.swift in Sources */,
 				CF49AB56F0505A1D4E7DCB1E /* WowStateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1771,6 +1789,7 @@
 				CDEDFF85812D5B15AABEE90D /* FeedbackTransport.swift in Sources */,
 				F8C60C4B2AD72CF65F778CE9 /* FeedbackView.swift in Sources */,
 				18A33CB20D36ED1D86B478B5 /* Freedom.swift in Sources */,
+				15556297F3296268E6C269A3 /* FreedomViews.swift in Sources */,
 				6545376684AB1F3B066A99BF /* GitHubIssueLink.swift in Sources */,
 				02EA0735807FF95F8BD64CF2 /* GlanceBuilder.swift in Sources */,
 				21FFF62C9848B791E38A2076 /* GlanceLinks.swift in Sources */,
@@ -1883,6 +1902,7 @@
 				D3CC69A01BB208D4471621B0 /* FeedbackTransport.swift in Sources */,
 				33B4C19F994177AAFDB19981 /* FeedbackView.swift in Sources */,
 				89B5F88D9AFF950B1591CF00 /* Freedom.swift in Sources */,
+				FE511548FA036EFC439EC9D2 /* FreedomViews.swift in Sources */,
 				D4AFBD1B4948B2B7BC169E3E /* GitHubIssueLink.swift in Sources */,
 				62612883FAE65AA4D1EF4128 /* GlanceBuilder.swift in Sources */,
 				060FA7F84DE7FA23AB08A340 /* GlanceLinks.swift in Sources */,
