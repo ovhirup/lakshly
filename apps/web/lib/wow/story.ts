@@ -350,3 +350,110 @@ export function openStoryMonths(months: readonly string[], share: boolean): stri
 export function storyMonthOpen(month: string, months: readonly string[], share: boolean): boolean {
   return openStoryMonths(months, share).includes(month);
 }
+
+/** 1080×1350 share card. Two tiles a row. A trailing tile takes the whole row. */
+export const SHARE_CARD_WIDTH = 1080;
+export const SHARE_CARD_HEIGHT = 1350;
+export const SHARE_CARD_PAD = 64;
+export const SHARE_TITLE_SIZE = 56;
+export const SHARE_FOOTER_SIZE = 28;
+export const SHARE_LABEL_SIZE = 22;
+export const SHARE_VALUE_SIZE = 40;
+export const SHARE_TILE_PAD = 24;
+export const SHARE_TILE_RADIUS = 28;
+export const SHARE_TILE_GAP = 20;
+export const SHARE_TILE_HEIGHT = 132;
+export const SHARE_SECTION_GAP = 28;
+export const SHARE_TILE_TEXT_GAP = 8;
+export const SHARE_FOOTER = "Made with Lakshly · amounts hidden";
+
+export interface ShareTileFrame {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface ShareCardLayout {
+  width: number;
+  height: number;
+  padding: number;
+  title: string;
+  titleY: number;
+  footer: string;
+  footerY: number;
+  fileName: string;
+  tiles: Array<ShareTile & ShareTileFrame>;
+}
+
+/** `lakshly-story-yyyy-mm.png` from a `yyyy-MM` month id. */
+export function storyShareFileName(month: string): string {
+  return `lakshly-story-${month}.png`;
+}
+
+/** Card title. `label` is already "Month YYYY". */
+export function storyShareTitle(label: string): string {
+  return `Lakshly · ${label}`;
+}
+
+/** Places `count` tiles under the title and above the footer. */
+export function shareTileFrames(count: number): ShareTileFrame[] {
+  if (count <= 0) return [];
+  const rows = Math.ceil(count / 2);
+  const inner = SHARE_CARD_WIDTH - SHARE_CARD_PAD * 2;
+  const column = (inner - SHARE_TILE_GAP) / 2;
+  const tilesTop = SHARE_CARD_PAD + SHARE_TITLE_SIZE + SHARE_SECTION_GAP;
+  const footerY = SHARE_CARD_HEIGHT - SHARE_CARD_PAD - SHARE_FOOTER_SIZE;
+  const room = footerY - SHARE_SECTION_GAP - tilesTop;
+  const natural = rows * SHARE_TILE_HEIGHT + (rows - 1) * SHARE_TILE_GAP;
+  const fit = natural > room && natural > 0 ? room / natural : 1;
+  const tileHeight = SHARE_TILE_HEIGHT * fit;
+  const gap = SHARE_TILE_GAP * fit;
+  const oddLast = count % 2 === 1;
+  const frames: ShareTileFrame[] = [];
+  for (let index = 0; index < count; index += 1) {
+    const row = Math.floor(index / 2);
+    const side = index % 2;
+    const full = oddLast && row === rows - 1;
+    frames.push({
+      x: SHARE_CARD_PAD + (full ? 0 : side * (column + SHARE_TILE_GAP)),
+      y: tilesTop + row * (tileHeight + gap),
+      width: full ? inner : column,
+      height: tileHeight,
+    });
+  }
+  return frames;
+}
+
+/** Title, footer, file name and tile boxes for one month. Values stay percentage strings. */
+export function shareCardLayout(
+  story: Pick<MonthlyStory, "month" | "label">,
+  tiles: readonly ShareTile[],
+): ShareCardLayout {
+  const frames = shareTileFrames(tiles.length);
+  const placed: Array<ShareTile & ShareTileFrame> = [];
+  for (let index = 0; index < tiles.length; index += 1) {
+    const tile = tiles[index];
+    const frame = frames[index];
+    if (!tile || !frame) continue;
+    placed.push({
+      label: tile.label,
+      value: tile.value,
+      x: frame.x,
+      y: frame.y,
+      width: frame.width,
+      height: frame.height,
+    });
+  }
+  return {
+    width: SHARE_CARD_WIDTH,
+    height: SHARE_CARD_HEIGHT,
+    padding: SHARE_CARD_PAD,
+    title: storyShareTitle(story.label),
+    titleY: SHARE_CARD_PAD,
+    footer: SHARE_FOOTER,
+    footerY: SHARE_CARD_HEIGHT - SHARE_CARD_PAD - SHARE_FOOTER_SIZE,
+    fileName: storyShareFileName(story.month),
+    tiles: placed,
+  };
+}

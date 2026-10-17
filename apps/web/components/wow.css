@@ -173,3 +173,59 @@
 }
 .wow-story-dot.on { width: 8px; height: 8px; background: var(--accent); }
 .wow-story-card .btn { justify-self: start; }
+.wow-share { display: grid; gap: 14px; }
+.wow-share h2 { font-size: 1.05rem; }
+.wow-share-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(100%, 360px);
+  aspect-ratio: 1080 / 1350;
+  padding: 6%;
+  border-radius: 28px;
+  color: var(--lk-text);
+  background: linear-gradient(
+    to bottom right,
+    var(--lk-bg),
+    color-mix(in srgb, var(--lk-lotus) 72%, var(--lk-bg)),
+    color-mix(in srgb, var(--lk-gold) 55%, var(--lk-bg))
+  );
+}
+.wow-share-title {
+  font-size: clamp(1rem, 2.4vw, 1.35rem);
+  font-weight: 750;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+}
+.wow-share-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.wow-share-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--lk-surface) 92%, transparent);
+}
+.wow-share-tile span {
+  color: var(--lk-text-muted);
+  font-size: .72rem;
+  font-weight: 650;
+}
+.wow-share-tile strong {
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -.02em;
+}
+.wow-share-foot {
+  margin-top: auto;
+  color: var(--lk-text-muted);
+  font-size: .8rem;
+  font-weight: 650;
+}
+.wow-share .btn { justify-self: start; }
+
