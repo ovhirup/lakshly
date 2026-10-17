@@ -11,7 +11,7 @@ import { deleteVault, loadUserData, saveUserData, vaultLockState, VAULT_DELETED_
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
 import { usePrivacy } from "./Privacy";
-import { useReviewStore, type ReviewApi } from "./useReview";
+import { demoNow, useReviewStore, type ReviewApi } from "./useReview";
 import { useWowStore, type WowApi } from "./useWow";
 import { overlayDecisions, type ReviewTxn } from "@/lib/review";
 import "./data-state.css";
@@ -134,7 +134,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const active: LakshlyDataset = useMemo(() => (source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo), [source, user]);
   const review = useReviewStore(source, active.transactions as ReviewTxn[], demo, user?.importedAt);
-  const wow = useWowStore(source);
+  // Fee dates in the demo seed stay on the demo clock, including while My data is showing.
+  const demoClock = useMemo(() => demoNow(demo), [demo]);
+  const wow = useWowStore(source, demoClock);
   const transactions = useMemo(() => overlayDecisions(active.transactions, review.state), [active, review.state]);
   const { forgetAll } = review;
   const forgetWow = wow.forgetAll;

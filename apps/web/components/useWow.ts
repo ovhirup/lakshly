@@ -2,7 +2,8 @@
 // Wow preferences: one encrypted vault record per dataset (demo vs mine), loaded once, saved on every change.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadRecord, saveRecord } from "@/lib/vault";
-import { normaliseWow, type WowState } from "@/lib/wow/state";
+import { applyFeeAdd, applyFeeLog, applyFeeRemove, applyFeeReset, demoFeeSeed } from "@/lib/wow/fee-runway";
+import { normaliseWow, type WowFee, type WowState } from "@/lib/wow/state";
 
 export interface WowApi {
   ready: boolean;
@@ -12,16 +13,24 @@ export interface WowApi {
   resetDemo: () => void;
   /** After "Delete all my data": forget in-memory state (the vault itself is already gone). */
   forgetAll: () => void;
+  /** True only on the add that first covers the fee. False when nothing was saved. */
+  logFee: (id: string, paise: number) => boolean;
+  resetFee: (id: string) => void;
+  addFee: (fee: WowFee) => void;
+  /** Drops the fee and its set-aside pot. */
+  removeFee: (id: string) => void;
 }
 
-/** Empty wow preferences. Round 1c fills the demo fees. */
-export function demoWowSeed(): WowState {
-  return normaliseWow(null);
+/** Demo wow preferences: three synthetic yearly fees against the demo clock. */
+export function demoWowSeed(now: Date): WowState {
+  const seeded = demoFeeSeed(now);
+  return normaliseWow({ fees: seeded.fees, setAside: seeded.setAside });
 }
 
-export function useWowStore(source: "demo" | "mine"): WowApi {
+export function useWowStore(source: "demo" | "mine", now: Date): WowApi {
   const [loaded, setLoaded] = useState<{ demo: WowState; mine: WowState } | null>(null);
-  const seed = useMemo(() => demoWowSeed(), []);
+  const at = now.getTime();
+  const seed = useMemo(() => demoWowSeed(new Date(at)), [at]);
 
   useEffect(() => {
     let alive = true;
@@ -58,5 +67,28 @@ export function useWowStore(source: "demo" | "mine"): WowApi {
 
   const forgetAll = useCallback(() => { setLoaded({ demo: seed, mine: normaliseWow(null) }); }, [seed]);
 
-  return { ready: !!loaded, state, update, resetDemo, forgetAll };
+  const logFee = useCallback((id: string, paise: number): boolean => {
+    if (!loadedRef.current) return false;
+    const { state: s, source: src } = latest.current;
+    const outcome = applyFeeLog(s, id, paise);
+    if (outcome.state === s) return false;
+    const next = normaliseWow(outcome.state);
+    latest.current = { ...latest.current, state: next };
+    commit(src, next);
+    return outcome.fundedNow;
+  }, [commit]);
+
+  const resetFee = useCallback((id: string) => {
+    update((s) => applyFeeReset(s, id));
+  }, [update]);
+
+  const addFee = useCallback((fee: WowFee) => {
+    update((s) => applyFeeAdd(s, fee));
+  }, [update]);
+
+  const removeFee = useCallback((id: string) => {
+    update((s) => applyFeeRemove(s, id));
+  }, [update]);
+
+  return { ready: !!loaded, state, update, resetDemo, forgetAll, logFee, resetFee, addFee, removeFee };
 }
