@@ -19,6 +19,7 @@ struct OverviewView: View {
       setupCard
       ReviewEntryCard(store: store, open: openReview)
       FreedomOverviewRow(store: store, open: openDebt)
+      StoryCard(store: store)
       Button(action: showFeedback) {
         HStack {
           Text("Have an idea? Tell us →").font(.subheadline.weight(.semibold))

@@ -345,3 +345,17 @@ enum Story {
     return nameFormatter.string(from: date)
   }
 }
+
+/// Which months a tier may open. `months` is chronological; the last entry is the latest month with transactions.
+enum StoryMonths {
+  /// Free opens the latest month only. `.storyShare` opens every month in the list.
+  static func openMonths(_ months: [String], tier: Tier) -> [String] {
+    guard let latest = months.last else { return [] }
+    if can(.storyShare, tier: tier) { return months }
+    return [latest]
+  }
+
+  static func isOpen(_ month: String, months: [String], tier: Tier) -> Bool {
+    openMonths(months, tier: tier).contains(month)
+  }
+}
