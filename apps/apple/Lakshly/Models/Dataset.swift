@@ -38,7 +38,7 @@ struct Budget: Codable, Identifiable {
   let rollover: Bool?
 }
 
-struct Debt: Codable, Identifiable {
+struct Debt: Codable, Identifiable, Equatable, Sendable {
   let id: String
   let name: String
   let kind: String
