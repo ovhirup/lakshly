@@ -19,6 +19,7 @@ vi.mock("@/components/Game", () => ({ BackfillCard: () => null, NextUpStrip: () 
 vi.mock("@/components/TodayCard", () => ({ TodayCard: () => null }));
 vi.mock("@/components/wow/Freedom", () => ({ FreedomOverviewRow: () => null }));
 vi.mock("@/components/wow/Story", () => ({ StoryCard: () => null }));
+vi.mock("@/components/bills/BillRadar", () => ({ NextBillsCard: () => null }));
 vi.mock("@/components/charts", () => ({
   CashflowBars: () => createElement("div", null, "Cash flow chart"),
   Donut: () => createElement("div", null, "Spending chart"),

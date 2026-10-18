@@ -11,7 +11,8 @@ enum GlanceBuilder {
     tier: Tier,
     themeID: String = ThemeID.lakshmi.rawValue,
     appearance: String = "system",
-    calendar: Calendar = .current
+    calendar: Calendar = .current,
+    radarBills: [RadarBill]? = nil
   ) -> GlanceSnapshot {
     let month = monthKey(now, calendar: calendar)
     let day = calendar.component(.day, from: now)
@@ -25,7 +26,19 @@ enum GlanceBuilder {
     let elapsedPercent = daysInMonth > 0 ? Double(day) / Double(daysInMonth) * 100 : 0
     let status = pace(spendPercent: spendPercent, elapsedPercent: elapsedPercent, limit: limit)
     let safe = safeToSpend(limit: limit, spent: spent, day: day, daysInMonth: daysInMonth, includeAmounts: includeAmounts)
-    let bill = nextBill(dataset, now: now, calendar: calendar, includeAmounts: includeAmounts)
+    let bills: [GlanceBill]
+    if let radarBills {
+      bills = radarBills.filter { !$0.paid }.prefix(6).compactMap { bill in
+        let parts = bill.due.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3,
+              let due = calendar.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2])) else { return nil }
+        let kind = GlanceBillKind(rawValue: bill.kind.rawValue) ?? .card
+        return GlanceBill(name: named(bill.name, fallback: kind.word), dueDate: due,
+          kind: kind, amount: includeAmounts ? bill.amount : nil)
+      }
+    } else {
+      bills = nextBill(dataset, now: now, calendar: calendar, includeAmounts: includeAmounts).map { [$0] } ?? []
+    }
     let debts = dataset.debts ?? []
     let principal = debts.reduce(Int64(0)) { $0 + $1.principal }
     let outstanding = debts.reduce(Int64(0)) { $0 + $1.outstanding }
@@ -42,7 +55,8 @@ enum GlanceBuilder {
         monthElapsedPercent: elapsedPercent,
         status: status,
         safeToSpendPerDay: safe),
-      nextBill: bill,
+      nextBill: bills.first,
+      bills: bills,
       debtRepaidPercent: min(100, max(0, repaid)),
       netWorthTrend: trend(dataset, now: now, calendar: calendar),
       netWorth: includeAmounts ? assets - liabilities : nil,
@@ -179,6 +193,9 @@ enum GlanceBuilder {
     case .card: 0
     case .emi: 1
     case .sip: 2
+    case .insurance: 3
+    case .fee: 4
+    case .subscription: 5
     }
   }
 

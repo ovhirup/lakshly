@@ -405,7 +405,10 @@ struct MenuBarGlanceBody: View {
       }
       if let snapshot {
         budgetRow(snapshot)
-        if let bill = snapshot.nextBill { billRow(bill) }
+        let bills = snapshot.bills.isEmpty ? snapshot.nextBill.map { [$0] } ?? [] : snapshot.bills
+        ForEach(Array(bills.prefix(2).enumerated()), id: \.offset) { _, bill in
+          billRow(bill)
+        }
         debtRow(snapshot)
         if premium { netRow(snapshot) }
         Text("Updated \(snapshot.generatedAt.formatted(date: .abbreviated, time: .shortened))")

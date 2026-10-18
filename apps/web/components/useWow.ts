@@ -1,11 +1,18 @@
 "use client";
 // Wow preferences: one encrypted vault record per dataset (demo vs mine), loaded once, saved on every change.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { BillKind } from "@/lib/bills/radar";
 import { loadRecord, saveRecord } from "@/lib/vault";
 import { applyFeeAdd, applyFeeLog, applyFeeRemove, applyFeeReset, demoFeeSeed } from "@/lib/wow/fee-runway";
 import { normaliseWow, type WowFee, type WowState } from "@/lib/wow/state";
 
 export interface WowApi {
+  markBillPaid: (id: string) => void;
+  unmarkBillPaid: (id: string) => void;
+  toggleBillMute: (kind: BillKind, sourceId: string) => void;
+  setBillAlerts: (on: boolean) => void;
+  setBillLeadDays: (n: number) => void;
+  setBillAmountsInAlerts: (on: boolean) => void;
   ready: boolean;
   state: WowState;
   /** Save the active record (wow.demo or wow.state). Ignored until the vault read has finished. */
@@ -90,5 +97,33 @@ export function useWowStore(source: "demo" | "mine", now: Date): WowApi {
     update((s) => applyFeeRemove(s, id));
   }, [update]);
 
-  return { ready: !!loaded, state, update, resetDemo, forgetAll, logFee, resetFee, addFee, removeFee };
+  const markBillPaid = useCallback((id: string) => {
+    update((s) => ({ ...s, bills: { ...s.bills, paid: [...s.bills.paid, id] } }));
+  }, [update]);
+
+  const unmarkBillPaid = useCallback((id: string) => {
+    update((s) => ({ ...s, bills: { ...s.bills, paid: s.bills.paid.filter((item) => item !== id) } }));
+  }, [update]);
+
+  const toggleBillMute = useCallback((kind: BillKind, sourceId: string) => {
+    const id = kind + ":" + sourceId;
+    update((s) => ({ ...s, bills: { ...s.bills, muted: s.bills.muted.includes(id) ? s.bills.muted.filter((item) => item !== id) : [...s.bills.muted, id] } }));
+  }, [update]);
+
+  const setBillAlerts = useCallback((on: boolean) => {
+    update((s) => ({ ...s, bills: { ...s.bills, alertsOn: on } }));
+  }, [update]);
+
+  const setBillLeadDays = useCallback((n: number) => {
+    update((s) => ({ ...s, bills: { ...s.bills, leadDays: n } }));
+  }, [update]);
+
+  const setBillAmountsInAlerts = useCallback((on: boolean) => {
+    update((s) => ({ ...s, bills: { ...s.bills, amountsInAlerts: on } }));
+  }, [update]);
+
+  return {
+    ready: !!loaded, state, update, resetDemo, forgetAll, logFee, resetFee, addFee, removeFee,
+    markBillPaid, unmarkBillPaid, toggleBillMute, setBillAlerts, setBillLeadDays, setBillAmountsInAlerts,
+  };
 }

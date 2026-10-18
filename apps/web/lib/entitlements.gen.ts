@@ -17,6 +17,10 @@ export const FEATURE_IDS = [
   "badges.core",
   "badges.share",
   "badges.themes",
+  "bills.alerts",
+  "bills.liveActivity",
+  "bills.radar",
+  "bills.widget",
   "budgets.lines",
   "budgets.unlimited",
   "core.tabs",
@@ -85,6 +89,26 @@ export const FEATURES: Readonly<Record<FeatureId, FeatureSpec>> = {
   "badges.themes": {
     "minTier": "premium",
     "label": "Badge themes"
+  },
+  "bills.alerts": {
+    "minTier": "free",
+    "label": "Bill alerts (Free: the next 3)",
+    "limits": {
+      "free": 3,
+      "premium": null
+    }
+  },
+  "bills.liveActivity": {
+    "minTier": "premium",
+    "label": "Live Activity on the due day for renewals and fees (Apple)"
+  },
+  "bills.radar": {
+    "minTier": "free",
+    "label": "Bill & renewal radar"
+  },
+  "bills.widget": {
+    "minTier": "premium",
+    "label": "Bill radar widget (Apple)"
   },
   "budgets.lines": {
     "minTier": "free",

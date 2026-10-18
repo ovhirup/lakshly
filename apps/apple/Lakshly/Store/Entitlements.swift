@@ -66,6 +66,14 @@ enum Feature: String, CaseIterable, Sendable {
   case subscriptionAudit = "wow.subscriptionAudit"
   /// Fee runway for yearly fees.
   case feeRunway = "wow.feeRunway"
+  /// Bill & renewal radar.
+  case billRadar = "bills.radar"
+  /// Bill alerts (local notifications). Free: the next 3.
+  case billAlerts = "bills.alerts"
+  /// Live Activity on the due day for renewals and fees.
+  case billLiveActivity = "bills.liveActivity"
+  /// Bill radar widget.
+  case billWidget = "bills.widget"
 }
 
 enum PremiumProduct {

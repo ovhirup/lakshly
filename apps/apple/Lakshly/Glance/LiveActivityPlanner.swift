@@ -28,11 +28,18 @@ enum LiveActivityPlanner {
     budgetAlertMonth: String? = nil,
     budgetActivityRunningToday: Bool = false
   ) -> LiveActivityPlan? {
-    if let bill = snapshot.nextBill, calendar.isDate(bill.dueDate, inSameDayAs: now) {
+    let bills = snapshot.bills.isEmpty ? snapshot.nextBill.map { [$0] } ?? [] : snapshot.bills
+    if let bill = bills.first(where: { bill in
+      guard calendar.isDate(bill.dueDate, inSameDayAs: now) else { return false }
+      switch bill.kind {
+      case .card, .emi, .sip: return true
+      case .insurance, .fee, .subscription: return can(.billLiveActivity, tier: snapshot.tier.accessTier)
+      }
+    }) {
       return LiveActivityPlan(
         kind: .bill,
         title: bill.name,
-        subtitle: "Due today",
+        subtitle: bill.kind == .subscription ? "Renews today" : "Due today",
         progress: 1,
         amountPaise: bill.amount,
         endOfDay: endOfDay(now, calendar: calendar),

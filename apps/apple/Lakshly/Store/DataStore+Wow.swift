@@ -13,7 +13,10 @@ extension DataStore {
   func setWowState(_ state: WowState) {
     let state = WowState(
       extraPaise: state.extraPaise, rollOver: state.rollOver, plannedCancels: state.plannedCancels,
-      fees: state.fees, setAside: state.setAside)
+      fees: state.fees, setAside: state.setAside,
+      bills: BillRadarState(
+        paid: state.bills.paid, muted: state.bills.muted, leadDays: state.bills.leadDays,
+        alertsOn: state.bills.alertsOn, amountsInAlerts: state.bills.amountsInAlerts))
     switch source {
     case .demo: wowDemo = state
     case .mine: wow = state
@@ -77,7 +80,7 @@ extension DataStore {
     FeeRunway.suggestions(transactions: dataset?.transactions ?? [], now: reviewNow, fees: wowState.fees)
   }
 
-  private func seedDemoFeesIfNeeded() {
+  func seedDemoFeesIfNeeded() {
     guard source == .demo else { return }
     var state = wowState
     guard state.fees.isEmpty else { return }

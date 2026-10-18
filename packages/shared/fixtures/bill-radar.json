@@ -1,0 +1,44 @@
+{
+  "now": "2026-03-28T19:00:00+05:30",
+  "timezone": "Asia/Kolkata",
+  "accounts": [
+    {"id":"demo-today","name":"Demo daily card","type":"credit_card","institution":"Demo","currency":"INR","balance":-10000,"dueDay":28,"asOf":"2026-03-28"},
+    {"id":"demo-month-end","name":"Demo month end card","type":"credit_card","institution":"Demo","currency":"INR","balance":-40000,"dueDay":31,"asOf":"2026-03-28"}
+  ],
+  "debts": [
+    {"id":"demo-emi","name":"Demo loan","kind":"personal","principal":300000,"outstanding":90000,"annualRatePct":0,"emi":30000,"startDate":"2025-01-30","tenureMonths":10}
+  ],
+  "sips": [
+    {"id":"demo-active","scheme":"Demo active fund","amount":60000,"dayOfMonth":3,"startDate":"2025-01-03","status":"active"},
+    {"id":"demo-paused","scheme":"Demo paused fund","amount":70000,"dayOfMonth":29,"startDate":"2025-01-29","status":"paused"}
+  ],
+  "fees": [
+    {"id":"demo-lic","name":"Demo LIC policy","amount":20000,"due":"2026-03-29","yearly":true},
+    {"id":"sample-cert","name":"Sample cert renewal","amount":50000,"due":"2025-04-02","yearly":true}
+  ],
+  "subscriptions": [
+    {"id":"demo-lapsed","name":"Demo old service","amount":80000,"nextDate":"2026-03-28","cadence":"monthly","lapsed":true},
+    {"id":"demo-cancel","name":"Demo cancelled service","amount":90000,"nextDate":"2026-03-29","cadence":"monthly","lapsed":false}
+  ],
+  "plannedCancels": ["demo-cancel"],
+  "state": {"paid":["emi:demo-emi:2026-03-30"],"muted":["insurance:demo-lic"],"leadDays":3,"alertsOn":true,"amountsInAlerts":false},
+  "expected": {
+    "bills": [
+      {"id":"card:demo-today:2026-03-28","daysLeft":0,"kind":"card","amount":10000,"paid":false,"muted":false},
+      {"id":"insurance:demo-lic:2026-03-29","daysLeft":1,"kind":"insurance","amount":20000,"paid":false,"muted":true},
+      {"id":"emi:demo-emi:2026-03-30","daysLeft":2,"kind":"emi","amount":30000,"paid":true,"muted":false},
+      {"id":"card:demo-month-end:2026-03-31","daysLeft":3,"kind":"card","amount":40000,"paid":false,"muted":false},
+      {"id":"fee:sample-cert:2026-04-02","daysLeft":5,"kind":"fee","amount":50000,"paid":false,"muted":false},
+      {"id":"sip:demo-active:2026-04-03","daysLeft":6,"kind":"sip","amount":60000,"paid":false,"muted":false}
+    ],
+    "summary": {"dueThisWeek":5,"dueThisWeekPaise":180000,"next":"card:demo-today:2026-03-28"},
+    "alerts": [
+      {"id":"lakshly.bill.card:demo-today:2026-03-28","billId":"card:demo-today:2026-03-28","fireAt":"2026-03-28T19:01:00+05:30","title":"Card bill due today","body":"Demo daily card · 28 Mar"},
+      {"id":"lakshly.bill.card:demo-month-end:2026-03-31","billId":"card:demo-month-end:2026-03-31","fireAt":"2026-03-31T09:00:00+05:30","title":"Card bill due today","body":"Demo month end card · 31 Mar"},
+      {"id":"lakshly.bill.fee:sample-cert:2026-04-02","billId":"fee:sample-cert:2026-04-02","fireAt":"2026-03-30T09:00:00+05:30","title":"Fee due in 3 days","body":"Sample cert renewal · 2 Apr"},
+      {"id":"lakshly.bill.sip:demo-active:2026-04-03","billId":"sip:demo-active:2026-04-03","fireAt":"2026-03-31T09:00:00+05:30","title":"SIP due in 3 days","body":"Demo active fund · 3 Apr"}
+    ],
+    "limit3": {"alertIds":["lakshly.bill.card:demo-today:2026-03-28","lakshly.bill.card:demo-month-end:2026-03-31","lakshly.bill.fee:sample-cert:2026-04-02"],"lockedCount":1},
+    "unlimited": {"alertIds":["lakshly.bill.card:demo-today:2026-03-28","lakshly.bill.card:demo-month-end:2026-03-31","lakshly.bill.fee:sample-cert:2026-04-02","lakshly.bill.sip:demo-active:2026-04-03"],"lockedCount":0}
+  }
+}

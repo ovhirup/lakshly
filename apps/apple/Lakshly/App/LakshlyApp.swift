@@ -30,6 +30,7 @@ import SwiftUI
     _menuBarExtra = AppStorage(wrappedValue: true, GlancePreferences.menuBarExtraKey, store: GlanceStore.preferences)
     #endif
     let store = DataStore(loadSyntheticDemo: Self.loadsSyntheticDemoAtLaunch)
+    BillNotifications.register(store: store)
     _store = State(initialValue: store)
     _session = State(initialValue: SetupSession(store: store))
     _lock = State(initialValue: AppLock())
@@ -243,7 +244,8 @@ struct RootView: View {
               DataGate(store: store, title: "Overview", need: [.accounts, .transactions]) {
                 OverviewView(
                   store: store, showFeedback: { selected = "feedback" },
-                  openReview: { selected = "review" }, openDebt: { selected = "debt" })
+                  openReview: { selected = "review" }, openDebt: { selected = "debt" },
+                  openBills: { selected = "bills" })
               }
             }
           } label: {
@@ -332,6 +334,11 @@ struct RootView: View {
       .modifier(LaunchPaywallModifier(locked: lock.locked))
       .onAppear {
         if !lockEnabled && !lock.forced { lock.locked = false }
+        if let text = BillNotifications.pendingURL, let url = URL(string: text),
+           let tab = GlanceLinks.tab(from: url) {
+          if lock.locked { pendingTab = tab } else { selected = tab }
+          BillNotifications.pendingURL = nil
+        }
         #if os(macOS)
         notchController?.start { try GlanceVault.dataset(from: store) }
         syncNotch()
@@ -355,6 +362,14 @@ struct RootView: View {
         case .deferSetup(let step): deferredSetup = .some(step)
         }
       }
+      .onReceive(NotificationCenter.default.publisher(for: BillNotifications.openURL)) { event in
+        guard let text = event.object as? String, let url = URL(string: text),
+              let tab = GlanceLinks.tab(from: url) else { return }
+        if lock.locked { pendingTab = tab } else { selected = tab }
+        BillNotifications.pendingURL = nil
+      }
+      .onChange(of: store.billRadar) { _, _ in publishGlance() }
+      .onChange(of: store.source) { _, _ in publishGlance() }
       .onChange(of: privacy.masked) { _, _ in publishGlance() }
       .onChange(of: lock.locked) { _, locked in
         if locked { privacy.noteLocked() }
@@ -405,7 +420,9 @@ struct RootView: View {
       themeID: themeSelection,
       appearance: LaunchOptions.current.appearance ?? appearanceStored,
       tier: entitlements.tier)
-    GlancePublisher.publish(dataset: store.dataset)
+    GlancePublisher.publish(dataset: store.dataset, now: store.reviewNow, wow: store.wowState)
+    BillNotifications.alertLimit = FeatureLimit(tierLimit: entitlements.limit(.billAlerts))
+    BillNotifications.reschedule(store: store)
     #if os(macOS)
     syncNotch()
     #endif
@@ -471,6 +488,11 @@ struct RootView: View {
       tabLabel("Review", systemImage: "checklist", identifier: "tab.review")
     }
     .badge(reviewBadge)
+    Tab(value: "bills") {
+      screen("screen.bills") { BillRadarView(store: store) }
+    } label: {
+      tabLabel("Bills", systemImage: "bell.badge", identifier: "tab.bills")
+    }
   }
   /// Inbox count on the Review tab, capped at "50+".
   private var reviewBadge: Text? {

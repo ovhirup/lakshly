@@ -189,7 +189,14 @@ describe("freedom date", () => {
 
 describe("normaliseWow", () => {
   it("fills defaults for empty input", () => {
-    const empty = { extraPaise: 0, rollOver: false, plannedCancels: [], fees: [], setAside: {} };
+    const empty = {
+      bills: { paid: [], muted: [], alertsOn: false, amountsInAlerts: false, leadDays: 3 },
+      extraPaise: 0,
+      rollOver: false,
+      plannedCancels: [],
+      fees: [],
+      setAside: {},
+    };
     expect(normaliseWow(null)).toEqual(empty);
     expect(normaliseWow(undefined)).toEqual(empty);
     expect(normaliseWow("nope")).toEqual(empty);

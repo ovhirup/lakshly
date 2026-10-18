@@ -127,7 +127,7 @@ import Observation
           wow: wow, wowDemo: wowDemo))
       error = nil
     } catch { self.error = "Could not save locally: \(error.localizedDescription)" }
-    GlancePublisher.publish(dataset: dataset)
+    GlancePublisher.publish(dataset: dataset, now: reviewNow, wow: wowState)
   }
 
   func restoreImportState(dataset: Dataset?, imports: [ImportLogEntry], source: DataSource, month: String) {

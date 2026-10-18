@@ -9,6 +9,7 @@ struct OverviewView: View {
   let showFeedback: () -> Void
   var openReview: () -> Void = {}
   var openDebt: () -> Void = {}
+  var openBills: () -> Void = {}
   private var accounts: [Account] { store.dataset?.accounts ?? [] }
   private var assets: Int64 { accounts.filter { $0.balance > 0 }.reduce(0) { $0 + $1.balance } }
   private var liabilities: Int64 {
@@ -20,6 +21,7 @@ struct OverviewView: View {
       ReviewEntryCard(store: store, open: openReview)
       FreedomOverviewRow(store: store, open: openDebt)
       StoryCard(store: store)
+      BillsOverviewCard(store: store, open: openBills)
       Button(action: showFeedback) {
         HStack {
           Text("Have an idea? Tell us →").font(.subheadline.weight(.semibold))

@@ -1,0 +1,29 @@
+.bills-page { display: grid; gap: 20px; }
+.card.bills-summary { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 24px; }
+.bills-total { font-size: clamp(1.6rem, 4vw, 2.2rem); font-variant-numeric: tabular-nums; }
+.bills-next p { margin: 5px 0; font-weight: 600; }
+.bills-list { list-style: none; padding: 0; margin: 0; }
+.bills-row { display: flex; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--lk-border); }
+.bills-row:last-child, .bills-overview-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.bills-detail { flex: 1; min-width: 0; }
+.bills-detail h3 { margin: 8px 0 5px; overflow-wrap: anywhere; font-size: 1rem; }
+.bills-detail p { margin: 0; }
+.bills-kind { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--lk-border); border-radius: 999px; padding: 4px 9px; font-size: .75rem; color: var(--lk-text-muted); }
+.bills-amount { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bills-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.bills-paid { opacity: .65; }
+.bills-alerts { margin-top: 20px; }
+.bills-setting { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; cursor: pointer; }
+.bills-setting input { width: 20px; height: 20px; accent-color: var(--lk-gold); }
+.bills-locked { border-top: 1px solid var(--lk-border); margin-top: 16px; padding-top: 16px; }
+.bills-overview-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--lk-border); }
+.bills-overview-row p { margin: 4px 0 0; }
+.bills-overview-row strong { font-size: .9rem; }
+@media (max-width: 700px) {
+  .card.bills-summary { align-items: flex-start; flex-direction: column; gap: 18px; }
+  .bills-row { flex-wrap: wrap; gap: 14px; }
+  .bills-detail { flex-basis: calc(100% - 120px); }
+  .bills-actions { width: 100%; }
+  .bills-actions .btn { min-height: 44px; }
+  .bills-overview .card-head { flex-wrap: wrap; }
+}

@@ -122,7 +122,7 @@ struct UpcomingBillWidget: Widget {
       GlanceWidgetEntryView(entry: entry, kind: .upcomingBill)
     }
     .configurationDisplayName("Upcoming bill")
-    .description("The next card, EMI or SIP.")
+    .description("Your next bill or renewal.")
     .supportedFamilies(Self.families)
   }
 

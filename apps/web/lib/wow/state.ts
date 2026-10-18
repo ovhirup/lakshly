@@ -1,3 +1,5 @@
+import { emptyBillState, normaliseBillState, type BillRadarState } from "@/lib/bills/radar";
+
 // Encrypted wow preferences for My data or the synthetic demo. Bad fields fall back; normalise never throws.
 
 export interface WowFee {
@@ -11,6 +13,7 @@ export interface WowFee {
 }
 
 export interface WowState {
+  bills: BillRadarState;
   /** What-if monthly extra, in paise. Clamped to 0...extraPaiseMax. */
   extraPaise: number;
   /** Cleared EMIs roll into the next debt. */
@@ -27,7 +30,7 @@ export const extraPaiseMax = 1_000_000_000;
 const DUE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export function emptyWow(): WowState {
-  return { extraPaise: 0, rollOver: false, plannedCancels: [], fees: [], setAside: {} };
+  return { bills: emptyBillState(), extraPaise: 0, rollOver: false, plannedCancels: [], fees: [], setAside: {} };
 }
 
 /** Defensive decode: defaults, unique sorted cancels, bad fees dropped, amounts never negative. */
@@ -35,6 +38,7 @@ export function normaliseWow(raw: unknown): WowState {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return emptyWow();
   const r = raw as Partial<WowState>;
   return {
+    bills: normaliseBillState(r.bills),
     extraPaise: clampExtra(r.extraPaise),
     rollOver: r.rollOver === true,
     plannedCancels: uniqueSorted(r.plannedCancels),
