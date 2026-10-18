@@ -1,4 +1,5 @@
 const P: Record<string, string> = {
+  bell: "M12 2a6 6 0 0 0-6 6v4l-2 4v2h16v-2l-2-4V8a6 6 0 0 0-6-6Zm0 2a4 4 0 0 1 4 4v4.5l1.75 3.5H6.25L8 12.5V8a4 4 0 0 1 4-4Zm-2 16a2 2 0 0 0 4 0h-4Z",
   overview: "M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z",
   spend: "M21 7H3V5h18v2zm0 4H3v8h18v-8zm-4 5h-3v-2h3v2z",
   budget: "M12 2a10 10 0 1 0 10 10h-10V2zm2 0v8h8a10 10 0 0 0-8-8z",

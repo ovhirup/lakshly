@@ -8,6 +8,7 @@ import WidgetKit
   @WidgetBundleBuilder private var widgets: some Widget {
     BudgetPaceWidget()
     UpcomingBillWidget()
+    BillRadarWidget()
     NetWorthWidget()
     DebtWidget()
     ReviewWidget()
@@ -17,6 +18,7 @@ import WidgetKit
   @WidgetBundleBuilder private var widgets: some Widget {
     BudgetPaceWidget()
     UpcomingBillWidget()
+    BillRadarWidget()
     NetWorthWidget()
     DebtWidget()
     ReviewWidget()

@@ -16,6 +16,7 @@ import "./review.css";
 import { IS_BETA } from "@/lib/edition";
 import { BetaRibbon, FeedbackFab } from "./Beta";
 import { ThemeV2Root } from "./ThemeV2";
+import { BillAlertsRunner } from "./bills/BillAlertsRunner";
 
 export const NAV: { href: string; label: string; icon: string; feature?: FeatureId }[] = [
   { href: "/", label: "Overview", icon: "overview" },
@@ -23,6 +24,7 @@ export const NAV: { href: string; label: string; icon: string; feature?: Feature
   { href: "/review/", label: "Weekly review", icon: "check" },
   { href: "/badges/", label: "Badges", icon: "medal" },
   { href: "/budget/", label: "Budget", icon: "budget" },
+  { href: "/bills/", label: "Bill radar", icon: "credit" },
   { href: "/debt/", label: "Debt", icon: "debt", feature: "debt.planner" },
   { href: "/owed/", label: "Owed to you", icon: "debt" },
   { href: "/credit/", label: "Credit", icon: "credit", feature: "credit.insights" },
@@ -56,6 +58,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className={`app ${path.startsWith("/setup/") ? "setup-mode" : ""}`}>
       <SetupAutoOpen />
+      <BillAlertsRunner />
       <a className="skip-link" href="#main-content">Skip to content</a>
       <div className="bg" aria-hidden="true" />
       {IS_BETA && <ThemeV2Root />}

@@ -19,6 +19,7 @@ struct WowState: Codable, Equatable, Sendable {
   var plannedCancels: [String]
   var fees: [WowFee]
   var setAside: [String: Int64]
+  var bills: BillRadarState
 
   static let extraPaiseMax: Int64 = 10_000_000_00
 
@@ -27,17 +28,19 @@ struct WowState: Codable, Equatable, Sendable {
     rollOver: Bool = false,
     plannedCancels: [String] = [],
     fees: [WowFee] = [],
-    setAside: [String: Int64] = [:]
+    setAside: [String: Int64] = [:],
+    bills: BillRadarState = BillRadarState()
   ) {
     self.extraPaise = Self.clampExtra(extraPaise)
     self.rollOver = rollOver
     self.plannedCancels = Self.uniqueSorted(plannedCancels)
     self.fees = fees
     self.setAside = setAside
+    self.bills = bills
   }
 
   enum CodingKeys: String, CodingKey {
-    case extraPaise, rollOver, plannedCancels, fees, setAside
+    case extraPaise, rollOver, plannedCancels, fees, setAside, bills
   }
 
   init(from decoder: Decoder) throws {
@@ -53,7 +56,8 @@ struct WowState: Codable, Equatable, Sendable {
       rollOver: value(.rollOver, false),
       plannedCancels: value(.plannedCancels, [String]()),
       fees: value(.fees, [WowFee]()),
-      setAside: value(.setAside, [String: Int64]()))
+      setAside: value(.setAside, [String: Int64]()),
+      bills: value(.bills, BillRadarState()))
   }
 
   func encode(to encoder: Encoder) throws {
@@ -63,6 +67,7 @@ struct WowState: Codable, Equatable, Sendable {
     try c.encode(plannedCancels, forKey: .plannedCancels)
     try c.encode(fees, forKey: .fees)
     try c.encode(setAside, forKey: .setAside)
+    try c.encode(bills, forKey: .bills)
   }
 
   private static func clampExtra(_ value: Int64) -> Int64 {

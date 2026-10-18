@@ -15,7 +15,7 @@ import WidgetKit
     self.tier = tier
   }
 
-  static func publish(dataset: Dataset?, now: Date = Date()) {
+  static func publish(dataset: Dataset?, now: Date = Date(), wow: WowState = WowState()) {
     guard let dataset else { return }
     let preferences = GlanceStore.preferences
     let snapshot = GlanceBuilder.build(
@@ -24,7 +24,12 @@ import WidgetKit
       includeAmounts: GlancePreferences.showAmounts(in: preferences),
       tier: tier,
       themeID: themeID,
-      appearance: appearance)
+      appearance: appearance,
+      fees: wow.fees,
+      subscriptions: SubscriptionAudit.build(
+        transactions: dataset.transactions, now: now, planned: Set(wow.plannedCancels)).items,
+      plannedCancels: Set(wow.plannedCancels),
+      radarState: wow.bills)
     try? GlanceStore.write(snapshot)
     #if canImport(WidgetKit)
     WidgetCenter.shared.reloadAllTimelines()

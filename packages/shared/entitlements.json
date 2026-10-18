@@ -56,7 +56,11 @@
     "wow.story": { "minTier": "free", "label": "Monthly story for the latest month (Apple)" },
     "wow.storyShare": { "minTier": "premium", "label": "Shareable story image and past months (Apple)" },
     "wow.subscriptionAudit": { "minTier": "free", "label": "Subscription audit (Apple)" },
-    "wow.feeRunway": { "minTier": "premium", "label": "Fee runway for yearly fees (Apple)" }
+    "wow.feeRunway": { "minTier": "premium", "label": "Fee runway for yearly fees (Apple)" },
+    "bills.radar": { "minTier": "free", "label": "Bill & renewal radar" },
+    "bills.alerts": { "minTier": "free", "label": "Bill alerts (Free: the next 3)", "limits": { "free": 3, "premium": null } },
+    "bills.liveActivity": { "minTier": "premium", "label": "Live Activity on the due day for renewals and fees (Apple)" },
+    "bills.widget": { "minTier": "premium", "label": "Bill radar widget (Apple)" }
   },
   "freeBillOfRights": ["security.lock", "security.encryption", "import.statements", "core.tabs", "data.delete", "data.export", "setup.wizard", "setup.emailGuide", "mailSync.connect", "privacy.mode", "badges.core"]
 }

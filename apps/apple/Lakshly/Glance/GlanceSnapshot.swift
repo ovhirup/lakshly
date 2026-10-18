@@ -29,13 +29,21 @@ enum GlancePace: String, Codable, Equatable, Sendable {
 }
 
 enum GlanceBillKind: String, Codable, Equatable, Sendable {
-  case card, emi, sip
+  case card, emi, sip, insurance, fee, subscription
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    self = GlanceBillKind(rawValue: try container.decode(String.self)) ?? .card
+  }
 
   var word: String {
     switch self {
     case .card: "Card"
     case .emi: "EMI"
     case .sip: "SIP"
+    case .insurance: "Insurance"
+    case .fee: "Fee"
+    case .subscription: "Subscription"
     }
   }
 
@@ -44,6 +52,9 @@ enum GlanceBillKind: String, Codable, Equatable, Sendable {
     case .card: "creditcard"
     case .emi: "calendar"
     case .sip: "arrow.triangle.2.circlepath"
+    case .insurance: "shield"
+    case .fee: "calendar.badge.clock"
+    case .subscription: "repeat"
     }
   }
 }
@@ -93,6 +104,7 @@ struct GlanceSnapshot: Codable, Equatable, Sendable {
   var themeID: String
   var appearance: GlanceAppearance
   var budget: GlanceBudgetPace
+  var bills: [GlanceBill]
   var nextBill: GlanceBill?
   var debtRepaidPercent: Double
   var netWorthTrend: GlanceTrend
@@ -107,6 +119,7 @@ struct GlanceSnapshot: Codable, Equatable, Sendable {
     appearance: GlanceAppearance,
     budget: GlanceBudgetPace,
     nextBill: GlanceBill?,
+    bills: [GlanceBill] = [],
     debtRepaidPercent: Double,
     netWorthTrend: GlanceTrend,
     netWorth: Int64?,
@@ -118,7 +131,8 @@ struct GlanceSnapshot: Codable, Equatable, Sendable {
     self.themeID = themeID
     self.appearance = appearance
     self.budget = budget
-    self.nextBill = nextBill
+    self.bills = Array(bills.prefix(6))
+    self.nextBill = self.bills.first ?? nextBill
     self.debtRepaidPercent = debtRepaidPercent
     self.netWorthTrend = netWorthTrend
     self.netWorth = netWorth
@@ -131,6 +145,11 @@ struct GlanceSnapshot: Codable, Equatable, Sendable {
     if var bill = copy.nextBill {
       bill.amount = nil
       copy.nextBill = bill
+    }
+    copy.bills = copy.bills.map { bill in
+      var hidden = bill
+      hidden.amount = nil
+      return hidden
     }
     copy.netWorth = nil
     copy.debtOutstanding = nil
@@ -150,6 +169,11 @@ struct GlanceSnapshot: Codable, Equatable, Sendable {
       budget: GlanceBudgetPace(
         monthSpendPercent: 42, monthElapsedPercent: 50, status: .onTrack, safeToSpendPerDay: 85_000),
       nextBill: GlanceBill(name: "Rewards Card", dueDate: due, kind: .card, amount: 450_000),
+      bills: [GlanceBill(name: "Rewards Card", dueDate: due, kind: .card, amount: 450_000)] + (1..<6).map { index in
+        GlanceBill(name: "Demo bill \(index + 1)",
+          dueDate: calendar.date(byAdding: .day, value: index, to: calendar.startOfDay(for: generated)) ?? due,
+          kind: index == 0 ? .subscription : .fee, amount: 10_000)
+      },
       debtRepaidPercent: 40,
       netWorthTrend: .up,
       netWorth: 56_000_000,
@@ -159,7 +183,7 @@ struct GlanceSnapshot: Codable, Equatable, Sendable {
 
 extension GlanceSnapshot {
   private enum CodingKeys: String, CodingKey {
-    case version, generatedAt, tier, themeID, appearance, budget, nextBill
+    case version, generatedAt, tier, themeID, appearance, budget, nextBill, bills
     case debtRepaidPercent, netWorthTrend, netWorth, debtOutstanding
   }
 
@@ -171,7 +195,9 @@ extension GlanceSnapshot {
     themeID = try container.decode(String.self, forKey: .themeID)
     appearance = try container.decode(GlanceAppearance.self, forKey: .appearance)
     budget = try container.decode(GlanceBudgetPace.self, forKey: .budget)
-    nextBill = try container.decodeIfPresent(GlanceBill.self, forKey: .nextBill)
+    bills = Array((try container.decodeIfPresent([GlanceBill].self, forKey: .bills) ?? []).prefix(6))
+    let legacyBill = try container.decodeIfPresent(GlanceBill.self, forKey: .nextBill)
+    nextBill = bills.first ?? legacyBill
     debtRepaidPercent = try container.decode(Double.self, forKey: .debtRepaidPercent)
     netWorthTrend = try container.decode(GlanceTrend.self, forKey: .netWorthTrend)
     netWorth = try container.decodeIfPresent(Int64.self, forKey: .netWorth)
@@ -186,7 +212,8 @@ extension GlanceSnapshot {
     try container.encode(themeID, forKey: .themeID)
     try container.encode(appearance, forKey: .appearance)
     try container.encode(budget, forKey: .budget)
-    try container.encodeIfPresent(nextBill, forKey: .nextBill)
+    try container.encode(Array(bills.prefix(6)), forKey: .bills)
+    try container.encodeIfPresent(bills.first ?? nextBill, forKey: .nextBill)
     try container.encode(debtRepaidPercent, forKey: .debtRepaidPercent)
     try container.encode(netWorthTrend, forKey: .netWorthTrend)
     try container.encodeIfPresent(netWorth, forKey: .netWorth)
@@ -289,5 +316,24 @@ enum GlancePrivacy {
       result.replaceSubrange(range, with: "••••" + suffix)
     }
     return result
+  }
+}
+
+/// Pure row selection shared by widgets and app tests.
+enum BillRadarWidgetRows {
+  static func select(snapshot: GlanceSnapshot, capacity: Int) -> [GlanceBill] {
+    let bills = snapshot.bills.isEmpty ? snapshot.nextBill.map { [$0] } ?? [] : snapshot.bills
+    let count = can(.billWidget, tier: snapshot.tier.accessTier) ? min(6, max(0, capacity)) : 1
+    return Array(bills.prefix(count))
+  }
+
+  static func dueText(_ due: Date, now: Date, calendar: Calendar = .current) -> String {
+    let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: now),
+      to: calendar.startOfDay(for: due)).day ?? 0
+    switch days {
+    case ...0: return "Today"
+    case 1: return "Tomorrow"
+    default: return "In \(days) days"
+    }
   }
 }

@@ -74,6 +74,7 @@ struct SettingsView: View {
           }.listRowBackground(theme.surface)
           PrivacySettingsSection()
           ReviewSettingsSection(store: store)
+          Section("Bill radar") { BillAlertsCard(store: store) }
           glanceSection
           Section("Purchases") {
             Button("Restore Purchases") { Task { await entitlements.restore() } }
@@ -266,7 +267,8 @@ struct SettingsView: View {
       themeID: themeSelection,
       appearance: LaunchOptions.current.appearance ?? appearance,
       tier: entitlements.tier)
-    GlancePublisher.publish(dataset: store.dataset)
+    GlancePublisher.publish(dataset: store.dataset, now: store.reviewNow, wow: store.wowState)
+    BillNotifications.reschedule(store: store)
     #if os(iOS)
     LiveActivityManager.shared.sync()
     #endif

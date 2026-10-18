@@ -174,6 +174,7 @@ final class GlanceTests: XCTestCase {
 
   func testBillDueTodayBeatsTheBudgetAlert() throws {
     var snapshot = try paced(percent: 95)
+    snapshot.bills = []
     snapshot.nextBill = GlanceBill(name: "Rewards Card", dueDate: date(2026, 9, 10), kind: .card, amount: 100)
     let plan = LiveActivityPlanner.select(
       snapshot: snapshot, now: date(2026, 9, 10), calendar: utc, budgetAlertMonth: nil)
@@ -272,6 +273,7 @@ final class GlanceTests: XCTestCase {
   private func paced(percent: Double) throws -> GlanceSnapshot {
     var snapshot = GlanceBuilder.build(
       dataset: try sample(), now: date(2026, 9, 10), includeAmounts: true, tier: .free, calendar: utc)
+    snapshot.bills = []
     snapshot.nextBill = nil
     snapshot.budget.monthSpendPercent = percent
     return snapshot
