@@ -4,6 +4,7 @@ import { MultiLine } from "@/components/charts";
 import { Glass, PageHeader, PremiumBadge, Progress, Stat } from "@/components/ui";
 import { PremiumGate } from "@/components/ui";
 import { DataGate, useData } from "@/components/DataState";
+import { FreedomCard, FreedomWhatIfCard } from "@/components/wow/Freedom";
 import { formatINR, formatPct, titleCase } from "@/lib/format";
 import { amortise } from "@/lib/selectors";
 
@@ -11,7 +12,15 @@ function DebtView() {
   const { debts } = useData();
   const [extra, setExtra] = useState(200000); // ₹2,000/month prepayment, in paise
   const d = debts[0];
-  if (!d) return <PageHeader title="Debt" subtitle="No debts. Wonderful! 🎉" />;
+  if (!d) {
+    return (
+      <>
+        <PageHeader title="Debt" subtitle="No debts. Wonderful! 🎉" />
+        <FreedomCard />
+        <FreedomWhatIfCard />
+      </>
+    );
+  }
   const base = amortise(d);
   const fast = amortise(d, extra);
   const merged = base.points.map((p, i) => ({ month: `M${p.month}`, current: p.balance, prepay: fast.points[i]?.balance ?? 0 }));
@@ -20,6 +29,8 @@ function DebtView() {
   return (
     <>
       <PageHeader title="Debt" subtitle="Payoff planner: see how small prepayments save real money"><PremiumBadge /></PageHeader>
+      <FreedomCard />
+      <FreedomWhatIfCard />
       <PremiumGate feature="Debt planner" id="debt.planner">
         <div className="grid g4">
           <Glass className="card"><Stat label="Outstanding" value={formatINR(d.outstanding)} hint={`${formatPct(paidPct, 0)} repaid`} /></Glass>

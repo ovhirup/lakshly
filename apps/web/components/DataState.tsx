@@ -11,7 +11,8 @@ import { deleteVault, loadUserData, saveUserData, vaultLockState, VAULT_DELETED_
 import { Glass, PageHeader } from "./ui";
 import { Icon } from "./Icon";
 import { usePrivacy } from "./Privacy";
-import { useReviewStore, type ReviewApi } from "./useReview";
+import { demoNow, useReviewStore, type ReviewApi } from "./useReview";
+import { useWowStore, type WowApi } from "./useWow";
 import { overlayDecisions, type ReviewTxn } from "@/lib/review";
 import "./data-state.css";
 
@@ -54,6 +55,7 @@ interface DataCtx {
   /** Raw transactions before weekly-review decisions are applied (the review inbox reads these). */
   rawTransactions: LakshlyDataset["transactions"];
   review: ReviewApi;
+  wow: WowApi;
 }
 const Ctx = createContext<DataCtx | null>(null);
 
@@ -132,8 +134,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
   const active: LakshlyDataset = useMemo(() => (source === "mine" ? (user?.dataset ?? (emptyDataset() as LakshlyDataset)) : demo), [source, user]);
   const review = useReviewStore(source, active.transactions as ReviewTxn[], demo, user?.importedAt);
+  // Fee dates in the demo seed stay on the demo clock, including while My data is showing.
+  const demoClock = useMemo(() => demoNow(demo), []);
+  const wow = useWowStore(source, demoClock);
   const transactions = useMemo(() => overlayDecisions(active.transactions, review.state), [active, review.state]);
   const { forgetAll } = review;
+  const forgetWow = wow.forgetAll;
   const deleteAll = useCallback(async () => {
     await deleteVault();
     localStorage.removeItem(SOURCE_KEY);
@@ -141,11 +147,12 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("lk-worth-snooze"); // legacy plaintext snoozes (now kept in the encrypted review record)
     setUser(null);
     forgetAll();
+    forgetWow();
     emit();
     window.dispatchEvent(new Event(VAULT_DELETED_EVENT));
-  }, [forgetAll, setUser]);
+  }, [forgetAll, forgetWow, setUser]);
   const value: DataCtx = {
-    source, setSource, ready, vaultLocked, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review,
+    source, setSource, ready, vaultLocked, user, saveImport, saveBudgets, saveGoal, deleteAll, masked, review, wow,
     dataset: active,
     accounts: active.accounts,
     rawTransactions: active.transactions,

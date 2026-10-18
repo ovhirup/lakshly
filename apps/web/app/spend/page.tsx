@@ -5,6 +5,7 @@ import { MonthPicker } from "@/components/MonthPicker";
 import { ReviewChip } from "@/components/ReviewParts";
 import { NudgeCard } from "@/components/Game";
 import { Glass, PageHeader, Stat } from "@/components/ui";
+import { SubscriptionAuditCard } from "@/components/wow/SubscriptionAudit";
 import { DataGate, useData } from "@/components/DataState";
 import { formatDate, formatINR, formatMonth, titleCase } from "@/lib/format";
 import { CATEGORY_COLORS, dailySpend, defaultMonth, months, spendByCategory, topMerchants } from "@/lib/selectors";
@@ -38,6 +39,7 @@ function SpendView() {
           <MonthPicker months={all} value={month} onChange={(value) => { setMonth(value); setShowAll(false); }} />
         </div>
       </PageHeader>
+      <SubscriptionAuditCard />
       <NudgeCard screen="spend" />
 
       <div className="grid g3">
