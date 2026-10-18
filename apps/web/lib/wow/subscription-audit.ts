@@ -67,6 +67,14 @@ export function flagText(flag: SubscriptionFlag): string {
   }
 }
 
+/** Headline count: every listed item, with possibly-cancelled ones called out. Totals still skip lapsed items. */
+export function auditCountLine(items: readonly Pick<SubscriptionItem, "lapsed">[]): string {
+  const total = items.length;
+  const lapsed = items.filter((item) => item.lapsed).length;
+  const base = `${total} ${total === 1 ? "subscription" : "subscriptions"}`;
+  return lapsed > 0 ? `${base} · ${lapsed} may be cancelled already` : base;
+}
+
 export function kindTitle(kind: string): string {
   switch (kind) {
     case "video": return "Video";

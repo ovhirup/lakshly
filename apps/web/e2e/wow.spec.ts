@@ -19,6 +19,8 @@ test("free: freedom date, story and subscription audit work; Premium parts stay 
   await expect(page.getByTestId("wow-storyShare-card")).toContainText("Share your story");
   await page.goto("/spend/");
   await expect(page.getByText("Subscription audit")).toBeVisible();
+  const auditRows = await page.locator(".wow-audit-row").count();
+  await expect(page.getByTestId("wow-subscription-audit-headline")).toContainText(`on ${auditRows} subscription`);
   await page.goto("/budget/");
   await expect(page.getByTestId("wow-feeRunway-card")).toContainText("Yearly fees, sorted.");
 });

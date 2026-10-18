@@ -5,7 +5,7 @@ import { useTier } from "@/components/useTier";
 import { Glass } from "@/components/ui";
 import { formatINR, formatPct } from "@/lib/format";
 import {
-  buildAudit, flagText, kindTitle, scheduleLine, togglePlanned,
+  auditCountLine, buildAudit, flagText, kindTitle, scheduleLine, togglePlanned,
   type SubscriptionFlag,
 } from "@/lib/wow/subscription-audit";
 import "../wow.css";
@@ -23,8 +23,6 @@ export function SubscriptionAuditCard() {
 
   const planned = new Set(wow.state.plannedCancels);
   const audit = buildAudit(transactions, review.now, planned);
-  const activeCount = audit.items.filter((item) => !item.lapsed).length;
-  const noun = activeCount === 1 ? "subscription" : "subscriptions";
 
   return (
     <Glass className="card wow-audit" data-testid="wow-subscription-audit-card">
@@ -37,7 +35,7 @@ export function SubscriptionAuditCard() {
             <Amount>{formatINR(audit.monthlyTotalPaise)}</Amount>
             {" a month · "}
             <Amount>{formatINR(audit.yearlyTotalPaise)}</Amount>
-            {` a year on ${activeCount} ${noun}`}
+            {` a year on ${auditCountLine(audit.items)}`}
           </p>
           <ul className="wow-audit-list">
             {audit.items.map((item) => {

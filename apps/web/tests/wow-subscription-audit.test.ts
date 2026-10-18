@@ -3,6 +3,7 @@ import { transactions } from "@/lib/data";
 import type { Category, Transaction } from "../lib/schema.gen";
 import { emptyWow } from "../lib/wow/state";
 import {
+  auditCountLine,
   buildAudit, flagText, kindTitle, scheduleLine, togglePlanned,
 } from "../lib/wow/subscription-audit";
 
@@ -237,5 +238,16 @@ describe("subscription audit", () => {
   it("finds at least three subscriptions in the demo dataset", () => {
     const audit = buildAudit(transactions, new Date(2026, 9, 17, 12), new Set());
     expect(audit.items.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("auditCountLine", () => {
+  it("counts every listed item and calls out possibly-cancelled ones", () => {
+    const items = [{ lapsed: false }, { lapsed: false }, { lapsed: false }, { lapsed: false }, { lapsed: true }];
+    expect(auditCountLine(items)).toBe("5 subscriptions · 1 may be cancelled already");
+  });
+  it("omits the note when nothing lapsed, and uses singular for one", () => {
+    expect(auditCountLine([{ lapsed: false }])).toBe("1 subscription");
+    expect(auditCountLine([{ lapsed: false }, { lapsed: false }])).toBe("2 subscriptions");
   });
 });
