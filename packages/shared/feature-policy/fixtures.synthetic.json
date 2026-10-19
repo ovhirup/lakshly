@@ -1,0 +1,2365 @@
+{
+  "policyVersion": 1,
+  "marker": "SYNTHETIC",
+  "catalog": {
+    "policyVersion": 1,
+    "policyRevision": "synthetic.v1",
+    "features": [
+      {
+        "id": "synthetic.sharedFree",
+        "audience": "public",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "iphone"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": null
+      },
+      {
+        "id": "synthetic.sharedPremium",
+        "audience": "public",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "iphone"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "premium",
+        "quota": null
+      },
+      {
+        "id": "synthetic.privateExperiment",
+        "audience": "private",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": null
+      },
+      {
+        "id": "synthetic.disabled",
+        "audience": "public",
+        "implemented": true,
+        "enabled": false,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "iphone"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": null
+      },
+      {
+        "id": "synthetic.unimplemented",
+        "audience": "public",
+        "implemented": false,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "iphone"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": null
+      },
+      {
+        "id": "synthetic.webOnly",
+        "audience": "public",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": null
+      },
+      {
+        "id": "synthetic.betaOnly",
+        "audience": "public",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": null
+      },
+      {
+        "id": "synthetic.quotaTwo",
+        "audience": "public",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "iphone"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": {
+          "free": 2,
+          "premium": null
+        }
+      },
+      {
+        "id": "synthetic.zeroQuota",
+        "audience": "public",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "iphone"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "free",
+        "quota": {
+          "free": 0,
+          "premium": 0
+        }
+      },
+      {
+        "id": "synthetic.finitePremium",
+        "audience": "public",
+        "implemented": true,
+        "enabled": true,
+        "supportedPlatforms": [
+          "web",
+          "macos",
+          "iphone"
+        ],
+        "availableIn": [
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "stable",
+            "platform": "iphone"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "web"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "macos"
+          },
+          {
+            "suite": "public",
+            "channel": "beta",
+            "platform": "iphone"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "web"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "macos"
+          },
+          {
+            "suite": "private",
+            "channel": "experimental",
+            "platform": "iphone"
+          }
+        ],
+        "minimumPublicTier": "premium",
+        "quota": {
+          "free": 0,
+          "premium": 3
+        }
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "stableFree.web",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "betaFree.web",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "beta",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "betaSimulatedPremium.web",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "beta",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "betaSimulation",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "simulatedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "stableVerifiedPremium.web",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "privateSuperUser.web",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "superUser",
+        "accessBasis": "privateSuperUser",
+        "limit": null
+      }
+    },
+    {
+      "id": "stableFree.macos",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "macos",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "betaFree.macos",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "beta",
+        "platform": "macos",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "betaSimulatedPremium.macos",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "beta",
+        "platform": "macos",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "betaSimulation",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "simulatedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "stableVerifiedPremium.macos",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "macos",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "privateSuperUser.macos",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "macos",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "superUser",
+        "accessBasis": "privateSuperUser",
+        "limit": null
+      }
+    },
+    {
+      "id": "stableFree.iphone",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "iphone",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "betaFree.iphone",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "beta",
+        "platform": "iphone",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "betaSimulatedPremium.iphone",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "beta",
+        "platform": "iphone",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "betaSimulation",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "simulatedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "stableVerifiedPremium.iphone",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "iphone",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "privateSuperUser.iphone",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "iphone",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "superUser",
+        "accessBasis": "privateSuperUser",
+        "limit": null
+      }
+    },
+    {
+      "id": "publicFreePremiumDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "tier_required",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "privateExperimentVerifiedDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": false,
+        "reason": "private_feature",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "privateExperimentSimulatedDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "beta",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "betaSimulation",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": false,
+        "reason": "private_feature",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "publicSuperUserInvalid",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": false,
+        "reason": "invalid_context",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "privateNoneDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": false,
+        "reason": "private_authorization_required",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "privateRevokedDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "revoked",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": false,
+        "reason": "private_authorization_required",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "privateFutureDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 201,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": false,
+        "reason": "private_authorization_required",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "privateExpiredDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": 200
+        }
+      },
+      "request": {
+        "featureId": "synthetic.privateExperiment",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.privateExperiment",
+        "allowed": false,
+        "reason": "private_authorization_required",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "stableSimulationInvalid",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "betaSimulation",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "invalid_context",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "premiumNoneProvenanceInvalid",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "none",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "invalid_context",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "publicPrivateProvenanceInvalid",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "invalid_context",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "privatePremiumInvalid",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": false,
+        "reason": "invalid_context",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "unknownFeature",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.unknown",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.unknown",
+        "allowed": false,
+        "reason": "unknown_feature",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "unsupportedPlatform",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "iphone",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.webOnly",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.webOnly",
+        "allowed": false,
+        "reason": "unsupported_platform",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "disabledFeature",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.disabled",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.disabled",
+        "allowed": false,
+        "reason": "disabled",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "unimplementedFeature",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.unimplemented",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.unimplemented",
+        "allowed": false,
+        "reason": "not_implemented",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "unreleasedStable",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.betaOnly",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.betaOnly",
+        "allowed": false,
+        "reason": "channel_unavailable",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "unreleasedPrivateSuperUser",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.betaOnly",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.betaOnly",
+        "allowed": false,
+        "reason": "channel_unavailable",
+        "effectiveTier": null,
+        "accessBasis": null,
+        "limit": null
+      }
+    },
+    {
+      "id": "paidBeforeExpiry",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": 201
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "paidAtExpiry",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": 200
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "tier_required",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "paidAfterExpiry",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": 199
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "tier_required",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "paidAtStart",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 200,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "paidFutureStart",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 201,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "tier_required",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "paidRevoked",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "revoked",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "tier_required",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "paidRefunded",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "refunded",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedPremium",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedPremium",
+        "allowed": false,
+        "reason": "tier_required",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "freeAfterPaidExpiry",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": 200
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    },
+    {
+      "id": "quotaBelowBoundary",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.quotaTwo",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.quotaTwo",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": 2
+      }
+    },
+    {
+      "id": "quotaAtBoundary",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.quotaTwo",
+        "usage": {
+          "used": 1,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.quotaTwo",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": 2
+      }
+    },
+    {
+      "id": "quotaOverBoundary",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.quotaTwo",
+        "usage": {
+          "used": 2,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.quotaTwo",
+        "allowed": false,
+        "reason": "quota_exhausted",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": 2
+      }
+    },
+    {
+      "id": "quotaRequestExceedsLimit",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.quotaTwo",
+        "usage": {
+          "used": 0,
+          "requested": 3
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.quotaTwo",
+        "allowed": false,
+        "reason": "quota_exhausted",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": 2
+      }
+    },
+    {
+      "id": "zeroQuotaDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.zeroQuota",
+        "usage": {
+          "used": 0,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.zeroQuota",
+        "allowed": false,
+        "reason": "quota_exhausted",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": 0
+      }
+    },
+    {
+      "id": "premiumUnlimited",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.quotaTwo",
+        "usage": {
+          "used": 9007199254740991,
+          "requested": 9007199254740991
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.quotaTwo",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": null
+      }
+    },
+    {
+      "id": "superUserBypassesQuota",
+      "context": {
+        "policyVersion": 1,
+        "suite": "private",
+        "channel": "experimental",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "superUser",
+          "provenance": "verifiedPrivateAuthorization",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.finitePremium",
+        "usage": {
+          "used": 9007199254740991,
+          "requested": 9007199254740991
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.finitePremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "superUser",
+        "accessBasis": "privateSuperUser",
+        "limit": null
+      }
+    },
+    {
+      "id": "finitePremiumBelow",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.finitePremium",
+        "usage": {
+          "used": 1,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.finitePremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": 3
+      }
+    },
+    {
+      "id": "finitePremiumExact",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.finitePremium",
+        "usage": {
+          "used": 2,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.finitePremium",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": 3
+      }
+    },
+    {
+      "id": "finitePremiumOver",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "premium",
+          "provenance": "verifiedEntitlement",
+          "state": "active",
+          "startsAtEpochSeconds": 100,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.finitePremium",
+        "usage": {
+          "used": 3,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.finitePremium",
+        "allowed": false,
+        "reason": "quota_exhausted",
+        "effectiveTier": "premium",
+        "accessBasis": "verifiedPremium",
+        "limit": 3
+      }
+    },
+    {
+      "id": "maxSafeUsedDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.quotaTwo",
+        "usage": {
+          "used": 9007199254740991,
+          "requested": 1
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.quotaTwo",
+        "allowed": false,
+        "reason": "quota_exhausted",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": 2
+      }
+    },
+    {
+      "id": "maxSafeRequestDenied",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.quotaTwo",
+        "usage": {
+          "used": 0,
+          "requested": 9007199254740991
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.quotaTwo",
+        "allowed": false,
+        "reason": "quota_exhausted",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": 2
+      }
+    },
+    {
+      "id": "noQuotaMaxSafeAllowed",
+      "context": {
+        "policyVersion": 1,
+        "suite": "public",
+        "channel": "stable",
+        "platform": "web",
+        "asOfEpochSeconds": 200,
+        "entitlement": {
+          "kind": "none",
+          "provenance": "none",
+          "state": "none",
+          "startsAtEpochSeconds": null,
+          "endsAtEpochSeconds": null
+        }
+      },
+      "request": {
+        "featureId": "synthetic.sharedFree",
+        "usage": {
+          "used": 9007199254740991,
+          "requested": 9007199254740991
+        }
+      },
+      "expected": {
+        "policyVersion": 1,
+        "policyRevision": "synthetic.v1",
+        "featureId": "synthetic.sharedFree",
+        "allowed": true,
+        "reason": "allowed",
+        "effectiveTier": "free",
+        "accessBasis": "free",
+        "limit": null
+      }
+    }
+  ]
+}
